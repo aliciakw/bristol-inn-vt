@@ -46,5 +46,6 @@ export function validateEnv(): EnvConfig {
   return env as EnvConfig;
 }
 
-// Export as singleton for app-wide access
-export const env = validateEnv();
+// Note: validateEnv() should be called manually when needed
+// Environment variables are loaded from process.env at runtime
+// For build-time validation, consider using a build hook or import in astro.config.mjs

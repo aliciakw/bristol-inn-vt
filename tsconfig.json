@@ -10,6 +10,7 @@
       "@styles/*": ["styles/*"]
     },
     "lib": ["es2020", "dom", "dom.iterable"],
+    "types": ["node"],
     "target": "es2020",
     "moduleResolution": "bundler",
     "resolveJsonModule": true
