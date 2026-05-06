@@ -4,7 +4,7 @@ A proof-of-concept hospitality website built with Astro 5, TypeScript (strict mo
 
 ## Technology Stack
 
-- **Framework:** Astro 5.x (static-first)
+- **Framework:** Astro 6.x (static-first)
 - **Language:** TypeScript (strict mode)
 - **Styling:** Tailwind CSS (mobile-first, 3 breakpoints)
 - **CMS:** Prismic (Phase 2)
