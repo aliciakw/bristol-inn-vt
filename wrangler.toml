@@ -1,2 +1,5 @@
-# wrangler.toml
-pages_build_output_dir = "./dist"
+name = "bristol-inn-vt"
+compatibility_date = "2026-05-06"
+
+[assets]
+directory = "./dist"
