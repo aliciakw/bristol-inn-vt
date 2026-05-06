@@ -1,0 +1,20 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "baseUrl": "src/",
+    "paths": {
+      "@components/*": ["components/*"],
+      "@layouts/*": ["layouts/*"],
+      "@types/*": ["types/*"],
+      "@lib/*": ["lib/*"],
+      "@styles/*": ["styles/*"]
+    },
+    "lib": ["es2020", "dom", "dom.iterable"],
+    "types": ["node"],
+    "target": "es2020",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist", "node_modules"]
+}
