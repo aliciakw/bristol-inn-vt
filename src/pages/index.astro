@@ -1,15 +1,15 @@
 ---
-import BaseLayout from '@layouts/BaseLayout.astro';
+import Welcome from '../components/Welcome.astro';
+import Layout from '../layouts/Layout.astro';
+import "../styles/global.css";
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<BaseLayout title="Bristol Inn" description="Welcome to Bristol Inn">
-  <div class="max-w-7xl mx-auto px-4 py-8">
-    <h2 class="text-3xl font-bold mb-4">Welcome to Bristol Inn</h2>
-    <p class="text-lg text-gray-600 mb-6">
-      A beautiful inn for your next getaway. Placeholder content until Prismic integration (Phase 2).
-    </p>
-    <a href="/rooms" class="inline-block bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700">
-      Browse Rooms
-    </a>
-  </div>
-</BaseLayout>
+<Layout>
+	<h1 class="text-3xl font-bold underline">
+		Bristol Inn, Vermont
+	</h1>
+	<Welcome />
+</Layout>

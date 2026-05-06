@@ -1,21 +1,19 @@
 {
-  "name": "bristol-inn",
+  "name": "bristol-inn-vermont",
   "type": "module",
   "version": "0.0.1",
-  "description": "Bristol Inn - Astro website",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "type-check": "tsc --noEmit"
+    "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/tailwind": "4.0.0",
-    "astro": "4.15.0",
-    "tailwindcss": "^3.4.0"
-  },
-  "devDependencies": {
-    "@types/node": "^25.6.0",
-    "typescript": "^5.3.0"
+    "@tailwindcss/vite": "^4.2.4",
+    "astro": "^6.2.2",
+    "tailwindcss": "^4.2.4"
   }
 }
