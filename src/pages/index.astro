@@ -3,7 +3,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import "../styles/global.css";
 ---
 
-<BaseLayout title="Bristol Inn" description="Welcome to Bristol Inn">
+<BaseLayout title="Bristol Inn Vermont" description="Welcome to Bristol Inn">
   <div class="max-w-7xl mx-auto px-4 py-8">
     <h2 class="text-3xl font-bold mb-4">Welcome to Bristol Inn</h2>
     <p class="text-lg text-gray-600 mb-6">
@@ -12,5 +12,13 @@ import "../styles/global.css";
     <a href="/rooms" class="inline-block bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700">
       Browse Rooms
     </a>
+    <button id="error-button" class="bg-red-500 text-white px-6 py-3 rounded hover:bg-red-600">Throw Error</button>
   </div>
 </BaseLayout>
+
+<script>
+  function handleClick () {
+    throw new Error('This is a test error from the index page');
+  }
+  document.querySelector("#error-button")?.addEventListener("click", handleClick);
+</script>
