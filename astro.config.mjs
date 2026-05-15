@@ -44,8 +44,7 @@ export default defineConfig({
     sentry({
       project: "bristol-inn-vt",
       org: "aleeshza-llc",
-      authToken:
-        "https://305f393572942183dbe19cee61ad08ac@o4511395402153984.ingest.us.sentry.io/4511395432955904",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
     }),
   ],
 });
