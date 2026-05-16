@@ -55,13 +55,13 @@ Source: Tailwind defaults. Sizes pulled from existing usage (`text-3xl font-bold
 | Role | Size | Weight | Line Height | Tailwind Class |
 |------|------|--------|-------------|----------------|
 | Body | 16px | 400 (normal) | 1.5 | `text-base font-normal leading-relaxed` |
-| Label / Badge | 12px | 500 (medium) | 1.0 | `text-xs font-medium leading-none` |
+| Label / Badge | 12px | 700 (bold) | 1.0 | `text-xs font-bold leading-none` |
 | Heading (card, section) | 20px | 700 (bold) | 1.2 | `text-xl font-bold leading-tight` |
 | Display (page title, hero) | 30px | 700 (bold) | 1.2 | `text-3xl font-bold leading-tight` |
 
 Rules:
 - Maximum 4 sizes in use for this phase (as declared above). Do not introduce additional sizes.
-- Maximum 2 weights: 400 (body, secondary text) and 700 (headings, room names). Badge uses 500 via `font-medium`.
+- Maximum 2 weights: 400 (body, secondary text) and 700 (headings, room names, amenity badge). Do not use weight 500 (`font-medium`) anywhere in this phase.
 - Body line-height: 1.5 (`leading-relaxed`).
 - Heading line-height: 1.2 (`leading-tight`).
 - Rich text from Prismic (`set:html`): wrap in a `prose`-style container using explicit Tailwind classes on the parent div, not a Tailwind Typography plugin. Apply `text-base leading-relaxed text-gray-700` to the wrapper.
@@ -120,7 +120,7 @@ Layout:
 - Room name: `text-xl font-bold text-gray-900`
 - Rate: `text-base font-normal text-gray-700` — copy: `"From $X / night"` (D-02)
 - Amenity badges: `flex flex-wrap gap-2` containing up to 3 `AmenityBadge` atoms
-- CTA link: `inline-block mt-2 text-slate-700 font-medium underline-offset-2 hover:underline` — copy: `"View Room"`
+- CTA link: `inline-block mt-2 text-slate-700 font-normal underline-offset-2 hover:underline` — copy: `"View Room"`
 
 ### AmenityBadge.astro
 
@@ -132,7 +132,7 @@ interface Props {
 ```
 
 Layout:
-- `inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-slate-700`
+- `inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-gray-100 text-slate-700`
 - No icon in this phase — text only.
 
 ### RoomGallery.astro
@@ -202,6 +202,7 @@ No new layout component — uses `BaseLayout.astro` directly. Content:
 - Container: `max-w-7xl mx-auto px-4 py-8`
 - Page heading: `<h1>` — `"Our Rooms"`, `text-3xl font-bold text-gray-900 mb-8` (promote from existing `h2` to `h1` — semantic requirement)
 - Grid: `grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6` (source: D-05, existing placeholder pattern; gap upgraded from `gap-4` to `gap-6`)
+- Focal point: Room card thumbnail photo is the primary visual anchor; room name (`text-xl font-bold`) is the secondary focal point.
 
 ### /rooms/[id] (Room Detail)
 
@@ -216,6 +217,7 @@ No new layout component — uses `BaseLayout.astro` directly. Content:
 ### / (Homepage)
 
 - Hero: full-width `HeroCarousel` above the fold, no container constraint
+- Focal point: HeroCarousel is the primary visual anchor above the fold; `ctaLabel` button is the secondary focal point.
 - Body content: `max-w-4xl mx-auto px-4 py-8` wrapping `SliceZone`
 
 ### /[slug] (Generic Prismic Page)
