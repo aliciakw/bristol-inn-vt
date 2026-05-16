@@ -621,22 +621,25 @@ return Astro.redirect(url);
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **What is the Hostaway image CDN domain?**
    - What we know: `listingImages[].url` is a string URL; domain not documented.
    - What's unclear: The exact hostname needed for `image.remotePatterns`.
    - Recommendation: First task in Wave 1 is a diagnostic `console.log` of a listing's first image URL. Block Astro Image config on this value.
+   - **RESOLVED:** Domain unknown until first live API call — plans log `listing.listingImages[0].url` in `normalizeRoom()` and add a TODO comment in `image.remotePatterns`. Executor must add the discovered hostname after the first API call.
 
 2. **Does Prismic `resolvePreviewURL` work without the full request object in Astro?**
    - What we know: `@prismicio/client` has `client.enableAutoPreviewsFromReq(req)` for server environments; cookie-based approach works per community guides.
    - What's unclear: Whether passing the raw cookie value to `resolvePreviewURL` is sufficient, or whether the full request headers must be passed via `enableAutoPreviewsFromReq`.
    - Recommendation: Implement with cookie value first (simpler); test against a real Prismic preview link. If it fails, switch to `enableAutoPreviewsFromReq(new Request(Astro.request.url, { headers: Astro.request.headers }))`.
+   - **RESOLVED:** Plans implement cookie-based approach first (Pattern 5). A TODO comment in `preview.astro` documents the `enableAutoPreviewsFromReq` fallback for use if cookie approach fails in testing.
 
 3. **Is the Prismic repository private (requires `PRISMIC_TOKEN` for all reads)?**
    - What we know: `PRISMIC_TOKEN` env var is defined and passed as `accessToken` to `createClient`.
    - What's unclear: Public Prismic repos don't need an access token for published content; private repos require it for all reads. Draft/preview content always requires a token.
    - Recommendation: Pass `PRISMIC_TOKEN` to `createClient` unconditionally. This is correct for both private and preview access.
+   - **RESOLVED:** Plans pass `PRISMIC_TOKEN` as `accessToken` unconditionally in `getClient()`. This is correct for both private repos and preview access.
 
 ---
 

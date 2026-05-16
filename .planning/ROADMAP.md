@@ -114,6 +114,18 @@ The roadmap derives phases from natural dependencies and critical path requireme
 
 **UI hint:** yes
 
+**Plans:** 8 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Foundation setup: dependencies, Cloudflare adapter, image.remotePatterns, Vitest
+- [ ] 02-02-PLAN.md — Hostaway API library: getRooms(), getRoom(), HostawayRoom type, amenity map
+- [ ] 02-03-PLAN.md — Prismic CMS library: getHomepage(), getPage(), getPages()
+- [ ] 02-04-PLAN.md — Room components: AmenityBadge, RoomCard, RoomGallery
+- [ ] 02-05-PLAN.md — Prismic components: HeroCarousel, SliceZone
+- [ ] 02-06-PLAN.md — Room pages: /rooms listing and /rooms/[id] detail pages
+- [ ] 02-07-PLAN.md — Prismic pages: homepage, [slug] generic template, preview SSR route
+- [ ] 02-08-PLAN.md — Unit tests: Hostaway and Prismic library tests, full build gate
+
 ---
 
 ### Phase 3: Availability & Booking
