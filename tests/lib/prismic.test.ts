@@ -37,7 +37,7 @@ const initialCreateClientArgs = mockCreateClient.mock.calls[0] as [string, { acc
 // ---------------------------------------------------------------------------
 
 /** Minimal stand-in for a prismic.PrismicDocument */
-function makeDocument(overrides: Partial<{ type: string; uid: string; id: string }> = {}) {
+function makeDocument(overrides: Partial<{ type: string; uid: string | null; id: string }> = {}) {
   return {
     id: overrides.id ?? 'doc-id-1',
     uid: overrides.uid ?? null,
