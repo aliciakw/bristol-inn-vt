@@ -24,6 +24,14 @@ vi.mock('@prismicio/client', () => ({
 // Import after mocking so the module picks up the mock
 const { getHomepage, getPage, getPages, getClient } = await import('../../src/lib/prismic');
 
+// Capture the createClient call made during the singleton initialisation.
+// getClient() is a singleton — the first call creates the client; subsequent
+// calls return the cached instance without invoking createClient again.
+// We call getClient() here (before any beforeEach clears mock state) so the
+// call args are captured once and reused in the getClient describe below.
+getClient();
+const initialCreateClientArgs = mockCreateClient.mock.calls[0] as [string, { accessToken: string }] | undefined;
+
 // ---------------------------------------------------------------------------
 // Fixture helpers
 // ---------------------------------------------------------------------------
@@ -66,23 +74,23 @@ beforeEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('getClient()', () => {
+  // The singleton is initialised once at module load time (see top-level
+  // getClient() call above). We use `initialCreateClientArgs` captured before
+  // any beforeEach clears mock state.
+
   it('calls createClient with repo name "bristol-inn-vt"', () => {
-    getClient();
-    expect(mockCreateClient).toHaveBeenCalledWith(
-      'bristol-inn-vt',
-      expect.objectContaining({ accessToken: 'test-prismic-token' }),
-    );
+    expect(initialCreateClientArgs).toBeDefined();
+    expect(initialCreateClientArgs![0]).toBe('bristol-inn-vt');
   });
 
   it('passes PRISMIC_TOKEN as accessToken', () => {
-    getClient();
-    const [, options] = mockCreateClient.mock.calls[0]!;
-    expect(options).toMatchObject({ accessToken: 'test-prismic-token' });
+    expect(initialCreateClientArgs).toBeDefined();
+    expect(initialCreateClientArgs![1]).toMatchObject({ accessToken: 'test-prismic-token' });
   });
 
   it('does NOT include the token in any logged console output', () => {
     const consoleSpy = vi.spyOn(console, 'log');
-    getClient();
+    getClient(); // returns cached singleton; createClient not called again
     for (const call of consoleSpy.mock.calls) {
       expect(call.join(' ')).not.toContain('test-prismic-token');
     }
