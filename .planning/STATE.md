@@ -2,21 +2,21 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: Not started
+current_phase: 02
 status: unknown
-last_updated: "2026-05-16T02:21:20.624Z"
+last_updated: "2026-05-16T03:00:21.014Z"
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 10
+  completed_plans: 4
   percent: 17
 ---
 
 # Project State — Bristol Inn
 
 **Created:** 2026-05-05  
-**Current Phase:** Not started  
+**Current Phase:** 02
 **Total Phases:** 6  
 **Requirements Mapped:** 73/73  
 **Coverage:** 100%  
@@ -54,13 +54,13 @@ progress:
 | Phase | Name | Status | Requirements | Completed |
 |-------|------|--------|--------------|-----------|
 | 1 | Foundation & Infrastructure | ✅ Complete | 11 | 11/11 |
-| 2 | Integrations & Core Data | Ready to execute | 8 | 0/8 |
+| 2 | Integrations & Core Data | In progress (02-02 complete) | 8 | 3/8 |
 | 3 | Availability & Booking | Pending | 9 | 0/9 |
 | 4 | Content & Contact | Pending | 3 | 0/3 |
 | 5 | Performance & Mobile | Pending | 21 | 0/21 |
 | 6 | Monitoring, Analytics & Launch | Pending | 21 | 0/21 |
 
-**Total: 11/73 requirements completed**
+**Total: 14/73 requirements completed** (ROOM-01, ROOM-02, ROOM-03 satisfied by 02-02)
 
 ---
 
@@ -105,6 +105,9 @@ Phase 6: Monitoring, Analytics & Launch
 | Cloudflare Pages for hosting | Fast, free tier, global CDN, PR previews | 1 |
 | Prismic for CMS | Draft/publish workflow, webhook support, easy content management | 2 |
 | TypeScript strict from day 1 | Catch errors at compile time; enforce quality | 1 |
+| AMENITY_NAMES seeded LOW confidence | Third-party partial list; must verify from live API data after first getRooms() call | 2 |
+| normalizeRoom logs first image URL once | CDN domain needed for image.remotePatterns; token never logged | 2 |
+| photos sliced to 6 max after sort | D-04: gallery shows up to 6 photos; consistent with detail page spec | 2 |
 | Sentry from day 1 | Silent errors are worse than crashes; visibility essential | 6 |
 | Mobile-first responsive design | 60-70% initial research on mobile; non-negotiable | 5 |
 | SEO in v1, not deferred | Cheap to include now; expensive to add later | 6 |
@@ -202,5 +205,5 @@ Phase 6: Monitoring, Analytics & Launch
 ---
 
 *State initialized: 2026-05-05*  
-*Last updated: 2026-05-05*  
-*Next action: `/gsd-plan-phase 2` — Integrations & Core Data (Hostaway API + Prismic CMS)*
+*Last updated: 2026-05-15*  
+*Next action: Plan 02-03 — Hostaway room pages (rooms.astro, rooms/[id].astro)*
