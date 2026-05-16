@@ -1,0 +1,24 @@
+---
+import { getPages } from '../lib/prismic';
+import * as prismic from '@prismicio/client';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import SliceZone from '../components/SliceZone.astro';
+
+export async function getStaticPaths() {
+  const pages = await getPages();  // throws on error → build fails per D-07
+  return pages.map(page => ({
+    params: { slug: page.uid },
+    props: { page },
+  }));
+}
+
+type Props = { page: prismic.PrismicDocument };
+const { page } = Astro.props;
+const pageTitle = prismic.asText(page.data.title) || 'Untitled';
+---
+<BaseLayout title={`${pageTitle} — Bristol Inn`} description={page.data.meta_description as string || ''}>
+  <div class="max-w-3xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">{pageTitle}</h1>
+    <SliceZone slices={page.data.body} />
+  </div>
+</BaseLayout>
