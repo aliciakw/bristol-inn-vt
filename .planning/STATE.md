@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 02
 status: unknown
-last_updated: "2026-05-16T03:00:21.014Z"
+last_updated: "2026-05-16T03:06:17.203Z"
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 10
-  completed_plans: 4
+  completed_plans: 5
   percent: 17
 ---
 
@@ -54,13 +54,13 @@ progress:
 | Phase | Name | Status | Requirements | Completed |
 |-------|------|--------|--------------|-----------|
 | 1 | Foundation & Infrastructure | ✅ Complete | 11 | 11/11 |
-| 2 | Integrations & Core Data | In progress (02-02 complete) | 8 | 3/8 |
+| 2 | Integrations & Core Data | In progress (02-03 complete) | 8 | 8/8 |
 | 3 | Availability & Booking | Pending | 9 | 0/9 |
 | 4 | Content & Contact | Pending | 3 | 0/3 |
 | 5 | Performance & Mobile | Pending | 21 | 0/21 |
 | 6 | Monitoring, Analytics & Launch | Pending | 21 | 0/21 |
 
-**Total: 14/73 requirements completed** (ROOM-01, ROOM-02, ROOM-03 satisfied by 02-02)
+**Total: 19/73 requirements completed** (ROOM-01, ROOM-02, ROOM-03 satisfied by 02-02; CONTENT-01, CONTENT-02, CONTENT-03, CONTENT-04, CONTENT-08 satisfied by 02-03)
 
 ---
 
@@ -108,6 +108,8 @@ Phase 6: Monitoring, Analytics & Launch
 | AMENITY_NAMES seeded LOW confidence | Third-party partial list; must verify from live API data after first getRooms() call | 2 |
 | normalizeRoom logs first image URL once | CDN domain needed for image.remotePatterns; token never logged | 2 |
 | photos sliced to 6 max after sort | D-04: gallery shows up to 6 photos; consistent with detail page spec | 2 |
+| Prismic errors propagate (no try/catch) | Build fails on Prismic outage — Cloudflare keeps last good deploy per D-07 | 2 |
+| getClient() exported for preview.astro | Preview route needs direct client access for resolvePreviewURL | 2 |
 | Sentry from day 1 | Silent errors are worse than crashes; visibility essential | 6 |
 | Mobile-first responsive design | 60-70% initial research on mobile; non-negotiable | 5 |
 | SEO in v1, not deferred | Cheap to include now; expensive to add later | 6 |
@@ -206,4 +208,4 @@ Phase 6: Monitoring, Analytics & Launch
 
 *State initialized: 2026-05-05*  
 *Last updated: 2026-05-15*  
-*Next action: Plan 02-03 — Hostaway room pages (rooms.astro, rooms/[id].astro)*
+*Next action: Plan 02-04 — Hostaway room pages (rooms.astro, rooms/[id].astro)*
