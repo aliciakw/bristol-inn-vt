@@ -18,7 +18,7 @@ export default defineConfig({
         access: "public",
         optional: true,
       }),
-      HOSTAWAY_API_KEY: envField.string({
+      HOSTAWAY_ACCESS_TOKEN: envField.string({ // Generated 05/15/2026, exp 05/15/2028
         context: "server",
         access: "secret",
         optional: false,

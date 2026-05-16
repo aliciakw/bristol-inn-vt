@@ -46,7 +46,7 @@ None — discussion stayed within phase scope.
 
 | ID | Description | Research Support |
 |----|-------------|------------------|
-| ROOM-01 | Fetch all rooms from Hostaway API at build time (title, description, amenities, photos, rates) | Hostaway OAuth2 token flow, `/listings` endpoint, field mapping verified |
+| ROOM-01 | Fetch all rooms from Hostaway API at build time (title, description, amenities, photos, rates) | Pre-generated Bearer token (`HOSTAWAY_ACCESS_TOKEN`), `/listings` endpoint, field mapping verified |
 | ROOM-02 | Generate static room listing page (`/rooms`) with thumbnail photos, amenity badges, nightly rates | `getStaticPaths()` pattern, card structure, Astro Image config verified |
 | ROOM-03 | Generate individual static room detail pages (`/rooms/:id`) with full-size photos, description, amenities, rates | Dynamic `[id].astro` with `getStaticPaths()` + props pattern verified |
 | CONTENT-01 | Homepage renders from Prismic with hero section, inn overview, CTA | Prismic `getSingle`/`getAllByType` + `homepage` doc type approach |
@@ -63,13 +63,13 @@ None — discussion stayed within phase scope.
 
 Phase 2 connects two external data sources to an Astro 6 static site: the Hostaway booking API (room data) and Prismic CMS (content management). Both integrations fetch data at build time to produce static HTML — this is the right architecture for performance and caching, and it matches Cloudflare Pages' static-first model.
 
-**Hostaway** uses OAuth2 client credentials flow: POST to `/v1/accessTokens` with account ID + API secret, receive a long-lived Bearer token (~184 days), then use it for all subsequent `/listings` calls. The API response is well-structured but has one critical gap: `listingAmenities` returns integer `amenityId` values with no human-readable names. The planner must include a task to build a static amenity ID-to-name map.
+**Hostaway** authentication uses a pre-generated Bearer token stored as `HOSTAWAY_ACCESS_TOKEN` in the environment — no OAuth2 token exchange is needed at build time. The token is passed directly as a `Bearer` header to all `/listings` calls. The API response is well-structured but has one critical gap: `listingAmenities` returns integer `amenityId` values with no human-readable names. The planner must include a task to build a static amenity ID-to-name map.
 
 **Prismic** is integrated via `@prismicio/client` v7. There is no `@prismicio/astro` package on npm — the integration is purely via the JS client. The existing `prismic` devDependency in `package.json` is Prismic's CLI tool, not the query client; `@prismicio/client` must be added as a production dependency. Prismic draft preview requires a server-rendered route (SSR), which in Astro 6 `static` output mode means adding `export const prerender = false` to a `/preview` route and installing `@astrojs/cloudflare` adapter. This is a material architectural addition.
 
 **Astro Image** with remote URLs requires `width` and `height` props, plus the source domain in `image.remotePatterns`. The Prismic CDN is `images.prismic.io`; Hostaway's image URLs will be confirmed at API integration time (domain is ASSUMED until first live API call).
 
-**Primary recommendation:** Install `@prismicio/client` (production dep), `@astrojs/cloudflare` (needed for the SSR preview route), build a Hostaway token fetch utility with module-level caching, and create a static amenity ID-to-name lookup map before implementing any UI.
+**Primary recommendation:** Install `@prismicio/client` (production dep), `@astrojs/cloudflare` (needed for the SSR preview route), and create a static amenity ID-to-name lookup map before implementing any UI. Rename `HOSTAWAY_API_KEY` → `HOSTAWAY_ACCESS_TOKEN` in `src/lib/env.ts` and Cloudflare env settings.
 
 ---
 
@@ -141,8 +141,7 @@ npm view @astrojs/cloudflare version # 13.5.1
 Build Time:
   getStaticPaths() [rooms.astro, rooms/[id].astro]
     → src/lib/hostaway.ts: getRooms()
-      → POST /v1/accessTokens (OAuth2) → Bearer token (module-cached)
-      → GET /v1/listings → raw listing array
+      → GET /v1/listings (Bearer HOSTAWAY_ACCESS_TOKEN) → raw listing array
       → normalize: map listingImages → photos[], amenityId → amenityName, price → rate
     → Static HTML pages emitted: /rooms, /rooms/123, /rooms/456
 
@@ -191,42 +190,24 @@ src/
     └── SliceZone.astro    # New — Prismic slice dispatcher
 ```
 
-### Pattern 1: Hostaway OAuth2 Token (Module-Cached)
+### Pattern 1: Hostaway Bearer Token Usage
 
-**What:** Fetch a Bearer token once per build; cache at module level so all `getStaticPaths()` calls reuse it.
+**What:** Read the pre-generated Bearer token from `HOSTAWAY_ACCESS_TOKEN` env var and pass it directly to all API calls. No token exchange or caching needed.
 **When to use:** All Hostaway API calls at build time.
 
 ```typescript
 // src/lib/hostaway.ts
 // Source: https://api.hostaway.com/documentation [VERIFIED: WebFetch from official docs]
 
-import { HOSTAWAY_API_KEY } from 'astro:env/server';
-// HOSTAWAY_API_KEY is "account_id:api_secret" format — see Open Questions #1
+import { HOSTAWAY_ACCESS_TOKEN } from 'astro:env/server';
 
 const BASE_URL = 'https://api.hostaway.com/v1';
-let _cachedToken: string | null = null;
 
-async function getToken(): Promise<string> {
-  if (_cachedToken) return _cachedToken;
-  const [clientId, clientSecret] = HOSTAWAY_API_KEY.split(':');
-  const res = await fetch(`${BASE_URL}/accessTokens`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'client_credentials',
-      client_id: clientId,
-      client_secret: clientSecret,
-      scope: 'general',
-    }),
-  });
-  if (!res.ok) throw new Error(`Hostaway auth failed: ${res.status}`);
-  const data = await res.json() as { access_token: string };
-  _cachedToken = data.access_token;
-  return _cachedToken;
-}
+// No token fetch needed — HOSTAWAY_ACCESS_TOKEN is a pre-generated Bearer token
+// stored in .env / Cloudflare environment variables
 ```
 
-Note: The `HOSTAWAY_API_KEY` environment variable name is already defined in `astro.config.mjs` env schema. However, the Hostaway API requires separate `client_id` (account ID integer) and `client_secret` values — not a single key string. The env var value encoding (`"accountId:secret"` split convention vs two separate vars) is an OPEN QUESTION — see Open Questions #1. `[ASSUMED]`
+Note: `HOSTAWAY_ACCESS_TOKEN` replaces the previous `HOSTAWAY_API_KEY` env var. Update `src/lib/env.ts`, `astro.config.mjs` env schema, and Cloudflare environment settings to use the new name.
 
 ### Pattern 2: Hostaway Listings Fetch + Normalization
 
@@ -237,6 +218,7 @@ Note: The `HOSTAWAY_API_KEY` environment variable name is already defined in `as
 // src/lib/hostaway.ts (continued)
 // Source: https://api.hostaway.com/documentation [VERIFIED: WebFetch from official docs]
 
+import { HOSTAWAY_ACCESS_TOKEN } from 'astro:env/server';
 import { AMENITY_NAMES } from './hostaway-amenities.ts';
 
 export interface HostawayRoom {
@@ -252,9 +234,8 @@ export interface HostawayRoom {
 }
 
 export async function getRooms(): Promise<HostawayRoom[]> {
-  const token = await getToken();
   const res = await fetch(`${BASE_URL}/listings`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${HOSTAWAY_ACCESS_TOKEN}` },
   });
   if (!res.ok) throw new Error(`Hostaway listings failed: ${res.status}`);
   const data = await res.json() as { result: RawListing[] };
@@ -262,9 +243,8 @@ export async function getRooms(): Promise<HostawayRoom[]> {
 }
 
 export async function getRoom(id: number): Promise<HostawayRoom | null> {
-  const token = await getToken();
   const res = await fetch(`${BASE_URL}/listings/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${HOSTAWAY_ACCESS_TOKEN}` },
   });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Hostaway listing ${id} failed: ${res.status}`);
@@ -443,7 +423,6 @@ Note: `rooms.astro` is a **non-dynamic static page** (no `getStaticPaths()`). On
 
 ### Anti-Patterns to Avoid
 
-- **Fetching Hostaway token on every request:** Store at module level; token is valid for ~184 days. The build process is single-threaded; one token fetch per build is correct.
 - **Using `process.env` directly for secrets in Astro 6:** Astro 6 no longer transforms `import.meta.env` to `process.env`. Use `import { HOSTAWAY_API_KEY } from 'astro:env/server'` instead. `[VERIFIED: Astro v6 upgrade guide via Context7]`
 - **Installing `@prismicio/astro`:** This package does not exist on npm. Do not add it.
 - **Setting `output: 'server'` globally:** This forces all pages to SSR; defeats static-first goal. Use `output: 'static'` (default) and add `export const prerender = false` only to the preview route.
@@ -459,7 +438,6 @@ Note: `rooms.astro` is a **non-dynamic static page** (no `getStaticPaths()`). On
 | Image resizing/format conversion | Custom Sharp pipeline | Astro `<Image>` component | Astro wraps Sharp internally; handles format, resize, lazy loading |
 | Prismic document fetching | Raw `fetch` to REST API | `@prismicio/client` `getAllByType`, `getByUID`, `getSingle` | Client handles CDN routing, pagination, preview ref injection |
 | Prismic rich text rendering | Manual HTML serialization | `prismic.asHTML(field)` from `@prismicio/client` | Handles all nested node types, links, images |
-| OAuth2 token refresh logic | Custom token expiry tracker | Module-level cache (token is ~184 days) | For a build-time-only integration, simple module caching is sufficient |
 | Prismic preview URL resolution | Manual `?ref=` query param parsing | `client.resolvePreviewURL()` | Official method handles the cookie-to-ref mapping |
 
 **Key insight:** Both Hostaway and Prismic provide well-maintained JS clients. The only custom logic needed is the amenity ID-to-name map (unavoidable) and the normalization adapter between raw API shapes and TypeScript domain types.
@@ -495,33 +473,28 @@ Not applicable — this is a greenfield integration phase; no rename/refactor/mi
 **How to avoid:** Install `@prismicio/client` as a production dependency; import from `"@prismicio/client"` not `"prismic"`.
 **Warning signs:** `import * as prismic from 'prismic'` → no `createClient` export.
 
-### Pitfall 4: Hostaway Credential Format
+### Pitfall 4: Hostaway Image Domain Unknown Until First API Call
 
-**What goes wrong:** The Hostaway API requires `client_id` (integer account ID) and `client_secret` (string secret) as separate OAuth2 params, but the existing env var is a single `HOSTAWAY_API_KEY` string.
-**Why it happens:** During Phase 1, the env var was defined generically. The actual Hostaway OAuth2 endpoint requires two separate values.
-**How to avoid:** Either split `HOSTAWAY_API_KEY` as `"accountId:secret"` and parse in `hostaway.ts`, or add a second `HOSTAWAY_ACCOUNT_ID` env var and update `astro.config.mjs` schema + Cloudflare env settings. This must be decided and implemented in Wave 0.
-**Warning signs:** 401 errors from `/v1/accessTokens`; `grant_type=client_credentials` requests failing.
 
-### Pitfall 5: Hostaway Image Domain Unknown Until First API Call
 
 **What goes wrong:** `astro.config.mjs` image allowlist is missing the Hostaway CDN domain; Astro refuses to optimize images from that domain; images display as broken or unoptimized.
 **Why it happens:** Hostaway's image CDN domain was not found in documentation. It may be `images.hostaway.com`, an AWS S3 URL, or per-account S3 bucket.
 **How to avoid:** On first API call during integration, log `listing.listingImages[0].url` and extract the hostname. Add it to `image.remotePatterns` immediately.
 **Warning signs:** Astro build warning "Image from external domain not allowed."
 
-### Pitfall 6: Prismic Preview Requires SSR — Not Pure Static
+### Pitfall 5: Prismic Preview Requires SSR — Not Pure Static
 
 **What goes wrong:** Adding a `preview.astro` route that reads cookies fails silently or throws at build because `Astro.cookies` is not available in static mode.
 **Why it happens:** Cookie access requires a server runtime. In Astro `static` output, all pages are pre-rendered; there's no server to read cookies.
 **How to avoid:** Add `export const prerender = false` to `preview.astro` AND install `@astrojs/cloudflare` adapter. The rest of the site remains static.
 **Warning signs:** `Astro.cookies is not available in static mode` error at build.
 
-### Pitfall 7: Astro 6 env Secret Validation at Build Time
+### Pitfall 6: Astro 6 env Secret Validation at Build Time
 
 **What goes wrong:** Importing from `astro:env/server` in any file triggers validation of ALL secrets defined in the schema — even ones not used in that file. If `PRISMIC_TOKEN` is missing during a Hostaway-only local test, build fails.
 **Why it happens:** Astro v6 validates the env schema when any module from `astro:env/server` is imported.
 **How to avoid:** Ensure ALL env vars are provided in `.env.local` for local development. Document this clearly in `.env.example`.
-**Warning signs:** `Missing environment variable: PRISMIC_TOKEN` when only running Hostaway code.
+**Warning signs:** `Missing environment variable: PRISMIC_TOKEN` when only running Hostaway code, or `Missing environment variable: HOSTAWAY_ACCESS_TOKEN` when only running Prismic code.
 
 ---
 
@@ -641,32 +614,26 @@ return Astro.redirect(url);
 
 | # | Claim | Section | Risk if Wrong |
 |---|-------|---------|---------------|
-| A1 | Hostaway token stored as `"accountId:secret"` in single `HOSTAWAY_API_KEY` env var | Pattern 1 / Pitfall 4 | Build fails with 401; must add second env var or reformat | 
-| A2 | Hostaway CDN image domain is something like `images.hostaway.com` | Pitfall 5 / remotePatterns | Images not optimized by Astro; must update `image.remotePatterns` after first API call |
-| A3 | Hostaway amenity IDs: partial list (WiFi=3, Internet=2, etc.); Hot Tub/Water View IDs unknown | Pattern 3 / Don't Hand-Roll | Amenity badges display blank or wrong text; map must be verified from live API data |
-| A4 | Prismic `resolvePreviewURL` correctly handles the `io.prismic.preview` cookie value without the full `Astro.request` context | Pattern 5 | Preview redirect goes to wrong page; may need `client.enableAutoPreviewsFromReq(request)` instead |
-| A5 | `PRISMIC_TOKEN` is a read-only API token sufficient for `createClient` (no additional auth) | Pattern 4 | Client throws 403; may need `accessToken` configured differently for private repo |
+| A1 | Hostaway CDN image domain is something like `images.hostaway.com` | Pitfall 4 / remotePatterns | Images not optimized by Astro; must update `image.remotePatterns` after first API call |
+| A2 | Hostaway amenity IDs: partial list (WiFi=3, Internet=2, etc.); Hot Tub/Water View IDs unknown | Pattern 3 / Don't Hand-Roll | Amenity badges display blank or wrong text; map must be verified from live API data |
+| A3 | Prismic `resolvePreviewURL` correctly handles the `io.prismic.preview` cookie value without the full `Astro.request` context | Pattern 5 | Preview redirect goes to wrong page; may need `client.enableAutoPreviewsFromReq(request)` instead |
+| A4 | `PRISMIC_TOKEN` is a read-only API token sufficient for `createClient` (no additional auth) | Pattern 4 | Client throws 403; may need `accessToken` configured differently for private repo |
 
 ---
 
 ## Open Questions
 
-1. **How should Hostaway credentials be split across env vars?**
-   - What we know: Hostaway OAuth2 requires `client_id` (integer account ID) and `client_secret` (string) as separate POST body params. The existing env schema has a single `HOSTAWAY_API_KEY` string.
-   - What's unclear: Should the planner define two env vars (`HOSTAWAY_ACCOUNT_ID` + `HOSTAWAY_API_SECRET`) and update `astro.config.mjs` schema, or encode both in one var as `"id:secret"` and split in code?
-   - Recommendation: **Two separate env vars** is cleaner and avoids parsing fragility. Update `astro.config.mjs` schema + Cloudflare environment settings. Wave 0 task.
-
-2. **What is the Hostaway image CDN domain?**
+1. **What is the Hostaway image CDN domain?**
    - What we know: `listingImages[].url` is a string URL; domain not documented.
    - What's unclear: The exact hostname needed for `image.remotePatterns`.
    - Recommendation: First task in Wave 1 is a diagnostic `console.log` of a listing's first image URL. Block Astro Image config on this value.
 
-3. **Does Prismic `resolvePreviewURL` work without the full request object in Astro?**
+2. **Does Prismic `resolvePreviewURL` work without the full request object in Astro?**
    - What we know: `@prismicio/client` has `client.enableAutoPreviewsFromReq(req)` for server environments; cookie-based approach works per community guides.
    - What's unclear: Whether passing the raw cookie value to `resolvePreviewURL` is sufficient, or whether the full request headers must be passed via `enableAutoPreviewsFromReq`.
    - Recommendation: Implement with cookie value first (simpler); test against a real Prismic preview link. If it fails, switch to `enableAutoPreviewsFromReq(new Request(Astro.request.url, { headers: Astro.request.headers }))`.
 
-4. **Is the Prismic repository private (requires `PRISMIC_TOKEN` for all reads)?**
+3. **Is the Prismic repository private (requires `PRISMIC_TOKEN` for all reads)?**
    - What we know: `PRISMIC_TOKEN` env var is defined and passed as `accessToken` to `createClient`.
    - What's unclear: Public Prismic repos don't need an access token for published content; private repos require it for all reads. Draft/preview content always requires a token.
    - Recommendation: Pass `PRISMIC_TOKEN` to `createClient` unconditionally. This is correct for both private and preview access.
@@ -681,11 +648,11 @@ return Astro.redirect(url);
 | npm | Package management | ✓ | (system) | — |
 | Hostaway API access | ROOM-01 through ROOM-03 | [ASSUMED] | n/a | Fail build (D-06) |
 | Prismic repo `bristol-inn-vt` | CONTENT-01 through CONTENT-04, CONTENT-08 | ✓ (D-16 confirms repo exists) | n/a | Fail build (D-07) |
-| HOSTAWAY_API_KEY env var | All Hostaway calls | Must be set in Cloudflare + `.env.local` | n/a | Build fails |
+| HOSTAWAY_ACCESS_TOKEN env var | All Hostaway calls | Must be set in Cloudflare + `.env` (pre-generated) | n/a | Build fails |
 | PRISMIC_TOKEN env var | All Prismic calls | Must be set in Cloudflare + `.env.local` | n/a | Build fails |
 
 **Missing dependencies with no fallback:**
-- Hostaway API key pair (account ID + secret): Must be obtained and configured before any integration work.
+- Hostaway Bearer token (`HOSTAWAY_ACCESS_TOKEN`): Pre-generated and already in `.env`; must also be configured in Cloudflare environment variables before deploying.
 - Prismic access token: Must be confirmed (dashboard: Settings → API & Security → Generate a token).
 
 ---
@@ -749,7 +716,7 @@ Note: CONTENT-03 (Prismic draft preview) is manual-only — it requires a live C
 |---------|--------|---------------------|
 | Server-side request forgery via Prismic `[slug]` param | Tampering | `getByUID` only queries Prismic; Prismic throws 404 for unknown UIDs — no arbitrary URL fetching |
 | API key exposure in client bundle | Information Disclosure | `HOSTAWAY_API_KEY` and `PRISMIC_TOKEN` are `context: "server"` in Astro env schema — never in client bundle |
-| Hostaway Bearer token in git | Information Disclosure | Token is fetched at runtime; never committed. `.env.local` in `.gitignore` |
+| Hostaway Bearer token in git | Information Disclosure | Token stored in `.env` / Cloudflare env vars; never in source code. `.env` in `.gitignore`. |
 | Preview cookie manipulation | Tampering | Prismic preview refs are cryptographically signed by Prismic; an attacker cannot forge a valid ref |
 | Image proxy abuse | Elevation of Privilege | `image.remotePatterns` explicitly allowlists domains; Astro rejects unauthorized domains |
 
@@ -791,10 +758,9 @@ Note: CONTENT-03 (Prismic draft preview) is manual-only — it requires a live C
 ## Metadata
 
 **Confidence breakdown:**
-- Hostaway API (auth, endpoints, field names): HIGH — verified via official docs WebFetch
+- Hostaway API (auth via pre-generated Bearer token, endpoints, field names): HIGH — verified via official docs WebFetch
 - Hostaway amenity ID-to-name map: LOW — partial third-party list; Hot Tub/Water View unknown
 - Hostaway image CDN domain: LOW — not in documentation; must check from live API response
-- Hostaway credential env var format: LOW — assumed split convention; must confirm with actual keys
 - Prismic client API (createClient, getAllByType, getByUID, getSingle): HIGH — verified via Context7 + npm
 - Prismic preview via SSR cookie route: MEDIUM — community-verified approach; `resolvePreviewURL` behavior assumed
 - Astro Image remote URL configuration: HIGH — verified via Context7

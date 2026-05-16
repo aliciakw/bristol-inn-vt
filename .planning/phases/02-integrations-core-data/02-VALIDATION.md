@@ -38,7 +38,7 @@ created: 2026-05-15
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 2-xx-01 | xx | 1 | ROOM-01 | — | API key not logged | unit (mock fetch) | `npx vitest run tests/lib/hostaway.test.ts` | ❌ Wave 0 | ⬜ pending |
+| 2-xx-01 | xx | 1 | ROOM-01 | — | Access token not logged | unit (mock fetch) | `npx vitest run tests/lib/hostaway.test.ts` | ❌ Wave 0 | ⬜ pending |
 | 2-xx-02 | xx | 1 | ROOM-02 | — | N/A | smoke | `npm run build && ls dist/rooms/index.html` | ❌ Wave 0 | ⬜ pending |
 | 2-xx-03 | xx | 1 | ROOM-03 | — | N/A | smoke | `npm run build && ls dist/rooms/` | ❌ Wave 0 | ⬜ pending |
 | 2-xx-04 | xx | 2 | CONTENT-01 | — | N/A | smoke | `npm run build && ls dist/index.html` | ❌ Wave 0 | ⬜ pending |

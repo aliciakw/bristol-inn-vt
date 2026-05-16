@@ -70,7 +70,7 @@ Connect to Hostaway API and Prismic CMS; replace all placeholder pages with real
 - `src/layouts/BaseLayout.astro` — Base layout with title/description props; extend for SEO meta tags in this phase
 - `src/pages/rooms.astro` — Placeholder to replace with `getStaticPaths()` + Hostaway data
 - `src/pages/index.astro` — Placeholder to replace with Prismic homepage content
-- `src/lib/env.ts` — Existing env validation scaffold (HOSTAWAY_API_KEY, PRISMIC_TOKEN already defined)
+- `src/lib/env.ts` — Existing env validation scaffold (HOSTAWAY_ACCESS_TOKEN, PRISMIC_TOKEN already defined — rename needed from HOSTAWAY_API_KEY → HOSTAWAY_ACCESS_TOKEN)
 - `astro.config.mjs` — Must add `image.domains` or `image.remotePatterns` for Hostaway + Prismic CDN URLs
 - `CLAUDE.md` — Project constraints: wrap dependencies for swappability, composability over configuration, strict TypeScript, mobile-first Tailwind
 
