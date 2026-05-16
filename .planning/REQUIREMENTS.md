@@ -33,7 +33,7 @@ These are the v1 requirements for the Bristol Inn proof-of-concept website. Each
 ### Content Management (CONTENT)
 
 - [x] **CONTENT-01**: Homepage (`/`) renders content from Prismic with hero section, inn overview, and call-to-action
-- [ ] **CONTENT-02**: Generic page template accepts Prismic content documents and renders at URLs determined by page slug (e.g., `/about`, `/contact`)
+- [x] **CONTENT-02**: Generic page template accepts Prismic content documents and renders at URLs determined by page slug (e.g., `/about`, `/contact`)
 - [x] **CONTENT-03**: Prismic draft content is accessible in Cloudflare PR preview deployments (via preview URL with draft content flag)
 - [ ] **CONTENT-04**: Contact page (`/contact`) displays contact information prominently (email, phone, address)
 - [ ] **CONTENT-05**: Contact form on `/contact` page with fields: name, email, message; client-side validation
