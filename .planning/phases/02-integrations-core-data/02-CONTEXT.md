@@ -40,6 +40,7 @@ Connect to Hostaway API and Prismic CMS; replace all placeholder pages with real
   - `meta_description` — text field (for SEO)
 - **D-10:** Page URL is determined by the Prismic document slug (e.g., slug `about` → `/about`).
 - **D-11:** Prismic draft preview works via Cloudflare PR preview deployments — the preview URL passes a `token` query param that signals Prismic to return draft content.
+- **D-16:** Prismic repository already exists at `https://bristol-inn-vt.cdn.prismic.io/api/v2`. The document types and slices defined in D-08 and D-09 must be created/configured in this existing repository, not a new one.
 
 ### Homepage Hero Carousel
 - **D-12:** Hero carousel: 3–5 images cycling with JavaScript fade transitions. Client-side JS only (no server logic). Images from the `hero_images` Prismic group field.
@@ -73,6 +74,9 @@ Connect to Hostaway API and Prismic CMS; replace all placeholder pages with real
 - `astro.config.mjs` — Must add `image.domains` or `image.remotePatterns` for Hostaway + Prismic CDN URLs
 - `CLAUDE.md` — Project constraints: wrap dependencies for swappability, composability over configuration, strict TypeScript, mobile-first Tailwind
 
+### Prismic
+- **Existing repository:** `https://bristol-inn-vt.cdn.prismic.io/api/v2` — Prismic repo is already created; document types and slices must be configured there, not in a new repo.
+
 ### No external ADRs — decisions fully captured above.
 
 </canonical_refs>
@@ -89,6 +93,9 @@ Connect to Hostaway API and Prismic CMS; replace all placeholder pages with real
 - Tailwind responsive grid already used in `rooms.astro`: `grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3` — reuse this for the real room grid
 - Custom breakpoint names (`tablet:`, `desktop:`) are defined in `tailwind.config.mjs` — use these, not `md:` / `lg:`
 - TypeScript strict mode throughout — all Hostaway and Prismic API responses must be typed
+
+### Existing External Services
+- **Prismic repo:** `https://bristol-inn-vt.cdn.prismic.io/api/v2` — already provisioned; use this endpoint in the Prismic client config (`PRISMIC_ENDPOINT` env var or hardcoded in `src/lib/prismic.ts`)
 
 ### Integration Points
 - `src/pages/rooms.astro` → `src/lib/hostaway.ts` (new) — `getStaticPaths()` calls `getRooms()`
