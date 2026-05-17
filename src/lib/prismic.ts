@@ -22,7 +22,7 @@
  */
 
 import * as prismic from '@prismicio/client';
-import { PRISMIC_TOKEN } from 'astro:env/server';
+import { PRISMIC_CLIENT_SECRET } from 'astro:env/server';
 
 /** Prismic repository name — matches https://bristol-inn-vt.cdn.prismic.io/api/v2 */
 const REPO_NAME = 'bristol-inn-vt';
@@ -39,7 +39,7 @@ let _client: prismic.Client | null = null;
  */
 export function getClient(): prismic.Client {
   if (_client) return _client;
-  _client = prismic.createClient(REPO_NAME, { accessToken: PRISMIC_TOKEN ?? undefined });
+  _client = prismic.createClient(REPO_NAME, { accessToken: PRISMIC_CLIENT_SECRET ?? undefined });
   return _client;
 }
 
