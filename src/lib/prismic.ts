@@ -39,7 +39,7 @@ let _client: prismic.Client | null = null;
  */
 export function getClient(): prismic.Client {
   if (_client) return _client;
-  _client = prismic.createClient(REPO_NAME, { accessToken: PRISMIC_TOKEN });
+  _client = prismic.createClient(REPO_NAME, { accessToken: PRISMIC_TOKEN ?? undefined });
   return _client;
 }
 

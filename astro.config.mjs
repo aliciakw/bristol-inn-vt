@@ -27,7 +27,7 @@ export default defineConfig({
       PRISMIC_TOKEN: envField.string({
         context: "server",
         access: "secret",
-        optional: false,
+        optional: true,
       }),
       SENTRY_AUTH_TOKEN: envField.string({
         context: "server",
