@@ -9,6 +9,7 @@ dist/
 .env
 .env.local
 .env.*.local
+.dev.vars
 
 # OS files
 .DS_Store

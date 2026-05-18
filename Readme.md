@@ -125,6 +125,13 @@ Missing required variables will cause the build to fail with a clear error messa
 5. Cloudflare will automatically build and deploy on push
 6. PR preview deployments auto-generate unique URLs
 
+#### Some quirks about Cloudflare Pages
+To host on Cloudflare, we must make use of Cloudflare Pages for static hosting, and Cloudflare Workers for server tasks, such as builds, and serverless api endpoints. These are technically separate environments and as such have different environment variables. We will need to ensure that both are correctly configured.
+
+ The distinction is:
+  - Workers → Variables and Secrets = runtime only (what you've set)
+  - Pages → Settings → Environment Variables = build time + runtime (what you need)
+
 ## Phase 1 Status
 
 ✅ Astro 5 project initialized  
