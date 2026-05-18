@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig, envField } from 'astro/config';
 import tailwindcss from "@tailwindcss/vite";
+import cloudflare from '@astrojs/cloudflare';
 
 import sentry from '@sentry/astro';
 
@@ -18,12 +19,12 @@ export default defineConfig({
         access: "public",
         optional: true,
       }),
-      HOSTAWAY_API_KEY: envField.string({
+      HOSTAWAY_ACCESS_TOKEN: envField.string({ // Generated 05/15/2026, exp 05/15/2028
         context: "server",
         access: "secret",
         optional: false,
       }),
-      PRISMIC_TOKEN: envField.string({
+      PRISMIC_CLIENT_SECRET: envField.string({
         context: "server",
         access: "secret",
         optional: false,
@@ -37,6 +38,14 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+  },
+  adapter: cloudflare(),
+  image: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.prismic.io' },
+      { protocol: 'https', hostname: '**.prismic.io' },
+      // TODO: add Hostaway CDN hostname after first getRooms() call logs listing.listingImages[0].url
+    ],
   },
   outDir: "./dist",
   server: { host: "127.0.0.1", port: 4321 },

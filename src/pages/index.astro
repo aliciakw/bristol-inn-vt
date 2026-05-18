@@ -1,24 +1,21 @@
 ---
+import { getHomepage } from '../lib/prismic';
+import * as prismic from '@prismicio/client';
 import BaseLayout from '@layouts/BaseLayout.astro';
-import "../styles/global.css";
----
+import HeroCarousel from '../components/HeroCarousel.astro';
+import SliceZone from '../components/SliceZone.astro';
 
-<BaseLayout title="Bristol Inn Vermont" description="Welcome to Bristol Inn">
-  <div class="max-w-7xl mx-auto px-4 py-8">
-    <h2 class="text-3xl font-bold mb-4">Welcome to Bristol Inn</h2>
-    <p class="text-lg text-gray-600 mb-6">
-      A beautiful inn for your next getaway. Placeholder content until Prismic integration (Phase 2).
-    </p>
-    <a href="/rooms" class="inline-block bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700">
-      Browse Rooms
-    </a>
-    <button id="error-button" class="bg-red-500 text-white px-6 py-3 rounded hover:bg-red-600">Throw Error</button>
+const homepage = await getHomepage();  // no try/catch — throws propagates → build fails per D-07
+const heroImages = (homepage.data.hero_images as Array<{ image: prismic.ImageField }>).map(item => ({
+  url: item.image.url ?? '',
+  alt: item.image.alt ?? '',
+}));
+const ctaLabel = homepage.data.cta_label as string || 'Browse Our Rooms';
+const ctaUrl = (homepage.data.cta_url as { url?: string })?.url ?? '/rooms';
+---
+<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere.">
+  {heroImages.length > 0 && <HeroCarousel images={heroImages} ctaLabel={ctaLabel} ctaUrl={ctaUrl} />}
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <SliceZone slices={homepage.data.body} />
   </div>
 </BaseLayout>
-
-<script>
-  function handleClick () {
-    throw new Error('This is a test error from the index page');
-  }
-  document.querySelector("#error-button")?.addEventListener("click", handleClick);
-</script>

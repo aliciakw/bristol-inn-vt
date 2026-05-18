@@ -1,20 +1,28 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
+import RoomCard from '../components/RoomCard.astro';
+import { getRooms } from '../lib/hostaway';
+
+const rooms = await getRooms();
 ---
 
-<BaseLayout title="Rooms - Bristol Inn" description="Browse our available rooms">
+<BaseLayout title="Rooms — Bristol Inn" description="Browse all available rooms at Bristol Inn, Vermont.">
   <div class="max-w-7xl mx-auto px-4 py-8">
-    <h2 class="text-3xl font-bold mb-4">Our Rooms</h2>
-    <p class="text-gray-600 mb-6">
-      Room listings will appear here once Hostaway API integration is complete (Phase 2).
-    </p>
-
-    <!-- Responsive grid: 1 column mobile, 2 tablet, 3 desktop -->
-    <div class="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-4">
-      <div class="bg-gray-100 p-4 rounded">
-        <h3 class="font-bold">Placeholder Room</h3>
-        <p class="text-sm text-gray-600">Details coming in Phase 2</p>
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Our Rooms</h1>
+    {rooms.length === 0 ? (
+      <p class="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
+    ) : (
+      <div class="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6">
+        {rooms.map((room) => (
+          <RoomCard
+            id={room.id}
+            name={room.name}
+            rate={room.price}
+            photo={room.photos[0] ?? { url: '', caption: '' }}
+            amenities={room.amenityNames.slice(0, 3)}
+          />
+        ))}
       </div>
-    </div>
+    )}
   </div>
 </BaseLayout>

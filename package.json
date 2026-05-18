@@ -1,27 +1,38 @@
 {
-  "name": "bristol-inn-vermont",
+  "name": "bristol-inn-vt",
   "type": "module",
   "version": "0.0.1",
   "engines": {
     "node": ">=22.12.0"
   },
   "description": "Bristol Inn - Astro website",
+  "repository": "https://github.com/aliciakw/bristol-inn-vt",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "type-check": "tsc --noEmit",
-    "astro": "astro"
+    "astro": "astro",
+    "generate-types": "wrangler types"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^13.5.1",
+    "@prismicio/client": "^7.21.8",
     "@sentry/astro": "^10.53.1",
+    "@sentry/cloudflare": "^10.53.1",
     "@tailwindcss/vite": "^4.2.4",
     "astro": "^6.2.2",
-    "tailwindcss": "^4.2.4"
+    "tailwindcss": "^4.2.4",
+    "wrangler": "^4.92.0"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
+    "@vitest/coverage-v8": "^4.1.6",
     "prismic": "^1.8.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "vitest": "^4.1.6"
+  },
+  "overrides": {
+    "vite": "^7"
   }
 }

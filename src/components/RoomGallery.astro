@@ -1,0 +1,52 @@
+---
+/**
+ * RoomGallery — purely presentational photo gallery.
+ *
+ * Displays up to 6 photos (already sliced by hostaway.ts normalization).
+ * First photo loads eagerly; remaining photos load lazily in a responsive grid.
+ * No JavaScript — static scrollable grid only (carousel is Phase 5 / ROOM-06).
+ */
+
+import { Image } from 'astro:assets';
+
+interface Props {
+  /** Up to 6 photos; already sliced by the Hostaway lib (D-04) */
+  photos: Array<{ url: string; caption: string }>;
+  roomName: string;
+}
+
+const { photos, roomName } = Astro.props;
+---
+
+{photos.length === 0 ? (
+  <div class="bg-gray-100 rounded h-64 flex items-center justify-center">
+    <p class="text-gray-500">No photos available</p>
+  </div>
+) : (
+  <>
+    <Image
+      src={photos[0].url}
+      alt={photos[0].caption || `${roomName} — photo 1`}
+      width={1200}
+      height={800}
+      format="webp"
+      loading="eager"
+      class="w-full object-cover rounded"
+    />
+    {photos.slice(1).length > 0 && (
+      <div class="grid grid-cols-2 tablet:grid-cols-3 gap-2 mt-2">
+        {photos.slice(1).map((p, i) => (
+          <Image
+            src={p.url}
+            alt={p.caption || `${roomName} — photo ${i + 2}`}
+            width={1200}
+            height={800}
+            format="webp"
+            loading="lazy"
+            class="w-full object-cover rounded"
+          />
+        ))}
+      </div>
+    )}
+  </>
+)}

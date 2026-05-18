@@ -18,7 +18,7 @@ The roadmap derives phases from natural dependencies and critical path requireme
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
 | 1 | Foundation & Infrastructure | Scaffold Astro project with TypeScript, Tailwind, routing, and deployment infrastructure | CODE-01, CODE-02, CODE-03, CODE-04, CODE-05, CODE-06, INFRA-01, INFRA-02, INFRA-03, INFRA-04, INFRA-05 | 5 |
-| 2 | Integrations & Core Data | Connect Hostaway API and Prismic CMS; fetch and display rooms; render generic content pages | ROOM-01, ROOM-02, ROOM-03, CONTENT-01, CONTENT-02, CONTENT-03, CONTENT-04, CONTENT-08 | 5 |
+| 2 | Integrations & Core Data | 5/8 | In Progress|  |
 | 3 | Availability & Booking | Implement date picker, real-time availability API, booking parameter validation, and Hostaway redirect | BOOK-01, BOOK-02, BOOK-03, BOOK-04, BOOK-05, BOOK-06, BOOK-07, BOOK-08, BOOK-09 | 5 |
 | 4 | Content & Contact | Add contact form, contact page, about page, and email notification backend | CONTENT-05, CONTENT-06, CONTENT-07 | 3 |
 | 5 | Performance & Mobile | Optimize images, implement caching strategy, ensure mobile responsiveness and Web Vitals targets | ROOM-04, ROOM-05, ROOM-06, ROOM-07, PERF-01, PERF-02, PERF-03, PERF-04, PERF-05, PERF-06, PERF-07, PERF-08, PERF-09, MOBILE-01, MOBILE-02, MOBILE-03, MOBILE-04, MOBILE-05, MOBILE-06, MOBILE-07, MOBILE-08 | 5 |
@@ -113,6 +113,18 @@ The roadmap derives phases from natural dependencies and critical path requireme
 - Photo URLs from Hostaway may be inconsistent; plan image proxy/resize strategy
 
 **UI hint:** yes
+
+**Plans:** 5/8 plans executed
+
+Plans:
+- [x] 02-01-PLAN.md — Foundation setup: dependencies, Cloudflare adapter, image.remotePatterns, Vitest
+- [x] 02-02-PLAN.md — Hostaway API library: getRooms(), getRoom(), HostawayRoom type, amenity map
+- [x] 02-03-PLAN.md — Prismic CMS library: getHomepage(), getPage(), getPages()
+- [x] 02-04-PLAN.md — Room components: AmenityBadge, RoomCard, RoomGallery
+- [x] 02-05-PLAN.md — Prismic components: HeroCarousel, SliceZone
+- [ ] 02-06-PLAN.md — Room pages: /rooms listing and /rooms/[id] detail pages
+- [ ] 02-07-PLAN.md — Prismic pages: homepage, [slug] generic template, preview SSR route
+- [ ] 02-08-PLAN.md — Unit tests: Hostaway and Prismic library tests, full build gate
 
 ---
 

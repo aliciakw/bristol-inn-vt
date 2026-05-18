@@ -10,7 +10,7 @@ These are the v1 requirements for the Bristol Inn proof-of-concept website. Each
 
 ### Room Management (ROOM)
 
-- [ ] **ROOM-01**: Fetch all rooms from Hostaway API at build time, including title, description, amenities, photos, and rates
+- [x] **ROOM-01**: Fetch all rooms from Hostaway API at build time, including title, description, amenities, photos, and rates
 - [ ] **ROOM-02**: Generate static room listing page (`/rooms`) showing all rooms with thumbnail photos, amenity badges, and nightly rates
 - [ ] **ROOM-03**: Generate individual static room detail pages (`/rooms/:id`) with full-size photos, complete description, amenities list, and rates
 - [ ] **ROOM-04**: Room listings display high-quality photos from Hostaway using Astro Image component with lazy loading and WebP/AVIF format
@@ -32,9 +32,9 @@ These are the v1 requirements for the Bristol Inn proof-of-concept website. Each
 
 ### Content Management (CONTENT)
 
-- [ ] **CONTENT-01**: Homepage (`/`) renders content from Prismic with hero section, inn overview, and call-to-action
-- [ ] **CONTENT-02**: Generic page template accepts Prismic content documents and renders at URLs determined by page slug (e.g., `/about`, `/contact`)
-- [ ] **CONTENT-03**: Prismic draft content is accessible in Cloudflare PR preview deployments (via preview URL with draft content flag)
+- [x] **CONTENT-01**: Homepage (`/`) renders content from Prismic with hero section, inn overview, and call-to-action
+- [x] **CONTENT-02**: Generic page template accepts Prismic content documents and renders at URLs determined by page slug (e.g., `/about`, `/contact`)
+- [x] **CONTENT-03**: Prismic draft content is accessible in Cloudflare PR preview deployments (via preview URL with draft content flag)
 - [ ] **CONTENT-04**: Contact page (`/contact`) displays contact information prominently (email, phone, address)
 - [ ] **CONTENT-05**: Contact form on `/contact` page with fields: name, email, message; client-side validation
 - [ ] **CONTENT-06**: Contact form submission sends data to backend API endpoint (`POST /api/contact/submit`)

@@ -1,0 +1,52 @@
+---
+import * as prismic from '@prismicio/client';
+import { Image } from 'astro:assets';
+
+interface Props {
+  slices: prismic.SliceZone;
+}
+
+const { slices } = Astro.props;
+---
+
+{slices.map((slice) => {
+  if (slice.slice_type === 'rich_text') {
+    return (
+      <div
+        class="text-base leading-relaxed text-gray-700 max-w-prose my-6"
+        set:html={prismic.asHTML(slice.primary.text as prismic.RichTextField)}
+      />
+    );
+  }
+
+  if (slice.slice_type === 'image_block') {
+    const imageField = slice.primary.image as prismic.ImageField;
+    const isFullWidth = (slice.primary.layout as string) === 'full';
+    const caption = slice.primary.caption as string | null | undefined;
+    const filledImage = prismic.isFilled.image(imageField) ? imageField : null;
+
+    if (!filledImage) return null;
+
+    return (
+      <figure class={isFullWidth ? 'my-6' : 'max-w-prose mx-auto my-6'}>
+        <Image
+          src={filledImage.url}
+          alt={filledImage.alt ?? ''}
+          width={isFullWidth ? 1200 : 800}
+          height={isFullWidth ? 600 : 500}
+          format="webp"
+          loading="lazy"
+          class={isFullWidth ? 'w-full object-cover' : 'w-full'}
+        />
+        {caption && (
+          <figcaption class="text-sm text-gray-500 mt-1 text-center">
+            {caption}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+
+  // Unknown slice types are silently skipped
+  return null;
+})}
