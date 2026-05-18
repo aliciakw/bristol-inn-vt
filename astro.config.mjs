@@ -39,11 +39,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  adapter: cloudflare({
-    platformProxy: {
-      configPath: './wrangler.toml',
-    },
-  }),
+  adapter: cloudflare(),
   image: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.prismic.io' },

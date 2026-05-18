@@ -1,6 +1,0 @@
-name = "bristol-inn-vt"
-compatibility_date = "2026-05-06"
-compatibility_flags = ["nodejs_compat"]
-
-[assets]
-directory = "./dist"

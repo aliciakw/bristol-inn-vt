@@ -1,6 +1,11 @@
 This project is primarily a content website for a small inn.
 
-Best practices
+Development best practices -- ask for confirmation if you need to deviate from these:
+- Use the astro cli for initial configuration, where ever possible. If overrides are needed, do that after running the CLI. 
+- By default, install node packages using `npm install`, rather than editing package.json to set a specific version directly.
+- Use git in readonly mode. It is fine to compare current local changes to either remote or local git history, but never add, commit or push without permission
+
+General Best practices
 - Leverage Astro.JS's static first preference. the website should load fast on poor internet
 - Leverage SEO best practices
 - Leverage Accessibility best practices
@@ -18,5 +23,3 @@ Integrations
 - Hostaway is used for booking and room browsing
 - Prismic is the CMS
 
-Git
-- Use git in readonly mode. It is fine to compare current local changes to either remote or local git history, but never add, commit or push without permission
