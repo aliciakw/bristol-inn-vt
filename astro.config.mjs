@@ -40,7 +40,10 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   output: 'static',
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    sessionKVBindingName: undefined,
+    imageService: 'passthrough',
+  }),
   image: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.prismic.io' },
