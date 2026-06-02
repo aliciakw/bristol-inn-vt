@@ -9,7 +9,7 @@ interface Props {
 const { slices } = Astro.props;
 ---
 
-{slices.map((slice) => {
+{(slices ?? []).map((slice) => {
   if (slice.slice_type === 'rich_text') {
     return (
       <div

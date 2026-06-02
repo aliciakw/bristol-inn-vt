@@ -6,10 +6,9 @@ import HeroCarousel from '../components/HeroCarousel.astro';
 import SliceZone from '../components/SliceZone.astro';
 
 const homepage = await getHomepage();  // no try/catch — throws propagates → build fails per D-07
-const heroImages = (homepage.data.hero_images as Array<{ image: prismic.ImageField }>).map(item => ({
-  url: item.image.url ?? '',
-  alt: item.image.alt ?? '',
-}));
+const heroImages = (homepage.data.hero_images as Array<{ image: prismic.ImageField }>)
+  .map(item => ({ url: item.image?.url ?? '', alt: item.image?.alt ?? '' }))
+  .filter(img => img.url);
 const ctaLabel = homepage.data.cta_label as string || 'Browse Our Rooms';
 const ctaUrl = (homepage.data.cta_url as { url?: string })?.url ?? '/rooms';
 ---

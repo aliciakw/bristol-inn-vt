@@ -2,7 +2,6 @@
 import { defineConfig, envField } from 'astro/config';
 import tailwindcss from "@tailwindcss/vite";
 import cloudflare from '@astrojs/cloudflare';
-
 import sentry from '@sentry/astro';
 
 // https://astro.build/config
@@ -19,7 +18,8 @@ export default defineConfig({
         access: "public",
         optional: true,
       }),
-      HOSTAWAY_ACCESS_TOKEN: envField.string({ // Generated 05/15/2026, exp 05/15/2028
+      HOSTAWAY_ACCESS_TOKEN: envField.string({
+        // Generated 05/15/2026, exp 05/15/2028
         context: "server",
         access: "secret",
         optional: false,
@@ -39,15 +39,15 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  output: 'static',
+  output: "static",
   adapter: cloudflare({
-    sessionKVBindingName: undefined,
-    imageService: 'passthrough',
+    prerenderEnvironment: "node",
+    imageService: "passthrough",
   }),
   image: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'images.prismic.io' },
-      { protocol: 'https', hostname: '**.prismic.io' },
+      { protocol: "https", hostname: "images.prismic.io" },
+      { protocol: "https", hostname: "**.prismic.io" },
       // TODO: add Hostaway CDN hostname after first getRooms() call logs listing.listingImages[0].url
     ],
   },
@@ -56,8 +56,11 @@ export default defineConfig({
   integrations: [
     sentry({
       project: "bristol-inn-vt",
-      org: "aleeshza-llc",
-      authToken: process.env.SENTRY_AUTH_TOKEN,
+      // authToken is read from SENTRY_AUTH_TOKEN env var
+      // Server-side SDK disabled: this is a static site with no SSR routes.
+      // Disabling server prevents @sentry/node (Node.js-only) from being bundled
+      // into the Cloudflare Worker, which cannot run Node.js built-ins.
+      enabled: { client: true, server: false },
     }),
   ],
 });
