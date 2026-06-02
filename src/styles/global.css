@@ -48,6 +48,31 @@
 
   /* Typography */
   --font-serif: "David Libre", Georgia, serif;
+
+  /* Type scale — mobile → tablet → desktop */
+  --text-h1: 2.25rem;           --text-h1--line-height: 1.2;
+  --text-h1-tablet: 3rem;       --text-h1-tablet--line-height: 1.15;
+  --text-h1-desktop: 3.75rem;   --text-h1-desktop--line-height: 1.1;
+
+  --text-h2: 1.75rem;           --text-h2--line-height: 1.25;
+  --text-h2-tablet: 2.25rem;    --text-h2-tablet--line-height: 1.2;
+  --text-h2-desktop: 3rem;      --text-h2-desktop--line-height: 1.15;
+
+  --text-h3: 1.375rem;          --text-h3--line-height: 1.3;
+  --text-h3-tablet: 1.75rem;    --text-h3-tablet--line-height: 1.25;
+  --text-h3-desktop: 2.25rem;   --text-h3-desktop--line-height: 1.2;
+
+  --text-h4: 1.125rem;          --text-h4--line-height: 1.35;
+  --text-h4-tablet: 1.375rem;   --text-h4-tablet--line-height: 1.3;
+  --text-h4-desktop: 1.75rem;   --text-h4-desktop--line-height: 1.25;
+
+  --text-paragraph: 1rem;             --text-paragraph--line-height: 1.6;
+  --text-paragraph-tablet: 1.0625rem; --text-paragraph-tablet--line-height: 1.6;
+  --text-paragraph-desktop: 1.125rem; --text-paragraph-desktop--line-height: 1.65;
+
+  --text-caption: 0.75rem;          --text-caption--line-height: 1.4;
+  --text-caption-tablet: 0.8125rem; --text-caption-tablet--line-height: 1.4;
+  --text-caption-desktop: 0.875rem; --text-caption-desktop--line-height: 1.4;
 }
 
 /* Grid layout variables */
