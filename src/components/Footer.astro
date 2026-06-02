@@ -1,10 +1,143 @@
 ---
-interface Props {}
-const {} = Astro.props;
+const year = new Date().getFullYear();
+
+const infoLinks = [
+  { label: 'Reserve a Room', href: '/rooms' },
+  { label: 'Pet Policy', href: '/pet-policy' },
+  { label: 'Cancellations', href: '/cancellations' },
+  { label: 'Directions & Parking', href: '/directions' },
+  { label: 'Accessibility Details', href: '/accessibility' },
+  { label: 'Vermont Marketplace', href: '/marketplace' },
+  { label: 'Our Story', href: '/about' },
+];
+
+const socialLinks = [
+  { label: 'Tripadvisor', href: 'https://www.tripadvisor.com' },
+  { label: 'Facebook', href: 'https://www.facebook.com' },
+  { label: 'Instagram', href: 'https://www.instagram.com' },
+];
 ---
 
-<footer class="bg-gray-800 text-white">
-  <div class="max-w-7xl mx-auto px-4 py-8">
-    <p>&copy; 2026 Bristol Inn. All rights reserved.</p>
+<footer class="bg-prussian-700">
+  <div class="grid grid-cols-2 desktop:grid-cols-3 desktop:grid-rows-3 gap-x-8 gap-y-10 px-6 py-14 desktop:gap-x-16 desktop:gap-y-12 desktop:px-24 desktop:py-20">
+
+    <!-- Info: full-width on mobile, col 1 rows 1–3 on desktop -->
+    <section class="col-span-2 desktop:col-start-1 desktop:col-span-1 desktop:row-start-1 desktop:row-span-3 flex flex-col">
+      <h3 class="font-serif text-[31px] leading-[1.2] text-white mb-6">Info</h3>
+      <nav aria-label="Info links">
+        <ul>
+          {infoLinks.map(({ label, href }) => (
+            <li>
+              <a href={href} class="font-serif text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 hover:text-white transition-colors">
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div class="mt-auto pt-10 flex items-center gap-3">
+        <img
+          src="https://www.figma.com/api/mcp/asset/cb797c77-9ad8-4fbe-a9aa-c29dc65ece6e"
+          alt="TripAdvisor Travelers' Choice"
+          class="h-14 w-auto object-contain opacity-80"
+          loading="lazy"
+        />
+        <div class="bg-white px-2 py-1">
+          <img
+            src="https://www.figma.com/api/mcp/asset/a0482de7-e535-406e-b7d8-4cf4cbf27ece"
+            alt="Travel Awards"
+            class="h-4 w-auto object-contain"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Location: col 1 on mobile, col 2 row 1 on desktop -->
+    <section class="desktop:col-start-2 desktop:row-start-1">
+      <h3 class="font-serif text-[31px] leading-[1.2] text-white mb-6">Location</h3>
+      <p class="font-serif text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100">11 Main Street,</p>
+      <p class="font-serif text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100">Bristol, VT 05401</p>
+      <a
+        href="https://maps.google.com/?q=11+Main+Street+Bristol+VT+05401"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-serif text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 underline hover:text-white transition-colors"
+      >
+        find directions
+      </a>
+    </section>
+
+    <!-- Contact: col 2 on mobile, col 3 row 1 on desktop -->
+    <section class="desktop:col-start-3 desktop:row-start-1">
+      <h3 class="font-serif text-[31px] leading-[1.2] text-white mb-6">Contact</h3>
+      <a
+        href="tel:+18027779502"
+        class="font-serif text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 hover:text-white transition-colors block"
+      >
+        +1 (802) 777-9502
+      </a>
+      <a
+        href="mailto:innkeeper@bristolsuites.com"
+        class="font-serif text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 hover:text-white transition-colors block"
+      >
+        innkeeper@bristolsuites.com
+      </a>
+    </section>
+
+    <!-- Follow: col 1 on mobile, col 2 row 2 on desktop -->
+    <section class="desktop:col-start-2 desktop:row-start-2">
+      <h3 class="font-serif text-[31px] leading-[1.2] text-white mb-6">Follow</h3>
+      <ul>
+        {socialLinks.map(({ label, href }) => (
+          <li>
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-serif text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 hover:text-white transition-colors"
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Specials: col 2 on mobile, col 3 row 2 on desktop -->
+    <section class="desktop:col-start-3 desktop:row-start-2">
+      <h3 class="font-serif text-[31px] leading-[1.2] text-white mb-6">Specials</h3>
+      <p class="font-serif font-medium text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100">
+        Stay tuned for upcoming specials!
+      </p>
+    </section>
+
+    <!-- Subscribe: full-width on mobile, col 3 row 3 on desktop -->
+    <section class="col-span-2 desktop:col-start-3 desktop:col-span-1 desktop:row-start-3">
+      <h3 class="font-serif text-[31px] leading-[1.2] text-white mb-3">Subscribe</h3>
+      <p class="font-serif text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 mb-5">
+        Keep apprised of the latest events and promotions
+      </p>
+      <form class="flex gap-2" method="post" action="/api/subscribe">
+        <input
+          type="email"
+          name="email"
+          placeholder="you@email.com"
+          required
+          class="flex-1 min-w-0 h-11 px-5 rounded-full bg-sand-100 border border-ink-900 font-serif text-[17px] text-ink-900 placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-ink-900"
+        />
+        <button
+          type="submit"
+          class="shrink-0 h-11 px-5 rounded-full bg-khaki-300 border-2 border-ink-900 font-serif font-medium text-[16px] text-ink-900 hover:opacity-90 transition-opacity"
+        >
+          Subscribe
+        </button>
+      </form>
+    </section>
+
+  </div>
+
+  <div class="border-t border-white/10 px-6 py-4 desktop:px-24">
+    <p class="font-serif text-[14px] text-sand-100/60">&copy; {year} Bristol Inn. All rights reserved.</p>
   </div>
 </footer>
