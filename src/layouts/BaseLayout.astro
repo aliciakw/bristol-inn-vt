@@ -4,8 +4,7 @@ interface Props {
   description?: string;
 }
 
-import Header from '@components/Header.astro';
-import Navigation from '@components/Navigation.astro';
+import NavigationTopBar from '@components/NavigationTopBar.astro';
 import Footer from '@components/Footer.astro';
 import '@styles/global.css';
 
@@ -21,8 +20,7 @@ const { title, description } = Astro.props;
     {description && <meta name="description" content={description} />}
   </head>
   <body class="flex flex-col min-h-screen font-serif bg-sand-100 text-ink-900">
-    <Header />
-    <Navigation />
+    <NavigationTopBar />
     <main class="flex-1">
       <slot />
     </main>
