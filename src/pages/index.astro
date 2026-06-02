@@ -1,20 +1,17 @@
 ---
-import { getHomepage } from '../lib/prismic';
-import * as prismic from '@prismicio/client';
-import BaseLayout from '@layouts/BaseLayout.astro';
-import HeroCarousel from '../components/HeroCarousel.astro';
-import SliceZone from '../components/SliceZone.astro';
+import { getHomepage } from '../lib/sanity'
+import BaseLayout from '@layouts/BaseLayout.astro'
+import HeroCarousel from '../components/HeroCarousel.astro'
+import SliceZone from '../components/SliceZone.astro'
 
-const homepage = await getHomepage();  // no try/catch — throws propagates → build fails per D-07
-const heroImages = (homepage.data.hero_images as Array<{ image: prismic.ImageField }>)
-  .map(item => ({ url: item.image?.url ?? '', alt: item.image?.alt ?? '' }))
-  .filter(img => img.url);
-const ctaLabel = homepage.data.cta_label as string || 'Browse Our Rooms';
-const ctaUrl = (homepage.data.cta_url as { url?: string })?.url ?? '/rooms';
+const homepage = await getHomepage()
+const heroImages = homepage.heroImages.filter(img => img.url)
+const ctaLabel = homepage.ctaLabel || 'Browse Our Rooms'
+const ctaUrl = homepage.ctaUrl ?? '/rooms'
 ---
 <BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere.">
   {heroImages.length > 0 && <HeroCarousel images={heroImages} ctaLabel={ctaLabel} ctaUrl={ctaUrl} />}
   <div class="max-w-4xl mx-auto px-4 py-8">
-    <SliceZone slices={homepage.data.body} />
+    <SliceZone blocks={homepage.body} />
   </div>
 </BaseLayout>

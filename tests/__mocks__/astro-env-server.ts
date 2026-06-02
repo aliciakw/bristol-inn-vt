@@ -12,4 +12,4 @@
  */
 
 export const HOSTAWAY_ACCESS_TOKEN = 'test-hostaway-token';
-export const PRISMIC_TOKEN = 'test-prismic-token';
+export const SANITY_API_TOKEN = 'test-sanity-token';

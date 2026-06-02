@@ -26,12 +26,12 @@ progress:
 ## Core Reference
 
 **Project:** Bristol Inn — Proof-of-concept hospitality website  
-**Vision:** Guests can browse rooms, check availability, and start booking on a fast, SEO-optimized website. Site teams can manage content through Prismic and track user behavior with GA4.
+**Vision:** Guests can browse rooms, check availability, and start booking on a fast, SEO-optimized website. Site teams can manage content through Sanity Studio and track user behavior with GA4.
 
 **Technology Stack:**
 
 - Framework: Astro 5.x (static-first)
-- CMS: Prismic (content management)
+- CMS: Sanity (content management, studio at ./studio-bristol-inn-vt)
 - Booking: Hostaway API (room data, availability, checkout redirect)
 - Hosting: Cloudflare Pages (static deployment, PR previews)
 - Error Tracking: Sentry (error visibility)
@@ -74,8 +74,8 @@ Phase 1: Foundation & Infrastructure
   → Outputs: Deployable project, env var validation, CI/CD working
 
 Phase 2: Integrations & Core Data
-  → Hostaway API integration, Prismic CMS setup, room pages, generic content
-  → Outputs: Room listing/detail pages, homepage, draft preview working
+  → Hostaway API integration, Sanity CMS setup, room pages, generic content
+  → Outputs: Room listing/detail pages, homepage, generic page template working
 
 Phase 3: Availability & Booking
   → Date picker, real-time availability API, booking validation, Hostaway redirect
@@ -103,13 +103,13 @@ Phase 6: Monitoring, Analytics & Launch
 | Static rooms + on-demand availability | Avoid stale booking data; always check real-time | 3 |
 | Redirect to Hostaway instead of embedded payment | Simplify v1; let Hostaway handle PCI compliance | 3 |
 | Cloudflare Pages for hosting | Fast, free tier, global CDN, PR previews | 1 |
-| Prismic for CMS | Draft/publish workflow, webhook support, easy content management | 2 |
+| Sanity for CMS | Structured content, GROQ queries, co-located Studio, Portable Text | 2 |
 | TypeScript strict from day 1 | Catch errors at compile time; enforce quality | 1 |
 | AMENITY_NAMES seeded LOW confidence | Third-party partial list; must verify from live API data after first getRooms() call | 2 |
 | normalizeRoom logs first image URL once | CDN domain needed for image.remotePatterns; token never logged | 2 |
 | photos sliced to 6 max after sort | D-04: gallery shows up to 6 photos; consistent with detail page spec | 2 |
-| Prismic errors propagate (no try/catch) | Build fails on Prismic outage — Cloudflare keeps last good deploy per D-07 | 2 |
-| getClient() exported for preview.astro | Preview route needs direct client access for resolvePreviewURL | 2 |
+| Sanity errors propagate (no try/catch) | Build fails on Sanity outage — Cloudflare keeps last good deploy | 2 |
+| Homepage singleton enforced via Sanity Studio structure | Fixed document ID prevents accidental duplicates; GROQ queries by _id | 2 |
 | Sentry from day 1 | Silent errors are worse than crashes; visibility essential | 6 |
 | Mobile-first responsive design | 60-70% initial research on mobile; non-negotiable | 5 |
 | SEO in v1, not deferred | Cheap to include now; expensive to add later | 6 |
@@ -122,7 +122,7 @@ Phase 6: Monitoring, Analytics & Launch
 
 - Hostaway API rate limits are sufficient for POC (single inn, <10 rooms)
 - Cloudflare Pages build time < 90s for 1-10 rooms
-- Prismic preview URLs work reliably with Cloudflare PR deployments
+- Sanity CDN is available and serves content reliably during builds
 - Email service (SMTP or external provider) available for contact form
 
 **Risks:**
@@ -131,6 +131,7 @@ Phase 6: Monitoring, Analytics & Launch
 - **Hostaway API unknown specifics** — Mitigated by critical spikes in Phase 1 week 1
 - **Image performance** — Mitigated by Astro Image component + early 4G testing
 - **Mobile booking abandonment** — Mitigated by real device testing in Phase 5
+- **Sanity content missing at build time** — Mitigated by Sanity Studio setup before build; build fails loudly (no silent empty pages)
 - **Sentry misconfiguration** — Mitigated by Day 1 setup and test error
 - **Scope creep** — Mitigated by locked PROJECT.md and explicit v2 backlog
 
@@ -174,7 +175,7 @@ Phase 6: Monitoring, Analytics & Launch
 - Live chat support
 - Multi-language support
 - Mobile app (web-responsive sufficient)
-- Admin dashboard (Prismic handles content)
+- Admin dashboard (Sanity Studio handles content)
 - Custom booking engine (Hostaway handles)
 
 ---
@@ -187,8 +188,7 @@ Phase 6: Monitoring, Analytics & Launch
 2. Critical spikes for Phase 1 week 1:
    - Hostaway API: Rate limits, response format, booking redirect URL
    - Cloudflare Pages: Build time for 1-10 rooms, cache header control
-   - Prismic: Preview URL reliability with PR deployments, webhook format
-3. Environment: Obtain API keys (Hostaway, Prismic, Sentry, GA4) and test sandbox access
+3. Environment: Obtain API keys (Hostaway, Sanity, Sentry, GA4) and test sandbox access
 4. Local development: Set up `.env.example` template for team consistency
 
 ---
@@ -208,4 +208,4 @@ Phase 6: Monitoring, Analytics & Launch
 
 *State initialized: 2026-05-05*  
 *Last updated: 2026-05-16*  
-*Next action: Plan 02-06 — Homepage and generic Prismic page routes*
+*Next action: Plan 02-08 — Full suite gate (tests + build)*

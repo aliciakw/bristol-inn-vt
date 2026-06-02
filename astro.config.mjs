@@ -24,7 +24,7 @@ export default defineConfig({
         access: "secret",
         optional: false,
       }),
-      PRISMIC_CLIENT_SECRET: envField.string({
+      SANITY_API_TOKEN: envField.string({
         context: "server",
         access: "secret",
         optional: false,
@@ -46,8 +46,7 @@ export default defineConfig({
   }),
   image: {
     remotePatterns: [
-      { protocol: "https", hostname: "images.prismic.io" },
-      { protocol: "https", hostname: "**.prismic.io" },
+      { protocol: "https", hostname: "cdn.sanity.io" },
       // TODO: add Hostaway CDN hostname after first getRooms() call logs listing.listingImages[0].url
     ],
   },

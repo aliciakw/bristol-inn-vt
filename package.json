@@ -11,14 +11,15 @@
     "dev": "astro dev",
     "prebuild": "node scripts/prebuild.mjs",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro build && astro preview",
     "type-check": "tsc --noEmit",
     "astro": "astro",
     "generate-types": "wrangler types"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.5.1",
-    "@prismicio/client": "^7.21.8",
+    "@portabletext/to-html": "^5.0.2",
+    "@sanity/client": "^7.22.1",
     "@sentry/astro": "^10.55.0",
     "@sentry/cloudflare": "^10.53.1",
     "@tailwindcss/vite": "^4.2.4",
@@ -29,7 +30,6 @@
   "devDependencies": {
     "@types/node": "^25.6.0",
     "@vitest/coverage-v8": "^4.1.6",
-    "prismic": "^1.8.0",
     "typescript": "^5.3.0",
     "vitest": "^4.1.6"
   },

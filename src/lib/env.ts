@@ -8,15 +8,15 @@
  *
  * Server-only secrets (never emitted into client bundle):
  *   HOSTAWAY_ACCESS_TOKEN — Hostaway API Bearer token (pre-generated, exp 2028-05-15)
- *   PRISMIC_TOKEN         — Prismic CMS read-only access token
+ *   SANITY_API_TOKEN      — Sanity CMS read token
  *   SENTRY_AUTH_TOKEN     — Sentry source-map upload token (optional)
  *
  * Public vars (safe to expose in client JS):
  *   PUBLIC_SENTRY_DSN — Sentry DSN for browser error reporting (optional)
  *   PUBLIC_GA4_ID     — Google Analytics 4 measurement ID (optional)
  *
- * Usage in server-only lib files (e.g. src/lib/hostaway.ts, src/lib/prismic.ts):
- *   import { HOSTAWAY_ACCESS_TOKEN, PRISMIC_TOKEN } from 'astro:env/server';
+ * Usage in server-only lib files (e.g. src/lib/hostaway.ts, src/lib/sanity.ts):
+ *   import { HOSTAWAY_ACCESS_TOKEN, SANITY_API_TOKEN } from 'astro:env/server';
  *
  * Usage in client components (e.g. src/components/Analytics.astro):
  *   import { PUBLIC_SENTRY_DSN, PUBLIC_GA4_ID } from 'astro:env/client';
