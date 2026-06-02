@@ -9,7 +9,7 @@
 **Execution:** Sequential (one phase at a time)  
 **Timeline estimate:** 4-6 weeks to Phase 6 completion
 
-The roadmap derives phases from natural dependencies and critical path requirements. Phase 1 establishes the foundation; Phase 2 connects to Hostaway and Prismic; Phase 3 implements the core booking flow; Phase 4 adds content richness; Phase 5 optimizes performance and mobile; Phase 6 handles monitoring, analytics, and launch readiness.
+The roadmap derives phases from natural dependencies and critical path requirements. Phase 1 establishes the foundation; Phase 2 connects to Hostaway and Sanity; Phase 3 implements the core booking flow; Phase 4 adds content richness; Phase 5 optimizes performance and mobile; Phase 6 handles monitoring, analytics, and launch readiness.
 
 ---
 
@@ -41,7 +41,7 @@ The roadmap derives phases from natural dependencies and critical path requireme
 - CODE-06: API keys and secrets are stored in environment variables, not in source code
 - INFRA-01: Project deployed to Cloudflare Pages with automatic builds on main branch pushes
 - INFRA-02: Pull request deployments are automatic with unique preview URLs
-- INFRA-03: Cloudflare environment variables are configured (HOSTAWAY_API_KEY, PRISMIC_TOKEN, SENTRY_DSN, GA4_ID)
+- INFRA-03: Cloudflare environment variables are configured (HOSTAWAY_ACCESS_TOKEN, SANITY_API_TOKEN, SENTRY_DSN, GA4_ID)
 - INFRA-04: Build succeeds locally and on Cloudflare with identical environment variables
 - INFRA-05: Build time is < 90 seconds for 1-10 rooms (acceptable for PoC)
 
@@ -49,7 +49,7 @@ The roadmap derives phases from natural dependencies and critical path requireme
 1. Astro project initializes with TypeScript strict mode enabled; `npm run build` succeeds without type errors
 2. Tailwind CSS is configured for mobile-first responsive design (3 breakpoints: mobile, tablet, desktop)
 3. Project routes correctly: `/` (home), `/rooms` (listing), `/contact` (contact), `/api/*` (backend endpoints)
-4. Environment variables are validated at startup; missing critical vars (HOSTAWAY_API_KEY, PRISMIC_TOKEN) cause clear error messages
+4. Environment variables are validated at startup; missing critical vars (HOSTAWAY_ACCESS_TOKEN, SANITY_API_TOKEN) cause clear error messages
 5. Cloudflare Pages deployment pipeline is configured; PR preview URLs auto-generate on branch pushes; build succeeds in CF environment
 
 **Inputs:**
@@ -74,42 +74,40 @@ The roadmap derives phases from natural dependencies and critical path requireme
 
 ### Phase 2: Integrations & Core Data
 
-**Goal:** Connect to Hostaway API and Prismic CMS; fetch real room data and content; generate room listing and detail pages, plus generic content pages powered by Prismic.
+**Goal:** Connect to Hostaway API and Sanity CMS; fetch real room data and content; generate room listing and detail pages, plus generic content pages powered by Sanity.
 
 **Requirements mapped:**
 - ROOM-01: Fetch all rooms from Hostaway API at build time, including title, description, amenities, photos, and rates
 - ROOM-02: Generate static room listing page (`/rooms`) showing all rooms with thumbnail photos, amenity badges, and nightly rates
 - ROOM-03: Generate individual static room detail pages (`/rooms/:id`) with full-size photos, complete description, amenities list, and rates
-- CONTENT-01: Homepage (`/`) renders content from Prismic with hero section, inn overview, and call-to-action
-- CONTENT-02: Generic page template accepts Prismic content documents and renders at URLs determined by page slug (e.g., `/about`, `/contact`)
-- CONTENT-03: Prismic draft content is accessible in Cloudflare PR preview deployments (via preview URL with draft content flag)
+- CONTENT-01: Homepage (`/`) renders content from Sanity with hero section, inn overview, and call-to-action
+- CONTENT-02: Generic page template accepts Sanity content documents and renders at URLs determined by page slug (e.g., `/about`, `/contact`)
+- CONTENT-03: ~~Prismic draft content accessible in PR deployments~~ — descoped; preview route removed in favor of Sanity Studio
 - CONTENT-04: Contact page (`/contact`) displays contact information prominently (email, phone, address)
-- CONTENT-08: About page (`/about` or via Prismic slug) displays inn story, history, and value proposition
+- CONTENT-08: About page (`/about` or via Sanity slug) displays inn story, history, and value proposition
 
 **Success Criteria:**
 1. Hostaway API authentication works; room data (title, description, amenities, photos, rates) is fetched successfully at build time
 2. Room listing page (`/rooms`) renders with all rooms, thumbnail images, amenity badges, and nightly rates visible
 3. Individual room detail pages (`/rooms/:id`) generate statically for each room with full-size photos, complete description, and amenities
-4. Prismic CMS integration is working; homepage (`/`) renders hero section and inn overview from Prismic content
-5. Generic page template renders any Prismic content document at its slug URL; draft content visible in Cloudflare PR previews
+4. Sanity CMS integration is working; homepage (`/`) renders hero section and inn overview from Sanity content
+5. Generic page template renders any Sanity content document at its slug URL
 
 **Inputs:**
 - Phase 1 complete: Astro, TypeScript, Tailwind configured
 - Hostaway API key obtained; Hostaway sandbox access available
-- Prismic project created and repository linked
-- Critical spikes answered: Hostaway response format, Prismic webhook format
+- Sanity project created (projectId: 4rk27ty6, dataset: production, studio at ./studio-bristol-inn-vt)
+- Critical spikes answered: Hostaway response format
 
 **Outputs:**
 - Room listing page at `/rooms` with real data
 - Room detail pages at `/rooms/:id` (static generation)
-- Homepage at `/` with Prismic content
+- Homepage at `/` with Sanity content
 - Generic page template working (about page, future contact page)
-- Prismic draft preview working in PR deployments
 - Hostaway API rate limits documented
 
 **Risks:**
 - Hostaway API response format unknown until integration; may require adapter
-- Prismic webhook reliability untested; fallback to manual trigger if needed
 - Photo URLs from Hostaway may be inconsistent; plan image proxy/resize strategy
 
 **UI hint:** yes
@@ -119,12 +117,12 @@ The roadmap derives phases from natural dependencies and critical path requireme
 Plans:
 - [x] 02-01-PLAN.md — Foundation setup: dependencies, Cloudflare adapter, image.remotePatterns, Vitest
 - [x] 02-02-PLAN.md — Hostaway API library: getRooms(), getRoom(), HostawayRoom type, amenity map
-- [x] 02-03-PLAN.md — Prismic CMS library: getHomepage(), getPage(), getPages()
+- [x] 02-03-PLAN.md — Sanity CMS library: getHomepage(), getPage(), getPages() (originally Prismic; migrated to Sanity)
 - [x] 02-04-PLAN.md — Room components: AmenityBadge, RoomCard, RoomGallery
-- [x] 02-05-PLAN.md — Prismic components: HeroCarousel, SliceZone
+- [x] 02-05-PLAN.md — Sanity components: HeroCarousel, SliceZone/PortableText renderer (originally Prismic; migrated to Sanity)
 - [ ] 02-06-PLAN.md — Room pages: /rooms listing and /rooms/[id] detail pages
-- [ ] 02-07-PLAN.md — Prismic pages: homepage, [slug] generic template, preview SSR route
-- [ ] 02-08-PLAN.md — Unit tests: Hostaway and Prismic library tests, full build gate
+- [x] 02-07-PLAN.md — Sanity pages: homepage, [slug] generic template (preview route descoped; refactored/completed during Sanity migration)
+- [ ] 02-08-PLAN.md — Unit tests: Hostaway and Sanity library tests, full build gate
 
 ---
 
@@ -151,7 +149,7 @@ Plans:
 5. Server-side validation prevents invalid bookings (past dates, check-out before check-in, non-existent room); fallback to "Call to book" if Hostaway API fails
 
 **Inputs:**
-- Phase 2 complete: Room pages and Prismic integration working
+- Phase 2 complete: Room pages and Sanity integration working
 - Hostaway booking redirect URL format confirmed
 - Availability API endpoint architecture designed (static vs. on-demand rendering)
 
@@ -173,7 +171,7 @@ Plans:
 
 ### Phase 4: Content & Contact
 
-**Goal:** Add contact form functionality, contact page, about page (if not in Prismic), and backend email notifications. Enrich Prismic workflow with review/draft capabilities.
+**Goal:** Add contact form functionality, contact page, about page (if not in Sanity), and backend email notifications.
 
 **Requirements mapped:**
 - CONTENT-05: Contact form on `/contact` page with fields: name, email, message; client-side validation
@@ -187,14 +185,13 @@ Plans:
 4. Contact form submission succeeds without exposing API keys or internal errors to user
 
 **Inputs:**
-- Phase 2 complete: Prismic integration, contact page structure in place
+- Phase 2 complete: Sanity integration, contact page structure in place
 - Email service selected (SMTP, SendGrid, Mailgun, or serverless email provider)
 - Email templates designed (confirmation, notification)
 
 **Outputs:**
 - Contact form fully functional with backend
 - Email notifications working (confirmed by test submissions)
-- Prismic review workflow for content teams
 - Contact page live
 
 **Risks:**
@@ -285,7 +282,7 @@ Plans:
 - SEO-09: Canonical tags prevent duplicate content issues
 - MONITOR-01: Sentry is initialized and configured with correct DSN in production environment
 - MONITOR-02: JavaScript errors are automatically captured and sent to Sentry
-- MONITOR-03: API errors (Hostaway, Prismic, contact form) are logged to Sentry with error context
+- MONITOR-03: API errors (Hostaway, Sanity, contact form) are logged to Sentry with error context
 - MONITOR-04: Sentry dashboard has alerts configured for error spikes (e.g., 5+ errors in 5 minutes)
 - MONITOR-05: Sentry breadcrumbs capture user actions before errors (navigation, form interactions)
 - MONITOR-06: PII (email, phone, credit card data) is NOT captured by Sentry (scrubbed/filtered)
@@ -351,9 +348,9 @@ Plans:
 | BOOK-07 | Redirect messaging | 3 | Pending |
 | BOOK-08 | Availability API endpoint | 3 | Pending |
 | BOOK-09 | Fallback for API failures | 3 | Pending |
-| CONTENT-01 | Homepage rendering | 2 | Pending |
-| CONTENT-02 | Generic page template | 2 | Pending |
-| CONTENT-03 | Prismic draft preview | 2 | Pending |
+| CONTENT-01 | Homepage rendering | 2 | Complete |
+| CONTENT-02 | Generic page template | 2 | Complete |
+| CONTENT-03 | Draft preview | 2 | Descoped |
 | CONTENT-04 | Contact page display | 2 | Pending |
 | CONTENT-05 | Contact form validation | 4 | Pending |
 | CONTENT-06 | Contact form API | 4 | Pending |
@@ -431,7 +428,7 @@ Plans:
 Phase 1 (Foundation)
   ↓ (Astro + TypeScript + Tailwind + Deployment)
 Phase 2 (Integrations)
-  ↓ (Hostaway API + Prismic CMS + Room pages)
+  ↓ (Hostaway API + Sanity CMS + Room pages)
 Phase 3 (Availability & Booking)
   ↓ (Date picker + API + Redirect)
 Phase 4 (Content & Contact)

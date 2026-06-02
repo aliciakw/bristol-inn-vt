@@ -32,14 +32,14 @@ These are the v1 requirements for the Bristol Inn proof-of-concept website. Each
 
 ### Content Management (CONTENT)
 
-- [x] **CONTENT-01**: Homepage (`/`) renders content from Prismic with hero section, inn overview, and call-to-action
-- [x] **CONTENT-02**: Generic page template accepts Prismic content documents and renders at URLs determined by page slug (e.g., `/about`, `/contact`)
-- [x] **CONTENT-03**: Prismic draft content is accessible in Cloudflare PR preview deployments (via preview URL with draft content flag)
+- [x] **CONTENT-01**: Homepage (`/`) renders content from Sanity with hero section, inn overview, and call-to-action
+- [x] **CONTENT-02**: Generic page template accepts Sanity content documents and renders at URLs determined by page slug (e.g., `/about`, `/contact`)
+- [~] **CONTENT-03**: ~~Prismic draft content accessible in PR previews~~ — descoped; preview route removed; Sanity Studio used for content review instead
 - [ ] **CONTENT-04**: Contact page (`/contact`) displays contact information prominently (email, phone, address)
 - [ ] **CONTENT-05**: Contact form on `/contact` page with fields: name, email, message; client-side validation
 - [ ] **CONTENT-06**: Contact form submission sends data to backend API endpoint (`POST /api/contact/submit`)
 - [ ] **CONTENT-07**: Backend contact form handler sends confirmation email to guest and notification email to inn
-- [ ] **CONTENT-08**: About page (`/about` or via Prismic slug) displays inn story, history, and value proposition
+- [ ] **CONTENT-08**: About page (`/about` or via Sanity slug) displays inn story, history, and value proposition
 
 ### Performance & Web Vitals (PERF)
 
@@ -91,7 +91,7 @@ These are the v1 requirements for the Bristol Inn proof-of-concept website. Each
 
 - [ ] **MONITOR-01**: Sentry is initialized and configured with correct DSN in production environment
 - [ ] **MONITOR-02**: JavaScript errors are automatically captured and sent to Sentry
-- [ ] **MONITOR-03**: API errors (Hostaway, Prismic, contact form) are logged to Sentry with error context
+- [ ] **MONITOR-03**: API errors (Hostaway, Sanity, contact form) are logged to Sentry with error context
 - [ ] **MONITOR-04**: Sentry dashboard has alerts configured for error spikes (e.g., 5+ errors in 5 minutes)
 - [ ] **MONITOR-05**: Sentry breadcrumbs capture user actions before errors (navigation, form interactions)
 - [ ] **MONITOR-06**: PII (email, phone, credit card data) is NOT captured by Sentry (scrubbed/filtered)
@@ -183,7 +183,7 @@ These features will NOT be built, and the reasoning behind each decision.
 | **Live Chat Support** | Small inn cannot staff 24/7; adds operational burden | Email form with 24h response time promise |
 | **Multi-Language Support** | No demand identified; impacts content maintenance | Revisit after validating local market |
 | **Mobile App** | Web-responsive enough for mobile; app adds maintenance burden | Progressive web app optional in Phase 4 |
-| **Advanced Admin Dashboard** | Prismic already handles content management; additional dashboard adds no value | Use Prismic UI for content; Hostaway UI for bookings |
+| **Advanced Admin Dashboard** | Sanity Studio already handles content management; additional dashboard adds no value | Use Sanity Studio for content; Hostaway UI for bookings |
 | **Custom Booking Engine** | Hostaway integration is simpler and more reliable than building from scratch | Use Hostaway API + redirect |
 | **Third-Party Integrations** (Slack, Zapier, etc.) | Adds complexity; no demand identified yet | Revisit after validating core workflow |
 | **Accessibility Beyond WCAG AA** | WCAG AA is sufficient for legal compliance and good UX | Exceed standards in Phase 2 if feedback suggests |
@@ -223,9 +223,9 @@ Each v1 requirement is mapped to the phase that will implement it.
 | BOOK-07 | Redirect messaging | 3 | Pending |
 | BOOK-08 | Availability API endpoint | 3 | Pending |
 | BOOK-09 | Fallback for API failures | 3 | Pending |
-| CONTENT-01 | Homepage rendering | 2 | Pending |
-| CONTENT-02 | Generic page template | 2 | Pending |
-| CONTENT-03 | Prismic draft preview | 2 | Pending |
+| CONTENT-01 | Homepage rendering | 2 | Complete |
+| CONTENT-02 | Generic page template | 2 | Complete |
+| CONTENT-03 | Draft preview | 2 | Descoped |
 | CONTENT-04 | Contact page display | 2 | Pending |
 | CONTENT-05 | Contact form validation | 4 | Pending |
 | CONTENT-06 | Contact form API | 4 | Pending |

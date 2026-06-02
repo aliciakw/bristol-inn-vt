@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A proof-of-concept website for a small inn that demonstrates integration of modern web technologies. The site scaffolds all key integrations (Hostaway for room management, Prismic for content, Sentry for error tracking, GA4 for analytics, Cloudflare Pages for hosting) with spare, minimal implementation. Visual polish and a composable component library are deferred to a later phase.
+A proof-of-concept website for a small inn that demonstrates integration of modern web technologies. The site scaffolds all key integrations (Hostaway for room management, Sanity for content, Sentry for error tracking, GA4 for analytics, Cloudflare Pages for hosting) with spare, minimal implementation. Visual polish and a composable component library are deferred to a later phase.
 
 The website prioritizes:
 - Fast load times on poor internet (leverage Astro static-first)
@@ -12,7 +12,7 @@ The website prioritizes:
 
 ## Core Value
 
-Guests can browse rooms, check availability, and start the booking flow on a fast, SEO-optimized website. Site teams can manage content through Prismic and track user behavior with GA4. Site errors are captured in Sentry for debugging.
+Guests can browse rooms, check availability, and start the booking flow on a fast, SEO-optimized website. Site teams can manage content through Sanity Studio and track user behavior with GA4. Site errors are captured in Sentry for debugging.
 
 ## Scope — V1
 
@@ -23,17 +23,16 @@ Guests can browse rooms, check availability, and start the booking flow on a fas
 - **Room Details** — Individual room page with amenities, photos, availability calendar
 - **Booking Flow** — Date picker → room selection → redirect to Hostaway checkout
 - **Contact/Inquiry** — Contact form for general questions
-- **Generic Page** — Prismic-driven page that renders any content document at its slug URL
+- **Generic Page** — Sanity-driven page that renders any content document at its slug URL
 
 ### Hostaway Integration
 
 - Read-only: Fetch and display rooms, availability, rates
 - Checkout redirects to Hostaway's booking interface (no embedded payment handling)
 
-### Prismic CMS
+### Sanity CMS
 
 - Generic page template for flexible content management
-- Support for draft content in preview builds (PR deployments)
 - No auth required for v1 — all pages public
 
 ### Integrations
@@ -47,7 +46,7 @@ Guests can browse rooms, check availability, and start the booking flow on a fas
 
 - Hostaway updates frequently (daily/hourly)
 - Site strategy: On-demand or scheduled incremental rebuilds to stay fresh
-- Prismic drafts available in preview builds for content review
+- Content managed via Sanity Studio at ./studio-bristol-inn-vt
 
 ### Architecture (Scaffolded, Not Visual)
 
@@ -87,12 +86,12 @@ This is a greenfield project built by a single developer (Alicia Willett) for a 
 
 ### Active
 
-- [ ] Home page displaying inn overview (from Prismic)
+- [ ] Home page displaying inn overview (from Sanity)
 - [ ] Room listings fetched from Hostaway API with real-time availability
 - [ ] Individual room detail pages with amenities and photos
 - [ ] Booking flow that checks availability and redirects to Hostaway checkout
 - [ ] Contact/inquiry form with basic validation
-- [ ] Generic Prismic page template that renders any content document
+- [ ] Generic Sanity page template that renders any content document
 - [ ] Sentry error tracking configured and reporting
 - [ ] GA4 page view tracking implemented
 - [ ] Cloudflare Pages deployment with PR preview links
@@ -106,7 +105,7 @@ This is a greenfield project built by a single developer (Alicia Willett) for a 
 - User authentication or guest accounts — all public for v1
 - Advanced analytics and custom event tracking — only basic metrics
 - Visual polish and responsive design system — minimal, scaffolded only
-- Admin panel — manage content through Prismic directly
+- Admin panel — manage content through Sanity Studio directly
 - Cloudflare Pages Functions backend — deferred until needed
 
 ## Evolution

@@ -78,7 +78,7 @@ describe('getHomepage()', () => {
     const query: string = mockFetch.mock.calls[0][0];
     expect(query).toContain('"homepage"');
     const params = mockFetch.mock.calls[0][1];
-    expect(params).toMatchObject({ id: 'singleton-homepage' });
+    expect(params).toMatchObject({ id: '6e561f5f-23ec-49fa-863f-141c005904c3' });
   });
 
   it('returns the document returned by fetch', async () => {

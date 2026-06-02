@@ -15,7 +15,7 @@ const { blocks } = Astro.props
     return (
       <div
         class="text-base leading-relaxed text-gray-700 max-w-prose my-6"
-        set:html={toHTML([block as Parameters<typeof toHTML>[0][number]])}
+        set:html={toHTML([block as SanityBlock])}
       />
     );
   }
