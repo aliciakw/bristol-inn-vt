@@ -1,7 +1,66 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "David Libre";
+  src: url("../assets/fonts/DavidLibre-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "David Libre";
+  src: url("../assets/fonts/DavidLibre-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "David Libre";
+  src: url("../assets/fonts/DavidLibre-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --breakpoint-*: initial;
   --breakpoint-tablet: 640px;
   --breakpoint-desktop: 1024px;
+
+  /* Colors */
+  --color-prussian-200: #B1BDC2;
+  --color-prussian-500: #1F5168;
+  --color-prussian-700: #20404F;
+  --color-sand-050: #EFEBE9;
+  --color-sand-100: #E7E1DD;
+  --color-sand-200: #DED6D2;
+  --color-lilac-200: #D5C7D0;
+  --color-ink-900: #252525;
+  --color-mustard-500: #CC9C00;
+  --color-earth-700: #452A1D;
+  --color-khaki-100: #EAE4DA;
+  --color-khaki-200: #E0D6C8;
+  --color-khaki-300: #CBBAA4;
+  --color-forest-400: #465546;
+  --color-iron: #5E5E5E;
+
+  /* Typography */
+  --font-serif: "David Libre", Georgia, serif;
+}
+
+/* Grid layout variables */
+:root {
+  --grid-columns: 6;
+  --grid-margin: 16px;
+  --grid-gutter: 8px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --grid-columns: 8;
+    --grid-margin: 24px;
+    --grid-gutter: 32px;
+  }
 }
