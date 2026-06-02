@@ -1,24 +1,24 @@
 ---
-import { getPages } from '../lib/prismic';
-import * as prismic from '@prismicio/client';
-import BaseLayout from '@layouts/BaseLayout.astro';
-import SliceZone from '../components/SliceZone.astro';
+import { getPages, getPage } from '../lib/sanity'
+import BaseLayout from '@layouts/BaseLayout.astro'
+import SliceZone from '../components/SliceZone.astro'
 
 export async function getStaticPaths() {
-  const pages = await getPages();  // throws on error → build fails per D-07
+  const pages = await getPages()
   return pages.map(page => ({
     params: { slug: page.uid },
-    props: { page },
-  }));
+    props: { slug: page.uid },
+  }))
 }
 
-type Props = { page: prismic.PrismicDocument };
-const { page } = Astro.props;
-const pageTitle = prismic.asText(page.data.title) || 'Untitled';
+type Props = { slug: string }
+const { slug } = Astro.props
+const page = await getPage(slug)
+const pageTitle = page.title || 'Untitled'
 ---
-<BaseLayout title={`${pageTitle} — Bristol Inn`} description={page.data.meta_description as string || ''}>
+<BaseLayout title={`${pageTitle} — Bristol Inn`} description={page.metaDescription || ''}>
   <div class="max-w-3xl mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold text-gray-900 mb-6">{pageTitle}</h1>
-    <SliceZone slices={page.data.body} />
+    <SliceZone blocks={page.body} />
   </div>
 </BaseLayout>
