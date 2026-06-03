@@ -5,6 +5,14 @@ export const pageType = defineType({
   title: 'Page',
   type: 'document',
   fields: [
+    // ── OG / SEO ─────────────────────────────────────────────────────────────
+    defineField({
+      name: 'meta',
+      title: 'Page Meta',
+      type: 'meta',
+      description: 'For SEO and social media.',
+      options: { collapsible: true, collapsed: true },
+    }),
     defineField({ name: 'title', type: 'string', title: 'Title' }),
     defineField({
       name: 'slug',
@@ -12,7 +20,7 @@ export const pageType = defineType({
       title: 'Slug',
       options: { source: 'title', maxLength: 96 },
     }),
-    defineField({ name: 'metaDescription', type: 'text', title: 'Meta Description', rows: 3 }),
+    
     defineField({
       name: 'body',
       title: 'Body',
