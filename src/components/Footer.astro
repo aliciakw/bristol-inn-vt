@@ -48,25 +48,27 @@ function sectionToHTML(content: unknown[]): string {
 
           {isLast && (
             <div>
+              <h3 class="font-serif text-[31px] leading-[1.2] mt-20 mb-3">Awards</h3>
       {awardImages.length > 0 && (
-            <div class="mt-20 mb-16 flex flex-wrap items-center gap-4 opacity-90">
-              {awardImages.map(({ url, alt, linkUrl }) => {
-                const img = (
-                  <img
-                    src={url}
-                    alt={alt}
-                    class="h-[2.5rem] w-auto object-contain"
-                    loading="lazy"
-                  />
-                )
-                return linkUrl
-                  ? <a href={linkUrl} target="_blank" rel="noopener noreferrer">{img}</a>
-                  : img
-              })}
-            </div>
+              <div class=" mb-16 flex flex-wrap items-center gap-4 opacity-90">          
+                {awardImages.map(({ url, alt, linkUrl }) => {
+                  const img = (
+                    <img
+                      src={url}
+                      alt={alt}
+                      class="h-[2.5rem] w-auto object-contain"
+                      loading="lazy"
+                    />
+                  )
+                  return linkUrl
+                    ? <a href={linkUrl} target="_blank" rel="noopener noreferrer">{img}</a>
+                    : img
+                })}
+              </div>
+              
           )}
       <h3 class="font-serif text-[31px] leading-[1.2] mb-3">Subscribe</h3>
-      <p class="font-serif text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 mb-5">
+      <p class="font-serif italic text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 mb-5">
         Keep apprised of the latest events and promotions
       </p>
       <form class="flex gap-2" method="post" action="/api/subscribe">
