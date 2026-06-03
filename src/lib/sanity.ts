@@ -85,6 +85,7 @@ export type SanityAwardImage = {
 }
 
 export type SanitySettings = {
+  sidebarLinks: SanityLink[]
   footerSections: SanityFooterSection[]
   awardImages: SanityAwardImage[]
   directionsLink: SanityLink | null
@@ -95,6 +96,14 @@ const SETTINGS_ID = 'settings-singleton'
 export async function getSettings(): Promise<SanitySettings> {
   return getClient().fetch<SanitySettings>(
     `*[_type == "settings" && _id == $id][0]{
+      "sidebarLinks": sidebarLinks[]{
+        label,
+        "href": select(
+          linkType == "internal" => "/" + internalLink->slug.current,
+          url
+        ),
+        "openInNewTab": coalesce(openInNewTab, false)
+      },
       "footerSections": footerSections[]{
         title,
         content
