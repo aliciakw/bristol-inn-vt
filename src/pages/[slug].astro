@@ -3,13 +3,12 @@ import { getPages, getPage } from '../lib/sanity'
 import BaseLayout from '@layouts/BaseLayout.astro'
 import SliceZone from '../components/SliceZone.astro'
 
-// Slugs handled by dedicated page files — exclude them from this catch-all
-const DEDICATED_SLUGS = new Set(['rooms-and-suites']);
-
 export async function getStaticPaths() {
+  // Slugs handled by dedicated page files — exclude them from this catch-all
+  const dedicatedSlugs = new Set(['rooms-and-suites']);
   const pages = await getPages()
   return pages
-    .filter(page => !DEDICATED_SLUGS.has(page.uid))
+    .filter(page => !dedicatedSlugs.has(page.uid))
     .map(page => ({
       params: { slug: page.uid },
       props: { slug: page.uid },
