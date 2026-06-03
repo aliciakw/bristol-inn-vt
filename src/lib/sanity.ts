@@ -66,3 +66,53 @@ export async function getPages(): Promise<Pick<SanityPage, 'uid'>[]> {
     `*[_type == "page"]{ "uid": slug.current }`
   )
 }
+
+export type SanityLink = {
+  label: string
+  href: string          // resolved from url or internalLink slug
+  openInNewTab: boolean
+}
+
+export type SanityFooterSection = {
+  title: string
+  content: SanityBlock[]
+}
+
+export type SanityAwardImage = {
+  url: string
+  alt: string
+  linkUrl?: string
+}
+
+export type SanitySettings = {
+  footerSections: SanityFooterSection[]
+  awardImages: SanityAwardImage[]
+  directionsLink: SanityLink | null
+}
+
+const SETTINGS_ID = 'settings-singleton'
+
+export async function getSettings(): Promise<SanitySettings> {
+  return getClient().fetch<SanitySettings>(
+    `*[_type == "settings" && _id == $id][0]{
+      "footerSections": footerSections[]{
+        title,
+        content
+      },
+      "awardImages": awardImages[]{
+        "url": asset->url,
+        alt,
+        "linkUrl": url
+      },
+      "directionsLink": directionsLink{
+        label,
+        "href": select(
+          linkType == "internal" => "/" + internalLink->slug.current,
+          url
+        ),
+        "openInNewTab": coalesce(openInNewTab, false)
+      }
+    }`,
+    { id: SETTINGS_ID }
+  )
+}
