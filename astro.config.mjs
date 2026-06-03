@@ -4,6 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 import cloudflare from '@astrojs/cloudflare';
 import sentry from '@sentry/astro';
 
+import react from "@astrojs/react";
+
 // https://astro.build/config
 export default defineConfig({
   env: {
@@ -47,19 +49,17 @@ export default defineConfig({
   image: {
     remotePatterns: [
       { protocol: "https", hostname: "cdn.sanity.io" },
-      // TODO: add Hostaway CDN hostname after first getRooms() call logs listing.listingImages[0].url
+      { protocol: "https", hostname: "hostaway-platform.s3.us-west-2.amazonaws.com" },
     ],
   },
   outDir: "./dist",
   server: { host: "127.0.0.1", port: 4321 },
-  integrations: [
-    sentry({
-      project: "bristol-inn-vt",
-      // authToken is read from SENTRY_AUTH_TOKEN env var
-      // Server-side SDK disabled: this is a static site with no SSR routes.
-      // Disabling server prevents @sentry/node (Node.js-only) from being bundled
-      // into the Cloudflare Worker, which cannot run Node.js built-ins.
-      enabled: { client: true, server: false },
-    }),
-  ],
+  integrations: [sentry({
+    project: "bristol-inn-vt",
+    // authToken is read from SENTRY_AUTH_TOKEN env var
+    // Server-side SDK disabled: this is a static site with no SSR routes.
+    // Disabling server prevents @sentry/node (Node.js-only) from being bundled
+    // into the Cloudflare Worker, which cannot run Node.js built-ins.
+    enabled: { client: true, server: false },
+  }), react()],
 });

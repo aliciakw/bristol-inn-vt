@@ -43,8 +43,26 @@ interface RawListing {
 }
 
 // ---------------------------------------------------------------------------
-// Public domain type
+// Internal calendar types (not exported)
 // ---------------------------------------------------------------------------
+
+interface RawCalendarDay {
+  date: string;        // "YYYY-MM-DD"
+  isAvailable: 0 | 1;
+  price: number;
+  minimumStay: number;
+}
+
+// ---------------------------------------------------------------------------
+// Public domain types
+// ---------------------------------------------------------------------------
+
+export interface RoomAvailability {
+  listingId: number;
+  available: boolean;
+  /** Price per night for the stay; undefined when unavailable */
+  pricePerNight?: number;
+}
 
 export interface HostawayRoom {
   id: number;
@@ -143,4 +161,38 @@ export async function getRoom(id: number): Promise<HostawayRoom | null> {
   }
   const data = await res.json() as { result: RawListing };
   return normalizeRoom(data.result);
+}
+
+/**
+ * Check real-time availability for a set of listings over a date range.
+ * checkIn/checkOut are ISO date strings "YYYY-MM-DD"; checkOut is the departure day
+ * (not counted as an occupied night). Fetches each listing's calendar in parallel.
+ *
+ * NOTE: RawCalendarDay shape is based on Hostaway v1 docs — validate against
+ * the live API response on first run and adjust field names if needed.
+ */
+export async function checkAvailability(
+  listingIds: number[],
+  checkIn: string,
+  checkOut: string,
+): Promise<RoomAvailability[]> {
+  return Promise.all(
+    listingIds.map(async (id): Promise<RoomAvailability> => {
+      const url = `${BASE_URL}/listings/${id}/calendar?startDate=${checkIn}&endDate=${checkOut}`;
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${HOSTAWAY_ACCESS_TOKEN}` },
+      });
+      if (!res.ok) {
+        throw new Error(`Hostaway calendar for listing ${id} failed: ${res.status}`);
+      }
+      const data = await res.json() as { result: RawCalendarDay[] };
+      const nights = data.result.filter(day => day.date >= checkIn && day.date < checkOut);
+      const available = nights.length > 0 && nights.every(day => day.isAvailable === 1);
+      return {
+        listingId: id,
+        available,
+        pricePerNight: available ? nights[0]?.price : undefined,
+      };
+    }),
+  );
 }
