@@ -28,6 +28,56 @@ interface Props {
   rooms: RoomBrowserRoom[];
 }
 
+function RoomGrid({ rooms, isLoading, availability }: {
+  rooms: RoomBrowserRoom[];
+  isLoading?: boolean;
+  availability?: AvailabilityResult[];
+}) {
+  return (
+    <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6">
+      {rooms.map((room) => (
+        <RoomCardReact
+          key={room.id}
+          id={room.id}
+          name={room.name}
+          price={room.price}
+          photo={room.photo}
+          amenities={room.amenities}
+          availability={availability?.find(a => a.listingId === room.id)}
+          isLoading={isLoading ?? false}
+        />
+      ))}
+    </div>
+  );
+}
+
+function RoomSections({ rooms, availability }: {
+  rooms: RoomBrowserRoom[];
+  availability: AvailabilityResult[];
+}) {
+  const available = rooms.filter(r => availability.find(a => a.listingId === r.id)?.available);
+  const unavailable = rooms.filter(r => !availability.find(a => a.listingId === r.id)?.available);
+
+  return (
+    <div className="flex flex-col gap-12">
+      <section>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Rooms &amp; Suites</h2>
+        {available.length === 0 ? (
+          <p className="text-gray-600">No rooms are available for your selected dates and guest count.</p>
+        ) : (
+          <RoomGrid rooms={available} availability={availability} />
+        )}
+      </section>
+      {unavailable.length > 0 && (
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Other Room Options</h2>
+          <RoomGrid rooms={unavailable} availability={availability} />
+        </section>
+      )}
+    </div>
+  );
+}
+
 export function RoomBrowser({ rooms }: Props) {
   const [state, setState] = useState<SearchState>({ status: 'idle' });
 
@@ -61,11 +111,6 @@ export function RoomBrowser({ rooms }: Props) {
   const isLoading = state.status === 'loading';
   const hasResults = state.status === 'results' || state.status === 'error';
 
-  function getAvailability(roomId: number): AvailabilityResult | undefined {
-    if (state.status !== 'results') return undefined;
-    return state.availability.find(a => a.listingId === roomId);
-  }
-
   return (
     <div>
       <AvailabilitySearchForm
@@ -83,21 +128,10 @@ export function RoomBrowser({ rooms }: Props) {
 
       {rooms.length === 0 ? (
         <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
+      ) : state.status === 'results' ? (
+        <RoomSections rooms={rooms} availability={state.availability} />
       ) : (
-        <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6">
-          {rooms.map((room) => (
-            <RoomCardReact
-              key={room.id}
-              id={room.id}
-              name={room.name}
-              price={room.price}
-              photo={room.photo}
-              amenities={room.amenities}
-              availability={getAvailability(room.id)}
-              isLoading={isLoading}
-            />
-          ))}
-        </div>
+        <RoomGrid rooms={rooms} isLoading={isLoading} />
       )}
     </div>
   );
