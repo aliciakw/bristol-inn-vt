@@ -13,14 +13,10 @@ interface Props {
   hasResults: boolean;
 }
 
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function tomorrowISO(): string {
+function localDateISO(offsetDays = 0): string {
   const d = new Date();
-  d.setDate(d.getDate() + 1);
-  return d.toISOString().slice(0, 10);
+  if (offsetDays) d.setDate(d.getDate() + offsetDays);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResults }: Props) {
@@ -29,8 +25,8 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
   const [guests, setGuests] = useState(2);
   const [errors, setErrors] = useState<Partial<Record<'checkIn' | 'checkOut' | 'guests', string>>>({});
 
-  const today = todayISO();
-  const minCheckOut = checkIn || tomorrowISO();
+  const today = localDateISO();
+  const minCheckOut = checkIn || localDateISO(1);
 
   function validate(): boolean {
     const next: typeof errors = {};

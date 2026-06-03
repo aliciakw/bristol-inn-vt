@@ -9,8 +9,10 @@ function isValidDate(str: string): boolean {
   return !isNaN(d.getTime()) && d.toISOString().startsWith(str);
 }
 
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
+function localDateISO(offsetDays = 0): string {
+  const d = new Date();
+  if (offsetDays) d.setUTCDate(d.getUTCDate() + offsetDays);
+  return d.toISOString().slice(0, 10);
 }
 
 export async function GET({ url }: APIContext): Promise<Response> {
@@ -22,7 +24,7 @@ export async function GET({ url }: APIContext): Promise<Response> {
   if (!isValidDate(checkIn) || !isValidDate(checkOut)) {
     return Response.json({ error: 'checkIn and checkOut must be valid YYYY-MM-DD dates' }, { status: 400 });
   }
-  if (checkIn < todayISO()) {
+  if (checkIn < localDateISO(-1)) {
     return Response.json({ error: 'checkIn must be today or in the future' }, { status: 400 });
   }
   if (checkOut <= checkIn) {

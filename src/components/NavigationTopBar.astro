@@ -14,7 +14,16 @@ const {
 const isTransparent = variant === 'transparent';
 
 const settings = await getSettings()
-const sidebarLinks = settings?.sidebarLinks ?? []
+
+const DEFAULT_NAV_LINKS = [
+  { label: 'Home', href: '/', openInNewTab: false },
+  { label: 'Rooms', href: '/rooms', openInNewTab: false },
+  { label: 'Contact', href: '/contact', openInNewTab: false },
+] as const;
+
+const sidebarLinks = settings?.sidebarLinks?.length
+  ? settings.sidebarLinks
+  : DEFAULT_NAV_LINKS;
 ---
 
 <header

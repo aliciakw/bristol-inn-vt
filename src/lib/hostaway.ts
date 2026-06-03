@@ -176,7 +176,7 @@ export async function checkAvailability(
   checkIn: string,
   checkOut: string,
 ): Promise<RoomAvailability[]> {
-  return Promise.all(
+  const settled = await Promise.allSettled(
     listingIds.map(async (id): Promise<RoomAvailability> => {
       const url = `${BASE_URL}/listings/${id}/calendar?startDate=${checkIn}&endDate=${checkOut}`;
       const res = await fetch(url, {
@@ -187,12 +187,21 @@ export async function checkAvailability(
       }
       const data = await res.json() as { result: RawCalendarDay[] };
       const nights = data.result.filter(day => day.date >= checkIn && day.date < checkOut);
-      const available = nights.length > 0 && nights.every(day => day.isAvailable === 1);
+      const numNights = nights.length;
+      const available =
+        numNights > 0 &&
+        nights.every(day => day.isAvailable === 1) &&
+        nights.every(day => numNights >= day.minimumStay);
       return {
         listingId: id,
         available,
         pricePerNight: available ? nights[0]?.price : undefined,
       };
     }),
+  );
+  return settled.map((result, i) =>
+    result.status === 'fulfilled'
+      ? result.value
+      : { listingId: listingIds[i]!, available: false },
   );
 }
