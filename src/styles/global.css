@@ -90,9 +90,23 @@
   }
 }
 
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 
 /* Animated Hamburger menu icon */
-.burger-icon.is-active{
+.burger-icon .line{
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background-color: var(--color-ink-900);
+  transition: all 0.3s ease-in-out;
+  z-index: 40;
+}
+.burger-icon.is-open{
   -webkit-transition: all 0.3s ease-in-out;
   -o-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
@@ -105,25 +119,25 @@
   transform: rotate(45deg);
 }
 
-.burger-icon.is-active .line:nth-child(2){
+.burger-icon.is-open .line:nth-child(2){
   width: 0px;
 }
 
-.burger-icon.is-active .line:nth-child(1),
-.burger-icon.is-active .line:nth-child(3){
+.burger-icon.is-open .line:nth-child(1),
+.burger-icon.is-open .line:nth-child(3){
   -webkit-transition-delay: 0.3s;
   -o-transition-delay: 0.3s;
   transition-delay: 0.3s;
 }
 
-.burger-icon.is-active .line:nth-child(1){
+.burger-icon.is-open .line:nth-child(1){
   -webkit-transform: translateY(13px);
   -ms-transform: translateY(13px);
   -o-transform: translateY(13px);
   transform: translateY(13px);
 }
 
-.burger-icon.is-active .line:nth-child(3){
+.burger-icon.is-open .line:nth-child(3){
   -webkit-transform: translateY(-13px) rotate(90deg);
   -ms-transform: translateY(-13px) rotate(90deg);
   -o-transform: translateY(-13px) rotate(90deg);

@@ -20,11 +20,11 @@ const sidebarLinks = settings?.sidebarLinks ?? []
 <header
   id="nav-top-bar"
   class:list={[
-    'w-full h-16 desktop:h-[96px] sticky top-0 z-40 flex items-center shrink-0',
+    'w-full h-16 desktop:h-[96px] sticky top-0 flex items-center shrink-0',
     isTransparent ? 'bg-transparent' : 'bg-sand-100',
   ]}
 >
-  <!-- Left: hamburger (+ Contact Us on tablet+) -->
+  <!-- Left (desktop only) -->
   <div class="flex items-center gap-3 desktop:gap-6 pl-4 desktop:pl-6">
     <a
       href="/contact"
@@ -46,7 +46,7 @@ const sidebarLinks = settings?.sidebarLinks ?? []
     </a>
   </div>
 
-  <!-- Right: Reserve A Room (desktop only) -->
+  <!-- Right (desktop only) -->
   <div class="desktop:flex items-center ml-auto pr-4 gap-4">
     <a
       href={bookingUrl}
@@ -60,11 +60,11 @@ const sidebarLinks = settings?.sidebarLinks ?? []
       aria-label="Open navigation menu"
       aria-expanded="false"
       aria-controls="nav-menu"
-      class="flex flex-col justify-center items-center gap-[5px] w-12 h-12 shrink-0 cursor-pointer rounded-full bg-khaki-200 desktop:bg-transparent desktop:w-10 desktop:h-10"
+      class="burger-icon relative z-[60] flex flex-col justify-center items-center gap-[5px] w-12 h-12 shrink-0 cursor-pointer rounded-full bg-khaki-200 desktop:bg-transparent desktop:w-10 desktop:h-10"
     >
-      <span class="block w-5 desktop:w-6 h-[2px] bg-ink-900 rounded-full transition-transform origin-center" data-bar="top"></span>
-      <span class="block w-5 desktop:w-6 h-[2px] bg-ink-900 rounded-full transition-opacity" data-bar="mid"></span>
-      <span class="block w-5 desktop:w-6 h-[2px] bg-ink-900 rounded-full transition-transform origin-center" data-bar="bot"></span>
+      <span class="line"></span>
+      <span class="line"></span>
+      <span class="line"></span>
     </button>
   </div>
   
@@ -102,7 +102,6 @@ const sidebarLinks = settings?.sidebarLinks ?? []
   
 
   <!-- Nav links from Sanity -->
-  {sidebarLinks.length > 0 ? (
     <ul>
       {sidebarLinks.map(({ label, href, openInNewTab }) => (
         <li>
@@ -110,20 +109,13 @@ const sidebarLinks = settings?.sidebarLinks ?? []
             href={href}
             target={openInNewTab ? '_blank' : undefined}
             rel={openInNewTab ? 'noopener noreferrer' : undefined}
-            class="font-serif font-medium text-[36px] leading-[1.2] text-ink-900 hover:opacity-60 transition-opacity"
+            class="font-serif font-medium text-[36px] leading-[1.5] text-ink-900 hover:opacity-60 transition-opacity"
           >
             {label}
           </a>
         </li>
       ))}
     </ul>
-  ) : (
-    <ul>
-      <li><a href="/" class="font-serif font-medium text-[36px] leading-[1.2] text-ink-900 hover:opacity-60 transition-opacity">Home</a></li>
-      <li><a href="/rooms" class="font-serif font-medium text-[36px] leading-[1.2] text-ink-900 hover:opacity-60 transition-opacity">Rooms</a></li>
-      <li><a href="/contact" class="font-serif font-medium text-[36px] leading-[1.2] text-ink-900 hover:opacity-60 transition-opacity">Contact</a></li>
-    </ul>
-  )}
   </div>
 </nav>
 
@@ -150,6 +142,30 @@ const sidebarLinks = settings?.sidebarLinks ?? []
   }
   @media (min-width: 1024px) {
     #nav-menu.is-open { width: 50%; }
+  }
+
+  .line {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background-color: var(--color-ink-900);
+    border-radius: 2px;
+    transform-origin: center;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  }
+  @media (min-width: 1024px) {
+    .line { width: 24px; }
+  }
+
+  /* Burger → X when menu is open */
+  [aria-expanded="true"] .line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  [aria-expanded="true"] .line:nth-child(2) {
+    opacity: 0;
+  }
+  [aria-expanded="true"] .line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
   }
 </style>
 
