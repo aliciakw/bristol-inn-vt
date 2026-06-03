@@ -2,16 +2,16 @@
 import { getSettings } from '../lib/sanity'
 
 interface Props {
-  variant?: 'default' | 'transparent';
+  variant?: 'sand-100' | 'transparent' | 'forest-400';
+  textColor?: 'ink-900' | 'sand-050';
   bookingUrl?: string;
 }
 
 const {
-  variant = 'default',
-  bookingUrl = '/rooms',
+  variant = 'sand-100',
+  textColor = 'ink-900',
+  bookingUrl = '/rooms-and-suites',
 } = Astro.props;
-
-const isTransparent = variant === 'transparent';
 
 const settings = await getSettings()
 
@@ -30,7 +30,7 @@ const sidebarLinks = settings?.sidebarLinks?.length
   id="nav-top-bar"
   class:list={[
     'w-full h-16 desktop:h-[96px] sticky top-0 flex items-center shrink-0',
-    isTransparent ? 'bg-transparent' : 'bg-sand-100',
+    `bg-${variant}`,
   ]}
 >
   <!-- Left (desktop only) -->
@@ -46,10 +46,10 @@ const sidebarLinks = settings?.sidebarLinks?.length
   <!-- Center: logo -->
   <div class="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none select-none">
     <a href="/" class="pointer-events-auto">
-      <p class="font-serif font-medium text-[30px] desktop:text-[2.4375rem] leading-none tracking-[0.01em] text-ink-900">
+      <p class="font-serif font-medium text-[30px] desktop:text-[2.4375rem] leading-none tracking-[0.01em]" class:list={`text-${textColor}`}>
         The Bristol Inn
       </p>
-      <p class="font-serif font-normal text-[11px] desktop:text-[0.875rem] leading-[1.1] tracking-[0.01em] uppercase text-ink-900 mt-0.5">
+      <p class="font-serif font-normal text-[11px] desktop:text-[0.875rem] leading-[1.1] tracking-[0.01em] uppercase mt-0.5" class:list={`text-${textColor}`} >
         19 Main Street, Bristol, Vermont, USA
       </p>
     </a>

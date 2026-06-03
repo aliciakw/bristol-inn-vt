@@ -61,7 +61,7 @@ function RoomSections({ rooms, availability }: {
   return (
     <div className="flex flex-col gap-12">
       <section>
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Rooms &amp; Suites</h2>
+        <h2 className="text-2xl font-bold mb-6">Available Rooms &amp; Suites</h2>
         {available.length === 0 ? (
           <p className="text-gray-600">No rooms are available for your selected dates and guest count.</p>
         ) : (
@@ -70,7 +70,7 @@ function RoomSections({ rooms, availability }: {
       </section>
       {unavailable.length > 0 && (
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Other Room Options</h2>
+          <h2 className="text-2xl font-bold mb-6">Other Room Options</h2>
           <RoomGrid rooms={unavailable} availability={availability} />
         </section>
       )}
