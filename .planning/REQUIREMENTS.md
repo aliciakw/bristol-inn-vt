@@ -11,8 +11,8 @@ These are the v1 requirements for the Bristol Inn proof-of-concept website. Each
 ### Room Management (ROOM)
 
 - [x] **ROOM-01**: Fetch all rooms from Hostaway API at build time, including title, description, amenities, photos, and rates
-- [ ] **ROOM-02**: Generate static room listing page (`/rooms`) showing all rooms with thumbnail photos, amenity badges, and nightly rates
-- [ ] **ROOM-03**: Generate individual static room detail pages (`/rooms/:id`) with full-size photos, complete description, amenities list, and rates
+- [x] **ROOM-02**: Generate static room listing page (`/rooms`) showing all rooms with thumbnail photos, amenity badges, and nightly rates
+- [x] **ROOM-03**: Generate individual static room detail pages (`/rooms/:id`) with full-size photos, complete description, amenities list, and rates
 - [ ] **ROOM-04**: Room listings display high-quality photos from Hostaway using Astro Image component with lazy loading and WebP/AVIF format
 - [ ] **ROOM-05**: Amenity badges on room cards (e.g., "WiFi", "Hot Tub", "Water View") visually distinct and scannable
 - [ ] **ROOM-06**: Room detail pages include gallery carousel or scrollable photo section with 4+ photos per room
@@ -20,14 +20,14 @@ These are the v1 requirements for the Bristol Inn proof-of-concept website. Each
 
 ### Availability & Booking (BOOK)
 
-- [ ] **BOOK-01**: Implement date picker component that allows guests to select check-in and check-out dates on `/rooms` page
-- [ ] **BOOK-02**: Check availability in real-time via API call (not static) when guest selects dates, confirming room is still available
-- [ ] **BOOK-03**: Display available rooms filtered by selected dates with updated pricing and availability status
+- [x] **BOOK-01**: Implement date picker component that allows guests to select check-in and check-out dates on `/rooms` page
+- [x] **BOOK-02**: Check availability in real-time via API call (not static) when guest selects dates, confirming room is still available
+- [x] **BOOK-03**: Display available rooms filtered by selected dates with updated pricing and availability status
 - [ ] **BOOK-04**: Show availability calendar on room detail page indicating blocked/open dates (visual indicator, updated on load)
 - [ ] **BOOK-05**: "Book Now" button redirects to Hostaway checkout with pre-filled parameters (room ID, check-in date, check-out date, guest count)
-- [ ] **BOOK-06**: Validate booking parameters server-side before redirect (confirm dates are future, checkout > check-in, room ID exists)
+- [x] **BOOK-06**: Validate booking parameters server-side before redirect (confirm dates are future, checkout > check-in, room ID exists)
 - [ ] **BOOK-07**: Clear messaging before redirect: "You will be redirected to Hostaway to complete your booking securely"
-- [ ] **BOOK-08**: Availability API endpoint (`GET /api/rooms/:id/availability?checkIn=...&checkOut=...`) returns real-time data from Hostaway
+- [x] **BOOK-08**: Availability API endpoint (`GET /api/rooms/availability?checkIn=...&checkOut=...&guests=N`) returns real-time data from Hostaway — implemented as a batch endpoint covering all rooms in one call
 - [ ] **BOOK-09**: Fallback behavior if Hostaway API fails: show cached availability or "Call to book" CTA instead of error
 
 ### Content Management (CONTENT)
@@ -35,11 +35,11 @@ These are the v1 requirements for the Bristol Inn proof-of-concept website. Each
 - [x] **CONTENT-01**: Homepage (`/`) renders content from Sanity with hero section, inn overview, and call-to-action
 - [x] **CONTENT-02**: Generic page template accepts Sanity content documents and renders at URLs determined by page slug (e.g., `/about`, `/contact`)
 - [~] **CONTENT-03**: ~~Prismic draft content accessible in PR previews~~ — descoped; preview route removed; Sanity Studio used for content review instead
-- [ ] **CONTENT-04**: Contact page (`/contact`) displays contact information prominently (email, phone, address)
+- [x] **CONTENT-04**: Contact page (`/contact`) displays contact information prominently (email, phone, address)
 - [ ] **CONTENT-05**: Contact form on `/contact` page with fields: name, email, message; client-side validation
 - [ ] **CONTENT-06**: Contact form submission sends data to backend API endpoint (`POST /api/contact/submit`)
 - [ ] **CONTENT-07**: Backend contact form handler sends confirmation email to guest and notification email to inn
-- [ ] **CONTENT-08**: About page (`/about` or via Sanity slug) displays inn story, history, and value proposition
+- [x] **CONTENT-08**: About page (`/about` or via Sanity slug) displays inn story, history, and value proposition
 
 ### Performance & Web Vitals (PERF)
 
@@ -207,30 +207,30 @@ Each v1 requirement is mapped to the phase that will implement it.
 
 | REQ-ID | Requirement | Phase | Status |
 |--------|-------------|-------|--------|
-| ROOM-01 | Fetch rooms from Hostaway API | 2 | Pending |
-| ROOM-02 | Generate room listing page | 2 | Pending |
-| ROOM-03 | Generate room detail pages | 2 | Pending |
+| ROOM-01 | Fetch rooms from Hostaway API | 2 | Complete |
+| ROOM-02 | Generate room listing page | 2 | Complete |
+| ROOM-03 | Generate room detail pages | 2 | Complete |
 | ROOM-04 | Optimize photos with Astro Image | 5 | Pending |
 | ROOM-05 | Amenity badges on cards | 5 | Pending |
 | ROOM-06 | Room gallery carousel | 5 | Pending |
 | ROOM-07 | Display pricing | 5 | Pending |
-| BOOK-01 | Date picker component | 3 | Pending |
-| BOOK-02 | Real-time availability check | 3 | Pending |
-| BOOK-03 | Filter rooms by dates | 3 | Pending |
+| BOOK-01 | Date picker component | 3 | Complete |
+| BOOK-02 | Real-time availability check | 3 | Complete |
+| BOOK-03 | Filter rooms by dates | 3 | Complete |
 | BOOK-04 | Availability calendar | 3 | Pending |
 | BOOK-05 | Redirect to Hostaway | 3 | Pending |
-| BOOK-06 | Server-side parameter validation | 3 | Pending |
+| BOOK-06 | Server-side parameter validation | 3 | Complete |
 | BOOK-07 | Redirect messaging | 3 | Pending |
-| BOOK-08 | Availability API endpoint | 3 | Pending |
+| BOOK-08 | Availability API endpoint | 3 | Complete |
 | BOOK-09 | Fallback for API failures | 3 | Pending |
 | CONTENT-01 | Homepage rendering | 2 | Complete |
 | CONTENT-02 | Generic page template | 2 | Complete |
 | CONTENT-03 | Draft preview | 2 | Descoped |
-| CONTENT-04 | Contact page display | 2 | Pending |
+| CONTENT-04 | Contact page display | 2 | Complete |
 | CONTENT-05 | Contact form validation | 4 | Pending |
 | CONTENT-06 | Contact form API | 4 | Pending |
 | CONTENT-07 | Email notifications | 4 | Pending |
-| CONTENT-08 | About page | 2 | Pending |
+| CONTENT-08 | About page | 2 | Complete |
 | PERF-01 | LCP < 2.5s on 4G | 5 | Pending |
 | PERF-02 | CLS < 0.1 | 5 | Pending |
 | PERF-03 | FCP < 1.8s | 5 | Pending |

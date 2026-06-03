@@ -9,9 +9,12 @@ interface Props {
   title: string;
   description?: string;  // plain-string fallback for non-CMS pages
   meta?: SanityMeta;     // Sanity-backed meta for CMS pages
+  backgroundColor?: string;
+  navigationVariant?: 'sand-100' | 'transparent' | 'forest-400';
+  textColor?: 'ink-900' | 'sand-050';
 }
 
-const { title, description, meta: pageMeta } = Astro.props;
+const { title, description, meta: pageMeta, backgroundColor = 'sand-100', textColor = 'ink-900', navigationVariant } = Astro.props;
 
 const settings = await getSettings();
 const siteMeta = settings?.meta;
@@ -42,9 +45,9 @@ const resolvedOgImage     = pageMeta?.ogImage?.url  ?? siteMeta?.ogImage?.url;
     {resolvedDescription && <meta name="twitter:description" content={resolvedDescription} />}
     {resolvedOgImage     && <meta name="twitter:image"       content={resolvedOgImage} />}
   </head>
-  <body class="flex flex-col min-h-screen font-serif bg-sand-100 text-ink-900">
+  <body class:list={['flex flex-col min-h-screen font-serif', `bg-${backgroundColor}`, `text-${textColor}`]}>
     <div class="flex flex-col flex-1">
-      <NavigationTopBar />
+      <NavigationTopBar variant={navigationVariant} textColor={textColor} />
       <main class="flex-1">
         <slot />
       </main>

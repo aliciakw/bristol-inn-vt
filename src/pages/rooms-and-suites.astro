@@ -1,0 +1,38 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import SliceZone from '../components/SliceZone.astro';
+import { RoomBrowser } from '../components/rooms/RoomBrowser';
+import { getPage } from '../lib/sanity';
+import { getRooms } from '../lib/hostaway';
+
+const [page, rooms] = await Promise.all([
+  getPage('rooms-and-suites'),
+  getRooms(),
+]);
+
+const pageTitle = page?.title || 'Rooms & Suites';
+
+const browserRooms = rooms.map(r => ({
+  id: r.id,
+  name: r.name,
+  price: r.price,
+  personCapacity: r.personCapacity,
+  photo: r.photos[0] ?? { url: '', caption: '' },
+  amenities: r.amenityNames.slice(0, 3),
+}));
+---
+
+<BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta} backgroundColor="forest-400" textColor="sand-050" navigationVariant="transparent">
+  {(page?.body?.length ?? 0) > 0 && (
+    <div class="max-w-3xl mx-auto px-4 pt-8 pb-4">
+      <h1 class="text-3xl font-medium mb-6">{pageTitle}</h1>
+      <SliceZone blocks={page!.body} />
+    </div>
+  )}
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    {(page?.body?.length ?? 0) === 0 && (
+      <h1 class="text-3xl font-bold text-gray-900 mb-8">{pageTitle}</h1>
+    )}
+    <RoomBrowser client:load rooms={browserRooms} />
+  </div>
+</BaseLayout>

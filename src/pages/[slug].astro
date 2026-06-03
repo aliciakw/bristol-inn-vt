@@ -4,11 +4,15 @@ import BaseLayout from '@layouts/BaseLayout.astro'
 import SliceZone from '../components/SliceZone.astro'
 
 export async function getStaticPaths() {
+  // Slugs handled by dedicated page files — exclude them from this catch-all
+  const dedicatedSlugs = new Set(['rooms-and-suites']);
   const pages = await getPages()
-  return pages.map(page => ({
-    params: { slug: page.uid },
-    props: { slug: page.uid },
-  }))
+  return pages
+    .filter(page => !dedicatedSlugs.has(page.uid))
+    .map(page => ({
+      params: { slug: page.uid },
+      props: { slug: page.uid },
+    }))
 }
 
 type Props = { slug: string }
@@ -18,7 +22,7 @@ const pageTitle = page.title || 'Untitled'
 ---
 <BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page.meta}>
   <div class="max-w-3xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">{pageTitle}</h1>
+    <h1 class="text-3xl font-bold mb-6">{pageTitle}</h1>
     <SliceZone blocks={page.body} />
   </div>
 </BaseLayout>
