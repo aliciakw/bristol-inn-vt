@@ -26,19 +26,6 @@ const sidebarLinks = settings?.sidebarLinks ?? []
 >
   <!-- Left: hamburger (+ Contact Us on tablet+) -->
   <div class="flex items-center gap-3 desktop:gap-6 pl-4 desktop:pl-6">
-    <button
-      id="nav-menu-toggle"
-      type="button"
-      aria-label="Open navigation menu"
-      aria-expanded="false"
-      aria-controls="nav-menu"
-      class="flex flex-col justify-center items-center gap-[5px] w-12 h-12 shrink-0 cursor-pointer rounded-full bg-khaki-200 desktop:bg-transparent desktop:w-10 desktop:h-10"
-    >
-      <span class="block w-5 desktop:w-6 h-[2px] bg-ink-900 rounded-full transition-transform origin-center" data-bar="top"></span>
-      <span class="block w-5 desktop:w-6 h-[2px] bg-ink-900 rounded-full transition-opacity" data-bar="mid"></span>
-      <span class="block w-5 desktop:w-6 h-[2px] bg-ink-900 rounded-full transition-transform origin-center" data-bar="bot"></span>
-    </button>
-
     <a
       href="/contact"
       class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-khaki-200 border border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 whitespace-nowrap hover:bg-khaki-300 transition-colors"
@@ -60,14 +47,27 @@ const sidebarLinks = settings?.sidebarLinks ?? []
   </div>
 
   <!-- Right: Reserve A Room (desktop only) -->
-  <div class="hidden desktop:flex items-center ml-auto pr-4 desktop:pr-16">
+  <div class="desktop:flex items-center ml-auto pr-4 gap-4">
     <a
       href={bookingUrl}
-      class="inline-flex items-center justify-center h-11 px-5 rounded-full bg-forest-400 border border-sand-100 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-sand-100 whitespace-nowrap hover:opacity-90 transition-opacity"
+      class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-forest-400 border border-sand-100 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-sand-100 whitespace-nowrap hover:opacity-90 transition-opacity"
     >
       Reserve A Room
     </a>
+    <button
+      id="nav-menu-toggle"
+      type="button"
+      aria-label="Open navigation menu"
+      aria-expanded="false"
+      aria-controls="nav-menu"
+      class="flex flex-col justify-center items-center gap-[5px] w-12 h-12 shrink-0 cursor-pointer rounded-full bg-khaki-200 desktop:bg-transparent desktop:w-10 desktop:h-10"
+    >
+      <span class="block w-5 desktop:w-6 h-[2px] bg-ink-900 rounded-full transition-transform origin-center" data-bar="top"></span>
+      <span class="block w-5 desktop:w-6 h-[2px] bg-ink-900 rounded-full transition-opacity" data-bar="mid"></span>
+      <span class="block w-5 desktop:w-6 h-[2px] bg-ink-900 rounded-full transition-transform origin-center" data-bar="bot"></span>
+    </button>
   </div>
+  
 </header>
 
 <!-- Nav drawer (slides in from right) -->
@@ -78,7 +78,7 @@ const sidebarLinks = settings?.sidebarLinks ?? []
   aria-hidden="true"
 >
   <!-- Close button -->
-  <div class="flex justify-end mb-10 p-3 desktop:p-6">
+  <div class="flex justify-end mb-10 p-3 desktop:pt-7 desktop:pr-4">
     <button
       id="nav-menu-close"
       type="button"
@@ -91,8 +91,8 @@ const sidebarLinks = settings?.sidebarLinks ?? []
     </button>
   </div>
 
-  <!-- Reserve A Room pill -->
-  <div class="mb-10 p-6 flex flex-col gap-12 items-start">
+  <!-- Content -->
+  <div class="mb-10 p-6 desktop:p-7 flex flex-col gap-12 items-start">
     <a
       href={bookingUrl}
       class="inline-flex items-center justify-center h-11 px-6 rounded-full bg-lilac-200 border border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 hover:bg-lilac-200/70 transition-colors"

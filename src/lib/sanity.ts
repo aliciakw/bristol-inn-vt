@@ -21,6 +21,12 @@ export function getClient(): SanityClient {
 
 export type SanityBlock = { _type: string; _key: string; [key: string]: unknown }
 
+export type SanityMeta = {
+  ogTitle?: string
+  ogDescription?: string
+  ogImage?: { url: string }
+}
+
 export type SanityHomepage = {
   heroImages: { url: string; alt: string }[]
   ctaLabel: string
@@ -30,7 +36,7 @@ export type SanityHomepage = {
 
 export type SanityPage = {
   title: string
-  metaDescription: string
+  meta?: SanityMeta
   body: SanityBlock[]
   uid: string
 }
@@ -53,7 +59,11 @@ export async function getPage(slug: string): Promise<SanityPage> {
   return getClient().fetch<SanityPage>(
     `*[_type == "page" && slug.current == $slug][0]{
       title,
-      metaDescription,
+      "meta": meta{
+        ogTitle,
+        ogDescription,
+        "ogImage": ogImage.asset->{ "url": url }
+      },
       body,
       "uid": slug.current
     }`,
@@ -85,6 +95,7 @@ export type SanityAwardImage = {
 }
 
 export type SanitySettings = {
+  meta?: SanityMeta
   sidebarLinks: SanityLink[]
   footerSections: SanityFooterSection[]
   awardImages: SanityAwardImage[]
@@ -96,6 +107,11 @@ const SETTINGS_ID = 'settings-singleton'
 export async function getSettings(): Promise<SanitySettings> {
   return getClient().fetch<SanitySettings>(
     `*[_type == "settings" && _id == $id][0]{
+      "meta": meta{
+        ogTitle,
+        ogDescription,
+        "ogImage": ogImage.asset->{ "url": url }
+      },
       "sidebarLinks": sidebarLinks[]{
         label,
         "href": select(

@@ -35,14 +35,6 @@ const footerRichTextOf = [
       ],
     },
   }),
-  defineArrayMember({
-    type: 'image',
-    title: 'Image',
-    options: { hotspot: true },
-    fields: [
-      defineField({ name: 'alt', title: 'Alt text', type: 'string' }),
-    ],
-  }),
 ]
 
 export const settingsType = defineType({
