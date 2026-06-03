@@ -15,12 +15,12 @@ const isTransparent = variant === 'transparent';
 <header
   id="nav-top-bar"
   class:list={[
-    'w-full h-16 desktop:h-[112px] sticky top-0 z-40 flex items-center shrink-0',
+    'w-full h-16 desktop:h-[96px] sticky top-0 z-40 flex items-center shrink-0',
     isTransparent ? 'bg-transparent' : 'bg-sand-100',
   ]}
 >
   <!-- Left: hamburger (+ Contact Us on tablet+) -->
-  <div class="flex items-center gap-3 pl-4 desktop:pl-6">
+  <div class="flex items-center gap-3 desktop:gap-6 pl-4 desktop:pl-6">
     <button
       id="nav-menu-toggle"
       type="button"
@@ -55,7 +55,7 @@ const isTransparent = variant === 'transparent';
   </div>
 
   <!-- Right: Reserve A Room (desktop only) -->
-  <div class="hidden desktop:flex items-center ml-auto pr-4 desktop:pr-6">
+  <div class="hidden desktop:flex items-center ml-auto pr-4 desktop:pr-16">
     <a
       href={bookingUrl}
       class="inline-flex items-center justify-center h-11 px-5 rounded-full bg-forest-400 border border-sand-100 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-sand-100 whitespace-nowrap hover:opacity-90 transition-opacity"
