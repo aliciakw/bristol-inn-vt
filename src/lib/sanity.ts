@@ -21,6 +21,12 @@ export function getClient(): SanityClient {
 
 export type SanityBlock = { _type: string; _key: string; [key: string]: unknown }
 
+export type SanityMeta = {
+  ogTitle?: string
+  ogDescription?: string
+  ogImage?: { url: string }
+}
+
 export type SanityHomepage = {
   heroImages: { url: string; alt: string }[]
   ctaLabel: string
@@ -30,7 +36,7 @@ export type SanityHomepage = {
 
 export type SanityPage = {
   title: string
-  metaDescription: string
+  meta?: SanityMeta
   body: SanityBlock[]
   uid: string
 }
@@ -53,7 +59,11 @@ export async function getPage(slug: string): Promise<SanityPage> {
   return getClient().fetch<SanityPage>(
     `*[_type == "page" && slug.current == $slug][0]{
       title,
-      metaDescription,
+      "meta": meta{
+        ogTitle,
+        ogDescription,
+        "ogImage": ogImage.asset->{ "url": url }
+      },
       body,
       "uid": slug.current
     }`,
@@ -64,5 +74,70 @@ export async function getPage(slug: string): Promise<SanityPage> {
 export async function getPages(): Promise<Pick<SanityPage, 'uid'>[]> {
   return getClient().fetch<Pick<SanityPage, 'uid'>[]>(
     `*[_type == "page"]{ "uid": slug.current }`
+  )
+}
+
+export type SanityLink = {
+  label: string
+  href: string          // resolved from url or internalLink slug
+  openInNewTab: boolean
+}
+
+export type SanityFooterSection = {
+  title: string
+  content: SanityBlock[]
+}
+
+export type SanityAwardImage = {
+  url: string
+  alt: string
+  linkUrl?: string
+}
+
+export type SanitySettings = {
+  meta?: SanityMeta
+  sidebarLinks: SanityLink[]
+  footerSections: SanityFooterSection[]
+  awardImages: SanityAwardImage[]
+  directionsLink: SanityLink | null
+}
+
+const SETTINGS_ID = 'settings-singleton'
+
+export async function getSettings(): Promise<SanitySettings> {
+  return getClient().fetch<SanitySettings>(
+    `*[_type == "settings" && _id == $id][0]{
+      "meta": meta{
+        ogTitle,
+        ogDescription,
+        "ogImage": ogImage.asset->{ "url": url }
+      },
+      "sidebarLinks": sidebarLinks[]{
+        label,
+        "href": select(
+          linkType == "internal" => "/" + internalLink->slug.current,
+          url
+        ),
+        "openInNewTab": coalesce(openInNewTab, false)
+      },
+      "footerSections": footerSections[]{
+        title,
+        content
+      },
+      "awardImages": awardImages[]{
+        "url": asset->url,
+        alt,
+        "linkUrl": url
+      },
+      "directionsLink": directionsLink{
+        label,
+        "href": select(
+          linkType == "internal" => "/" + internalLink->slug.current,
+          url
+        ),
+        "openInNewTab": coalesce(openInNewTab, false)
+      }
+    }`,
+    { id: SETTINGS_ID }
   )
 }

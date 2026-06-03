@@ -1,10 +1,97 @@
 ---
-interface Props {}
-const {} = Astro.props;
+import { toHTML } from '@portabletext/to-html'
+import { getSettings } from '../lib/sanity'
+
+const year = new Date().getFullYear()
+
+const settings = await getSettings()
+const { footerSections = [], awardImages = [], directionsLink } = settings ?? {}
+
+function sectionToHTML(content: unknown[]): string {
+  return toHTML(content as Parameters<typeof toHTML>[0], {
+    components: {
+      block: {
+        normal: ({ children }) => `<p class="font-serif text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100">${children}</p>`,
+        h4: ({ children }) => `<h4 class="font-serif text-[31px] leading-[1.2] text-white mt-[4rem] mb-6">${children}</h4>`,
+        small: ({ children }) => `<p class="font-serif text-[14px] leading-[1.4] tracking-[0.01em] text-sand-100">${children}</p>`,
+      },
+      marks: {
+        em: ({ children }) => `<em>${children}</em>`,
+        link: ({ children, value }) => {
+          const target = value?.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : ''
+          return `<a href="${value?.href ?? '#'}"${target} class="underline hover:text-white transition-colors">${children}</a>`
+        },
+      },
+    },
+  })
+}
 ---
 
-<footer class="bg-gray-800 text-white">
-  <div class="max-w-7xl mx-auto px-4 py-8">
-    <p>&copy; 2026 Bristol Inn. All rights reserved.</p>
+<footer class="bg-prussian-700 max-w-[100vw] overflow-x-hidden">
+  <div class="grid grid-cols-2 desktop:grid-cols-3 gap-x-8 gap-y-10 px-6 py-14 desktop:gap-x-16 desktop:gap-y-12 desktop:px-24 desktop:py-[4.5rem]">
+
+    {footerSections.map((section, i) => {
+      // First section spans col 1 rows 1–3 on desktop to make room for award images
+      const isFirst = i === 0
+
+      return (
+        <section class:list={[
+          isFirst
+            ? 'col-span-2 desktop:col-start-1 desktop:col-span-1 desktop:row-start-1 desktop:row-span-3 flex flex-col'
+            : ''
+        ]}>
+
+          {section.content?.length > 0 && (
+            <div set:html={sectionToHTML(section.content)} />
+          )}
+
+          {isFirst && awardImages.length > 0 && (
+            <div class="mt-auto pt-10 flex flex-wrap items-center gap-4">
+              {awardImages.map(({ url, alt, linkUrl }) => {
+                const img = (
+                  <img
+                    src={url}
+                    alt={alt}
+                    class="h-[2.5rem] w-auto object-contain"
+                    loading="lazy"
+                  />
+                )
+                return linkUrl
+                  ? <a href={linkUrl} target="_blank" rel="noopener noreferrer">{img}</a>
+                  : img
+              })}
+            </div>
+          )}
+        </section>
+      )
+    })}
+
+    <!-- Subscribe: full-width on mobile, col 3 row 3 on desktop (always present) -->
+    <section class="col-span-2 desktop:col-start-3 desktop:col-span-1 desktop:row-start-3">
+      <h3 class="font-serif text-[31px] leading-[1.2] text-white mb-3">Subscribe</h3>
+      <p class="font-serif text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 mb-5">
+        Keep apprised of the latest events and promotions
+      </p>
+      <form class="flex gap-2" method="post" action="/api/subscribe">
+        <input
+          type="email"
+          name="email"
+          placeholder="you@email.com"
+          required
+          class="flex-1 min-w-0 h-11 px-5 rounded-full bg-sand-100 border border-ink-900 font-serif text-[17px] text-ink-900 placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-ink-900"
+        />
+        <button
+          type="submit"
+          class="shrink-0 h-11 px-5 rounded-full bg-khaki-300 border-2 border-ink-900 font-serif font-medium text-[16px] text-ink-900 hover:opacity-90 transition-opacity"
+        >
+          Subscribe
+        </button>
+      </form>
+    </section>
+
+  </div>
+
+  <div class="border-t border-white/10 px-6 py-4 desktop:px-24">
+    <p class="font-serif text-[14px] text-sand-100/60">&copy; {year} Bristol Inn. All rights reserved.</p>
   </div>
 </footer>

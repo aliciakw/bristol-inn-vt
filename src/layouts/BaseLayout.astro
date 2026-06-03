@@ -1,15 +1,24 @@
 ---
-interface Props {
-  title: string;
-  description?: string;
-}
-
-import Header from '@components/Header.astro';
-import Navigation from '@components/Navigation.astro';
+import NavigationTopBar from '@components/NavigationTopBar.astro';
 import Footer from '@components/Footer.astro';
+import { getSettings } from '../lib/sanity';
+import type { SanityMeta } from '../lib/sanity';
 import '@styles/global.css';
 
-const { title, description } = Astro.props;
+interface Props {
+  title: string;
+  description?: string;  // plain-string fallback for non-CMS pages
+  meta?: SanityMeta;     // Sanity-backed meta for CMS pages
+}
+
+const { title, description, meta: pageMeta } = Astro.props;
+
+const settings = await getSettings();
+const siteMeta = settings?.meta;
+
+const resolvedTitle       = pageMeta?.ogTitle       ?? title;
+const resolvedDescription = pageMeta?.ogDescription ?? description ?? siteMeta?.ogDescription;
+const resolvedOgImage     = pageMeta?.ogImage?.url  ?? siteMeta?.ogImage?.url;
 ---
 
 <!DOCTYPE html>
@@ -17,19 +26,29 @@ const { title, description } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    {description && <meta name="description" content={description} />}
+
+    <title>{resolvedTitle}</title>
+    {resolvedDescription && <meta name="description" content={resolvedDescription} />}
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={resolvedTitle} />
+    <meta property="og:type" content="website" />
+    {resolvedDescription && <meta property="og:description" content={resolvedDescription} />}
+    {resolvedOgImage     && <meta property="og:image"       content={resolvedOgImage} />}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={resolvedTitle} />
+    {resolvedDescription && <meta name="twitter:description" content={resolvedDescription} />}
+    {resolvedOgImage     && <meta name="twitter:image"       content={resolvedOgImage} />}
   </head>
   <body class="flex flex-col min-h-screen font-serif bg-sand-100 text-ink-900">
-    <Header />
-    <Navigation />
-    <main class="flex-1">
-      <slot />
-    </main>
+    <div class="flex flex-col flex-1">
+      <NavigationTopBar />
+      <main class="flex-1">
+        <slot />
+      </main>
+    </div>
     <Footer />
   </body>
 </html>
-
-<style>
-  /* Tailwind utilities applied via classes above */
-</style>
