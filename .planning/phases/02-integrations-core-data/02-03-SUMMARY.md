@@ -1,7 +1,7 @@
 ---
 phase: 02-integrations-core-data
 plan: 3
-title: "Prismic CMS Library: getHomepage, getPage, getPages"
+title: 'Prismic CMS Library: getHomepage, getPage, getPages'
 subsystem: cms-integration
 tags: [prismic, cms, typescript, wrapper, tdd]
 dependency-graph:
@@ -25,14 +25,14 @@ key-files:
     - tests/lib/prismic.test.ts
   modified: []
 decisions:
-  - "Singleton _client initialized lazily on first getClient() call; null-guarded"
-  - "No try/catch on any function — build fails on Prismic error per D-07"
-  - "PRISMIC_TOKEN passed to createClient options only; never logged"
-  - "getClient() exported for preview.astro direct use (resolvePreviewURL)"
-  - "Test captures initialCreateClientArgs before beforeEach clears mocks — solves singleton isolation"
+  - 'Singleton _client initialized lazily on first getClient() call; null-guarded'
+  - 'No try/catch on any function — build fails on Prismic error per D-07'
+  - 'PRISMIC_TOKEN passed to createClient options only; never logged'
+  - 'getClient() exported for preview.astro direct use (resolvePreviewURL)'
+  - 'Test captures initialCreateClientArgs before beforeEach clears mocks — solves singleton isolation'
 metrics:
-  duration: "~12 minutes"
-  completed: "2026-05-15"
+  duration: '~12 minutes'
+  completed: '2026-05-15'
   tasks_completed: 1
   tasks_total: 1
 requirements:
@@ -49,11 +49,11 @@ requirements:
 
 ## Commits
 
-| Task | Commit  | Message                                                       |
-|------|---------|---------------------------------------------------------------|
-| RED  | 02656ac | test(02-03): add failing tests for prismic.ts wrapper         |
-| GREEN| 81ec084 | feat(02-03): implement Prismic CMS client wrapper             |
-| FIX  | 20668ad | fix(02-03): fix makeDocument fixture uid type to allow null   |
+| Task  | Commit  | Message                                                     |
+| ----- | ------- | ----------------------------------------------------------- |
+| RED   | 02656ac | test(02-03): add failing tests for prismic.ts wrapper       |
+| GREEN | 81ec084 | feat(02-03): implement Prismic CMS client wrapper           |
+| FIX   | 20668ad | fix(02-03): fix makeDocument fixture uid type to allow null |
 
 ## TDD Gate Compliance
 
@@ -80,6 +80,7 @@ requirements:
 ### Auto-fixed Issues
 
 **1. [Rule 1 - Bug] TypeScript strict null in test fixture**
+
 - **Found during:** Post-GREEN `tsc --noEmit`
 - **Issue:** `makeDocument` fixture typed `uid: string` but the override site passed `uid: null` (valid for homepage documents); TypeScript strict mode flagged `Type 'null' is not assignable to type 'string | undefined'`
 - **Fix:** Changed fixture overrides type to `uid: string | null` — matches `prismic.PrismicDocument.uid`
@@ -87,6 +88,7 @@ requirements:
 - **Commit:** 20668ad
 
 **2. [Rule 1 - Bug] Singleton breaks per-test mock call isolation**
+
 - **Found during:** First GREEN run (12/13 tests passing)
 - **Issue:** `_client` singleton is set on first `getClient()` call; `beforeEach` clears mock call counts but the cached client means `createClient` is never called again — second test saw 0 `mockCreateClient.mock.calls`
 - **Fix:** Captured `initialCreateClientArgs` at module load time (before any `beforeEach` runs) by calling `getClient()` immediately after the dynamic import; each `getClient()` describe test references this pre-captured value
@@ -100,6 +102,7 @@ None — `src/lib/prismic.ts` is a pure data-fetching library with no UI or hard
 ## Threat Flags
 
 No new threat surface beyond the plan's threat model. Mitigations confirmed:
+
 - **T-02-08** (PRISMIC_TOKEN disclosure): Token appears only in `createClient` options object; no `console.log` of token value anywhere in `prismic.ts`
 - **T-02-09** (slug param in getByUID): `getPage(slug)` passes the slug only to `client.getByUID('page', slug)`; Prismic's API returns 404 for unknown UIDs — no SSRF, no arbitrary URL construction
 

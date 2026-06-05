@@ -114,32 +114,39 @@ Features less common in small inns that provide competitive edge.
 ## Anti-Features (Don't Build These)
 
 ### Embedded Payment Processing
+
 - **Why avoid:** PCI compliance liability, fraud handling, refund complexity.
 - **What to do instead:** Clear redirect messaging; Hostaway handles all payments.
 
 ### User Accounts & Guest Logins (v1)
+
 - **Why avoid:** Authentication adds complexity without v1 benefit. Guests book once; no need for accounts.
 - **What to do instead:** Anonymous booking. Revisit if loyalty program becomes valuable.
 
 ### Detailed Room Filtering (v1)
+
 - **Why avoid:** Small inns (3-10 rooms) don't require complex filtering. Guests browse all options.
 - **What to do instead:** Simple listing with clear amenity highlights ("has hot tub", "water view", "family suite").
 
 ### Live Chat Support
+
 - **Why avoid:** Requires 24/7 staffing. Small inns lack resources.
 - **What to do instead:** Email form with clear response time + FAQ.
 
 ### Heavy Third-Party Widgets
+
 - **Why avoid:** Each widget adds HTTP requests, JavaScript, and page bloat. Kills performance.
 - **What to do instead:** Choose 1-2 essential integrations (Hostaway + Prismic + analytics).
 
 ### Upsells & Ancillary Products (v1)
+
 - **Why avoid:** Adds checkout friction and abandonment.
 - **What to do instead:** Mention extras in room descriptions ("Activities available upon request").
 
 ## Feature Complexity Estimates
 
 ### High-Effort (3+ weeks)
+
 - Virtual tours / 360 photos
 - Custom booking engine
 - User accounts with loyalty program
@@ -147,6 +154,7 @@ Features less common in small inns that provide competitive edge.
 - Advanced analytics dashboard
 
 ### Medium-Effort (1-2 weeks)
+
 - Guest testimonials display
 - Seasonal promotions with conditional rendering
 - Room filtering by amenity
@@ -155,6 +163,7 @@ Features less common in small inns that provide competitive edge.
 - Contact form with backend
 
 ### Low-Effort (< 1 week)
+
 - Room descriptions + amenities
 - Photo galleries (use Hostaway photos)
 - Availability calendar
@@ -167,6 +176,7 @@ Features less common in small inns that provide competitive edge.
 ## Room Browsing & Discovery Best Practices
 
 **What works:**
+
 - Hero image or carousel per room
 - Grid layout (2-3 cols desktop, 1 mobile)
 - Quick date picker at top (sticky while browsing)
@@ -174,12 +184,14 @@ Features less common in small inns that provide competitive edge.
 - Cards link to detail pages (enables SEO, sharing)
 
 **Common UX patterns:**
+
 - Related/similar rooms at bottom of detail page
 - Price shown in card and detail page
 - Visual badges ("Best Value", "Hot Tub", "Water View")
 - Amenity icons (WiFi, AC, hot tub, etc.)
 
 **SEO considerations:**
+
 - Unique titles: `Sunset Suite with Hot Tub - Bristol Inn`
 - Room names searchable ("Ocean View Deluxe", not "Room A")
 - Amenity list in text + schema markup
@@ -189,14 +201,17 @@ Features less common in small inns that provide competitive edge.
 ## Booking & Availability Best Practices
 
 **Standard flow:**
+
 1. Browse rooms → Select dates → View available rooms → Pick room → See total → Book Now → Hostaway
 
 **Hostaway integration patterns:**
+
 - Fetch room catalog daily (keep inventory fresh)
 - Check real-time availability before redirect
 - Pass pre-filled data to Hostaway (room ID, dates, guests)
 
 **Common friction points:**
+
 - **Availability conflicts** → Room shown available, unavailable at checkout. Solution: Real-time check before redirect.
 - **Price surprises** → $120/night listed, $180 final with fees. Solution: Show "from $X"; calculate total before redirect.
 - **Unclear checkout** → Guest doesn't understand they're leaving your site. Solution: "Complete payment securely through Hostaway".
@@ -208,22 +223,26 @@ Features less common in small inns that provide competitive edge.
 **Why important for inns:** Guests choose small inns over hotels for experience + personality. Storytelling creates emotional connection.
 
 **Content that converts:**
+
 - Owner story: "Sarah & Mike left corporate jobs to open Bristol Inn in 2018..."
 - Inn history: "Built in 1895, lovingly restored..."
 - Staff bios: "Chef James, 15 years farm-to-table experience..."
 - Seasonal updates: "Fall apple picking Sept 1st. Recommend the orchard 2 miles south..."
 
 **Photo galleries:**
+
 - 4-6 photos minimum per room
 - Show: bed, bathroom, view, unique feature, ambiance
 - Natural lighting > staged
 
 **Staff bios:**
+
 - Photos + names (personal touch)
 - Brief background (2-3 sentences)
 - Personality details (dog lover, makes the best croissants)
 
 **About page:**
+
 - Start with "why" — Why did you open this inn?
 - Include timeline — Founding, renovations, evolution
 - Highlight unique points — "Only inn with hot spring access"
@@ -233,12 +252,14 @@ Features less common in small inns that provide competitive edge.
 ## Guest Reviews & Social Proof
 
 **Display locations:**
+
 - Homepage — Testimonial carousel ("4.8 stars, 180+ guests")
 - Room detail pages — "Guests loved the hot tub" with relevant snippets
 - Booking flow — Quote just before "Book Now" reduces abandonment
 - Footer — Awards, certifications, media mentions
 
 **Integration options:**
+
 1. Hostaway native reviews (if available via API)
 2. Google My Business reviews (many guests review here)
 3. TripAdvisor / Airbnb reviews (if inn lists there)
@@ -250,6 +271,7 @@ Features less common in small inns that provide competitive edge.
 ## Mobile & Responsiveness Critical Details
 
 **Touch-friendly patterns:**
+
 - Tap targets 44x44px minimum, 8px spacing
 - Scrollable galleries (swipe left/right)
 - Expandable forms (date picker full-screen on mobile)
@@ -257,11 +279,13 @@ Features less common in small inns that provide competitive edge.
 - Bottom-aligned CTAs (avoid sticky headers eating 25% of screen)
 
 **Mobile breakpoints (Tailwind mobile-first):**
+
 - Mobile (0-640px): Single column, large fonts, touch-friendly
 - Tablet (640-1024px): Two-column grid, optimized gallery
 - Desktop (1024px+): Three-column grid, full experience
 
 **Common mobile mistakes:**
+
 - Fixed headers consuming 25%+ of screen
 - Unoptimized images (5MB photos = 10s load on 4G)
 - Unresponsive date picker (tiny on mobile)
@@ -317,6 +341,7 @@ Features less common in small inns that provide competitive edge.
 - ✓ GA4 page view tracking
 
 **Not in v1:**
+
 - Virtual tours, guest accounts, payment processing, blog, advanced analytics
 
 ### Phase 2: Content & Trust (Week 2-4)
@@ -352,6 +377,7 @@ Features less common in small inns that provide competitive edge.
 ## Summary: What to Build in Bristol Inn V1
 
 **Start with table stakes only:**
+
 - Room browsing with real photos
 - Availability calendar + date picker
 - Complete booking flow to Hostaway checkout
@@ -359,16 +385,18 @@ Features less common in small inns that provide competitive edge.
 - Core Web Vitals < 2.5s LCP
 
 **Add immediately after launch (week 2-3):**
+
 - About page + inn story (high conversion impact)
 - Staff bios (personal touch)
 - Testimonials from Hostaway reviews
 - Contact form with response time promise
 
 **Defer to Phase 2+:**
+
 - Virtual tours, complex filtering, guest accounts, blog, upsells
 
 This balances **proof of concept** (validate tech stack + booking flow) with **credibility** (compelling story + social proof).
 
 ---
 
-*Last updated: 2026-05-05 with current ecosystem research*
+_Last updated: 2026-05-05 with current ecosystem research_

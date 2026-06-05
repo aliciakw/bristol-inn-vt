@@ -7,24 +7,31 @@ import '@styles/global.css';
 
 interface Props {
   title: string;
-  description?: string;  // plain-string fallback for non-CMS pages
-  meta?: SanityMeta;     // Sanity-backed meta for CMS pages
-  backgroundColor?: string;
+  description?: string; // plain-string fallback for non-CMS pages
+  meta?: SanityMeta; // Sanity-backed meta for CMS pages
+  backgroundColor?: 'sand-100' | 'forest-400';
   navigationVariant?: 'sand-100' | 'transparent' | 'forest-400';
   textColor?: 'ink-900' | 'sand-050';
 }
 
-const { title, description, meta: pageMeta, backgroundColor = 'sand-100', textColor = 'ink-900', navigationVariant } = Astro.props;
+const {
+  title,
+  description,
+  meta: pageMeta,
+  backgroundColor = 'sand-100',
+  textColor = 'ink-900',
+  navigationVariant,
+} = Astro.props;
 
 const settings = await getSettings();
 const siteMeta = settings?.meta;
 
-const resolvedTitle       = pageMeta?.ogTitle       ?? title;
+const resolvedTitle = pageMeta?.ogTitle ?? title;
 const resolvedDescription = pageMeta?.ogDescription ?? description ?? siteMeta?.ogDescription;
-const resolvedOgImage     = pageMeta?.ogImage?.url  ?? siteMeta?.ogImage?.url;
+const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -37,15 +44,21 @@ const resolvedOgImage     = pageMeta?.ogImage?.url  ?? siteMeta?.ogImage?.url;
     <meta property="og:title" content={resolvedTitle} />
     <meta property="og:type" content="website" />
     {resolvedDescription && <meta property="og:description" content={resolvedDescription} />}
-    {resolvedOgImage     && <meta property="og:image"       content={resolvedOgImage} />}
+    {resolvedOgImage && <meta property="og:image" content={resolvedOgImage} />}
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={resolvedTitle} />
     {resolvedDescription && <meta name="twitter:description" content={resolvedDescription} />}
-    {resolvedOgImage     && <meta name="twitter:image"       content={resolvedOgImage} />}
+    {resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
   </head>
-  <body class:list={['flex flex-col min-h-screen font-serif', `bg-${backgroundColor}`, `text-${textColor}`]}>
+  <body
+    class:list={[
+      'flex flex-col min-h-screen font-serif',
+      `bg-${backgroundColor}`,
+      `text-${textColor}`,
+    ]}
+  >
     <div class="flex flex-col flex-1">
       <NavigationTopBar variant={navigationVariant} textColor={textColor} />
       <main class="flex-1">

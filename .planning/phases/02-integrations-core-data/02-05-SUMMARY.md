@@ -1,10 +1,10 @@
 ---
 phase: 02-integrations-core-data
 plan: 5
-title: "Prismic Components: HeroCarousel and SliceZone"
+title: 'Prismic Components: HeroCarousel and SliceZone'
 subsystem: components
 tags: [astro, components, tailwind, prismic, carousel, slicezone]
-one_liner: "Vanilla JS fade carousel with no-JS fallback and Prismic slice dispatcher for RichText and ImageBlock"
+one_liner: 'Vanilla JS fade carousel with no-JS fallback and Prismic slice dispatcher for RichText and ImageBlock'
 requires:
   - 02-03
 provides:
@@ -16,22 +16,22 @@ affects:
 tech_stack:
   added: []
   patterns:
-    - "Astro Image with remote Prismic CDN URLs"
-    - "Vanilla JS fade via classList toggle (opacity-0/opacity-100)"
-    - "Prismic slice dispatching via slice_type string comparison"
-    - "as-casts for @prismicio/client strict TypeScript types"
+    - 'Astro Image with remote Prismic CDN URLs'
+    - 'Vanilla JS fade via classList toggle (opacity-0/opacity-100)'
+    - 'Prismic slice dispatching via slice_type string comparison'
+    - 'as-casts for @prismicio/client strict TypeScript types'
 key_files:
   created:
     - src/components/HeroCarousel.astro
     - src/components/SliceZone.astro
   modified: []
 decisions:
-  - "Used isFilled.image() guard in SliceZone before rendering image_block to avoid null URL runtime errors"
-  - "HeroCarousel script uses default Astro bundling (no is:inline) so the querySelector runs after DOM is ready"
+  - 'Used isFilled.image() guard in SliceZone before rendering image_block to avoid null URL runtime errors'
+  - 'HeroCarousel script uses default Astro bundling (no is:inline) so the querySelector runs after DOM is ready'
   - "SliceZone uses prismic.SliceZone as prop type rather than PrismicDocument['data']['body'] to avoid generic document constraint"
 metrics:
-  duration: "~8 minutes"
-  completed: "2026-05-16"
+  duration: '~8 minutes'
+  completed: '2026-05-16'
   tasks_completed: 2
   tasks_total: 2
   files_created: 2
@@ -49,6 +49,7 @@ Accepts `images: Array<{ url: string; alt: string }>`, `ctaLabel: string`, and `
 
 **SliceZone.astro** (`src/components/SliceZone.astro`)
 Accepts `slices: prismic.SliceZone` and maps over the array dispatching by `slice_type`. Handles:
+
 - `rich_text`: renders `prismic.asHTML()` output via `set:html` in a `max-w-prose` wrapper
 - `image_block`: renders Astro `<Image>` in a `<figure>`, applying full-width or prose-width layout based on `slice.primary.layout`, with optional figcaption
 - unknown types: returns `null` — silent skip, no error, no placeholder

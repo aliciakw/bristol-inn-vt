@@ -1,0 +1,46 @@
+---
+import { Image } from 'astro:assets';
+import type { SanityImage } from '../../lib/sanity';
+
+interface Props {
+  images: SanityImage[];
+}
+
+const { images } = Astro.props;
+const visible = images.filter((img) => img.url);
+---
+
+{
+  visible.length > 0 && (
+    <div class="overflow-hidden w-full pt-12 pb-4">
+      <div class="flex w-max gallery-scroll">
+        {[...visible, ...visible].map((img) => (
+          <div class="flex-none w-48 aspect-square overflow-hidden mr-4">
+            <Image src={img.url} alt={img.alt} width={600} height={600} format="webp" loading="lazy" class="w-full h-full object-cover" />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+<style>
+  @keyframes gallery-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .gallery-scroll {
+    animation: gallery-scroll 80s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-scroll {
+      animation: none;
+    }
+  }
+</style>

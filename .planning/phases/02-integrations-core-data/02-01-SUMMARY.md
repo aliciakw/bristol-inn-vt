@@ -1,7 +1,7 @@
 ---
 phase: 02-integrations-core-data
 plan: 1
-title: "Foundation Setup: Dependencies, Config, Env, and Vitest"
+title: 'Foundation Setup: Dependencies, Config, Env, and Vitest'
 subsystem: tooling
 tags: [dependencies, cloudflare, prismic, vitest, env, astro-config]
 key-files:
@@ -15,12 +15,12 @@ key-files:
     - src/lib/env.ts
     - .env.example
 decisions:
-  - "@astrojs/cloudflare adapter registered; no output: server — per-page prerender=false only"
-  - "src/lib/env.ts reduced to documentation-only; Astro 6 envField schema handles all validation"
-  - "@sentry/cloudflare installed alongside @astrojs/cloudflare (required peer)"
+  - '@astrojs/cloudflare adapter registered; no output: server — per-page prerender=false only'
+  - 'src/lib/env.ts reduced to documentation-only; Astro 6 envField schema handles all validation'
+  - '@sentry/cloudflare installed alongside @astrojs/cloudflare (required peer)'
 metrics:
-  duration: "~8 minutes"
-  completed: "2026-05-15"
+  duration: '~8 minutes'
+  completed: '2026-05-15'
   tasks_completed: 3
   tasks_total: 3
 ---
@@ -31,11 +31,11 @@ metrics:
 
 ## Commits
 
-| Task | Commit  | Message                                                          |
-|------|---------|------------------------------------------------------------------|
-| 1    | 6e53626 | feat(02-01): install deps and clean env.ts                       |
+| Task | Commit  | Message                                                                     |
+| ---- | ------- | --------------------------------------------------------------------------- |
+| 1    | 6e53626 | feat(02-01): install deps and clean env.ts                                  |
 | 2    | 1e7eb8f | feat(02-01): configure Cloudflare adapter, image.remotePatterns, and Vitest |
-| 3    | b68ee82 | feat(02-01): create astro:env/server mock for vitest             |
+| 3    | b68ee82 | feat(02-01): create astro:env/server mock for vitest                        |
 
 ## Tasks Completed
 
@@ -50,6 +50,7 @@ metrics:
 ### Auto-fixed Issues
 
 **1. [Rule 3 - Blocking] Install @sentry/cloudflare peer dependency**
+
 - **Found during:** Task 2 build verification
 - **Issue:** `@sentry/astro` requires `@sentry/cloudflare` when the Cloudflare adapter is registered. Build failed with: `You are using the Cloudflare adapter but @sentry/cloudflare is not installed.`
 - **Fix:** Ran `npm install @sentry/cloudflare`; build then succeeded with exit 0.
@@ -77,6 +78,7 @@ None — this plan installs infrastructure only; no UI or data components with p
 ## Threat Flags
 
 No new threat surface introduced beyond what is documented in the plan's threat model (T-02-01 through T-02-04). All mitigations confirmed:
+
 - `HOSTAWAY_ACCESS_TOKEN` and `PRISMIC_TOKEN` are `context: "server"` in astro.config.mjs env schema — never emitted to client bundle.
 - `.env.example` contains placeholder strings only.
 - `tests/__mocks__/astro-env-server.ts` contains fake test tokens only.

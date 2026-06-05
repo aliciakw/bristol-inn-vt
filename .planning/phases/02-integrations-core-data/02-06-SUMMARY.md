@@ -1,7 +1,7 @@
 ---
 phase: 02-integrations-core-data
 plan: 6
-title: "Room Pages: /rooms listing and /rooms/[id] detail"
+title: 'Room Pages: /rooms listing and /rooms/[id] detail'
 subsystem: pages
 tags: [astro, pages, hostaway, rooms, static-paths]
 depends_on: [02-02, 02-04]
@@ -13,12 +13,12 @@ key_files:
     - src/pages/rooms.astro
     - src/pages/rooms/[id].astro
 decisions:
-  - "No try/catch per D-06: errors propagate and fail the build, preventing silent bad deploys"
-  - "Room data passed via getStaticPaths props to avoid a second API call per listing"
-  - "PRISMIC_TOKEN made optional in astro.config.mjs — Prismic public repos work without token for published content, and .env uses PRISMIC_CLIENT_SECRET naming"
-  - "Build requires .dev.vars (Cloudflare miniflare convention) in worktree root for secrets during prerender"
+  - 'No try/catch per D-06: errors propagate and fail the build, preventing silent bad deploys'
+  - 'Room data passed via getStaticPaths props to avoid a second API call per listing'
+  - 'PRISMIC_TOKEN made optional in astro.config.mjs — Prismic public repos work without token for published content, and .env uses PRISMIC_CLIENT_SECRET naming'
+  - 'Build requires .dev.vars (Cloudflare miniflare convention) in worktree root for secrets during prerender'
 metrics:
-  completed: "2026-05-16"
+  completed: '2026-05-16'
   tasks_completed: 2
   tasks_total: 2
 ---
@@ -48,6 +48,7 @@ The build generates room pages for all active Hostaway listings (e.g., `/rooms/4
 ### Auto-fixed Issues
 
 **1. [Rule 3 - Blocking] Missing prerequisite source files in worktree**
+
 - **Found during:** Task 2 setup
 - **Issue:** The worktree branch was based on `e0853d8` (pre-Phase-2) and lacked `src/lib/hostaway.ts`, `src/components/RoomGallery.astro`, `src/components/AmenityBadge.astro`, and other Phase 2 prerequisites.
 - **Fix:** Cherry-picked commits from `scaffold/phase2` up through `f187179` (Task 1 commit) onto the worktree branch to bring in all prerequisite files.
@@ -55,6 +56,7 @@ The build generates room pages for all active Hostaway listings (e.g., `/rooms/4
 - **Commits:** Multiple cherry-picks from `scaffold/phase2`
 
 **2. [Rule 3 - Blocking] Build fails: HOSTAWAY_ACCESS_TOKEN missing from miniflare prerender context**
+
 - **Found during:** Task 2 verification (build step)
 - **Issue:** The `@astrojs/cloudflare` adapter's miniflare prerender server does not read env vars from shell environment or Vite's `.env` discovery. It reads exclusively from `.dev.vars` in the project root. The worktree had no `.dev.vars`, so `HOSTAWAY_ACCESS_TOKEN` (required, non-optional in schema) caused a 500 error during `getStaticPaths`.
 - **Fix:** Created `.dev.vars` in the worktree root with `HOSTAWAY_ACCESS_TOKEN` and `PRISMIC_TOKEN` values sourced from the main project's `.env`. Note: `.dev.vars` is gitignored (Cloudflare convention for local secrets).

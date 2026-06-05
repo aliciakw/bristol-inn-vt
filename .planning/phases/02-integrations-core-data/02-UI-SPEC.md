@@ -16,13 +16,13 @@ created: 2026-05-15
 
 ## Design System
 
-| Property | Value |
-|----------|-------|
-| Tool | none |
-| Preset | not applicable |
-| Component library | none (Astro components + Tailwind utilities) |
-| Icon library | none in this phase |
-| Font | system-ui stack (Tailwind default) — no custom font in this phase |
+| Property          | Value                                                             |
+| ----------------- | ----------------------------------------------------------------- |
+| Tool              | none                                                              |
+| Preset            | not applicable                                                    |
+| Component library | none (Astro components + Tailwind utilities)                      |
+| Icon library      | none in this phase                                                |
+| Font              | system-ui stack (Tailwind default) — no custom font in this phase |
 
 **Rationale:** This project is an Astro static site (not React/Next.js). shadcn is not applicable. Styling is composed via Tailwind utility classes per CLAUDE.md. No icon library is needed in Phase 2 — amenity badges are text-only.
 
@@ -32,17 +32,18 @@ created: 2026-05-15
 
 Declared values (must be multiples of 4). Source: inferred from existing Tailwind usage in `rooms.astro`, `BaseLayout.astro`, `Footer.astro`.
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| xs | 4px | Icon gaps, badge internal padding (`px-1 py-0.5`) |
-| sm | 8px | Compact element spacing, badge gap (`gap-2`) |
-| md | 16px | Default element and section padding (`px-4`, `p-4`) |
-| lg | 24px | Card content padding, section vertical spacing (`py-6`, `mb-6`) |
-| xl | 32px | Page section gaps (`py-8`, `mb-8`) |
-| 2xl | 48px | Hero section vertical padding (`py-12`) |
-| 3xl | 64px | Page-level section breaks (reserved for Phase 5 polish) |
+| Token | Value | Usage                                                           |
+| ----- | ----- | --------------------------------------------------------------- |
+| xs    | 4px   | Icon gaps, badge internal padding (`px-1 py-0.5`)               |
+| sm    | 8px   | Compact element spacing, badge gap (`gap-2`)                    |
+| md    | 16px  | Default element and section padding (`px-4`, `p-4`)             |
+| lg    | 24px  | Card content padding, section vertical spacing (`py-6`, `mb-6`) |
+| xl    | 32px  | Page section gaps (`py-8`, `mb-8`)                              |
+| 2xl   | 48px  | Hero section vertical padding (`py-12`)                         |
+| 3xl   | 64px  | Page-level section breaks (reserved for Phase 5 polish)         |
 
 Exceptions:
+
 - Room card image: aspect-ratio `3/2` with no manual height — preserves proportions without a pixel exception.
 - Hero carousel: full-viewport height (`h-screen` or `min-h-[480px]` on mobile, `min-h-[600px]` on tablet+).
 
@@ -52,14 +53,15 @@ Exceptions:
 
 Source: Tailwind defaults. Sizes pulled from existing usage (`text-3xl font-bold`, `text-lg text-gray-600`, `text-sm`) plus inferred needs for new Phase 2 components.
 
-| Role | Size | Weight | Line Height | Tailwind Class |
-|------|------|--------|-------------|----------------|
-| Body | 16px | 400 (normal) | 1.5 | `text-base font-normal leading-relaxed` |
-| Label / Badge | 12px | 700 (bold) | 1.0 | `text-xs font-bold leading-none` |
-| Heading (card, section) | 20px | 700 (bold) | 1.2 | `text-xl font-bold leading-tight` |
-| Display (page title, hero) | 30px | 700 (bold) | 1.2 | `text-3xl font-bold leading-tight` |
+| Role                       | Size | Weight       | Line Height | Tailwind Class                          |
+| -------------------------- | ---- | ------------ | ----------- | --------------------------------------- |
+| Body                       | 16px | 400 (normal) | 1.5         | `text-base font-normal leading-relaxed` |
+| Label / Badge              | 12px | 700 (bold)   | 1.0         | `text-xs font-bold leading-none`        |
+| Heading (card, section)    | 20px | 700 (bold)   | 1.2         | `text-xl font-bold leading-tight`       |
+| Display (page title, hero) | 30px | 700 (bold)   | 1.2         | `text-3xl font-bold leading-tight`      |
 
 Rules:
+
 - Maximum 4 sizes in use for this phase (as declared above). Do not introduce additional sizes.
 - Maximum 2 weights: 400 (body, secondary text) and 700 (headings, room names, amenity badge). Do not use weight 500 (`font-medium`) anywhere in this phase.
 - Body line-height: 1.5 (`leading-relaxed`).
@@ -72,15 +74,16 @@ Rules:
 
 Source: inferred from existing codebase (Header, Navigation, Footer, index.astro placeholder). No color tokens are locked in CONTEXT.md — full discretion applied for a hospitality site.
 
-| Role | Tailwind Value | Hex (approx) | Usage |
-|------|---------------|--------------|-------|
-| Dominant (60%) | `white` / `gray-50` | #ffffff / #f9fafb | Page background, card surfaces, header background |
+| Role            | Tailwind Value          | Hex (approx)      | Usage                                              |
+| --------------- | ----------------------- | ----------------- | -------------------------------------------------- |
+| Dominant (60%)  | `white` / `gray-50`     | #ffffff / #f9fafb | Page background, card surfaces, header background  |
 | Secondary (30%) | `gray-100` / `gray-200` | #f3f4f6 / #e5e7eb | Nav background, card hover state, badge background |
-| Accent (10%) | `slate-700` | #334155 | See reserved list below |
-| Dark anchor | `gray-800` | #1f2937 | Footer background only (existing) |
-| Destructive | none | — | No destructive actions in Phase 2 |
+| Accent (10%)    | `slate-700`             | #334155           | See reserved list below                            |
+| Dark anchor     | `gray-800`              | #1f2937           | Footer background only (existing)                  |
+| Destructive     | none                    | —                 | No destructive actions in Phase 2                  |
 
 Accent (`slate-700`) is reserved for exactly these elements:
+
 - Primary CTA button ("Browse Rooms", homepage CTA from Prismic `cta_label`)
 - Room card "View Room" link/button
 - Active navigation link indicator
@@ -89,6 +92,7 @@ Accent (`slate-700`) is reserved for exactly these elements:
 Do NOT use accent on: body text, card borders, image overlays, or secondary informational text.
 
 Color contrast notes:
+
 - `slate-700` (#334155) on `white`: ratio ~9.7:1 — passes WCAG AA for all text sizes.
 - `gray-700` (#374151) on `white`: ratio ~9.0:1 — passes AA (used for body text).
 - `white` text on `gray-800` footer: ratio ~16:1 — passes AA.
@@ -103,17 +107,19 @@ New components required in this phase. Each must be composable (props-driven, no
 ### RoomCard.astro
 
 Props:
+
 ```typescript
 interface Props {
   id: number;
   name: string;
-  rate: number;          // base nightly rate in dollars
+  rate: number; // base nightly rate in dollars
   photo: { url: string; caption: string };
-  amenities: string[];   // first 3 amenity names (D-01, D-03)
+  amenities: string[]; // first 3 amenity names (D-01, D-03)
 }
 ```
 
 Layout:
+
 - Card container: `bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200`
 - Thumbnail: Astro `<Image>` at 600×400px, `object-cover w-full`, `loading="lazy"`, `format="webp"`. Alt = `photo.caption` if non-empty, else `room.name`.
 - Content area: `p-4 flex flex-col gap-3`
@@ -125,6 +131,7 @@ Layout:
 ### AmenityBadge.astro
 
 Props:
+
 ```typescript
 interface Props {
   label: string;
@@ -132,20 +139,23 @@ interface Props {
 ```
 
 Layout:
+
 - `inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-gray-100 text-slate-700`
 - No icon in this phase — text only.
 
 ### RoomGallery.astro
 
 Props:
+
 ```typescript
 interface Props {
-  photos: Array<{ url: string; caption: string }>;  // up to 6 (D-04)
+  photos: Array<{ url: string; caption: string }>; // up to 6 (D-04)
   roomName: string;
 }
 ```
 
 Layout (mobile-first):
+
 - Primary photo: Astro `<Image>` at 1200×800px, `w-full object-cover`, `loading="eager"` (first photo), `format="webp"`.
 - Secondary photos: `grid grid-cols-2 tablet:grid-cols-3 gap-2 mt-2`. Photos 2–6 use `loading="lazy"`.
 - Alt text: `photo.caption` if non-empty, else `roomName + " photo " + index`.
@@ -154,15 +164,17 @@ Layout (mobile-first):
 ### HeroCarousel.astro
 
 Props:
+
 ```typescript
 interface Props {
-  images: Array<{ url: string; alt: string }>;  // 3–5 from Prismic hero_images (D-08, D-12)
+  images: Array<{ url: string; alt: string }>; // 3–5 from Prismic hero_images (D-08, D-12)
   ctaLabel: string;
   ctaUrl: string;
 }
 ```
 
 Layout:
+
 - Container: `relative w-full min-h-[480px] tablet:min-h-[600px] overflow-hidden bg-gray-900`
 - Each image slide: `absolute inset-0 w-full h-full object-cover transition-opacity duration-700 opacity-0` — active slide: `opacity-100`.
 - Overlay: `absolute inset-0 bg-black/30` — ensures CTA text is readable on any image.
@@ -175,13 +187,15 @@ Layout:
 ### SliceZone.astro
 
 Props:
+
 ```typescript
 interface Props {
-  slices: PrismicDocument['data']['body'];  // typed Prismic slice array
+  slices: PrismicDocument['data']['body']; // typed Prismic slice array
 }
 ```
 
 Slice rendering:
+
 - `RichText` slice: render `prismic.asHTML(slice.primary.text)` via `set:html`. Wrapper: `prose-wrapper` class → `text-base leading-relaxed text-gray-700 max-w-prose`.
 - `ImageBlock` slice: Astro `<Image>` with layout option. If `slice.primary.layout === 'full'` → `w-full`, else `max-w-prose mx-auto`. Caption: `text-sm text-gray-500 mt-1 text-center` if caption present.
 - Unknown slice types: render nothing (silent skip, no error).
@@ -189,6 +203,7 @@ Slice rendering:
 ### Generic Page Layout ([slug].astro)
 
 No new layout component — uses `BaseLayout.astro` directly. Content:
+
 - Page title: `<h1 class="text-3xl font-bold text-gray-900 mb-6">` — from Prismic `page.data.title`.
 - Body: `<SliceZone>` component.
 - Container: `max-w-3xl mx-auto px-4 py-8` — narrower than room grid for readable prose.
@@ -230,19 +245,19 @@ No new layout component — uses `BaseLayout.astro` directly. Content:
 
 ## Copywriting Contract
 
-| Element | Copy |
-|---------|------|
-| Primary CTA (homepage) | Value from Prismic `cta_label` field — default fallback: `"Browse Our Rooms"` |
-| Room card CTA | `"View Room"` |
-| Room detail booking CTA | `"Book This Room"` |
-| Rate display | `"From $X / night"` (D-02) |
-| Empty state — rooms list | `"No rooms available right now."` / `"Please check back soon or call us directly."` |
-| Build error (rooms) | Silent — build fails, Cloudflare serves previous deployment (D-06). No user-facing copy needed. |
-| Build error (Prismic) | Silent — same as above (D-07). |
-| Gallery alt text fallback | `"{room name} — photo {n}"` |
-| Hero image alt text | Pulled from Prismic image `alt` field. Editor must populate this in Prismic. |
-| Amenity badge — unknown ID | Do not display the badge. Filter out amenities where `AMENITY_NAMES[id]` is undefined. |
-| Prismic RichText — empty field | Render nothing. No placeholder copy. |
+| Element                        | Copy                                                                                            |
+| ------------------------------ | ----------------------------------------------------------------------------------------------- |
+| Primary CTA (homepage)         | Value from Prismic `cta_label` field — default fallback: `"Browse Our Rooms"`                   |
+| Room card CTA                  | `"View Room"`                                                                                   |
+| Room detail booking CTA        | `"Book This Room"`                                                                              |
+| Rate display                   | `"From $X / night"` (D-02)                                                                      |
+| Empty state — rooms list       | `"No rooms available right now."` / `"Please check back soon or call us directly."`             |
+| Build error (rooms)            | Silent — build fails, Cloudflare serves previous deployment (D-06). No user-facing copy needed. |
+| Build error (Prismic)          | Silent — same as above (D-07).                                                                  |
+| Gallery alt text fallback      | `"{room name} — photo {n}"`                                                                     |
+| Hero image alt text            | Pulled from Prismic image `alt` field. Editor must populate this in Prismic.                    |
+| Amenity badge — unknown ID     | Do not display the badge. Filter out amenities where `AMENITY_NAMES[id]` is undefined.          |
+| Prismic RichText — empty field | Render nothing. No placeholder copy.                                                            |
 
 Destructive actions in Phase 2: none. No confirmation dialogs needed.
 
@@ -250,14 +265,14 @@ Destructive actions in Phase 2: none. No confirmation dialogs needed.
 
 ## Interaction Contract
 
-| Interaction | Behavior |
-|------------|---------|
-| Hero carousel auto-advance | Every 5000ms, fade to next image. Cycle wraps. No pause on hover in this phase (Phase 5 polish). |
-| Hero carousel — no JS | First image visible via initial `opacity-100` on slide 0. Other slides hidden. Site is navigable. |
-| Room card hover | `shadow-md` on card container (CSS `hover:shadow-md`). No JS required. |
-| RoomGallery — mobile | Static grid, natural scroll. No swipe JS in Phase 2 (swipe is Phase 5 / MOBILE-04). |
-| Prismic preview route | Redirects to draft page URL after cookie read. No UI — server-side redirect only. |
-| Navigation links | Plain `<a>` tags. No JS routing. Active state: not required in this phase. |
+| Interaction                | Behavior                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------- |
+| Hero carousel auto-advance | Every 5000ms, fade to next image. Cycle wraps. No pause on hover in this phase (Phase 5 polish).  |
+| Hero carousel — no JS      | First image visible via initial `opacity-100` on slide 0. Other slides hidden. Site is navigable. |
+| Room card hover            | `shadow-md` on card container (CSS `hover:shadow-md`). No JS required.                            |
+| RoomGallery — mobile       | Static grid, natural scroll. No swipe JS in Phase 2 (swipe is Phase 5 / MOBILE-04).               |
+| Prismic preview route      | Redirects to draft page URL after cookie read. No UI — server-side redirect only.                 |
+| Navigation links           | Plain `<a>` tags. No JS routing. Active state: not required in this phase.                        |
 
 ---
 
@@ -287,10 +302,10 @@ Full SEO is Phase 6. These must be wired in Phase 2:
 
 ## Registry Safety
 
-| Registry | Blocks Used | Safety Gate |
-|----------|-------------|-------------|
-| shadcn official | none | not applicable — no shadcn in this project |
-| third-party | none | not applicable |
+| Registry        | Blocks Used | Safety Gate                                |
+| --------------- | ----------- | ------------------------------------------ |
+| shadcn official | none        | not applicable — no shadcn in this project |
+| third-party     | none        | not applicable                             |
 
 No third-party component registries are used in this phase. All components are bespoke Astro files.
 
@@ -298,25 +313,25 @@ No third-party component registries are used in this phase. All components are b
 
 ## Pre-Population Source Map
 
-| Decision | Source |
-|----------|--------|
-| Room card content (photo, name, rate, 3 badges) | CONTEXT.md D-01, D-02, D-03 |
-| Room detail page content | CONTEXT.md D-04 |
-| Static generation approach | CONTEXT.md D-05 |
-| Build failure behavior | CONTEXT.md D-06, D-07 |
-| Prismic document types and fields | CONTEXT.md D-08, D-09 |
-| URL slug routing | CONTEXT.md D-10 |
-| Hero carousel (JS fade, 3–5 images) | CONTEXT.md D-12 |
-| Image sizes (600×400 thumbnail, 1200×800 gallery) | CONTEXT.md D-15 |
-| Room grid breakpoints (`grid-cols-1 tablet:... desktop:...`) | CONTEXT.md code_context + rooms.astro codebase |
-| Tailwind breakpoint names (`tablet:`, `desktop:`) | tailwind.config.mjs codebase |
-| Spacing scale (existing `px-4`, `py-8`, `gap-4` patterns) | rooms.astro, BaseLayout.astro codebase |
-| Color palette (dominant `white`, secondary `gray-100`, footer `gray-800`) | Header.astro, Navigation.astro, Footer.astro codebase |
-| Accent color (`slate-700`) | Claude's discretion — hospitality-appropriate, no brand palette locked in CONTEXT.md |
-| Typography sizes and weights | Inferred from existing `text-3xl font-bold`, `text-lg`, `text-sm` usage in codebase |
-| No icon library | No icons referenced anywhere in codebase; Phase 2 doesn't require them |
-| No shadcn | Astro project (not React); no components.json present |
-| Composable component structure | CLAUDE.md constraint: composability over configuration |
+| Decision                                                                  | Source                                                                               |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Room card content (photo, name, rate, 3 badges)                           | CONTEXT.md D-01, D-02, D-03                                                          |
+| Room detail page content                                                  | CONTEXT.md D-04                                                                      |
+| Static generation approach                                                | CONTEXT.md D-05                                                                      |
+| Build failure behavior                                                    | CONTEXT.md D-06, D-07                                                                |
+| Prismic document types and fields                                         | CONTEXT.md D-08, D-09                                                                |
+| URL slug routing                                                          | CONTEXT.md D-10                                                                      |
+| Hero carousel (JS fade, 3–5 images)                                       | CONTEXT.md D-12                                                                      |
+| Image sizes (600×400 thumbnail, 1200×800 gallery)                         | CONTEXT.md D-15                                                                      |
+| Room grid breakpoints (`grid-cols-1 tablet:... desktop:...`)              | CONTEXT.md code_context + rooms.astro codebase                                       |
+| Tailwind breakpoint names (`tablet:`, `desktop:`)                         | tailwind.config.mjs codebase                                                         |
+| Spacing scale (existing `px-4`, `py-8`, `gap-4` patterns)                 | rooms.astro, BaseLayout.astro codebase                                               |
+| Color palette (dominant `white`, secondary `gray-100`, footer `gray-800`) | Header.astro, Navigation.astro, Footer.astro codebase                                |
+| Accent color (`slate-700`)                                                | Claude's discretion — hospitality-appropriate, no brand palette locked in CONTEXT.md |
+| Typography sizes and weights                                              | Inferred from existing `text-3xl font-bold`, `text-lg`, `text-sm` usage in codebase  |
+| No icon library                                                           | No icons referenced anywhere in codebase; Phase 2 doesn't require them               |
+| No shadcn                                                                 | Astro project (not React); no components.json present                                |
+| Composable component structure                                            | CLAUDE.md constraint: composability over configuration                               |
 
 ---
 

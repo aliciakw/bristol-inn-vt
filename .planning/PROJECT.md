@@ -5,6 +5,7 @@
 A proof-of-concept website for a small inn that demonstrates integration of modern web technologies. The site scaffolds all key integrations (Hostaway for room management, Sanity for content, Sentry for error tracking, GA4 for analytics, Cloudflare Pages for hosting) with spare, minimal implementation. Visual polish and a composable component library are deferred to a later phase.
 
 The website prioritizes:
+
 - Fast load times on poor internet (leverage Astro static-first)
 - SEO and accessibility best practices
 - Proof of all critical integrations
@@ -66,13 +67,13 @@ Guests can browse rooms, check availability, and start the booking flow on a fas
 
 ## Key Decisions
 
-| Decision | Rationale | Outcome |
-|----------|-----------|---------|
-| Start with proof of concept, defer polish | Get all integrations working before perfecting visuals; easier to refactor structure than to add missing tech later | Spare scaffold now, beautiful later |
-| Hostaway read-only + external redirect | Simplify v1; defer complex booking mutations until core flow is proven | Faster time-to-working prototype |
-| Draft content in previews | Content teams can review unpublished changes before going live | Better collaboration workflow |
-| Cloudflare Pages + Functions | Aligned with static-first philosophy; minimal backend if needed | Cost-effective, fast, integrates well with Astro |
-| No auth in v1 | All pages public; simplifies initial scope | Revisit when guest accounts become valuable |
+| Decision                                  | Rationale                                                                                                           | Outcome                                          |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Start with proof of concept, defer polish | Get all integrations working before perfecting visuals; easier to refactor structure than to add missing tech later | Spare scaffold now, beautiful later              |
+| Hostaway read-only + external redirect    | Simplify v1; defer complex booking mutations until core flow is proven                                              | Faster time-to-working prototype                 |
+| Draft content in previews                 | Content teams can review unpublished changes before going live                                                      | Better collaboration workflow                    |
+| Cloudflare Pages + Functions              | Aligned with static-first philosophy; minimal backend if needed                                                     | Cost-effective, fast, integrates well with Astro |
+| No auth in v1                             | All pages public; simplifies initial scope                                                                          | Revisit when guest accounts become valuable      |
 
 ## Context
 
@@ -113,6 +114,7 @@ This is a greenfield project built by a single developer (Alicia Willett) for a 
 This document evolves at phase transitions and milestone boundaries.
 
 **After each phase transition** (via `/gsd-transition`):
+
 1. Requirements invalidated? → Move to Out of Scope with reason
 2. Requirements validated? → Move to Validated with phase reference
 3. New requirements emerged? → Add to Active
@@ -120,6 +122,7 @@ This document evolves at phase transitions and milestone boundaries.
 5. "What This Is" still accurate? → Update if drifted
 
 **After each milestone** (via `/gsd-complete-milestone`):
+
 1. Full review of all sections
 2. Core Value check — still the right priority?
 3. Audit Out of Scope — reasons still valid?
@@ -127,4 +130,4 @@ This document evolves at phase transitions and milestone boundaries.
 
 ---
 
-*Last updated: 2026-05-05 after initialization*
+_Last updated: 2026-05-05 after initialization_

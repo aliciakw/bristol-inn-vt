@@ -14,17 +14,26 @@ import type { HostawayRoom } from '../../src/lib/hostaway';
 // Fixture helpers
 // ---------------------------------------------------------------------------
 
-function makeRawListing(overrides: Partial<{
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  bedroomsNumber: number;
-  bathroomsNumber: number;
-  personCapacity: number;
-  listingImages: Array<{ id: number; caption: string; vrboCaption: string; airbnbCaption: string; url: string; sortOrder: number }>;
-  listingAmenities: Array<{ id: number; amenityId: number }>;
-}> = {}) {
+function makeRawListing(
+  overrides: Partial<{
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    bedroomsNumber: number;
+    bathroomsNumber: number;
+    personCapacity: number;
+    listingImages: Array<{
+      id: number;
+      caption: string;
+      vrboCaption: string;
+      airbnbCaption: string;
+      url: string;
+      sortOrder: number;
+    }>;
+    listingAmenities: Array<{ id: number; amenityId: number }>;
+  }> = {},
+) {
   return {
     id: overrides.id ?? 1,
     name: overrides.name ?? 'Test Room',
@@ -34,11 +43,18 @@ function makeRawListing(overrides: Partial<{
     bathroomsNumber: overrides.bathroomsNumber ?? 1,
     personCapacity: overrides.personCapacity ?? 2,
     listingImages: overrides.listingImages ?? [
-      { id: 10, caption: 'Main view', vrboCaption: 'VRBO caption', airbnbCaption: 'Airbnb caption', url: 'https://cdn.example.com/photo1.jpg', sortOrder: 1 },
+      {
+        id: 10,
+        caption: 'Main view',
+        vrboCaption: 'VRBO caption',
+        airbnbCaption: 'Airbnb caption',
+        url: 'https://cdn.example.com/photo1.jpg',
+        sortOrder: 1,
+      },
     ],
     listingAmenities: overrides.listingAmenities ?? [
-      { id: 100, amenityId: 3 },  // WiFi — known
-      { id: 101, amenityId: 2 },  // Internet — known
+      { id: 100, amenityId: 3 }, // WiFi — known
+      { id: 101, amenityId: 2 }, // Internet — known
       { id: 102, amenityId: 9999 }, // unknown — must be filtered out
     ],
   };
@@ -94,9 +110,9 @@ describe('getRooms()', () => {
     const rooms = await getRooms();
 
     // amenityId 3 → 'WiFi', amenityId 2 → 'Internet', amenityId 9999 → filtered out
-    expect(rooms[0]!.amenityNames).toContain('WiFi');
-    expect(rooms[0]!.amenityNames).toContain('Internet');
-    expect(rooms[0]!.amenityNames).toHaveLength(2); // 9999 filtered
+    expect(rooms[0]?.amenityNames).toContain('WiFi');
+    expect(rooms[0]?.amenityNames).toContain('Internet');
+    expect(rooms[0]?.amenityNames).toHaveLength(2); // 9999 filtered
   });
 
   it('maps listingImages to photos with url, caption, sortOrder', async () => {
@@ -105,7 +121,7 @@ describe('getRooms()', () => {
 
     const rooms = await getRooms();
 
-    expect(rooms[0]!.photos[0]).toEqual({
+    expect(rooms[0]?.photos[0]).toEqual({
       url: 'https://cdn.example.com/photo1.jpg',
       caption: 'Main view',
       sortOrder: 1,
@@ -115,28 +131,56 @@ describe('getRooms()', () => {
   it('uses vrboCaption fallback when caption is empty', async () => {
     const rawListing = makeRawListing({
       listingImages: [
-        { id: 10, caption: '', vrboCaption: 'VRBO fallback', airbnbCaption: 'Airbnb', url: 'https://cdn.example.com/photo.jpg', sortOrder: 1 },
+        {
+          id: 10,
+          caption: '',
+          vrboCaption: 'VRBO fallback',
+          airbnbCaption: 'Airbnb',
+          url: 'https://cdn.example.com/photo.jpg',
+          sortOrder: 1,
+        },
       ],
     });
     global.fetch = mockFetchOk({ result: [rawListing] });
 
     const rooms = await getRooms();
 
-    expect(rooms[0]!.photos[0]!.caption).toBe('VRBO fallback');
+    expect(rooms[0]?.photos[0]?.caption).toBe('VRBO fallback');
   });
 
   it('sorts photos by sortOrder ascending', async () => {
     const rawListing = makeRawListing({
       listingImages: [
-        { id: 10, caption: 'C', vrboCaption: '', airbnbCaption: '', url: 'https://cdn.example.com/c.jpg', sortOrder: 3 },
-        { id: 11, caption: 'A', vrboCaption: '', airbnbCaption: '', url: 'https://cdn.example.com/a.jpg', sortOrder: 1 },
-        { id: 12, caption: 'B', vrboCaption: '', airbnbCaption: '', url: 'https://cdn.example.com/b.jpg', sortOrder: 2 },
+        {
+          id: 10,
+          caption: 'C',
+          vrboCaption: '',
+          airbnbCaption: '',
+          url: 'https://cdn.example.com/c.jpg',
+          sortOrder: 3,
+        },
+        {
+          id: 11,
+          caption: 'A',
+          vrboCaption: '',
+          airbnbCaption: '',
+          url: 'https://cdn.example.com/a.jpg',
+          sortOrder: 1,
+        },
+        {
+          id: 12,
+          caption: 'B',
+          vrboCaption: '',
+          airbnbCaption: '',
+          url: 'https://cdn.example.com/b.jpg',
+          sortOrder: 2,
+        },
       ],
     });
     global.fetch = mockFetchOk({ result: [rawListing] });
 
     const rooms = await getRooms();
-    const sortOrders = rooms[0]!.photos.map(p => p.sortOrder);
+    const sortOrders = rooms[0]?.photos.map((p) => p.sortOrder);
 
     expect(sortOrders).toEqual([1, 2, 3]);
   });
@@ -155,7 +199,7 @@ describe('getRooms()', () => {
 
     const rooms = await getRooms();
 
-    expect(rooms[0]!.photos).toHaveLength(6);
+    expect(rooms[0]?.photos).toHaveLength(6);
   });
 
   it('throws when API returns non-2xx status', async () => {
@@ -173,7 +217,7 @@ describe('getRooms()', () => {
 
     const callArgs = mockFetch.mock.calls[0];
     expect(callArgs).toBeDefined();
-    const options = callArgs![1] as RequestInit;
+    const options = callArgs[1] as RequestInit;
     const headers = options?.headers as Record<string, string>;
     expect(headers?.['Authorization']).toBe('Bearer test-hostaway-token');
   });
@@ -206,8 +250,8 @@ describe('getRoom(id)', () => {
     const room = await getRoom(42);
 
     expect(room).not.toBeNull();
-    expect(room!.id).toBe(42);
-    expect(room!.name).toBe('Suite 42');
+    expect(room?.id).toBe(42);
+    expect(room?.name).toBe('Suite 42');
   });
 
   it('returns null when API returns 404', async () => {
@@ -233,7 +277,7 @@ describe('getRoom(id)', () => {
 
     const callArgs = mockFetch.mock.calls[0];
     expect(callArgs).toBeDefined();
-    const url = callArgs![0] as string;
+    const url = callArgs?.[0] as string;
     expect(url).toMatch(/\/listings\/77$/);
   });
 });

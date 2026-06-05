@@ -13,7 +13,15 @@ interface Props {
   isLoading: boolean;
 }
 
-export function RoomCardReact({ id, name, price, photo, amenities, availability, isLoading }: Props) {
+export function RoomCardReact({
+  id,
+  name,
+  price,
+  photo,
+  amenities,
+  availability,
+  isLoading,
+}: Props) {
   const baseRate = Math.round(price);
   const isUnavailable = availability !== undefined && !availability.available;
   const dimmed = isLoading || isUnavailable;
@@ -54,7 +62,10 @@ export function RoomCardReact({ id, name, price, photo, amenities, availability,
         </div>
         <div className="flex flex-wrap gap-2">
           {amenities.map((a) => (
-            <span key={a} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-gray-100 text-slate-700">
+            <span
+              key={a}
+              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-gray-100 text-slate-700"
+            >
               {a}
             </span>
           ))}

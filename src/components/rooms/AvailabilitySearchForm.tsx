@@ -23,7 +23,9 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(2);
-  const [errors, setErrors] = useState<Partial<Record<'checkIn' | 'checkOut' | 'guests', string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<'checkIn' | 'checkOut' | 'guests', string>>>(
+    {},
+  );
 
   const today = localDateISO();
   const minCheckOut = checkIn || localDateISO(1);
@@ -59,7 +61,7 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
     const val = e.target.value;
     setCheckIn(val);
     if (checkOut && checkOut <= val) setCheckOut('');
-    setErrors(prev => ({ ...prev, checkIn: undefined }));
+    setErrors((prev) => ({ ...prev, checkIn: undefined }));
   }
 
   return (
@@ -85,7 +87,9 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
             aria-describedby={errors.checkIn ? 'checkIn-error' : undefined}
           />
           {errors.checkIn && (
-            <p id="checkIn-error" className="text-xs text-red-600">{errors.checkIn}</p>
+            <p id="checkIn-error" className="text-xs text-red-600">
+              {errors.checkIn}
+            </p>
           )}
         </div>
 
@@ -98,16 +102,18 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
             type="date"
             value={checkOut}
             min={minCheckOut}
-            onChange={e => {
+            onChange={(e) => {
               setCheckOut(e.target.value);
-              setErrors(prev => ({ ...prev, checkOut: undefined }));
+              setErrors((prev) => ({ ...prev, checkOut: undefined }));
             }}
             disabled={isLoading}
             className="border border-gray-300 rounded px-3 py-2 text-sm text-gray-900 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
             aria-describedby={errors.checkOut ? 'checkOut-error' : undefined}
           />
           {errors.checkOut && (
-            <p id="checkOut-error" className="text-xs text-red-600">{errors.checkOut}</p>
+            <p id="checkOut-error" className="text-xs text-red-600">
+              {errors.checkOut}
+            </p>
           )}
         </div>
 
@@ -121,16 +127,18 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
             value={guests}
             min={1}
             max={20}
-            onChange={e => {
+            onChange={(e) => {
               setGuests(parseInt(e.target.value, 10) || 1);
-              setErrors(prev => ({ ...prev, guests: undefined }));
+              setErrors((prev) => ({ ...prev, guests: undefined }));
             }}
             disabled={isLoading}
             className="border border-gray-300 rounded px-3 py-2 text-sm text-gray-900 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
             aria-describedby={errors.guests ? 'guests-error' : undefined}
           />
           {errors.guests && (
-            <p id="guests-error" className="text-xs text-red-600">{errors.guests}</p>
+            <p id="guests-error" className="text-xs text-red-600">
+              {errors.guests}
+            </p>
           )}
         </div>
 

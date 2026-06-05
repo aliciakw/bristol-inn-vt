@@ -68,6 +68,7 @@ bristolsuites.com
 ```
 
 **External Booking Subdomain** (separate domain, Hostaway-powered):
+
 ```
 bristolsuites.holidayfuture.com
 └── /all-listings
@@ -135,25 +136,33 @@ The Vermont Marketplace operates as a physical retail storefront with no e-comme
 ## 5. Special Cases & Anomalies
 
 ### ⚠ Stale "About" Page URL
+
 The About page URL is `/about-tom-and-carol-wells-proprietors/` — named after the previous owners. The property was sold to Justin Sandherr in **February 2025** and is now managed by innkeepers Niko and Mark. The slug has not been updated and may cause SEO confusion or look unprofessional to visitors who notice the URL.
 
 ### ⚠ Special Offers Page Is Empty
+
 `/bristol-suites-special-offers/` currently displays only "Stay tuned for upcoming specials!" — a placeholder with no active promotions. If this page is being indexed and linked from the nav, it creates a dead-end experience for visitors.
 
 ### ⚠ No Embedded Map on Directions Page
+
 `/directions-and-location/` provides only text-based driving directions with no Google Maps embed or interactive map. This is a notable omission for a hospitality site where wayfinding is a primary guest need.
 
 ### ⚠ Booking Engine on a Separate Domain
+
 All reservations happen at `bristolsuites.holidayfuture.com` — a fully external domain. This creates a jarring brand transition for users and means the hotel has no direct control over the checkout experience, no ability to customize the booking UI, and a broken analytics funnel (see above).
 
 ### ⚠ No HTTPS Redirect Verification / CDN
+
 The site does not appear to use Vercel, Cloudflare, or any CDN in front of WordPress. Performance and DDoS resilience depend entirely on the hosting provider.
 
 ### ℹ "Rockydale Room" Missing from Main Site
+
 The booking engine lists 7 properties (including the **Rockydale Room**), but the rooms page on the main site only prominently features 6 named suites in its intro copy. Minor inconsistency.
 
 ### ℹ No Elevator — Not Disclosed Prominently
+
 The building has no elevator and upper-floor rooms require stair access. This accessibility note is mentioned on the rooms page but is not surfaced on the booking engine, which could lead to booking issues for guests with mobility limitations.
 
 ### ℹ Vermont Marketplace Has Seasonal Hours
+
 The lobby store operates on reduced hours January–April (Thu–Sat only). This is noted on the Marketplace page but not cross-referenced in any "plan your visit" or guest info context.

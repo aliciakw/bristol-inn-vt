@@ -175,19 +175,19 @@ These are valuable features to add after v1 validation. They are lower priority 
 
 These features will NOT be built, and the reasoning behind each decision.
 
-| Feature | Why Out of Scope | Alternative |
-|---------|-----------------|-------------|
-| **User Accounts / Guest Logins** | No repeat booking demand identified yet; adds auth complexity to PoC | Revisit after v1 if return visitors justify it |
-| **Direct Payment Processing** | PCI compliance, fraud handling, refunds = complex liability | Hostaway handles all payments securely |
-| **Loyalty Program** | Requires user accounts first | Defer to Phase 4 if repeat bookings justify |
-| **Live Chat Support** | Small inn cannot staff 24/7; adds operational burden | Email form with 24h response time promise |
-| **Multi-Language Support** | No demand identified; impacts content maintenance | Revisit after validating local market |
-| **Mobile App** | Web-responsive enough for mobile; app adds maintenance burden | Progressive web app optional in Phase 4 |
-| **Advanced Admin Dashboard** | Sanity Studio already handles content management; additional dashboard adds no value | Use Sanity Studio for content; Hostaway UI for bookings |
-| **Custom Booking Engine** | Hostaway integration is simpler and more reliable than building from scratch | Use Hostaway API + redirect |
-| **Third-Party Integrations** (Slack, Zapier, etc.) | Adds complexity; no demand identified yet | Revisit after validating core workflow |
-| **Accessibility Beyond WCAG AA** | WCAG AA is sufficient for legal compliance and good UX | Exceed standards in Phase 2 if feedback suggests |
-| **Heavy Third-Party Widgets** | Each widget = more JavaScript, slower page load | Choose 1-2 essential tools; avoid bloat |
+| Feature                                            | Why Out of Scope                                                                     | Alternative                                             |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| **User Accounts / Guest Logins**                   | No repeat booking demand identified yet; adds auth complexity to PoC                 | Revisit after v1 if return visitors justify it          |
+| **Direct Payment Processing**                      | PCI compliance, fraud handling, refunds = complex liability                          | Hostaway handles all payments securely                  |
+| **Loyalty Program**                                | Requires user accounts first                                                         | Defer to Phase 4 if repeat bookings justify             |
+| **Live Chat Support**                              | Small inn cannot staff 24/7; adds operational burden                                 | Email form with 24h response time promise               |
+| **Multi-Language Support**                         | No demand identified; impacts content maintenance                                    | Revisit after validating local market                   |
+| **Mobile App**                                     | Web-responsive enough for mobile; app adds maintenance burden                        | Progressive web app optional in Phase 4                 |
+| **Advanced Admin Dashboard**                       | Sanity Studio already handles content management; additional dashboard adds no value | Use Sanity Studio for content; Hostaway UI for bookings |
+| **Custom Booking Engine**                          | Hostaway integration is simpler and more reliable than building from scratch         | Use Hostaway API + redirect                             |
+| **Third-Party Integrations** (Slack, Zapier, etc.) | Adds complexity; no demand identified yet                                            | Revisit after validating core workflow                  |
+| **Accessibility Beyond WCAG AA**                   | WCAG AA is sufficient for legal compliance and good UX                               | Exceed standards in Phase 2 if feedback suggests        |
+| **Heavy Third-Party Widgets**                      | Each widget = more JavaScript, slower page load                                      | Choose 1-2 essential tools; avoid bloat                 |
 
 ---
 
@@ -197,7 +197,7 @@ These features will NOT be built, and the reasoning behind each decision.
 ✓ **User-centric** — "User can check availability" (not "System queries database")  
 ✓ **Atomic** — One capability per requirement (not "login and manage profile")  
 ✓ **Independent** — Minimal dependencies on other requirements  
-✓ **No vague language** — Not "Handle authentication" or "Support sharing"  
+✓ **No vague language** — Not "Handle authentication" or "Support sharing"
 
 ---
 
@@ -205,93 +205,93 @@ These features will NOT be built, and the reasoning behind each decision.
 
 Each v1 requirement is mapped to the phase that will implement it.
 
-| REQ-ID | Requirement | Phase | Status |
-|--------|-------------|-------|--------|
-| ROOM-01 | Fetch rooms from Hostaway API | 2 | Complete |
-| ROOM-02 | Generate room listing page | 2 | Complete |
-| ROOM-03 | Generate room detail pages | 2 | Complete |
-| ROOM-04 | Optimize photos with Astro Image | 5 | Pending |
-| ROOM-05 | Amenity badges on cards | 5 | Pending |
-| ROOM-06 | Room gallery carousel | 5 | Pending |
-| ROOM-07 | Display pricing | 5 | Pending |
-| BOOK-01 | Date picker component | 3 | Complete |
-| BOOK-02 | Real-time availability check | 3 | Complete |
-| BOOK-03 | Filter rooms by dates | 3 | Complete |
-| BOOK-04 | Availability calendar | 3 | Pending |
-| BOOK-05 | Redirect to Hostaway | 3 | Pending |
-| BOOK-06 | Server-side parameter validation | 3 | Complete |
-| BOOK-07 | Redirect messaging | 3 | Pending |
-| BOOK-08 | Availability API endpoint | 3 | Complete |
-| BOOK-09 | Fallback for API failures | 3 | Pending |
-| CONTENT-01 | Homepage rendering | 2 | Complete |
-| CONTENT-02 | Generic page template | 2 | Complete |
-| CONTENT-03 | Draft preview | 2 | Descoped |
-| CONTENT-04 | Contact page display | 2 | Complete |
-| CONTENT-05 | Contact form validation | 4 | Pending |
-| CONTENT-06 | Contact form API | 4 | Pending |
-| CONTENT-07 | Email notifications | 4 | Pending |
-| CONTENT-08 | About page | 2 | Complete |
-| PERF-01 | LCP < 2.5s on 4G | 5 | Pending |
-| PERF-02 | CLS < 0.1 | 5 | Pending |
-| PERF-03 | FCP < 1.8s | 5 | Pending |
-| PERF-04 | TTI < 3.8s | 5 | Pending |
-| PERF-05 | Edge cache 24h (rooms) | 5 | Pending |
-| PERF-06 | Edge cache 5-30min (availability) | 5 | Pending |
-| PERF-07 | Versioned assets cache-forever | 5 | Pending |
-| PERF-08 | Optimize room images | 5 | Pending |
-| PERF-09 | Homepage < 2s on 4G | 5 | Pending |
-| MOBILE-01 | No horizontal scroll on mobile | 5 | Pending |
-| MOBILE-02 | Responsive columns (mobile → desktop) | 5 | Pending |
-| MOBILE-03 | Touch-friendly date picker | 5 | Pending |
-| MOBILE-04 | Swipeable galleries | 5 | Pending |
-| MOBILE-05 | Mobile booking form | 5 | Pending |
-| MOBILE-06 | Header height < 15% viewport | 5 | Pending |
-| MOBILE-07 | Contact form mobile UX | 5 | Pending |
-| MOBILE-08 | Mobile navigation | 5 | Pending |
-| A11Y-01 | Descriptive alt text | 6 | Pending |
-| A11Y-02 | WCAG AA color contrast | 6 | Pending |
-| A11Y-03 | Keyboard navigation | 6 | Pending |
-| A11Y-04 | Visible focus indicators | 6 | Pending |
-| A11Y-05 | Form input labels | 6 | Pending |
-| A11Y-06 | Semantic heading hierarchy | 6 | Pending |
-| A11Y-07 | Decorative image handling | 6 | Pending |
-| A11Y-08 | Works without JavaScript | 6 | Pending |
-| SEO-01 | Unique page titles | 6 | Pending |
-| SEO-02 | Unique meta descriptions | 6 | Pending |
-| SEO-03 | Hotel schema markup | 6 | Pending |
-| SEO-04 | Room schema markup | 6 | Pending |
-| SEO-05 | Contact schema markup | 6 | Pending |
-| SEO-06 | Auto-generated sitemap | 6 | Pending |
-| SEO-07 | robots.txt | 6 | Pending |
-| SEO-08 | Open Graph tags | 6 | Pending |
-| SEO-09 | Canonical tags | 6 | Pending |
-| MONITOR-01 | Sentry initialized | 6 | Pending |
-| MONITOR-02 | JavaScript errors captured | 6 | Pending |
-| MONITOR-03 | API errors logged | 6 | Pending |
-| MONITOR-04 | Sentry alerts configured | 6 | Pending |
-| MONITOR-05 | Breadcrumbs captured | 6 | Pending |
-| MONITOR-06 | PII scrubbed from Sentry | 6 | Pending |
-| GA4-01 | Page view tracking | 6 | Pending |
-| GA4-02 | booking_started event | 6 | Pending |
-| GA4-03 | room_selected event | 6 | Pending |
-| GA4-04 | checkout_initiated event | 6 | Pending |
-| GA4-05 | contact_form_submitted event | 6 | Pending |
-| GA4-06 | PII filtered from GA4 | 6 | Pending |
-| GA4-07 | Funnel creation enabled | 6 | Pending |
-| CODE-01 | TypeScript strict mode | 1 | Pending |
-| CODE-02 | API type safety | 1 | Pending |
-| CODE-03 | Component prop types | 1 | Pending |
-| CODE-04 | No `any` types | 1 | Pending |
-| CODE-05 | Env var validation | 1 | Pending |
-| CODE-06 | Secrets in env, not source | 1 | Pending |
-| CODE-07 | Error handling & fallbacks | 3 | Pending |
-| INFRA-01 | Cloudflare Pages deployment | 1 | Pending |
-| INFRA-02 | PR preview deployments | 1 | Pending |
-| INFRA-03 | Environment variables configured | 1 | Pending |
-| INFRA-04 | Build consistency (local → Cloudflare) | 1 | Pending |
-| INFRA-05 | Build time < 90s | 1 | Pending |
-| INFRA-06 | Cache headers per route | 6 | Pending |
-| INFRA-07 | Rollback capability | 6 | Pending |
+| REQ-ID     | Requirement                            | Phase | Status   |
+| ---------- | -------------------------------------- | ----- | -------- |
+| ROOM-01    | Fetch rooms from Hostaway API          | 2     | Complete |
+| ROOM-02    | Generate room listing page             | 2     | Complete |
+| ROOM-03    | Generate room detail pages             | 2     | Complete |
+| ROOM-04    | Optimize photos with Astro Image       | 5     | Pending  |
+| ROOM-05    | Amenity badges on cards                | 5     | Pending  |
+| ROOM-06    | Room gallery carousel                  | 5     | Pending  |
+| ROOM-07    | Display pricing                        | 5     | Pending  |
+| BOOK-01    | Date picker component                  | 3     | Complete |
+| BOOK-02    | Real-time availability check           | 3     | Complete |
+| BOOK-03    | Filter rooms by dates                  | 3     | Complete |
+| BOOK-04    | Availability calendar                  | 3     | Pending  |
+| BOOK-05    | Redirect to Hostaway                   | 3     | Pending  |
+| BOOK-06    | Server-side parameter validation       | 3     | Complete |
+| BOOK-07    | Redirect messaging                     | 3     | Pending  |
+| BOOK-08    | Availability API endpoint              | 3     | Complete |
+| BOOK-09    | Fallback for API failures              | 3     | Pending  |
+| CONTENT-01 | Homepage rendering                     | 2     | Complete |
+| CONTENT-02 | Generic page template                  | 2     | Complete |
+| CONTENT-03 | Draft preview                          | 2     | Descoped |
+| CONTENT-04 | Contact page display                   | 2     | Complete |
+| CONTENT-05 | Contact form validation                | 4     | Pending  |
+| CONTENT-06 | Contact form API                       | 4     | Pending  |
+| CONTENT-07 | Email notifications                    | 4     | Pending  |
+| CONTENT-08 | About page                             | 2     | Complete |
+| PERF-01    | LCP < 2.5s on 4G                       | 5     | Pending  |
+| PERF-02    | CLS < 0.1                              | 5     | Pending  |
+| PERF-03    | FCP < 1.8s                             | 5     | Pending  |
+| PERF-04    | TTI < 3.8s                             | 5     | Pending  |
+| PERF-05    | Edge cache 24h (rooms)                 | 5     | Pending  |
+| PERF-06    | Edge cache 5-30min (availability)      | 5     | Pending  |
+| PERF-07    | Versioned assets cache-forever         | 5     | Pending  |
+| PERF-08    | Optimize room images                   | 5     | Pending  |
+| PERF-09    | Homepage < 2s on 4G                    | 5     | Pending  |
+| MOBILE-01  | No horizontal scroll on mobile         | 5     | Pending  |
+| MOBILE-02  | Responsive columns (mobile → desktop)  | 5     | Pending  |
+| MOBILE-03  | Touch-friendly date picker             | 5     | Pending  |
+| MOBILE-04  | Swipeable galleries                    | 5     | Pending  |
+| MOBILE-05  | Mobile booking form                    | 5     | Pending  |
+| MOBILE-06  | Header height < 15% viewport           | 5     | Pending  |
+| MOBILE-07  | Contact form mobile UX                 | 5     | Pending  |
+| MOBILE-08  | Mobile navigation                      | 5     | Pending  |
+| A11Y-01    | Descriptive alt text                   | 6     | Pending  |
+| A11Y-02    | WCAG AA color contrast                 | 6     | Pending  |
+| A11Y-03    | Keyboard navigation                    | 6     | Pending  |
+| A11Y-04    | Visible focus indicators               | 6     | Pending  |
+| A11Y-05    | Form input labels                      | 6     | Pending  |
+| A11Y-06    | Semantic heading hierarchy             | 6     | Pending  |
+| A11Y-07    | Decorative image handling              | 6     | Pending  |
+| A11Y-08    | Works without JavaScript               | 6     | Pending  |
+| SEO-01     | Unique page titles                     | 6     | Pending  |
+| SEO-02     | Unique meta descriptions               | 6     | Pending  |
+| SEO-03     | Hotel schema markup                    | 6     | Pending  |
+| SEO-04     | Room schema markup                     | 6     | Pending  |
+| SEO-05     | Contact schema markup                  | 6     | Pending  |
+| SEO-06     | Auto-generated sitemap                 | 6     | Pending  |
+| SEO-07     | robots.txt                             | 6     | Pending  |
+| SEO-08     | Open Graph tags                        | 6     | Pending  |
+| SEO-09     | Canonical tags                         | 6     | Pending  |
+| MONITOR-01 | Sentry initialized                     | 6     | Pending  |
+| MONITOR-02 | JavaScript errors captured             | 6     | Pending  |
+| MONITOR-03 | API errors logged                      | 6     | Pending  |
+| MONITOR-04 | Sentry alerts configured               | 6     | Pending  |
+| MONITOR-05 | Breadcrumbs captured                   | 6     | Pending  |
+| MONITOR-06 | PII scrubbed from Sentry               | 6     | Pending  |
+| GA4-01     | Page view tracking                     | 6     | Pending  |
+| GA4-02     | booking_started event                  | 6     | Pending  |
+| GA4-03     | room_selected event                    | 6     | Pending  |
+| GA4-04     | checkout_initiated event               | 6     | Pending  |
+| GA4-05     | contact_form_submitted event           | 6     | Pending  |
+| GA4-06     | PII filtered from GA4                  | 6     | Pending  |
+| GA4-07     | Funnel creation enabled                | 6     | Pending  |
+| CODE-01    | TypeScript strict mode                 | 1     | Pending  |
+| CODE-02    | API type safety                        | 1     | Pending  |
+| CODE-03    | Component prop types                   | 1     | Pending  |
+| CODE-04    | No `any` types                         | 1     | Pending  |
+| CODE-05    | Env var validation                     | 1     | Pending  |
+| CODE-06    | Secrets in env, not source             | 1     | Pending  |
+| CODE-07    | Error handling & fallbacks             | 3     | Pending  |
+| INFRA-01   | Cloudflare Pages deployment            | 1     | Pending  |
+| INFRA-02   | PR preview deployments                 | 1     | Pending  |
+| INFRA-03   | Environment variables configured       | 1     | Pending  |
+| INFRA-04   | Build consistency (local → Cloudflare) | 1     | Pending  |
+| INFRA-05   | Build time < 90s                       | 1     | Pending  |
+| INFRA-06   | Cache headers per route                | 6     | Pending  |
+| INFRA-07   | Rollback capability                    | 6     | Pending  |
 
 **Total v1 requirements: 73**  
 **All mapped: 73/73 ✓**
@@ -303,6 +303,7 @@ Each v1 requirement is mapped to the phase that will implement it.
 All requirements in the **V1 Requirements** section must be satisfied before considering the PoC complete.
 
 **Non-negotiable (must have):**
+
 - All room, booking, and content requirements (ROOM, BOOK, CONTENT categories)
 - Performance metrics (LCP < 2.5s, CLS < 0.1)
 - Mobile usability (responsive, touch-friendly)
@@ -311,11 +312,13 @@ All requirements in the **V1 Requirements** section must be satisfied before con
 - Error tracking (Sentry working)
 
 **Highly recommended (should have):**
+
 - All monitoring and analytics requirements
 - Full accessibility compliance
 - Deployment to Cloudflare Pages
 
 **Nice to have (defer if timeline pressure):**
+
 - Some advanced SEO features (if foundational SEO is done)
 - Advanced GA4 setup (if basic tracking is done)
 
@@ -326,15 +329,17 @@ All requirements in the **V1 Requirements** section must be satisfied before con
 This document evolves as the project progresses.
 
 **After each phase transition:**
+
 1. Requirements completed? → Move to validated section
 2. Requirements invalidated? → Move to out of scope
 3. New requirements emerged? → Add to V2/V3 sections
 
 **After each milestone:**
+
 1. Full review of all requirement sections
 2. Core Value check — are these the right priorities?
 3. Out of Scope audit — reasons still valid?
 
 ---
 
-*Last updated: 2026-05-05 after roadmap creation*
+_Last updated: 2026-05-05 after roadmap creation_

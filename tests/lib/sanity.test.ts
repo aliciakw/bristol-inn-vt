@@ -24,7 +24,9 @@ const { getHomepage, getPage, getPages, getClient } = await import('../../src/li
 
 // Capture createClient args from the singleton initialisation (first call).
 getClient();
-const initialCreateClientArgs = mockCreateClient.mock.calls[0] as [Record<string, unknown>] | undefined;
+const initialCreateClientArgs = mockCreateClient.mock.calls[0] as
+  | [Record<string, unknown>]
+  | undefined;
 
 // ---------------------------------------------------------------------------
 // Setup
@@ -44,15 +46,15 @@ beforeEach(() => {
 describe('getClient()', () => {
   it('calls createClient with projectId "4rk27ty6"', () => {
     expect(initialCreateClientArgs).toBeDefined();
-    expect(initialCreateClientArgs![0]).toMatchObject({ projectId: '4rk27ty6' });
+    expect(initialCreateClientArgs?.[0]).toMatchObject({ projectId: '4rk27ty6' });
   });
 
   it('passes SANITY_API_TOKEN as token', () => {
-    expect(initialCreateClientArgs![0]).toMatchObject({ token: 'test-sanity-token' });
+    expect(initialCreateClientArgs?.[0]).toMatchObject({ token: 'test-sanity-token' });
   });
 
   it('uses dataset "production"', () => {
-    expect(initialCreateClientArgs![0]).toMatchObject({ dataset: 'production' });
+    expect(initialCreateClientArgs?.[0]).toMatchObject({ dataset: 'production' });
   });
 
   it('does NOT include the token in any logged console output', () => {
@@ -82,7 +84,12 @@ describe('getHomepage()', () => {
   });
 
   it('returns the document returned by fetch', async () => {
-    const doc = { heroImages: [{ url: 'https://cdn.sanity.io/img.jpg', alt: 'test' }], ctaLabel: 'Book Now', ctaUrl: '/rooms', body: [] };
+    const doc = {
+      heroImages: [{ url: 'https://cdn.sanity.io/img.jpg', alt: 'test' }],
+      ctaLabel: 'Book Now',
+      ctaUrl: '/rooms',
+      body: [],
+    };
     mockFetch.mockResolvedValue(doc);
 
     const result = await getHomepage();

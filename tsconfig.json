@@ -3,43 +3,20 @@
   "compilerOptions": {
     "baseUrl": "src/",
     "paths": {
-      "@components/*": [
-        "components/*"
-      ],
-      "@layouts/*": [
-        "layouts/*"
-      ],
-      "@types/*": [
-        "types/*"
-      ],
-      "@lib/*": [
-        "lib/*"
-      ],
-      "@styles/*": [
-        "styles/*"
-      ]
+      "@components/*": ["components/*"],
+      "@layouts/*": ["layouts/*"],
+      "@types/*": ["types/*"],
+      "@lib/*": ["lib/*"],
+      "@styles/*": ["styles/*"]
     },
-    "lib": [
-      "es2020",
-      "dom",
-      "dom.iterable"
-    ],
-    "types": [
-      "node"
-    ],
+    "lib": ["es2020", "dom", "dom.iterable"],
+    "types": ["node"],
     "target": "es2020",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react"
   },
-  "include": [
-    ".astro/types.d.ts",
-    "**/*",
-    "./worker-configuration.d.ts"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+  "include": [".astro/types.d.ts", "**/*", "./worker-configuration.d.ts"],
+  "exclude": ["dist", "node_modules"]
 }

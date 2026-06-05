@@ -22,7 +22,10 @@ export async function GET({ url }: APIContext): Promise<Response> {
   const guests = parseInt(guestsRaw, 10);
 
   if (!isValidDate(checkIn) || !isValidDate(checkOut)) {
-    return Response.json({ error: 'checkIn and checkOut must be valid YYYY-MM-DD dates' }, { status: 400 });
+    return Response.json(
+      { error: 'checkIn and checkOut must be valid YYYY-MM-DD dates' },
+      { status: 400 },
+    );
   }
   if (checkIn < localDateISO(-1)) {
     return Response.json({ error: 'checkIn must be today or in the future' }, { status: 400 });
@@ -36,17 +39,20 @@ export async function GET({ url }: APIContext): Promise<Response> {
 
   try {
     const rooms = await getRooms();
-    const eligible = rooms.filter(r => r.personCapacity >= guests);
-    const listingIds = eligible.map(r => r.id);
+    const eligible = rooms.filter((r) => r.personCapacity >= guests);
+    const listingIds = eligible.map((r) => r.id);
     const results = await checkAvailability(listingIds, checkIn, checkOut);
 
     // Rooms filtered out by capacity are always "not available" for this guest count
     const capacityExcluded = rooms
-      .filter(r => r.personCapacity < guests)
-      .map(r => ({ listingId: r.id, available: false }));
+      .filter((r) => r.personCapacity < guests)
+      .map((r) => ({ listingId: r.id, available: false }));
 
     return Response.json([...results, ...capacityExcluded]);
   } catch {
-    return Response.json({ error: 'Unable to check availability. Please try again.' }, { status: 500 });
+    return Response.json(
+      { error: 'Unable to check availability. Please try again.' },
+      { status: 500 },
+    );
   }
 }

@@ -10,33 +10,36 @@
 
 ### Recommended Stack for V1
 
-| Layer | Choice | Why | Gotcha |
-|-------|--------|-----|--------|
-| **Framework** | Astro 5.x | Static-first, perfect for fast load times; on-demand rendering for availability | Builds take 30-60s for room data; monitor if scaling to 100+ rooms |
-| **CMS** | Prismic | Easy draft/publish workflow; supports Cloudflare PR previews; API-first | Webhooks need care; set up review workflow |
-| **Booking** | Hostaway API | Real-time availability, standard protocol | Rate limits need testing; API limits unknown until Phase 1 spike |
-| **Hosting** | Cloudflare Pages | PR previews; global CDN; $0 (free tier) | Astro adapter deprecated; stay on static builds for v1; migrate to Workers later if needed |
-| **Errors** | Sentry | Essential for booking sites; immediate visibility into user issues | Requires Day 1 setup; silent failures otherwise |
-| **Analytics** | GA4 | Free, event tracking, funnels | Event naming consistency is hard; plan taxonomy upfront |
-| **Lang** | TypeScript strict | Catches errors at compile time; your requirement | Must use from day 1 |
-| **Styling** | Tailwind CSS | Mobile-first, composable; aligns with your component vision | Inline Tailwind classes can get unwieldy; plan component structure early |
+| Layer         | Choice            | Why                                                                             | Gotcha                                                                                     |
+| ------------- | ----------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Framework** | Astro 5.x         | Static-first, perfect for fast load times; on-demand rendering for availability | Builds take 30-60s for room data; monitor if scaling to 100+ rooms                         |
+| **CMS**       | Prismic           | Easy draft/publish workflow; supports Cloudflare PR previews; API-first         | Webhooks need care; set up review workflow                                                 |
+| **Booking**   | Hostaway API      | Real-time availability, standard protocol                                       | Rate limits need testing; API limits unknown until Phase 1 spike                           |
+| **Hosting**   | Cloudflare Pages  | PR previews; global CDN; $0 (free tier)                                         | Astro adapter deprecated; stay on static builds for v1; migrate to Workers later if needed |
+| **Errors**    | Sentry            | Essential for booking sites; immediate visibility into user issues              | Requires Day 1 setup; silent failures otherwise                                            |
+| **Analytics** | GA4               | Free, event tracking, funnels                                                   | Event naming consistency is hard; plan taxonomy upfront                                    |
+| **Lang**      | TypeScript strict | Catches errors at compile time; your requirement                                | Must use from day 1                                                                        |
+| **Styling**   | Tailwind CSS      | Mobile-first, composable; aligns with your component vision                     | Inline Tailwind classes can get unwieldy; plan component structure early                   |
 
 ### Critical Spikes for Phase 1 Week 1
 
 Before planning Phase 1 in detail, you must answer these:
 
 **Hostaway API:**
+
 - How many requests/minute allowed? (Rate limits)
 - What's the response format for room photos? (Size/resolution?)
 - Exact booking redirect URL format? (Date format, param names)
 - Webhook support for changes? (Or polling only?)
 
 **Cloudflare Pages:**
+
 - Build time for 1-10 rooms? (Currently estimate 30-60s)
 - Cache header control per route? (Essential for 24h room data + 30min availability)
 - Can preview links work with draft Prismic content?
 
 **Prismic:**
+
 - Do preview URLs work reliably with Cloudflare PR deployments?
 - Webhook format when content publishes?
 
@@ -52,6 +55,7 @@ Before planning Phase 1 in detail, you must answer these:
 Static HTML says "Available May 10-12" → User tries to book → Hostaway says "Booked" → User feels misled → Abandons.
 
 **Solution:**
+
 ```
 Static pages: Room info (description, amenities, photos) built daily
 On-demand API: Availability check happens when user clicks "Check Availability"
@@ -175,15 +179,15 @@ These are low-effort, high-impact. Ship core PoC, then add these immediately:
 
 ## Confidence Levels
 
-| Area | Confidence | Reason | Risk |
-|------|-----------|--------|------|
-| **Astro choice** | HIGH | Proven framework for content sites; your use case is standard | Build times may slow if 100+ rooms; addressable with pagination |
-| **Cloudflare Pages** | MEDIUM | Good for static; deprecated for on-demand rendering; may need Workers migration later | Unknown until Phase 2; no risk for v1 |
-| **Prismic + Astro** | HIGH | Official integration; draft preview workflows documented | Webhook reliability untested; plan fallback |
-| **Hostaway integration** | MEDIUM | API exists and works; specifics unknown until spike | Rate limits, response formats, redirect URL format need verification |
-| **Mobile performance** | MEDIUM-HIGH | Industry standards clear (LCP < 2.5s); Astro + Tailwind handle this well | Image optimization is critical; test early |
-| **SEO scaffolding** | HIGH | Straightforward with Astro; schema.org patterns well-known | Requires discipline; easy to defer and regret |
-| **Booking UX** | MEDIUM | Standard flow; complexity in availability sync | Availability desync is the biggest risk; architecture handles it |
+| Area                     | Confidence  | Reason                                                                                | Risk                                                                 |
+| ------------------------ | ----------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| **Astro choice**         | HIGH        | Proven framework for content sites; your use case is standard                         | Build times may slow if 100+ rooms; addressable with pagination      |
+| **Cloudflare Pages**     | MEDIUM      | Good for static; deprecated for on-demand rendering; may need Workers migration later | Unknown until Phase 2; no risk for v1                                |
+| **Prismic + Astro**      | HIGH        | Official integration; draft preview workflows documented                              | Webhook reliability untested; plan fallback                          |
+| **Hostaway integration** | MEDIUM      | API exists and works; specifics unknown until spike                                   | Rate limits, response formats, redirect URL format need verification |
+| **Mobile performance**   | MEDIUM-HIGH | Industry standards clear (LCP < 2.5s); Astro + Tailwind handle this well              | Image optimization is critical; test early                           |
+| **SEO scaffolding**      | HIGH        | Straightforward with Astro; schema.org patterns well-known                            | Requires discipline; easy to defer and regret                        |
+| **Booking UX**           | MEDIUM      | Standard flow; complexity in availability sync                                        | Availability desync is the biggest risk; architecture handles it     |
 
 ---
 
@@ -195,7 +199,7 @@ These are low-effort, high-impact. Ship core PoC, then add these immediately:
 **Cloudflare Pages:** ⭐⭐⭐⭐ Mature for static; evolving for dynamic  
 **Sentry:** ⭐⭐⭐⭐⭐ Mature, battle-tested, industry standard  
 **GA4:** ⭐⭐⭐⭐ Mature, powerful, free  
-**TypeScript + Tailwind:** ⭐⭐⭐⭐⭐ Industry standard, no surprises  
+**TypeScript + Tailwind:** ⭐⭐⭐⭐⭐ Industry standard, no surprises
 
 **Overall:** Excellent ecosystem maturity. No experimental dependencies. All tools have strong communities and documentation.
 
@@ -236,6 +240,7 @@ Your vision is clear and achievable. But "just add guest accounts" or "let's han
 ## Phase Breakdown (Refined)
 
 ### Phase 1: Proof of Concept (1-2 weeks)
+
 - Static pages + Hostaway rooms
 - On-demand availability API
 - Booking flow to Hostaway
@@ -246,6 +251,7 @@ Your vision is clear and achievable. But "just add guest accounts" or "let's han
 - Deploy to Cloudflare Pages
 
 ### Phase 2: Credibility & Content (Week 2-4)
+
 - About page + inn story
 - Staff bios + photos
 - Guest testimonials (Hostaway integration)
@@ -255,6 +261,7 @@ Your vision is clear and achievable. But "just add guest accounts" or "let's han
 - Monitoring setup (Sentry alerts, status page)
 
 ### Phase 3: Discoverability (Month 2)
+
 - Blog / location guides
 - Room filtering / sorting
 - GA4 ecommerce tracking (booking funnel)
@@ -262,12 +269,14 @@ Your vision is clear and achievable. But "just add guest accounts" or "let's han
 - Seasonal promotions
 
 ### Phase 4: Premium Experience (Month 3+)
+
 - Virtual tours / 360 photos
 - Repeat booking discounts
 - Email follow-up automation
 - Component library (atoms → molecules)
 
 ### Phase 5: Advanced Features (Post-Validation)
+
 - Guest accounts + loyalty program
 - User reviews & ratings
 - Direct payment integration
@@ -285,6 +294,6 @@ Your vision is clear and achievable. But "just add guest accounts" or "let's han
 
 ---
 
-*Research completed: 2026-05-05*  
-*Ecosystem snapshot: Astro 5.x, Prismic latest, Hostaway API v1, Cloudflare Pages 2026 state*  
-*Next validation: Phase 1 spikes answer critical unknowns (API limits, build times, webhook reliability)*
+_Research completed: 2026-05-05_  
+_Ecosystem snapshot: Astro 5.x, Prismic latest, Hostaway API v1, Cloudflare Pages 2026 state_  
+_Next validation: Phase 1 spikes answer critical unknowns (API limits, build times, webhook reliability)_

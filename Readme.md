@@ -24,12 +24,14 @@ A proof-of-concept hospitality website built with Astro 5, TypeScript (strict mo
 ### Local Development
 
 1. Clone the repository
+
    ```bash
    git clone <repository-url>
    cd bristol-inn
    ```
 
 2. Copy environment variables template
+
    ```bash
    cp .env.example .env.local
    ```
@@ -37,11 +39,13 @@ A proof-of-concept hospitality website built with Astro 5, TypeScript (strict mo
 3. Fill in `.env.local` with your API keys (Hostaway, Prismic, Sentry, GA4)
 
 4. Install dependencies
+
    ```bash
    npm install
    ```
 
 5. Start development server
+
    ```bash
    npm run dev
    ```
@@ -74,6 +78,7 @@ src/
 ### TypeScript Strict Mode
 
 All TypeScript files must:
+
 - Have explicit type annotations on function parameters and return values
 - Use interfaces/types for component props
 - Have no `any` types (exceptions must be documented)
@@ -83,16 +88,16 @@ TypeScript compilation runs as part of `npm run build`. Type errors will block t
 ### Tailwind CSS
 
 Responsive design follows mobile-first approach with three breakpoints:
+
 - **mobile:** 0px (unprefixed, base styles apply to all)
 - **tablet:** 640px (use `tablet:` prefix)
 - **desktop:** 1024px (use `desktop:` prefix)
 
 Example:
+
 ```astro
 <!-- Single column on mobile, 2 on tablet, 3 on desktop -->
-<div class="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3">
-  ...
-</div>
+<div class="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3">...</div>
 ```
 
 ### Environment Variables
@@ -126,11 +131,13 @@ Missing required variables will cause the build to fail with a clear error messa
 6. PR preview deployments auto-generate unique URLs
 
 #### Some quirks about Cloudflare Pages
+
 To host on Cloudflare, we must make use of Cloudflare Pages for static hosting, and Cloudflare Workers for server tasks, such as builds, and serverless api endpoints. These are technically separate environments and as such have different environment variables. We will need to ensure that both are correctly configured.
 
- The distinction is:
-  - Workers → Variables and Secrets = runtime only (what you've set)
-  - Pages → Settings → Environment Variables = build time + runtime (what you need)
+The distinction is:
+
+- Workers → Variables and Secrets = runtime only (what you've set)
+- Pages → Settings → Environment Variables = build time + runtime (what you need)
 
 ## Phase 1 Status
 
@@ -141,11 +148,12 @@ To host on Cloudflare, we must make use of Cloudflare Pages for static hosting, 
 ✅ Placeholder pages (/, /rooms, /contact)  
 ✅ Environment variable validation  
 ✅ Local development verified  
-✅ Build succeeds with < 90s build time  
+✅ Build succeeds with < 90s build time
 
 ## Next: Phase 2 — Integrations & Core Data
 
 Phase 2 will:
+
 - Connect to Hostaway API and fetch real room data
 - Set up Prismic CMS integration
 - Generate static room listing and detail pages
