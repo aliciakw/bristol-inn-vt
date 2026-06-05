@@ -64,6 +64,28 @@ export const settingsType = defineType({
     }),
     // ── Navigation ──────────────────────────────────────────────────────────
     defineField({
+      name: 'nameplateLogo',
+      title: 'Nameplate Logo',
+      type: 'image',
+      options: { hotspot: true },
+      description: 'Horizontal, text-based logo displayed in the top nav bar on every page',
+      group: 'navigation',
+    }),
+    defineField({
+      name: 'leftCta',
+      title: 'Left CTA',
+      description: 'CTA button shown in the left column of the top nav bar on every page. Desktop only & optional.',
+      type: 'buttonLink',
+      group: 'navigation',
+    }),
+    defineField({
+      name: 'rightCta',
+      title: 'Right CTA',
+      description: 'CTA button shown in the right column of the top nav bar on every page. Desktop only & optional.',
+      type: 'buttonLink',
+      group: 'navigation',
+    }),
+    defineField({
       name: 'sidebarLinks',
       title: 'Sidebar Links',
       description: 'Links shown in the nav drawer / sidebar.',

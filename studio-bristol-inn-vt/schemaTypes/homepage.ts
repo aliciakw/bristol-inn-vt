@@ -10,6 +10,22 @@ export const homepageType = defineType({
     defineField({ name: 'welcomeDescription', title: 'Welcome Description', type: 'text', rows: 3 }),
     defineField({ name: 'welcomeCTA', title: 'Welcome CTA (optional)', type: 'link' }),
     defineField({
+      name: 'heroLeftImage',
+      title: 'Hero Collage — Left Image',
+      description: 'Left panel of the hero collage (e.g. nature or landscape photo).',
+      type: 'image',
+      options: { hotspot: true },
+      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+    }),
+    defineField({
+      name: 'heroRightImage',
+      title: 'Hero Collage — Right Image',
+      description: 'Right panel of the hero collage (e.g. building exterior photo).',
+      type: 'image',
+      options: { hotspot: true },
+      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+    }),
+    defineField({
       name: 'welcomeImage',
       title: 'Welcome Image',
       type: 'image',

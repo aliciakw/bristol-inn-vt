@@ -1,17 +1,15 @@
 ---
 import { getSettings } from '../lib/sanity';
 
+export type NavigationVariant = 'sand-050' | 'white' | 'sand-100' | 'forest-400';
+export type NavigationTextColor = 'ink-900' | 'sand-050';
+
 interface Props {
-  variant?: 'sand-100' | 'transparent' | 'forest-400';
-  textColor?: 'ink-900' | 'sand-050';
-  bookingUrl?: string;
+  variant?: NavigationVariant;
+  textColor?: NavigationTextColor;
 }
 
-const {
-  variant = 'sand-100',
-  textColor = 'ink-900',
-  bookingUrl = '/rooms-and-suites',
-} = Astro.props;
+const { variant = 'sand-050', textColor = 'ink-900' } = Astro.props;
 
 const settings = await getSettings();
 
@@ -22,59 +20,58 @@ const DEFAULT_NAV_LINKS = [
 ] as const;
 
 const sidebarLinks = settings?.sidebarLinks?.length ? settings.sidebarLinks : DEFAULT_NAV_LINKS;
+
+const nameplateLogo = settings?.nameplateLogo ?? null;
+
+const leftCta = settings?.leftCta?.label && settings?.leftCta?.href ? settings.leftCta : { label: settings?.leftCta?.label, href: settings?.leftCta?.href, openInNewTab: false };
+
+const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? settings.rightCta : { label: settings?.rightCta?.label, href: settings?.rightCta?.href, openInNewTab: false };
 ---
 
-<header
-  id="nav-top-bar"
-  class:list={[
-    'w-full h-16 desktop:h-[96px] sticky z-30 top-0 flex items-center shrink-0',
-    `bg-${variant}`,
-  ]}
->
+<header id="nav-top-bar" class:list={['w-full h-16 desktop:h-[96px] sticky z-30 top-0 flex items-center shrink-0', `bg-${variant}`]}>
   <!-- Left (desktop only) -->
   <div class="flex items-center gap-3 desktop:gap-6 pl-4 desktop:pl-6">
     <a
-      href="/contact"
+      href={leftCta.href}
+      target={leftCta.openInNewTab ? '_blank' : undefined}
+      rel={leftCta.openInNewTab ? 'noopener noreferrer' : undefined}
       class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-khaki-200 border border-2 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 whitespace-nowrap hover:bg-khaki-300 transition-colors"
     >
-      Contact Us
+      {leftCta.label}
     </a>
   </div>
 
   <!-- Center: logo -->
   <div class="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none select-none">
     <a href="/" class="pointer-events-auto">
-      <p
-        class="font-serif font-medium text-[30px] desktop:text-[2.4375rem] leading-none tracking-[0.01em]"
-        class:list={`text-${textColor}`}
-      >
-        The Bristol Inn
-      </p>
-      <p
-        class="font-serif font-normal text-[11px] desktop:text-[0.875rem] leading-[1.1] tracking-[0.01em] uppercase mt-0.5"
-        class:list={`text-${textColor}`}
-      >
-        19 Main Street, Bristol, Vermont, USA
-      </p>
+      {
+        nameplateLogo ? (
+          <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-10 desktop:max-h-14 w-auto object-contain" />
+        ) : (
+          <>
+            <p class="font-serif font-medium text-[30px] desktop:text-[2.4375rem] leading-none tracking-[0.01em]" class:list={`text-${textColor}`}>
+              The Bristol Inn
+            </p>
+            <p class="font-serif font-normal text-[11px] desktop:text-[0.875rem] leading-[1.1] tracking-[0.01em] uppercase mt-0.5" class:list={`text-${textColor}`}>
+              19 Main Street, Bristol, Vermont, USA
+            </p>
+          </>
+        )
+      }
     </a>
   </div>
 
   <!-- Right (desktop only) -->
   <div class="desktop:flex items-center ml-auto pr-4 gap-4">
     <a
-      href={bookingUrl}
+      href={rightCta.href}
+      target={rightCta.openInNewTab ? '_blank' : undefined}
+      rel={rightCta.openInNewTab ? 'noopener noreferrer' : undefined}
       class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-forest-400 border border-2 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-sand-100 whitespace-nowrap hover:opacity-90 transition-opacity"
     >
-      Reserve A Room
+      {rightCta.label}
     </a>
-    <button
-      id="nav-menu-toggle"
-      type="button"
-      aria-label="Open navigation menu"
-      aria-expanded="false"
-      aria-controls="nav-menu"
-      class="burger-icon relative z-[60] flex flex-col justify-center items-center gap-[5px] w-12 h-12 shrink-0 cursor-pointer rounded-full desktop:w-10 desktop:h-10"
-    >
+    <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon relative z-[60] flex flex-col justify-center items-center gap-[5px] w-12 h-12 shrink-0 cursor-pointer rounded-full desktop:w-10 desktop:h-10">
       <span class="line"></span>
       <span class="line"></span>
       <span class="line"></span>
@@ -83,23 +80,12 @@ const sidebarLinks = settings?.sidebarLinks?.length ? settings.sidebarLinks : DE
 </header>
 
 <!-- Nav drawer (slides in from right) -->
-<nav
-  id="nav-menu"
-  aria-label="Site navigation"
-  class="fixed inset-y-0 right-0 z-50 bg-lilac-200 flex flex-col pb-12"
-  aria-hidden="true"
->
+<nav id="nav-menu" aria-label="Site navigation" class="fixed inset-y-0 right-0 z-50 bg-lilac-200 flex flex-col pb-12" aria-hidden="true">
   <!-- Close button -->
   <div class="flex justify-end mb-10 p-3 desktop:pt-7 desktop:pr-4">
-    <button
-      id="nav-menu-close"
-      type="button"
-      aria-label="Close navigation menu"
-      class="flex items-center justify-center w-10 h-10 cursor-pointer text-ink-900"
-    >
+    <button id="nav-menu-close" type="button" aria-label="Close navigation menu" class="flex items-center justify-center w-10 h-10 cursor-pointer text-ink-900">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M2 2L18 18M18 2L2 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-        ></path>
+        <path d="M2 2L18 18M18 2L2 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
       </svg>
     </button>
   </div>
@@ -107,10 +93,12 @@ const sidebarLinks = settings?.sidebarLinks?.length ? settings.sidebarLinks : DE
   <!-- Content -->
   <div class="mb-10 p-6 desktop:p-7 flex flex-col gap-12 items-start">
     <a
-      href={bookingUrl}
+      href={rightCta.href}
+      target={rightCta.openInNewTab ? '_blank' : undefined}
+      rel={rightCta.openInNewTab ? 'noopener noreferrer' : undefined}
       class="inline-flex items-center justify-center h-11 px-6 rounded-full bg-lilac-200 border border-2 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 hover:bg-lilac-200/70 transition-colors"
     >
-      Reserve A Room
+      {rightCta.label}
     </a>
 
     <!-- Nav links from Sanity -->
@@ -118,12 +106,7 @@ const sidebarLinks = settings?.sidebarLinks?.length ? settings.sidebarLinks : DE
       {
         sidebarLinks.map(({ label, href, openInNewTab }) => (
           <li>
-            <a
-              href={href}
-              target={openInNewTab ? '_blank' : undefined}
-              rel={openInNewTab ? 'noopener noreferrer' : undefined}
-              class="font-serif font-medium text-[36px] leading-[1.5] text-ink-900 hover:opacity-60 transition-opacity"
-            >
+            <a href={href} target={openInNewTab ? '_blank' : undefined} rel={openInNewTab ? 'noopener noreferrer' : undefined} class="font-serif font-medium text-[36px] leading-[1.5] text-ink-900 hover:opacity-60 transition-opacity">
               {label}
             </a>
           </li>
@@ -133,12 +116,7 @@ const sidebarLinks = settings?.sidebarLinks?.length ? settings.sidebarLinks : DE
   </div>
 </nav>
 
-<div
-  id="nav-backdrop"
-  class="fixed inset-0 z-40 bg-ink-900/40 opacity-0 pointer-events-none transition-opacity duration-300"
-  aria-hidden="true"
->
-</div>
+<div id="nav-backdrop" class="fixed inset-0 z-40 bg-ink-900/40 opacity-0 pointer-events-none transition-opacity duration-300" aria-hidden="true"></div>
 
 <style>
   #nav-menu {
