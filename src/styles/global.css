@@ -96,6 +96,15 @@ html {
   text-rendering: optimizeLegibility;
 }
 
+.Section__inner {
+  max-width: 1480px;
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), 1fr);
+  gap: var(--grid-gutter);
+  margin: 0 auto;
+  padding: var(--grid-margin) 0;
+}
+
 
 /* Animated Hamburger menu icon */
 .burger-icon .line{

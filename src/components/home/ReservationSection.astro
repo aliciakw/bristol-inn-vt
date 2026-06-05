@@ -1,0 +1,139 @@
+---
+import { Image } from 'astro:assets'
+import TextStyle from '@components/ui/TextStyle.astro'
+import type { SanityImage } from '../../lib/sanity'
+
+interface Props {
+  reservationDescription?: string
+  reservationImage?: SanityImage
+}
+
+const { reservationDescription, reservationImage } = Astro.props
+---
+
+<section class="bg-forest-400 px-[var(--grid-margin)] pt-14 desktop:pt-20 pb-14 desktop:pb-20">
+  <div class="max-w-[1480px] mx-auto">
+
+    <!-- Section header -->
+    <div class="text-center mb-10 desktop:mb-14">
+      <TextStyle variant="h2" class="text-sand-050">Make a Reservation</TextStyle>
+      {reservationDescription && (
+        <TextStyle
+          variant="paragraph"
+          element="p"
+          class="text-sand-050 mt-4 max-w-3xl mx-auto"
+        >
+          {reservationDescription}
+        </TextStyle>
+      )}
+    </div>
+
+    <!-- Form card -->
+    <div class="bg-sand-050 rounded-[16px] p-6 tablet:p-8 desktop:p-10">
+      <TextStyle variant="h3" class="text-ink-900 mb-6">Rooms &amp; Suites</TextStyle>
+
+      <div class="flex flex-col desktop:flex-row gap-8 desktop:gap-10">
+
+        <!-- Booking form (static UI) -->
+        <div class="desktop:w-[55%] flex flex-col gap-5">
+
+          <!-- Date fields -->
+          <div class="flex flex-col tablet:flex-row gap-4">
+            <div class="flex-1">
+              <label class="block font-serif font-medium text-ink-900 mb-1.5 text-sm">Check in</label>
+              <input
+                type="date"
+                class="w-full bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 appearance-none focus:outline-none focus:ring-1 focus:ring-ink-900"
+              />
+            </div>
+            <div class="flex-1">
+              <label class="block font-serif font-medium text-ink-900 mb-1.5 text-sm">Check out</label>
+              <input
+                type="date"
+                class="w-full bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 appearance-none focus:outline-none focus:ring-1 focus:ring-ink-900"
+              />
+            </div>
+          </div>
+
+          <!-- Guests -->
+          <div>
+            <label class="block font-serif font-medium text-ink-900 mb-1.5 text-sm">Guests</label>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              placeholder="2"
+              class="w-full tablet:w-36 bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 focus:outline-none focus:ring-1 focus:ring-ink-900"
+            />
+          </div>
+
+          <!-- Checkboxes -->
+          <div class="flex flex-col tablet:flex-row gap-4 tablet:gap-8 items-start">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <span class="relative flex-none">
+                <input type="checkbox" class="peer sr-only" />
+                <span
+                  class="block size-[46px] bg-sand-050 border border-ink-900 rounded-[8px] peer-checked:bg-forest-400"
+                ></span>
+                <svg
+                  class="absolute inset-0 m-auto size-5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
+                  viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"
+                >
+                  <polyline points="2,8 6,12 14,4" />
+                </svg>
+              </span>
+              <TextStyle variant="paragraph" element="span" class="text-ink-900">Wheelchair Accessible</TextStyle>
+            </label>
+
+            <label class="flex items-center gap-3 cursor-pointer">
+              <span class="relative flex-none">
+                <input type="checkbox" class="peer sr-only" />
+                <span
+                  class="block size-[46px] bg-sand-050 border border-ink-900 rounded-[8px] peer-checked:bg-forest-400"
+                ></span>
+                <svg
+                  class="absolute inset-0 m-auto size-5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
+                  viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"
+                >
+                  <polyline points="2,8 6,12 14,4" />
+                </svg>
+              </span>
+              <TextStyle variant="paragraph" element="span" class="text-ink-900">Dog-friendly</TextStyle>
+            </label>
+          </div>
+
+          <a href="#" class="font-serif text-caption desktop:text-caption-desktop underline text-ink-900 hover:opacity-70 -mt-1 self-start">
+            See Pet Policy
+          </a>
+
+          <!-- Search button (no-op for now) -->
+          <div class="pt-2">
+            <button
+              type="button"
+              class="w-full tablet:w-auto px-12 py-4 rounded-[72px] border border-ink-900 bg-lilac-200 font-serif text-ink-900 text-h4 desktop:text-h4-desktop hover:bg-lilac-200/80 transition-colors"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+
+        <!-- Room photo -->
+        {reservationImage?.url && (
+          <div class="flex-1 rounded-[16px] overflow-hidden min-h-[260px] tablet:min-h-[340px] desktop:min-h-[403px]">
+            <Image
+              src={reservationImage.url}
+              alt={reservationImage.alt}
+              width={549}
+              height={403}
+              format="webp"
+              loading="lazy"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
+      </div>
+    </div>
+
+  </div>
+</section>

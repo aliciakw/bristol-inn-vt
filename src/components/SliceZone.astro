@@ -48,5 +48,23 @@ const { blocks } = Astro.props
     );
   }
 
+  if (block._type === 'ctaBlock') {
+    const cta = block.cta as { label?: string; href?: string; openInNewTab?: boolean } | undefined;
+    if (!cta?.label || !cta?.href) return null;
+
+    return (
+      <div class="my-8 flex justify-center">
+        <a
+          href={cta.href}
+          target={cta.openInNewTab ? '_blank' : undefined}
+          rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}
+          class="inline-flex items-center px-8 py-3 rounded-full border border-ink-900 bg-lilac-200 font-serif text-ink-900 hover:bg-lilac-200/80 transition-colors"
+        >
+          {cta.label}
+        </a>
+      </div>
+    );
+  }
+
   return null;
 })}

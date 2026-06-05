@@ -1,0 +1,29 @@
+---
+import { Image } from 'astro:assets'
+import type { SanityImage } from '../../lib/sanity'
+
+interface Props {
+  images: SanityImage[]
+}
+
+const { images } = Astro.props
+const visible = images.filter(img => img.url).slice(0, 4)
+---
+
+{visible.length > 0 && (
+  <div class="flex overflow-hidden w-full">
+    {visible.map((img) => (
+      <div class="flex-1 aspect-[4/3] overflow-hidden">
+        <Image
+          src={img.url}
+          alt={img.alt}
+          width={432}
+          height={324}
+          format="webp"
+          loading="lazy"
+          class="w-full h-full object-cover"
+        />
+      </div>
+    ))}
+  </div>
+)}

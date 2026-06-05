@@ -27,10 +27,27 @@ export type SanityMeta = {
   ogImage?: { url: string }
 }
 
+export type SanityResolvedLink = {
+  label: string
+  href: string
+  openInNewTab: boolean
+}
+
+export type SanityImage = {
+  url: string
+  alt: string
+}
+
 export type SanityHomepage = {
-  heroImages: { url: string; alt: string }[]
-  ctaLabel: string
-  ctaUrl: string
+  welcomeHeading?: string
+  welcomeDescription?: string
+  welcomeCTA?: SanityResolvedLink
+  welcomeImage?: SanityImage
+  galleryImages: SanityImage[]
+  reservationDescription?: string
+  reservationImage?: SanityImage
+  testimonial?: { quote: string; author: string; role: string }
+  amenities: string[]
   body: SanityBlock[]
 }
 
@@ -43,13 +60,27 @@ export type SanityPage = {
 
 const HOMEPAGE_ID = "6e561f5f-23ec-49fa-863f-141c005904c3";
 
+const RESOLVE_LINK = `{ label, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`
+
 export async function getHomepage(): Promise<SanityHomepage> {
   return getClient().fetch<SanityHomepage>(
     `*[_type == "homepage" && _id == $id][0]{
-      "heroImages": heroImages[]{ "url": asset->url, "alt": alt },
-      ctaLabel,
-      ctaUrl,
-      body
+      welcomeHeading,
+      welcomeDescription,
+      "welcomeCTA": welcomeCTA${RESOLVE_LINK},
+      "welcomeImage": welcomeImage{ "url": asset->url, "alt": coalesce(alt, "") },
+      "galleryImages": galleryImages[]{ "url": asset->url, "alt": coalesce(alt, "") },
+      reservationDescription,
+      "reservationImage": reservationImage{ "url": asset->url, "alt": coalesce(alt, "") },
+      "testimonial": testimonial{ quote, author, role },
+      "amenities": coalesce(amenities, []),
+      "body": body[]{
+        ...,
+        _type == "ctaBlock" => {
+          ...,
+          "cta": cta${RESOLVE_LINK}
+        }
+      }
     }`,
     { id: HOMEPAGE_ID }
   )

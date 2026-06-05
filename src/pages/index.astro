@@ -1,17 +1,60 @@
 ---
-import { getHomepage } from '../lib/sanity'
+import { getHomepage, getSettings } from '../lib/sanity'
 import BaseLayout from '@layouts/BaseLayout.astro'
-import HeroCarousel from '../components/HeroCarousel.astro'
+import WelcomeSection from '../components/home/WelcomeSection.astro'
+import GalleryStrip from '../components/home/GalleryStrip.astro'
+import ReservationSection from '../components/home/ReservationSection.astro'
+import TestimonialsSection from '../components/home/TestimonialsSection.astro'
 import SliceZone from '../components/SliceZone.astro'
 
-const homepage = await getHomepage()
-const heroImages = homepage.heroImages.filter(img => img.url)
-const ctaLabel = homepage.ctaLabel || 'Browse Our Rooms'
-const ctaUrl = homepage.ctaUrl ?? '/rooms'
+const [homepage, settings] = await Promise.all([getHomepage(), getSettings()])
+
+const {
+  welcomeHeading,
+  welcomeDescription,
+  welcomeCTA,
+  welcomeImage,
+  galleryImages,
+  reservationDescription,
+  reservationImage,
+  testimonial,
+  amenities,
+  body,
+} = homepage
 ---
-<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere.">
-  {heroImages.length > 0 && <HeroCarousel images={heroImages} ctaLabel={ctaLabel} ctaUrl={ctaUrl} />}
-  <div class="max-w-4xl mx-auto px-4 py-8">
-    <SliceZone blocks={homepage.body} />
+
+<BaseLayout
+  title="Bristol Inn — Vermont"
+  description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere."
+>
+  <WelcomeSection
+    welcomeHeading={welcomeHeading}
+    welcomeDescription={welcomeDescription}
+    welcomeCTA={welcomeCTA}
+    welcomeImage={welcomeImage}
+    directionsHref={settings.directionsLink?.href}
+    directionsLabel={settings.directionsLink?.label}
+  />
+
+  <GalleryStrip images={galleryImages ?? []} />
+
+  <div class="bg-forest-400">
+    <ReservationSection
+      reservationDescription={reservationDescription}
+      reservationImage={reservationImage}
+    />
+
+    <TestimonialsSection
+      testimonial={testimonial}
+      amenities={amenities ?? []}
+    />
+
+    {body?.length > 0 && (
+      <div class="px-[var(--grid-margin)] pb-16 desktop:pb-24 text-sand-050">
+        <div class="max-w-[1480px] mx-auto">
+          <SliceZone blocks={body} />
+        </div>
+      </div>
+    )}
   </div>
 </BaseLayout>

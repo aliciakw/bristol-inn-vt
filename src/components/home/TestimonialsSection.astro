@@ -1,0 +1,75 @@
+---
+import TextStyle from '@components/ui/TextStyle.astro'
+
+interface Props {
+  testimonial?: { quote: string; author: string; role: string }
+  amenities: string[]
+}
+
+const { testimonial, amenities } = Astro.props
+
+// Split amenities into two columns
+const mid = Math.ceil(amenities.length / 2)
+const col1 = amenities.slice(0, mid)
+const col2 = amenities.slice(mid)
+---
+
+<section class="bg-forest-400 px-[var(--grid-margin)] pb-16 desktop:pb-24">
+  <div class="max-w-[1480px] mx-auto">
+
+    <!-- Heading -->
+    <TextStyle variant="h2" class="text-sand-050 text-center mb-10 desktop:mb-14">
+      You&#8217;re in good hands
+    </TextStyle>
+
+    <!-- Cards row -->
+    <div class="flex flex-col tablet:flex-row gap-6 desktop:gap-8 items-start">
+
+      <!-- Testimonial card -->
+      {testimonial && (
+        <div class="bg-lilac-200 rounded-[16px] p-8 desktop:p-10 tablet:w-[40%] shrink-0">
+          <TextStyle variant="h4" element="p" class="text-ink-900 leading-snug">
+            &#8220;{testimonial.quote}&#8221;
+          </TextStyle>
+          <div class="mt-6 text-right">
+            <TextStyle variant="h3" element="p" class="text-ink-900">&#8212; {testimonial.author}</TextStyle>
+            <TextStyle variant="caption" element="p" class="text-ink-900 mt-0.5">{testimonial.role}</TextStyle>
+          </div>
+        </div>
+      )}
+
+      <!-- Amenities card -->
+      {amenities.length > 0 && (
+        <div class="flex-1 relative pt-6">
+          <!-- Tab label -->
+          <div class="absolute top-0 left-8 bg-khaki-300 px-5 py-2.5 rounded-none">
+            <TextStyle variant="h4" element="span" bold class="text-ink-900">Popular Amenities</TextStyle>
+          </div>
+
+          <div class="bg-khaki-200 rounded-[16px] pt-12 desktop:pt-14 pb-8 px-8 desktop:px-10 shadow-sm">
+            <div class="flex gap-6 desktop:gap-10">
+              <ul class="flex-1 list-disc list-inside space-y-1.5">
+                {col1.map(item => (
+                  <li>
+                    <TextStyle variant="paragraph" element="span" class="text-ink-900">{item}</TextStyle>
+                  </li>
+                ))}
+              </ul>
+              {col2.length > 0 && (
+                <ul class="flex-1 list-disc list-inside space-y-1.5">
+                  {col2.map(item => (
+                    <li>
+                      <TextStyle variant="paragraph" element="span" class="text-ink-900">{item}</TextStyle>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+
+  </div>
+</section>

@@ -29,7 +29,7 @@ const sidebarLinks = settings?.sidebarLinks?.length
 <header
   id="nav-top-bar"
   class:list={[
-    'w-full h-16 desktop:h-[96px] sticky top-0 flex items-center shrink-0',
+    'w-full h-16 desktop:h-[96px] sticky z-30 top-0 flex items-center shrink-0',
     `bg-${variant}`,
   ]}
 >
@@ -37,7 +37,7 @@ const sidebarLinks = settings?.sidebarLinks?.length
   <div class="flex items-center gap-3 desktop:gap-6 pl-4 desktop:pl-6">
     <a
       href="/contact"
-      class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-khaki-200 border border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 whitespace-nowrap hover:bg-khaki-300 transition-colors"
+      class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-khaki-200 border border-2 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 whitespace-nowrap hover:bg-khaki-300 transition-colors"
     >
       Contact Us
     </a>
@@ -59,7 +59,7 @@ const sidebarLinks = settings?.sidebarLinks?.length
   <div class="desktop:flex items-center ml-auto pr-4 gap-4">
     <a
       href={bookingUrl}
-      class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-forest-400 border border-sand-100 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-sand-100 whitespace-nowrap hover:opacity-90 transition-opacity"
+      class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-forest-400 border border-2 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-sand-100 whitespace-nowrap hover:opacity-90 transition-opacity"
     >
       Reserve A Room
     </a>
@@ -104,7 +104,7 @@ const sidebarLinks = settings?.sidebarLinks?.length
   <div class="mb-10 p-6 desktop:p-7 flex flex-col gap-12 items-start">
     <a
       href={bookingUrl}
-      class="inline-flex items-center justify-center h-11 px-6 rounded-full bg-lilac-200 border border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 hover:bg-lilac-200/70 transition-colors"
+      class="inline-flex items-center justify-center h-11 px-6 rounded-full bg-lilac-200 border border-2 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 hover:bg-lilac-200/70 transition-colors"
     >
       Reserve A Room
     </a>
