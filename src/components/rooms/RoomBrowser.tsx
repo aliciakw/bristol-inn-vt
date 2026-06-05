@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AvailabilitySearchForm } from './AvailabilitySearchForm';
 import type { SearchParams } from './AvailabilitySearchForm';
 import { RoomCardReact } from './RoomCardReact';
@@ -18,66 +18,31 @@ interface AvailabilityResult {
   pricePerNight?: number;
 }
 
-type SearchState =
-  | { status: 'idle' }
-  | { status: 'loading' }
-  | { status: 'results'; availability: AvailabilityResult[] }
-  | { status: 'error'; message: string };
+type SearchState = { status: 'idle' } | { status: 'loading' } | { status: 'results'; availability: AvailabilityResult[] } | { status: 'error'; message: string };
 
 interface Props {
   rooms: RoomBrowserRoom[];
 }
 
-function RoomGrid({
-  rooms,
-  isLoading,
-  availability,
-}: {
-  rooms: RoomBrowserRoom[];
-  isLoading?: boolean;
-  availability?: AvailabilityResult[];
-}) {
+function RoomGrid({ rooms, isLoading, availability }: { rooms: RoomBrowserRoom[]; isLoading?: boolean; availability?: AvailabilityResult[] }) {
   return (
     <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6">
       {rooms.map((room) => (
-        <RoomCardReact
-          key={room.id}
-          id={room.id}
-          name={room.name}
-          price={room.price}
-          photo={room.photo}
-          amenities={room.amenities}
-          availability={availability?.find((a) => a.listingId === room.id)}
-          isLoading={isLoading ?? false}
-        />
+        <RoomCardReact key={room.id} id={room.id} name={room.name} price={room.price} photo={room.photo} amenities={room.amenities} availability={availability?.find((a) => a.listingId === room.id)} isLoading={isLoading ?? false} />
       ))}
     </div>
   );
 }
 
-function RoomSections({
-  rooms,
-  availability,
-}: {
-  rooms: RoomBrowserRoom[];
-  availability: AvailabilityResult[];
-}) {
+function RoomSections({ rooms, availability }: { rooms: RoomBrowserRoom[]; availability: AvailabilityResult[] }) {
   const available = rooms.filter((r) => availability.find((a) => a.listingId === r.id)?.available);
-  const unavailable = rooms.filter(
-    (r) => !availability.find((a) => a.listingId === r.id)?.available,
-  );
+  const unavailable = rooms.filter((r) => !availability.find((a) => a.listingId === r.id)?.available);
 
   return (
     <div className="flex flex-col gap-12">
       <section>
         <h2 className="text-2xl font-bold mb-6">Available Rooms &amp; Suites</h2>
-        {available.length === 0 ? (
-          <p className="text-gray-600">
-            No rooms are available for your selected dates and guest count.
-          </p>
-        ) : (
-          <RoomGrid rooms={available} availability={availability} />
-        )}
+        {available.length === 0 ? <p className="text-gray-600">No rooms are available for your selected dates and guest count.</p> : <RoomGrid rooms={available} availability={availability} />}
       </section>
       {unavailable.length > 0 && (
         <section>
@@ -91,6 +56,22 @@ function RoomSections({
 
 export function RoomBrowser({ rooms }: Props) {
   const [state, setState] = useState<SearchState>({ status: 'idle' });
+
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const checkIn = sp.get('checkIn') ?? '';
+    const checkOut = sp.get('checkOut') ?? '';
+    const guests = parseInt(sp.get('guests') ?? '', 10) || 0;
+    if (checkIn && checkOut && guests > 0) {
+      handleSearch({
+        checkIn,
+        checkOut,
+        guests,
+        groundFloor: sp.get('groundFloor') === '1',
+        pets: sp.get('pets') === '1',
+      });
+    }
+  }, []);
 
   async function handleSearch(params: SearchParams) {
     setState({ status: 'loading' });
@@ -110,8 +91,7 @@ export function RoomBrowser({ rooms }: Props) {
     } catch (err) {
       setState({
         status: 'error',
-        message:
-          err instanceof Error ? err.message : 'Unable to check availability. Please try again.',
+        message: err instanceof Error ? err.message : 'Unable to check availability. Please try again.',
       });
     }
   }
@@ -125,12 +105,7 @@ export function RoomBrowser({ rooms }: Props) {
 
   return (
     <div>
-      <AvailabilitySearchForm
-        onSearch={handleSearch}
-        onClear={handleClear}
-        isLoading={isLoading}
-        hasResults={hasResults}
-      />
+      <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} />
 
       {state.status === 'error' && (
         <p role="alert" className="text-red-600 text-sm mb-6">
@@ -138,15 +113,7 @@ export function RoomBrowser({ rooms }: Props) {
         </p>
       )}
 
-      {rooms.length === 0 ? (
-        <p className="text-center text-gray-600">
-          No rooms available at this time. Please check back soon.
-        </p>
-      ) : state.status === 'results' ? (
-        <RoomSections rooms={rooms} availability={state.availability} />
-      ) : (
-        <RoomGrid rooms={rooms} isLoading={isLoading} />
-      )}
+      {rooms.length === 0 ? <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p> : state.status === 'results' ? <RoomSections rooms={rooms} availability={state.availability} /> : <RoomGrid rooms={rooms} isLoading={isLoading} />}
     </div>
   );
 }

@@ -19,27 +19,17 @@ const browserRooms = rooms.map((r) => ({
 }));
 ---
 
-<BaseLayout
-  title={`${pageTitle} — Bristol Inn`}
-  meta={page?.meta}
-  backgroundColor="forest-400"
-  textColor="sand-050"
-  navigationVariant="transparent"
->
-  {
+<BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta} backgroundColor="forest-400" textColor="sand-050" navigationVariant="forest-400">
+  <!-- {
     (page?.body?.length ?? 0) > 0 && (
       <div class="max-w-3xl mx-auto px-4 pt-8 pb-4">
         <h1 class="text-3xl font-medium mb-6">{pageTitle}</h1>
         <SliceZone blocks={page!.body} />
       </div>
     )
-  }
-  <div class="max-w-7xl mx-auto px-4 py-8">
-    {
-      (page?.body?.length ?? 0) === 0 && (
-        <h1 class="text-3xl font-bold text-gray-900 mb-8">{pageTitle}</h1>
-      )
-    }
+  } -->
+  <div class="Section px-[var(--grid-margin)]">
+    {(page?.body?.length ?? 0) === 0 && <h1 class="text-3xl font-bold text-gray-900 mb-8">{pageTitle}</h1>}
     <RoomBrowser client:load rooms={browserRooms} />
   </div>
 </BaseLayout>

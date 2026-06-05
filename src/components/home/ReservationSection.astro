@@ -28,31 +28,31 @@ const { reservationHeading = 'Make a Reservation', reservationDescription, reser
       <div class="flex flex-col flex-1">
         <TextStyle variant="h3" class="text-ink-900 mb-6">Rooms &amp; Suites</TextStyle>
         <div class="flex flex-col desktop:flex-row gap-8 desktop:gap-10">
-          <!-- Booking form (static UI) -->
-          <div class="desktop:w-[55%] flex flex-col gap-5">
+          <!-- Booking form -->
+          <form id="reservation-form" class="desktop:w-[55%] flex flex-col gap-5">
             <!-- Date fields -->
             <div class="flex flex-col tablet:flex-row gap-4">
               <div class="flex-1">
-                <label class="block font-serif font-medium text-ink-900 mb-1.5 text-sm">Check in</label>
-                <input type="date" class="w-full bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 appearance-none focus:outline-none focus:ring-1 focus:ring-ink-900" />
+                <label for="res-check-in" class="block font-serif font-medium text-ink-900 mb-1.5 text-sm">Check in</label>
+                <input id="res-check-in" name="checkIn" type="date" class="w-full bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 appearance-none focus:outline-none focus:ring-1 focus:ring-ink-900" />
               </div>
               <div class="flex-1">
-                <label class="block font-serif font-medium text-ink-900 mb-1.5 text-sm">Check out</label>
-                <input type="date" class="w-full bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 appearance-none focus:outline-none focus:ring-1 focus:ring-ink-900" />
+                <label for="res-check-out" class="block font-serif font-medium text-ink-900 mb-1.5 text-sm">Check out</label>
+                <input id="res-check-out" name="checkOut" type="date" class="w-full bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 appearance-none focus:outline-none focus:ring-1 focus:ring-ink-900" />
               </div>
             </div>
 
             <!-- Guests -->
             <div>
-              <label class="block font-serif font-medium text-ink-900 mb-1.5 text-sm">Guests</label>
-              <input type="number" min="1" max="10" placeholder="2" class="w-full tablet:w-36 bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 focus:outline-none focus:ring-1 focus:ring-ink-900" />
+              <label for="res-guests" class="block font-serif font-medium text-ink-900 mb-1.5 text-sm">Guests</label>
+              <input id="res-guests" name="guests" type="number" min="1" max="20" placeholder="2" class="w-full tablet:w-36 bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 focus:outline-none focus:ring-1 focus:ring-ink-900" />
             </div>
 
             <!-- Checkboxes -->
             <div class="flex flex-col tablet:flex-row gap-4 tablet:gap-8 items-start">
               <label class="flex items-center gap-3 cursor-pointer">
                 <span class="relative flex-none">
-                  <input type="checkbox" class="peer sr-only" />
+                  <input name="groundFloor" type="checkbox" class="peer sr-only" />
                   <span class="block size-[46px] bg-sand-050 border border-ink-900 rounded-[8px] peer-checked:bg-forest-400"></span>
                   <svg class="absolute inset-0 m-auto size-5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5">
                     <polyline points="2,8 6,12 14,4"></polyline>
@@ -63,7 +63,7 @@ const { reservationHeading = 'Make a Reservation', reservationDescription, reser
 
               <label class="flex items-center gap-3 cursor-pointer">
                 <span class="relative flex-none">
-                  <input type="checkbox" class="peer sr-only" />
+                  <input name="pets" type="checkbox" class="peer sr-only" />
                   <span class="block size-[46px] bg-sand-050 border border-ink-900 rounded-[8px] peer-checked:bg-forest-400"></span>
                   <svg class="absolute inset-0 m-auto size-5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5">
                     <polyline points="2,8 6,12 14,4"></polyline>
@@ -75,11 +75,10 @@ const { reservationHeading = 'Make a Reservation', reservationDescription, reser
 
             <a href="/faq#pet-policy" class="font-serif text-caption desktop:text-caption-desktop underline text-ink-900 hover:opacity-70 -mt-1 self-start"> See Pet Policy </a>
 
-            <!-- Search button (no-op for now) -->
             <div class="pt-2">
-              <button type="button" class="w-full tablet:w-auto px-12 py-2 rounded-[72px] border border-2 border-ink-900 bg-lilac-200 font-serif text-ink-900 text-[18px] hover:bg-lilac-200/80 transition-colors"> Search </button>
+              <button type="submit" class="w-full tablet:w-auto px-12 py-2 rounded-[72px] border border-2 border-ink-900 bg-lilac-200 font-serif text-ink-900 text-[18px] hover:bg-lilac-200/80 transition-colors"> Search </button>
             </div>
-          </div>
+          </form>
 
           <!-- Room photo -->
           {
@@ -94,3 +93,24 @@ const { reservationHeading = 'Make a Reservation', reservationDescription, reser
     </div>
   </div>
 </section>
+
+<script>
+  const form = document.getElementById('reservation-form') as HTMLFormElement | null;
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const params = new URLSearchParams();
+
+    const checkIn = data.get('checkIn') as string;
+    const checkOut = data.get('checkOut') as string;
+    const guests = data.get('guests') as string;
+
+    if (checkIn) params.set('checkIn', checkIn);
+    if (checkOut) params.set('checkOut', checkOut);
+    if (guests) params.set('guests', guests);
+    if (data.get('groundFloor')) params.set('groundFloor', '1');
+    if (data.get('pets')) params.set('pets', '1');
+
+    window.location.href = `/rooms-and-suites?${params.toString()}`;
+  });
+</script>
