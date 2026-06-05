@@ -1,5 +1,5 @@
 ---
-import { getSettings } from '../lib/sanity'
+import { getSettings } from '../lib/sanity';
 
 interface Props {
   variant?: 'sand-100' | 'transparent' | 'forest-400';
@@ -13,7 +13,7 @@ const {
   bookingUrl = '/rooms-and-suites',
 } = Astro.props;
 
-const settings = await getSettings()
+const settings = await getSettings();
 
 const DEFAULT_NAV_LINKS = [
   { label: 'Home', href: '/', openInNewTab: false },
@@ -21,9 +21,7 @@ const DEFAULT_NAV_LINKS = [
   { label: 'Contact', href: '/contact', openInNewTab: false },
 ] as const;
 
-const sidebarLinks = settings?.sidebarLinks?.length
-  ? settings.sidebarLinks
-  : DEFAULT_NAV_LINKS;
+const sidebarLinks = settings?.sidebarLinks?.length ? settings.sidebarLinks : DEFAULT_NAV_LINKS;
 ---
 
 <header
@@ -46,10 +44,16 @@ const sidebarLinks = settings?.sidebarLinks?.length
   <!-- Center: logo -->
   <div class="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none select-none">
     <a href="/" class="pointer-events-auto">
-      <p class="font-serif font-medium text-[30px] desktop:text-[2.4375rem] leading-none tracking-[0.01em]" class:list={`text-${textColor}`}>
+      <p
+        class="font-serif font-medium text-[30px] desktop:text-[2.4375rem] leading-none tracking-[0.01em]"
+        class:list={`text-${textColor}`}
+      >
         The Bristol Inn
       </p>
-      <p class="font-serif font-normal text-[11px] desktop:text-[0.875rem] leading-[1.1] tracking-[0.01em] uppercase mt-0.5" class:list={`text-${textColor}`} >
+      <p
+        class="font-serif font-normal text-[11px] desktop:text-[0.875rem] leading-[1.1] tracking-[0.01em] uppercase mt-0.5"
+        class:list={`text-${textColor}`}
+      >
         19 Main Street, Bristol, Vermont, USA
       </p>
     </a>
@@ -76,7 +80,6 @@ const sidebarLinks = settings?.sidebarLinks?.length
       <span class="line"></span>
     </button>
   </div>
-  
 </header>
 
 <!-- Nav drawer (slides in from right) -->
@@ -95,7 +98,8 @@ const sidebarLinks = settings?.sidebarLinks?.length
       class="flex items-center justify-center w-10 h-10 cursor-pointer text-ink-900"
     >
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M2 2L18 18M18 2L2 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M2 2L18 18M18 2L2 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        ></path>
       </svg>
     </button>
   </div>
@@ -108,22 +112,23 @@ const sidebarLinks = settings?.sidebarLinks?.length
     >
       Reserve A Room
     </a>
-  
 
-  <!-- Nav links from Sanity -->
+    <!-- Nav links from Sanity -->
     <ul>
-      {sidebarLinks.map(({ label, href, openInNewTab }) => (
-        <li>
-          <a
-            href={href}
-            target={openInNewTab ? '_blank' : undefined}
-            rel={openInNewTab ? 'noopener noreferrer' : undefined}
-            class="font-serif font-medium text-[36px] leading-[1.5] text-ink-900 hover:opacity-60 transition-opacity"
-          >
-            {label}
-          </a>
-        </li>
-      ))}
+      {
+        sidebarLinks.map(({ label, href, openInNewTab }) => (
+          <li>
+            <a
+              href={href}
+              target={openInNewTab ? '_blank' : undefined}
+              rel={openInNewTab ? 'noopener noreferrer' : undefined}
+              class="font-serif font-medium text-[36px] leading-[1.5] text-ink-900 hover:opacity-60 transition-opacity"
+            >
+              {label}
+            </a>
+          </li>
+        ))
+      }
     </ul>
   </div>
 </nav>
@@ -132,14 +137,17 @@ const sidebarLinks = settings?.sidebarLinks?.length
   id="nav-backdrop"
   class="fixed inset-0 z-40 bg-ink-900/40 opacity-0 pointer-events-none transition-opacity duration-300"
   aria-hidden="true"
-></div>
+>
+</div>
 
 <style>
   #nav-menu {
     width: 0;
     opacity: 0;
     overflow: hidden;
-    transition: width 0.35s ease-in-out, opacity 0.35s ease-in-out;
+    transition:
+      width 0.35s ease-in-out,
+      opacity 0.35s ease-in-out;
   }
   #nav-menu.is-open {
     width: 100%;
@@ -147,10 +155,14 @@ const sidebarLinks = settings?.sidebarLinks?.length
     overflow-y: auto;
   }
   @media (min-width: 640px) {
-    #nav-menu.is-open { width: 75%; }
+    #nav-menu.is-open {
+      width: 75%;
+    }
   }
   @media (min-width: 1024px) {
-    #nav-menu.is-open { width: 50%; }
+    #nav-menu.is-open {
+      width: 50%;
+    }
   }
 
   .line {
@@ -160,20 +172,24 @@ const sidebarLinks = settings?.sidebarLinks?.length
     background-color: var(--color-ink-900);
     border-radius: 2px;
     transform-origin: center;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transition:
+      transform 0.3s ease-in-out,
+      opacity 0.3s ease-in-out;
   }
   @media (min-width: 1024px) {
-    .line { width: 24px; }
+    .line {
+      width: 24px;
+    }
   }
 
   /* Burger → X when menu is open */
-  [aria-expanded="true"] .line:nth-child(1) {
+  [aria-expanded='true'] .line:nth-child(1) {
     transform: translateY(7px) rotate(45deg);
   }
-  [aria-expanded="true"] .line:nth-child(2) {
+  [aria-expanded='true'] .line:nth-child(2) {
     opacity: 0;
   }
-  [aria-expanded="true"] .line:nth-child(3) {
+  [aria-expanded='true'] .line:nth-child(3) {
     transform: translateY(-7px) rotate(-45deg);
   }
 </style>

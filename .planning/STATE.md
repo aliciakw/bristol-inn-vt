@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 03
 status: in_progress
-last_updated: "2026-06-03T00:00:00.000Z"
+last_updated: '2026-06-03T00:00:00.000Z'
 progress:
   total_phases: 6
   completed_phases: 2
@@ -19,7 +19,7 @@ progress:
 **Current Phase:** 03
 **Total Phases:** 6  
 **Requirements Mapped:** 73/73  
-**Coverage:** 100%  
+**Coverage:** 100%
 
 ---
 
@@ -52,14 +52,14 @@ progress:
 
 ## Phase Status Overview
 
-| Phase | Name | Status | Requirements | Completed |
-|-------|------|--------|--------------|-----------|
-| 1 | Foundation & Infrastructure | ✅ Complete | 11 | 11/11 |
-| 2 | Integrations & Core Data | ✅ Complete | 8 | 8/8 |
-| 3 | Availability & Booking | In progress (BOOK-01–03, 06, 08 complete) | 9 | 5/9 |
-| 4 | Content & Contact | Pending | 3 | 0/3 |
-| 5 | Performance & Mobile | Pending | 21 | 0/21 |
-| 6 | Monitoring, Analytics & Launch | Pending | 21 | 0/21 |
+| Phase | Name                           | Status                                    | Requirements | Completed |
+| ----- | ------------------------------ | ----------------------------------------- | ------------ | --------- |
+| 1     | Foundation & Infrastructure    | ✅ Complete                               | 11           | 11/11     |
+| 2     | Integrations & Core Data       | ✅ Complete                               | 8            | 8/8       |
+| 3     | Availability & Booking         | In progress (BOOK-01–03, 06, 08 complete) | 9            | 5/9       |
+| 4     | Content & Contact              | Pending                                   | 3            | 0/3       |
+| 5     | Performance & Mobile           | Pending                                   | 21           | 0/21      |
+| 6     | Monitoring, Analytics & Launch | Pending                                   | 21           | 0/21      |
 
 **Total: 24/73 requirements completed** (Phase 1: 11; Phase 2: ROOM-01–03, CONTENT-01, CONTENT-02, CONTENT-04, CONTENT-08 = 8; Phase 3 partial: BOOK-01–03, BOOK-06, BOOK-08 = 5)
 
@@ -99,25 +99,25 @@ Phase 6: Monitoring, Analytics & Launch
 
 ## Key Decisions
 
-| Decision | Rationale | Phase |
-|----------|-----------|-------|
-| Static rooms + on-demand availability | Avoid stale booking data; always check real-time | 3 |
-| Redirect to Hostaway instead of embedded payment | Simplify v1; let Hostaway handle PCI compliance | 3 |
-| Cloudflare Pages for hosting | Fast, free tier, global CDN, PR previews | 1 |
-| Sanity for CMS | Structured content, GROQ queries, co-located Studio, Portable Text | 2 |
-| TypeScript strict from day 1 | Catch errors at compile time; enforce quality | 1 |
-| AMENITY_NAMES seeded LOW confidence | Third-party partial list; must verify from live API data after first getRooms() call | 2 |
-| Hostaway CDN domain resolved | `hostaway-platform.s3.us-west-2.amazonaws.com` added to `image.remotePatterns`; logging removed after discovery | 2 |
-| photos sliced to 6 max after sort | D-04: gallery shows up to 6 photos; consistent with detail page spec | 2 |
-| Sanity errors propagate (no try/catch) | Build fails on Sanity outage — Cloudflare keeps last good deploy | 2 |
-| Homepage singleton enforced via Sanity Studio structure | Fixed document ID prevents accidental duplicates; GROQ queries by _id | 2 |
-| Sentry from day 1 | Silent errors are worse than crashes; visibility essential | 6 |
-| Mobile-first responsive design | 60-70% initial research on mobile; non-negotiable | 5 |
-| SEO in v1, not deferred | Cheap to include now; expensive to add later | 6 |
-| React island for availability search (`client:load`) | Astro SSR-seeds the island to static HTML; idle render matches the previous static grid exactly so hydration causes zero CLS | 3 |
-| Batch availability API (`GET /api/rooms/availability`) | One request for all rooms vs. per-room endpoint as originally specified; fewer round trips, simpler client code | 3 |
-| `wrangler dev` for local preview | `astro preview` does not inject `.dev.vars` secrets into the Worker runtime — the adapter's config customizer strips `configPath`, so `@cloudflare/vite-plugin` never emits the secrets file; `wrangler dev` reads `.dev.vars` directly | 3 |
-| `.dev.vars` must be populated separately from `.env.local` | Vite loads `.env.local` for `astro dev`; Wrangler only reads `.dev.vars` for Worker runtime — both files are gitignored and must each contain `HOSTAWAY_ACCESS_TOKEN` and `SANITY_API_TOKEN` | 3 |
+| Decision                                                   | Rationale                                                                                                                                                                                                                               | Phase |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| Static rooms + on-demand availability                      | Avoid stale booking data; always check real-time                                                                                                                                                                                        | 3     |
+| Redirect to Hostaway instead of embedded payment           | Simplify v1; let Hostaway handle PCI compliance                                                                                                                                                                                         | 3     |
+| Cloudflare Pages for hosting                               | Fast, free tier, global CDN, PR previews                                                                                                                                                                                                | 1     |
+| Sanity for CMS                                             | Structured content, GROQ queries, co-located Studio, Portable Text                                                                                                                                                                      | 2     |
+| TypeScript strict from day 1                               | Catch errors at compile time; enforce quality                                                                                                                                                                                           | 1     |
+| AMENITY_NAMES seeded LOW confidence                        | Third-party partial list; must verify from live API data after first getRooms() call                                                                                                                                                    | 2     |
+| Hostaway CDN domain resolved                               | `hostaway-platform.s3.us-west-2.amazonaws.com` added to `image.remotePatterns`; logging removed after discovery                                                                                                                         | 2     |
+| photos sliced to 6 max after sort                          | D-04: gallery shows up to 6 photos; consistent with detail page spec                                                                                                                                                                    | 2     |
+| Sanity errors propagate (no try/catch)                     | Build fails on Sanity outage — Cloudflare keeps last good deploy                                                                                                                                                                        | 2     |
+| Homepage singleton enforced via Sanity Studio structure    | Fixed document ID prevents accidental duplicates; GROQ queries by \_id                                                                                                                                                                  | 2     |
+| Sentry from day 1                                          | Silent errors are worse than crashes; visibility essential                                                                                                                                                                              | 6     |
+| Mobile-first responsive design                             | 60-70% initial research on mobile; non-negotiable                                                                                                                                                                                       | 5     |
+| SEO in v1, not deferred                                    | Cheap to include now; expensive to add later                                                                                                                                                                                            | 6     |
+| React island for availability search (`client:load`)       | Astro SSR-seeds the island to static HTML; idle render matches the previous static grid exactly so hydration causes zero CLS                                                                                                            | 3     |
+| Batch availability API (`GET /api/rooms/availability`)     | One request for all rooms vs. per-room endpoint as originally specified; fewer round trips, simpler client code                                                                                                                         | 3     |
+| `wrangler dev` for local preview                           | `astro preview` does not inject `.dev.vars` secrets into the Worker runtime — the adapter's config customizer strips `configPath`, so `@cloudflare/vite-plugin` never emits the secrets file; `wrangler dev` reads `.dev.vars` directly | 3     |
+| `.dev.vars` must be populated separately from `.env.local` | Vite loads `.env.local` for `astro dev`; Wrangler only reads `.dev.vars` for Worker runtime — both files are gitignored and must each contain `HOSTAWAY_ACCESS_TOKEN` and `SANITY_API_TOKEN`                                            | 3     |
 
 ---
 
@@ -197,6 +197,7 @@ Phase 3 is in progress. The availability search UI and API are working end-to-en
 - **BOOK-09**: Graceful fallback when Hostaway availability API fails — show "Call to book" CTA instead of error message
 
 **Environment setup reminder:**
+
 - `.env.local` — used by `astro dev` (Vite). Must contain `HOSTAWAY_ACCESS_TOKEN`, `SANITY_API_TOKEN`, optional `PUBLIC_SENTRY_DSN`, `PUBLIC_GA4_ID`.
 - `.dev.vars` — used by `wrangler dev` / `npm run preview` (Cloudflare Worker runtime). Must also contain `HOSTAWAY_ACCESS_TOKEN` and `SANITY_API_TOKEN`. File exists but must be populated separately.
 
@@ -217,6 +218,6 @@ Phase 3 is in progress. The availability search UI and API are working end-to-en
 
 ---
 
-*State initialized: 2026-05-05*  
-*Last updated: 2026-06-03*  
-*Next action: Plan BOOK-04, BOOK-05, BOOK-07, BOOK-09 — complete Phase 3 booking flow*
+_State initialized: 2026-05-05_  
+_Last updated: 2026-06-03_  
+_Next action: Plan BOOK-04, BOOK-05, BOOK-07, BOOK-09 — complete Phase 3 booking flow_

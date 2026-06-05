@@ -1,7 +1,7 @@
 ---
 phase: 02-integrations-core-data
 plan: 2
-title: "Hostaway API Library: getRooms, getRoom, and amenity map"
+title: 'Hostaway API Library: getRooms, getRoom, and amenity map'
 subsystem: data
 tags: [hostaway, api-wrapper, typescript, tdd, amenities]
 key-files:
@@ -10,14 +10,14 @@ key-files:
     - src/lib/hostaway-amenities.ts
     - tests/lib/hostaway.test.ts
 decisions:
-  - "AMENITY_NAMES seeded with 48+ entries from partial third-party source; marked LOW confidence with inline instructions to expand from live API data"
-  - "normalizeRoom logs first image URL once (not the token) to enable Hostaway CDN domain discovery for image.remotePatterns"
-  - "_firstImageLogged module-level flag ensures CDN diagnostic log fires once per build, not per room"
-  - "photos sliced to 6 max after sort-by-sortOrder, per D-04"
-  - "vrboCaption used as caption fallback when caption is empty string"
+  - 'AMENITY_NAMES seeded with 48+ entries from partial third-party source; marked LOW confidence with inline instructions to expand from live API data'
+  - 'normalizeRoom logs first image URL once (not the token) to enable Hostaway CDN domain discovery for image.remotePatterns'
+  - '_firstImageLogged module-level flag ensures CDN diagnostic log fires once per build, not per room'
+  - 'photos sliced to 6 max after sort-by-sortOrder, per D-04'
+  - 'vrboCaption used as caption fallback when caption is empty string'
 metrics:
-  duration: "~12 minutes"
-  completed: "2026-05-15"
+  duration: '~12 minutes'
+  completed: '2026-05-15'
   tasks_completed: 2
   tasks_total: 2
 ---
@@ -28,11 +28,11 @@ metrics:
 
 ## Commits
 
-| Task | Commit  | Message                                                          |
-|------|---------|------------------------------------------------------------------|
+| Task | Commit  | Message                                                                 |
+| ---- | ------- | ----------------------------------------------------------------------- |
 | 1    | 07ae258 | feat(02-02): create hostaway-amenities.ts static amenity ID-to-name map |
-| TDD  | dfc04ca | test(02-02): add failing tests for hostaway.ts getRooms and getRoom |
-| 2    | c607ea9 | feat(02-02): implement hostaway.ts API wrapper with normalization |
+| TDD  | dfc04ca | test(02-02): add failing tests for hostaway.ts getRooms and getRoom     |
+| 2    | c607ea9 | feat(02-02): implement hostaway.ts API wrapper with normalization       |
 
 ## Tasks Completed
 
@@ -67,6 +67,7 @@ None — this plan creates library code only; no UI components with placeholder 
 ## Threat Flags
 
 No new threat surface beyond the plan's threat model:
+
 - T-02-05 (token in logs): mitigated — `HOSTAWAY_ACCESS_TOKEN` appears only in import and `Authorization: Bearer` header; no `console.log` of the token.
 - T-02-06 (raw API response tampering): mitigated — `RawListing` typed cast; `normalizeRoom` produces clean `HostawayRoom`; unknown amenityIds silently filtered.
 - T-02-07 (rate limit): accepted — build fetches only at build time for a small inn.

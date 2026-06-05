@@ -1,13 +1,13 @@
 ---
-import { getHomepage, getSettings } from '../lib/sanity'
-import BaseLayout from '@layouts/BaseLayout.astro'
-import WelcomeSection from '../components/home/WelcomeSection.astro'
-import GalleryStrip from '../components/home/GalleryStrip.astro'
-import ReservationSection from '../components/home/ReservationSection.astro'
-import TestimonialsSection from '../components/home/TestimonialsSection.astro'
-import SliceZone from '../components/SliceZone.astro'
+import { getHomepage, getSettings } from '../lib/sanity';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import WelcomeSection from '../components/home/WelcomeSection.astro';
+import GalleryStrip from '../components/home/GalleryStrip.astro';
+import ReservationSection from '../components/home/ReservationSection.astro';
+import TestimonialsSection from '../components/home/TestimonialsSection.astro';
+import SliceZone from '../components/SliceZone.astro';
 
-const [homepage, settings] = await Promise.all([getHomepage(), getSettings()])
+const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 
 const {
   welcomeHeading,
@@ -20,7 +20,7 @@ const {
   testimonial,
   amenities,
   body,
-} = homepage
+} = homepage;
 ---
 
 <BaseLayout
@@ -44,17 +44,16 @@ const {
       reservationImage={reservationImage}
     />
 
-    <TestimonialsSection
-      testimonial={testimonial}
-      amenities={amenities ?? []}
-    />
+    <TestimonialsSection testimonial={testimonial} amenities={amenities ?? []} />
 
-    {body?.length > 0 && (
-      <div class="px-[var(--grid-margin)] pb-16 desktop:pb-24 text-sand-050">
-        <div class="max-w-[1480px] mx-auto">
-          <SliceZone blocks={body} />
+    {
+      body?.length > 0 && (
+        <div class="px-[var(--grid-margin)] pb-16 desktop:pb-24 text-sand-050">
+          <div class="max-w-[1480px] mx-auto">
+            <SliceZone blocks={body} />
+          </div>
         </div>
-      </div>
-    )}
+      )
+    }
   </div>
 </BaseLayout>

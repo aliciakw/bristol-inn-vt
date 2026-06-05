@@ -7,6 +7,7 @@
 ---
 
 <user_constraints>
+
 ## User Constraints (from CONTEXT.md)
 
 ### Locked Decisions
@@ -42,18 +43,19 @@ None — discussion stayed within phase scope.
 ---
 
 <phase_requirements>
+
 ## Phase Requirements
 
-| ID | Description | Research Support |
-|----|-------------|------------------|
-| ROOM-01 | Fetch all rooms from Hostaway API at build time (title, description, amenities, photos, rates) | Pre-generated Bearer token (`HOSTAWAY_ACCESS_TOKEN`), `/listings` endpoint, field mapping verified |
-| ROOM-02 | Generate static room listing page (`/rooms`) with thumbnail photos, amenity badges, nightly rates | `getStaticPaths()` pattern, card structure, Astro Image config verified |
-| ROOM-03 | Generate individual static room detail pages (`/rooms/:id`) with full-size photos, description, amenities, rates | Dynamic `[id].astro` with `getStaticPaths()` + props pattern verified |
-| CONTENT-01 | Homepage renders from Prismic with hero section, inn overview, CTA | Prismic `getSingle`/`getAllByType` + `homepage` doc type approach |
-| CONTENT-02 | Generic page template renders Prismic content at slug-determined URL | `[slug].astro` + `client.getByUID("page", slug)` pattern verified |
-| CONTENT-03 | Prismic draft content accessible in Cloudflare PR preview deployments | Preview requires SSR route; `export const prerender = false` + cookie approach |
-| CONTENT-04 | Contact page displays contact info (email, phone, address) | Rendered via generic `page` Prismic doc type at `/contact` slug |
-| CONTENT-08 | About page displays inn story, history, value proposition | Rendered via generic `page` Prismic doc type at `/about` slug |
+| ID         | Description                                                                                                      | Research Support                                                                                   |
+| ---------- | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| ROOM-01    | Fetch all rooms from Hostaway API at build time (title, description, amenities, photos, rates)                   | Pre-generated Bearer token (`HOSTAWAY_ACCESS_TOKEN`), `/listings` endpoint, field mapping verified |
+| ROOM-02    | Generate static room listing page (`/rooms`) with thumbnail photos, amenity badges, nightly rates                | `getStaticPaths()` pattern, card structure, Astro Image config verified                            |
+| ROOM-03    | Generate individual static room detail pages (`/rooms/:id`) with full-size photos, description, amenities, rates | Dynamic `[id].astro` with `getStaticPaths()` + props pattern verified                              |
+| CONTENT-01 | Homepage renders from Prismic with hero section, inn overview, CTA                                               | Prismic `getSingle`/`getAllByType` + `homepage` doc type approach                                  |
+| CONTENT-02 | Generic page template renders Prismic content at slug-determined URL                                             | `[slug].astro` + `client.getByUID("page", slug)` pattern verified                                  |
+| CONTENT-03 | Prismic draft content accessible in Cloudflare PR preview deployments                                            | Preview requires SSR route; `export const prerender = false` + cookie approach                     |
+| CONTENT-04 | Contact page displays contact info (email, phone, address)                                                       | Rendered via generic `page` Prismic doc type at `/contact` slug                                    |
+| CONTENT-08 | About page displays inn story, history, value proposition                                                        | Rendered via generic `page` Prismic doc type at `/about` slug                                      |
 
 </phase_requirements>
 
@@ -75,16 +77,16 @@ Phase 2 connects two external data sources to an Astro 6 static site: the Hostaw
 
 ## Architectural Responsibility Map
 
-| Capability | Primary Tier | Secondary Tier | Rationale |
-|------------|-------------|----------------|-----------|
-| Room data fetching (Hostaway) | API / Backend (build time) | — | Runs in `getStaticPaths()` at build; never client-side |
-| Room listing page | Frontend (SSG) | — | Static HTML generated at build; no runtime server |
-| Room detail pages | Frontend (SSG) | — | One static page per room; `getStaticPaths()` generates all |
-| Homepage content (Prismic) | Frontend (SSG) | — | Fetched at build via `getSingle("homepage")` |
-| Generic CMS pages (`/[slug]`) | Frontend (SSG) | — | Fetched at build via `getAllByType("page")` |
-| Prismic draft preview route (`/preview`) | Frontend Server (SSR) | — | Requires cookies; must be `prerender = false`; needs Cloudflare adapter |
-| Hero carousel transitions | Browser / Client | — | Vanilla JS fade, no server involvement |
-| Image optimization | Frontend (SSG build step) | CDN | Astro Sharp runs at build time; outputs optimized assets |
+| Capability                               | Primary Tier               | Secondary Tier | Rationale                                                               |
+| ---------------------------------------- | -------------------------- | -------------- | ----------------------------------------------------------------------- |
+| Room data fetching (Hostaway)            | API / Backend (build time) | —              | Runs in `getStaticPaths()` at build; never client-side                  |
+| Room listing page                        | Frontend (SSG)             | —              | Static HTML generated at build; no runtime server                       |
+| Room detail pages                        | Frontend (SSG)             | —              | One static page per room; `getStaticPaths()` generates all              |
+| Homepage content (Prismic)               | Frontend (SSG)             | —              | Fetched at build via `getSingle("homepage")`                            |
+| Generic CMS pages (`/[slug]`)            | Frontend (SSG)             | —              | Fetched at build via `getAllByType("page")`                             |
+| Prismic draft preview route (`/preview`) | Frontend Server (SSR)      | —              | Requires cookies; must be `prerender = false`; needs Cloudflare adapter |
+| Hero carousel transitions                | Browser / Client           | —              | Vanilla JS fade, no server involvement                                  |
+| Image optimization                       | Frontend (SSG build step)  | CDN            | Astro Sharp runs at build time; outputs optimized assets                |
 
 ---
 
@@ -92,20 +94,20 @@ Phase 2 connects two external data sources to an Astro 6 static site: the Hostaw
 
 ### Core
 
-| Library | Version | Purpose | Why Standard |
-|---------|---------|---------|--------------|
-| astro | 6.3.3 | SSG framework | Already installed; project uses |
-| @prismicio/client | 7.21.8 | Prismic CMS query client | Official Prismic JS SDK; getAllByType, getByUID, getSingle, preview ref |
-| @astrojs/cloudflare | 13.5.1 | Cloudflare Pages adapter | Required for SSR preview route (`prerender = false`); Astro static output still works for all other pages |
+| Library             | Version | Purpose                  | Why Standard                                                                                              |
+| ------------------- | ------- | ------------------------ | --------------------------------------------------------------------------------------------------------- |
+| astro               | 6.3.3   | SSG framework            | Already installed; project uses                                                                           |
+| @prismicio/client   | 7.21.8  | Prismic CMS query client | Official Prismic JS SDK; getAllByType, getByUID, getSingle, preview ref                                   |
+| @astrojs/cloudflare | 13.5.1  | Cloudflare Pages adapter | Required for SSR preview route (`prerender = false`); Astro static output still works for all other pages |
 
 `[VERIFIED: npm registry]`
 
 ### Supporting
 
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| astro:assets (built-in) | bundled with Astro 6 | `<Image>` component for remote URL optimization | All room and Prismic images |
-| astro:env (built-in) | bundled with Astro 6 | Type-safe secret access (`HOSTAWAY_API_KEY`, `PRISMIC_TOKEN`) | All API lib files |
+| Library                 | Version              | Purpose                                                       | When to Use                 |
+| ----------------------- | -------------------- | ------------------------------------------------------------- | --------------------------- |
+| astro:assets (built-in) | bundled with Astro 6 | `<Image>` component for remote URL optimization               | All room and Prismic images |
+| astro:env (built-in)    | bundled with Astro 6 | Type-safe secret access (`HOSTAWAY_API_KEY`, `PRISMIC_TOKEN`) | All API lib files           |
 
 ### The `prismic` devDependency
 
@@ -115,17 +117,19 @@ The current `package.json` has `"prismic": "^1.8.0"` as a devDependency — this
 
 ### Alternatives Considered
 
-| Instead of | Could Use | Tradeoff |
-|------------|-----------|----------|
-| `@prismicio/client` directly | `@prismicio/astro` wrapper | No `@prismicio/astro` exists on npm; community-maintained wrappers are outdated |
-| `export const prerender = false` per-page | `output: 'server'` globally | Global server mode requires all pages to be SSR, eliminating static advantages |
+| Instead of                                | Could Use                   | Tradeoff                                                                        |
+| ----------------------------------------- | --------------------------- | ------------------------------------------------------------------------------- |
+| `@prismicio/client` directly              | `@prismicio/astro` wrapper  | No `@prismicio/astro` exists on npm; community-maintained wrappers are outdated |
+| `export const prerender = false` per-page | `output: 'server'` globally | Global server mode requires all pages to be SSR, eliminating static advantages  |
 
 **Installation:**
+
 ```bash
 npm install @prismicio/client @astrojs/cloudflare
 ```
 
 **Version verification:**
+
 ```bash
 npm view @prismicio/client version   # 7.21.8
 npm view @astrojs/cloudflare version # 13.5.1
@@ -225,9 +229,9 @@ export interface HostawayRoom {
   id: number;
   name: string;
   description: string;
-  price: number;             // base nightly rate (field is "price" in API)
+  price: number; // base nightly rate (field is "price" in API)
   photos: Array<{ url: string; caption: string; sortOrder: number }>;
-  amenityNames: string[];    // resolved from amenityId integers via AMENITY_NAMES map
+  amenityNames: string[]; // resolved from amenityId integers via AMENITY_NAMES map
   bedroomsNumber: number;
   bathroomsNumber: number;
   personCapacity: number;
@@ -238,7 +242,7 @@ export async function getRooms(): Promise<HostawayRoom[]> {
     headers: { Authorization: `Bearer ${HOSTAWAY_ACCESS_TOKEN}` },
   });
   if (!res.ok) throw new Error(`Hostaway listings failed: ${res.status}`);
-  const data = await res.json() as { result: RawListing[] };
+  const data = (await res.json()) as { result: RawListing[] };
   return data.result.map(normalizeRoom);
 }
 
@@ -248,7 +252,7 @@ export async function getRoom(id: number): Promise<HostawayRoom | null> {
   });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Hostaway listing ${id} failed: ${res.status}`);
-  const data = await res.json() as { result: RawListing };
+  const data = (await res.json()) as { result: RawListing };
   return normalizeRoom(data.result);
 }
 ```
@@ -413,7 +417,7 @@ const rooms = await getRooms();
   <div class="max-w-7xl mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-8">Our Rooms</h1>
     <div class="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6">
-      {rooms.map(room => <RoomCard room={room} />)}
+      {rooms.map((room) => <RoomCard room={room} />)}
     </div>
   </div>
 </BaseLayout>
@@ -433,12 +437,12 @@ Note: `rooms.astro` is a **non-dynamic static page** (no `getStaticPaths()`). On
 
 ## Don't Hand-Roll
 
-| Problem | Don't Build | Use Instead | Why |
-|---------|-------------|-------------|-----|
-| Image resizing/format conversion | Custom Sharp pipeline | Astro `<Image>` component | Astro wraps Sharp internally; handles format, resize, lazy loading |
-| Prismic document fetching | Raw `fetch` to REST API | `@prismicio/client` `getAllByType`, `getByUID`, `getSingle` | Client handles CDN routing, pagination, preview ref injection |
-| Prismic rich text rendering | Manual HTML serialization | `prismic.asHTML(field)` from `@prismicio/client` | Handles all nested node types, links, images |
-| Prismic preview URL resolution | Manual `?ref=` query param parsing | `client.resolvePreviewURL()` | Official method handles the cookie-to-ref mapping |
+| Problem                          | Don't Build                        | Use Instead                                                 | Why                                                                |
+| -------------------------------- | ---------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------ |
+| Image resizing/format conversion | Custom Sharp pipeline              | Astro `<Image>` component                                   | Astro wraps Sharp internally; handles format, resize, lazy loading |
+| Prismic document fetching        | Raw `fetch` to REST API            | `@prismicio/client` `getAllByType`, `getByUID`, `getSingle` | Client handles CDN routing, pagination, preview ref injection      |
+| Prismic rich text rendering      | Manual HTML serialization          | `prismic.asHTML(field)` from `@prismicio/client`            | Handles all nested node types, links, images                       |
+| Prismic preview URL resolution   | Manual `?ref=` query param parsing | `client.resolvePreviewURL()`                                | Official method handles the cookie-to-ref mapping                  |
 
 **Key insight:** Both Hostaway and Prismic provide well-maintained JS clients. The only custom logic needed is the amenity ID-to-name map (unavoidable) and the normalization adapter between raw API shapes and TypeScript domain types.
 
@@ -474,8 +478,6 @@ Not applicable — this is a greenfield integration phase; no rename/refactor/mi
 **Warning signs:** `import * as prismic from 'prismic'` → no `createClient` export.
 
 ### Pitfall 4: Hostaway Image Domain Unknown Until First API Call
-
-
 
 **What goes wrong:** `astro.config.mjs` image allowlist is missing the Hostaway CDN domain; Astro refuses to optimize images from that domain; images display as broken or unoptimized.
 **Why it happens:** Hostaway's image CDN domain was not found in documentation. It may be `images.hostaway.com`, an AWS S3 URL, or per-account S3 bucket.
@@ -524,7 +526,7 @@ interface RawListing {
   id: number;
   name: string;
   description: string;
-  price: number;             // base nightly rate
+  price: number; // base nightly rate
   bedroomsNumber: number;
   bathroomsNumber: number;
   personCapacity: number;
@@ -541,7 +543,7 @@ interface RawListing {
 
 export async function getStaticPaths() {
   const pages = await getPages(); // client.getAllByType("page")
-  return pages.map(page => ({
+  return pages.map((page) => ({
     params: { slug: page.uid },
     props: { page },
   }));
@@ -597,14 +599,15 @@ return Astro.redirect(url);
 
 ## State of the Art
 
-| Old Approach | Current Approach | When Changed | Impact |
-|--------------|------------------|--------------|--------|
-| `output: 'hybrid'` in Astro | Merged into `output: 'static'`; use `prerender = false` per page | Astro v5.0 | No need for hybrid config; per-page SSR opt-in just works |
-| `import.meta.env.MY_SECRET` | `import { MY_SECRET } from 'astro:env/server'` | Astro v5/v6 | Type-safe; schema-validated; `process.env` fallback no longer automatic in v6 |
-| `prismic.getApi(endpoint)` (v4/v5 style) | `prismic.createClient(repoName)` (v6/v7) | @prismicio/client v6 | Simpler client creation; pass repo name not full URL |
-| `image.domains` array | `image.remotePatterns` array with protocol + hostname | Astro 2+ | More granular; wildcard subdomains supported via `**.hostname.com` |
+| Old Approach                             | Current Approach                                                 | When Changed         | Impact                                                                        |
+| ---------------------------------------- | ---------------------------------------------------------------- | -------------------- | ----------------------------------------------------------------------------- |
+| `output: 'hybrid'` in Astro              | Merged into `output: 'static'`; use `prerender = false` per page | Astro v5.0           | No need for hybrid config; per-page SSR opt-in just works                     |
+| `import.meta.env.MY_SECRET`              | `import { MY_SECRET } from 'astro:env/server'`                   | Astro v5/v6          | Type-safe; schema-validated; `process.env` fallback no longer automatic in v6 |
+| `prismic.getApi(endpoint)` (v4/v5 style) | `prismic.createClient(repoName)` (v6/v7)                         | @prismicio/client v6 | Simpler client creation; pass repo name not full URL                          |
+| `image.domains` array                    | `image.remotePatterns` array with protocol + hostname            | Astro 2+             | More granular; wildcard subdomains supported via `**.hostname.com`            |
 
 **Deprecated/outdated:**
+
 - `@prismicio/helpers`: Merged into `@prismicio/client` v7 — `asHTML`, `asText`, `asImageSrc` now exported from `@prismicio/client` directly.
 - `import.meta.env` for server secrets in Astro 6: No longer auto-transformed; use `astro:env/server`.
 
@@ -612,12 +615,12 @@ return Astro.redirect(url);
 
 ## Assumptions Log
 
-| # | Claim | Section | Risk if Wrong |
-|---|-------|---------|---------------|
-| A1 | Hostaway CDN image domain is something like `images.hostaway.com` | Pitfall 4 / remotePatterns | Images not optimized by Astro; must update `image.remotePatterns` after first API call |
-| A2 | Hostaway amenity IDs: partial list (WiFi=3, Internet=2, etc.); Hot Tub/Water View IDs unknown | Pattern 3 / Don't Hand-Roll | Amenity badges display blank or wrong text; map must be verified from live API data |
-| A3 | Prismic `resolvePreviewURL` correctly handles the `io.prismic.preview` cookie value without the full `Astro.request` context | Pattern 5 | Preview redirect goes to wrong page; may need `client.enableAutoPreviewsFromReq(request)` instead |
-| A4 | `PRISMIC_TOKEN` is a read-only API token sufficient for `createClient` (no additional auth) | Pattern 4 | Client throws 403; may need `accessToken` configured differently for private repo |
+| #   | Claim                                                                                                                        | Section                     | Risk if Wrong                                                                                     |
+| --- | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------- |
+| A1  | Hostaway CDN image domain is something like `images.hostaway.com`                                                            | Pitfall 4 / remotePatterns  | Images not optimized by Astro; must update `image.remotePatterns` after first API call            |
+| A2  | Hostaway amenity IDs: partial list (WiFi=3, Internet=2, etc.); Hot Tub/Water View IDs unknown                                | Pattern 3 / Don't Hand-Roll | Amenity badges display blank or wrong text; map must be verified from live API data               |
+| A3  | Prismic `resolvePreviewURL` correctly handles the `io.prismic.preview` cookie value without the full `Astro.request` context | Pattern 5                   | Preview redirect goes to wrong page; may need `client.enableAutoPreviewsFromReq(request)` instead |
+| A4  | `PRISMIC_TOKEN` is a read-only API token sufficient for `createClient` (no additional auth)                                  | Pattern 4                   | Client throws 403; may need `accessToken` configured differently for private repo                 |
 
 ---
 
@@ -645,16 +648,17 @@ return Astro.redirect(url);
 
 ## Environment Availability
 
-| Dependency | Required By | Available | Version | Fallback |
-|------------|------------|-----------|---------|----------|
-| Node.js | Build runtime | ✓ | >=22.12.0 (package.json engine) | — |
-| npm | Package management | ✓ | (system) | — |
-| Hostaway API access | ROOM-01 through ROOM-03 | [ASSUMED] | n/a | Fail build (D-06) |
-| Prismic repo `bristol-inn-vt` | CONTENT-01 through CONTENT-04, CONTENT-08 | ✓ (D-16 confirms repo exists) | n/a | Fail build (D-07) |
-| HOSTAWAY_ACCESS_TOKEN env var | All Hostaway calls | Must be set in Cloudflare + `.env` (pre-generated) | n/a | Build fails |
-| PRISMIC_TOKEN env var | All Prismic calls | Must be set in Cloudflare + `.env.local` | n/a | Build fails |
+| Dependency                    | Required By                               | Available                                          | Version                         | Fallback          |
+| ----------------------------- | ----------------------------------------- | -------------------------------------------------- | ------------------------------- | ----------------- |
+| Node.js                       | Build runtime                             | ✓                                                  | >=22.12.0 (package.json engine) | —                 |
+| npm                           | Package management                        | ✓                                                  | (system)                        | —                 |
+| Hostaway API access           | ROOM-01 through ROOM-03                   | [ASSUMED]                                          | n/a                             | Fail build (D-06) |
+| Prismic repo `bristol-inn-vt` | CONTENT-01 through CONTENT-04, CONTENT-08 | ✓ (D-16 confirms repo exists)                      | n/a                             | Fail build (D-07) |
+| HOSTAWAY_ACCESS_TOKEN env var | All Hostaway calls                        | Must be set in Cloudflare + `.env` (pre-generated) | n/a                             | Build fails       |
+| PRISMIC_TOKEN env var         | All Prismic calls                         | Must be set in Cloudflare + `.env.local`           | n/a                             | Build fails       |
 
 **Missing dependencies with no fallback:**
+
 - Hostaway Bearer token (`HOSTAWAY_ACCESS_TOKEN`): Pre-generated and already in `.env`; must also be configured in Cloudflare environment variables before deploying.
 - Prismic access token: Must be confirmed (dashboard: Settings → API & Security → Generate a token).
 
@@ -664,25 +668,25 @@ return Astro.redirect(url);
 
 ### Test Framework
 
-| Property | Value |
-|----------|-------|
-| Framework | None detected — no jest.config, vitest.config, or pytest.ini found in project |
-| Config file | Wave 0 gap — must create `vitest.config.ts` |
-| Quick run command | `npx vitest run` (once configured) |
-| Full suite command | `npx vitest run --reporter=verbose` |
+| Property           | Value                                                                         |
+| ------------------ | ----------------------------------------------------------------------------- |
+| Framework          | None detected — no jest.config, vitest.config, or pytest.ini found in project |
+| Config file        | Wave 0 gap — must create `vitest.config.ts`                                   |
+| Quick run command  | `npx vitest run` (once configured)                                            |
+| Full suite command | `npx vitest run --reporter=verbose`                                           |
 
 ### Phase Requirements → Test Map
 
-| Req ID | Behavior | Test Type | Automated Command | File Exists? |
-|--------|----------|-----------|-------------------|-------------|
-| ROOM-01 | `getRooms()` returns typed array with required fields | unit (mock fetch) | `npx vitest run tests/lib/hostaway.test.ts` | ❌ Wave 0 |
-| ROOM-02 | `/rooms` page renders room grid with names, prices, badges | smoke (build check) | `npm run build && ls dist/rooms/index.html` | ❌ Wave 0 |
-| ROOM-03 | `/rooms/:id` pages generated for each room | smoke (build check) | `npm run build && ls dist/rooms/` | ❌ Wave 0 |
-| CONTENT-01 | `/` renders hero images and CTA from Prismic | smoke (build check) | `npm run build && ls dist/index.html` | ❌ Wave 0 |
-| CONTENT-02 | `/[slug]` renders Prismic page content | unit (mock client) | `npx vitest run tests/lib/prismic.test.ts` | ❌ Wave 0 |
-| CONTENT-03 | `/preview` route returns 302 redirect | manual | Load preview URL in browser after deploy | manual-only |
-| CONTENT-04 | `/contact` renders contact info from Prismic | smoke (build check) | `npm run build && ls dist/contact/index.html` | ❌ Wave 0 |
-| CONTENT-08 | `/about` renders inn story from Prismic | smoke (build check) | `npm run build && ls dist/about/index.html` | ❌ Wave 0 |
+| Req ID     | Behavior                                                   | Test Type           | Automated Command                             | File Exists? |
+| ---------- | ---------------------------------------------------------- | ------------------- | --------------------------------------------- | ------------ |
+| ROOM-01    | `getRooms()` returns typed array with required fields      | unit (mock fetch)   | `npx vitest run tests/lib/hostaway.test.ts`   | ❌ Wave 0    |
+| ROOM-02    | `/rooms` page renders room grid with names, prices, badges | smoke (build check) | `npm run build && ls dist/rooms/index.html`   | ❌ Wave 0    |
+| ROOM-03    | `/rooms/:id` pages generated for each room                 | smoke (build check) | `npm run build && ls dist/rooms/`             | ❌ Wave 0    |
+| CONTENT-01 | `/` renders hero images and CTA from Prismic               | smoke (build check) | `npm run build && ls dist/index.html`         | ❌ Wave 0    |
+| CONTENT-02 | `/[slug]` renders Prismic page content                     | unit (mock client)  | `npx vitest run tests/lib/prismic.test.ts`    | ❌ Wave 0    |
+| CONTENT-03 | `/preview` route returns 302 redirect                      | manual              | Load preview URL in browser after deploy      | manual-only  |
+| CONTENT-04 | `/contact` renders contact info from Prismic               | smoke (build check) | `npm run build && ls dist/contact/index.html` | ❌ Wave 0    |
+| CONTENT-08 | `/about` renders inn story from Prismic                    | smoke (build check) | `npm run build && ls dist/about/index.html`   | ❌ Wave 0    |
 
 Note: CONTENT-03 (Prismic draft preview) is manual-only — it requires a live Cloudflare PR deployment and an active Prismic preview session. Cannot be meaningfully automated.
 
@@ -705,29 +709,30 @@ Note: CONTENT-03 (Prismic draft preview) is manual-only — it requires a live C
 
 ### Applicable ASVS Categories
 
-| ASVS Category | Applies | Standard Control |
-|---------------|---------|-----------------|
-| V2 Authentication | No | No user auth in this phase |
-| V3 Session Management | No | No user sessions; preview cookie is read-only |
-| V4 Access Control | No | All pages public |
-| V5 Input Validation | Yes | Prismic slug from URL param used in `getByUID()` — must validate against allow-list (only published UIDs) |
-| V6 Cryptography | No | OAuth2 Bearer token over HTTPS; no custom crypto |
+| ASVS Category         | Applies | Standard Control                                                                                          |
+| --------------------- | ------- | --------------------------------------------------------------------------------------------------------- |
+| V2 Authentication     | No      | No user auth in this phase                                                                                |
+| V3 Session Management | No      | No user sessions; preview cookie is read-only                                                             |
+| V4 Access Control     | No      | All pages public                                                                                          |
+| V5 Input Validation   | Yes     | Prismic slug from URL param used in `getByUID()` — must validate against allow-list (only published UIDs) |
+| V6 Cryptography       | No      | OAuth2 Bearer token over HTTPS; no custom crypto                                                          |
 
 ### Known Threat Patterns for This Stack
 
-| Pattern | STRIDE | Standard Mitigation |
-|---------|--------|---------------------|
-| Server-side request forgery via Prismic `[slug]` param | Tampering | `getByUID` only queries Prismic; Prismic throws 404 for unknown UIDs — no arbitrary URL fetching |
-| API key exposure in client bundle | Information Disclosure | `HOSTAWAY_API_KEY` and `PRISMIC_TOKEN` are `context: "server"` in Astro env schema — never in client bundle |
-| Hostaway Bearer token in git | Information Disclosure | Token stored in `.env` / Cloudflare env vars; never in source code. `.env` in `.gitignore`. |
-| Preview cookie manipulation | Tampering | Prismic preview refs are cryptographically signed by Prismic; an attacker cannot forge a valid ref |
-| Image proxy abuse | Elevation of Privilege | `image.remotePatterns` explicitly allowlists domains; Astro rejects unauthorized domains |
+| Pattern                                                | STRIDE                 | Standard Mitigation                                                                                         |
+| ------------------------------------------------------ | ---------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Server-side request forgery via Prismic `[slug]` param | Tampering              | `getByUID` only queries Prismic; Prismic throws 404 for unknown UIDs — no arbitrary URL fetching            |
+| API key exposure in client bundle                      | Information Disclosure | `HOSTAWAY_API_KEY` and `PRISMIC_TOKEN` are `context: "server"` in Astro env schema — never in client bundle |
+| Hostaway Bearer token in git                           | Information Disclosure | Token stored in `.env` / Cloudflare env vars; never in source code. `.env` in `.gitignore`.                 |
+| Preview cookie manipulation                            | Tampering              | Prismic preview refs are cryptographically signed by Prismic; an attacker cannot forge a valid ref          |
+| Image proxy abuse                                      | Elevation of Privilege | `image.remotePatterns` explicitly allowlists domains; Astro rejects unauthorized domains                    |
 
 ---
 
 ## Sources
 
 ### Primary (HIGH confidence)
+
 - `https://api.hostaway.com/documentation` — Hostaway API v1: authentication flow, listings endpoint, response field names, rate limits (15 req/10s per IP, 20 req/10s per account)
 - Context7 `/withastro/docs` — Astro Image component (`inferSize`, `remotePatterns`, `width`/`height` requirements for remote URLs)
 - Context7 `/withastro/docs` — `getStaticPaths()` pattern, `export const prerender = false`, Astro v5 hybrid merge into static, Cloudflare env var access patterns
@@ -735,32 +740,35 @@ Note: CONTENT-03 (Prismic draft preview) is manual-only — it requires a live C
 - Context7 `/prismicio/prismic-client` — `createClient`, `getAllByType`, `getByUID`, `getSingle` API
 
 ### Secondary (MEDIUM confidence)
+
 - `https://www.saykiat.com/essay/astrojs-prismic-preview-setup-guide/` — Prismic preview implementation with Astro cookies API; cookie name `io.prismic.preview`
 - `https://community.prismic.io/t/previews-with-astro/12858` — SSR requirement for Prismic preview; `export const prerender = false` approach
 - npm registry — all package versions verified via `npm view [package] version`
 - WebSearch (Prismic CDN domains) — `images.prismic.io` confirmed as primary Prismic image CDN
 
 ### Tertiary (LOW confidence)
+
 - `https://lymebayescapes.co.uk/hostaway-listing-amenities/` — Partial Hostaway amenity ID-to-name mapping (48 amenities); Hot Tub/Water View IDs not found — must verify from live API
 
 ---
 
 ## Project Constraints (from CLAUDE.md)
 
-| Directive | Impact on Phase 2 |
-|-----------|-------------------|
-| Static-first Astro preference | Default `output: 'static'`; SSR only for `/preview` route |
-| Wrap dependencies for swappability | `src/lib/hostaway.ts` and `src/lib/prismic.ts` as typed wrappers with domain types |
-| Composability over configuration | `RoomCard`, `RoomGallery`, `AmenityBadge`, `HeroCarousel` as discrete composable components |
-| TypeScript strict mode | All API response types fully typed; no `any`; `RawListing` → `HostawayRoom` normalization |
+| Directive                                                      | Impact on Phase 2                                                                                       |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Static-first Astro preference                                  | Default `output: 'static'`; SSR only for `/preview` route                                               |
+| Wrap dependencies for swappability                             | `src/lib/hostaway.ts` and `src/lib/prismic.ts` as typed wrappers with domain types                      |
+| Composability over configuration                               | `RoomCard`, `RoomGallery`, `AmenityBadge`, `HeroCarousel` as discrete composable components             |
+| TypeScript strict mode                                         | All API response types fully typed; no `any`; `RawListing` → `HostawayRoom` normalization               |
 | Mobile-first Tailwind (3 breakpoints: mobile, tablet, desktop) | Room grid reuses existing `grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3` pattern from placeholder |
-| No library for one-line if statements | Hero carousel fade logic can use ternaries; no side-effect-heavy animation library |
+| No library for one-line if statements                          | Hero carousel fade logic can use ternaries; no side-effect-heavy animation library                      |
 
 ---
 
 ## Metadata
 
 **Confidence breakdown:**
+
 - Hostaway API (auth via pre-generated Bearer token, endpoints, field names): HIGH — verified via official docs WebFetch
 - Hostaway amenity ID-to-name map: LOW — partial third-party list; Hot Tub/Water View unknown
 - Hostaway image CDN domain: LOW — not in documentation; must check from live API response

@@ -15,13 +15,13 @@ created: 2026-05-15
 
 ## Test Infrastructure
 
-| Property | Value |
-|----------|-------|
-| **Framework** | None detected — Wave 0 must create `vitest.config.ts` |
-| **Config file** | `vitest.config.ts` (Wave 0 gap) |
-| **Quick run command** | `npx vitest run` |
-| **Full suite command** | `npx vitest run --reporter=verbose` |
-| **Estimated runtime** | ~30 seconds (once configured) |
+| Property               | Value                                                 |
+| ---------------------- | ----------------------------------------------------- |
+| **Framework**          | None detected — Wave 0 must create `vitest.config.ts` |
+| **Config file**        | `vitest.config.ts` (Wave 0 gap)                       |
+| **Quick run command**  | `npx vitest run`                                      |
+| **Full suite command** | `npx vitest run --reporter=verbose`                   |
+| **Estimated runtime**  | ~30 seconds (once configured)                         |
 
 ---
 
@@ -36,18 +36,18 @@ created: 2026-05-15
 
 ## Per-Task Verification Map
 
-| Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
-|---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 2-xx-01 | xx | 1 | ROOM-01 | — | Access token not logged | unit (mock fetch) | `npx vitest run tests/lib/hostaway.test.ts` | ❌ Wave 0 | ⬜ pending |
-| 2-xx-02 | xx | 1 | ROOM-02 | — | N/A | smoke | `npm run build && ls dist/rooms/index.html` | ❌ Wave 0 | ⬜ pending |
-| 2-xx-03 | xx | 1 | ROOM-03 | — | N/A | smoke | `npm run build && ls dist/rooms/` | ❌ Wave 0 | ⬜ pending |
-| 2-xx-04 | xx | 2 | CONTENT-01 | — | N/A | smoke | `npm run build && ls dist/index.html` | ❌ Wave 0 | ⬜ pending |
-| 2-xx-05 | xx | 2 | CONTENT-02 | — | N/A | unit (mock client) | `npx vitest run tests/lib/prismic.test.ts` | ❌ Wave 0 | ⬜ pending |
-| 2-xx-06 | xx | 2 | CONTENT-03 | — | Preview token not leaked | manual | Load preview URL in browser after CF PR deploy | manual-only | ⬜ pending |
-| 2-xx-07 | xx | 2 | CONTENT-04 | — | N/A | smoke | `npm run build && ls dist/contact/index.html` | ❌ Wave 0 | ⬜ pending |
-| 2-xx-08 | xx | 2 | CONTENT-08 | — | N/A | smoke | `npm run build && ls dist/about/index.html` | ❌ Wave 0 | ⬜ pending |
+| Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior          | Test Type          | Automated Command                              | File Exists | Status     |
+| ------- | ---- | ---- | ----------- | ---------- | ------------------------ | ------------------ | ---------------------------------------------- | ----------- | ---------- |
+| 2-xx-01 | xx   | 1    | ROOM-01     | —          | Access token not logged  | unit (mock fetch)  | `npx vitest run tests/lib/hostaway.test.ts`    | ❌ Wave 0   | ⬜ pending |
+| 2-xx-02 | xx   | 1    | ROOM-02     | —          | N/A                      | smoke              | `npm run build && ls dist/rooms/index.html`    | ❌ Wave 0   | ⬜ pending |
+| 2-xx-03 | xx   | 1    | ROOM-03     | —          | N/A                      | smoke              | `npm run build && ls dist/rooms/`              | ❌ Wave 0   | ⬜ pending |
+| 2-xx-04 | xx   | 2    | CONTENT-01  | —          | N/A                      | smoke              | `npm run build && ls dist/index.html`          | ❌ Wave 0   | ⬜ pending |
+| 2-xx-05 | xx   | 2    | CONTENT-02  | —          | N/A                      | unit (mock client) | `npx vitest run tests/lib/prismic.test.ts`     | ❌ Wave 0   | ⬜ pending |
+| 2-xx-06 | xx   | 2    | CONTENT-03  | —          | Preview token not leaked | manual             | Load preview URL in browser after CF PR deploy | manual-only | ⬜ pending |
+| 2-xx-07 | xx   | 2    | CONTENT-04  | —          | N/A                      | smoke              | `npm run build && ls dist/contact/index.html`  | ❌ Wave 0   | ⬜ pending |
+| 2-xx-08 | xx   | 2    | CONTENT-08  | —          | N/A                      | smoke              | `npm run build && ls dist/about/index.html`    | ❌ Wave 0   | ⬜ pending |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+_Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky_
 
 ---
 
@@ -61,9 +61,9 @@ created: 2026-05-15
 
 ## Manual-Only Verifications
 
-| Behavior | Requirement | Why Manual | Test Instructions |
-|----------|-------------|------------|-------------------|
-| Prismic draft preview redirects correctly | CONTENT-03 | Requires live CF PR deployment + active Prismic preview session | 1. Push branch to CF PR preview. 2. Open Prismic draft. 3. Click "Share Preview". 4. Confirm redirect lands on correct PR preview URL with draft content visible. |
+| Behavior                                  | Requirement | Why Manual                                                      | Test Instructions                                                                                                                                                 |
+| ----------------------------------------- | ----------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Prismic draft preview redirects correctly | CONTENT-03  | Requires live CF PR deployment + active Prismic preview session | 1. Push branch to CF PR preview. 2. Open Prismic draft. 3. Click "Share Preview". 4. Confirm redirect lands on correct PR preview URL with draft content visible. |
 
 ---
 

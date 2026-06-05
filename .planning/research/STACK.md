@@ -52,18 +52,23 @@ Astro provides a hybrid approach:
 ### Integration Patterns
 
 **Build-time fetching:**
+
 ```
 Astro build → Fetch all rooms from Hostaway → Pre-render room listing/detail pages
 ```
+
 **Best for:** Static room pages that update weekly
 
 **On-demand rendering:**
+
 ```
 User requests → Hostaway API call → Render availability in real-time
 ```
+
 **Best for:** Booking flow where availability changes hourly
 
 **Hybrid (Recommended for v1):**
+
 ```
 Build-time: Pre-render room pages with basic info
 On-request: Check availability for selected dates when user books
@@ -72,11 +77,13 @@ On-request: Check availability for selected dates when user books
 ### Data Freshness Strategy
 
 For your use case (availability updates daily/hourly):
+
 - **Room listings** — Rebuild daily at off-peak hours (e.g., 2am UTC)
 - **Availability** — Fetch on-demand during booking flow (lightweight API call)
 - **Rates** — Rebuild with room listings
 
 **Hostaway API considerations:**
+
 - Payments handled externally (you redirect to Hostaway checkout, don't process payments)
 - No webhook support for real-time changes (pull-based only)
 - Rate limits are generous for read operations
@@ -91,6 +98,7 @@ For your use case (availability updates daily/hourly):
 ### For Your Project
 
 Prismic is excellent for:
+
 - **Generic page templates** — Create content once, publish at any URL (using slug field)
 - **Draft content in previews** — PR builds can render unpublished content for review
 - **Content scheduling** — Schedule multiple changes to go live together
@@ -99,16 +107,19 @@ Prismic is excellent for:
 ### Key Integration Points
 
 **Content models to create:**
+
 - `GenericPage` — Slug, title, body, metadata (SEO)
 - `RoomPage` — Linked to Hostaway room data, custom content overlay
 - `ContactPage` — Form content and contact info
 
 **Fetching during build:**
+
 ```astro
 const allPages = await fetch('https://your-space.cdn.prismic.io/api/v2/documents?type=page')
 ```
 
 **Preview mode:**
+
 - Pass `ref=preview` query param in Prismic link previews
 - Astro can detect and fetch draft content for PR deployments
 - Webhook: Rebuild site when content is published
@@ -146,11 +157,13 @@ As of 2025, Astro's official Cloudflare adapter **does not recommend Cloudflare 
 ### For Your Project
 
 **Recommended approach:**
+
 - Use Cloudflare Pages for now (static builds work fine)
 - If you later need on-demand rendering for availability checks, plan migration to Workers
 - Alternative: Implement caching headers for room availability data on static pages
 
 **Build configuration for Pages:**
+
 ```
 Build command: npm run build
 Output directory: dist
@@ -160,6 +173,7 @@ Node version: 18 (or 20, 22 available)
 ### Preview Deployments
 
 Excellent news: Cloudflare Pages **automatically creates preview URLs for all PR branches**. Enables your workflow:
+
 - User opens PR
 - Cloudflare builds preview version with draft Prismic content
 - Preview URL shared for stakeholder review
@@ -182,14 +196,16 @@ Excellent news: Cloudflare Pages **automatically creates preview URLs for all PR
 ### Integration for Astro
 
 Install via npm:
+
 ```bash
 npm install @sentry/astro
 ```
 
 Add to `astro.config.mjs`:
+
 ```javascript
 import { defineConfig } from 'astro/config';
-import sentry from "@sentry/astro";
+import sentry from '@sentry/astro';
 
 export default defineConfig({
   integrations: [sentry()],
@@ -197,8 +213,9 @@ export default defineConfig({
 ```
 
 Then in your app:
+
 ```javascript
-import * as Sentry from "@sentry/astro";
+import * as Sentry from '@sentry/astro';
 Sentry.init({ dsn: process.env.SENTRY_DSN });
 ```
 
@@ -225,6 +242,7 @@ Sentry.init({ dsn: process.env.SENTRY_DSN });
 ### For Your Project
 
 Minimal setup in v1:
+
 - Page views (automatic)
 - Custom event: "booking_started" when user clicks booking flow
 - Custom event: "contact_form_submitted"
@@ -233,10 +251,13 @@ Minimal setup in v1:
 ### Integration in Astro
 
 Add to your base layout:
+
 ```html
 <script is:inline>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+  function gtag() {
+    dataLayer.push(arguments);
+  }
   gtag('js', new Date());
   gtag('config', 'GA_MEASUREMENT_ID');
 </script>
@@ -244,6 +265,7 @@ Add to your base layout:
 ```
 
 For custom events (booking flow):
+
 ```javascript
 gtag('event', 'booking_started', { property_id: roomId });
 ```
@@ -265,6 +287,7 @@ gtag('event', 'booking_started', { property_id: roomId });
 
 - Enable `strict: true` in `tsconfig.json` (you required this)
 - Type your Astro props:
+
 ```typescript
 interface Props {
   roomId: string;
@@ -272,39 +295,43 @@ interface Props {
 }
 const { roomId, availability } = Astro.props;
 ```
+
 - Use `as const` for literal types
 - Type async data fetching:
+
 ```typescript
-const rooms: Room[] = await fetch('...').then(r => r.json());
+const rooms: Room[] = await fetch('...').then((r) => r.json());
 ```
 
 ### Tailwind + Responsive Design
 
 Your CLAUDE.md mentions mobile-first with 3 breakpoints. Tailwind defaults:
+
 - Mobile (no prefix) — 0px+
 - Tablet (md) — 768px+
 - Desktop (lg) — 1024px+
 - Add `2xl` — 1536px+ for large monitors
 
 Example:
+
 ```html
 <button class="px-4 md:px-6 lg:px-8">Button</button>
 ```
 
 ## Stack Summary
 
-| Layer | Choice | Version | Confidence |
-|-------|--------|---------|------------|
-| **Framework** | Astro | 5.x | HIGH |
-| **CMS** | Prismic | Latest | HIGH |
-| **Booking API** | Hostaway | REST | HIGH |
-| **Hosting** | Cloudflare Pages | Latest | MEDIUM* |
-| **Error Tracking** | Sentry | Latest | HIGH |
-| **Analytics** | GA4 | Latest | HIGH |
-| **Language** | TypeScript | 5.x | HIGH |
-| **Styling** | Tailwind | Latest | HIGH |
+| Layer              | Choice           | Version | Confidence |
+| ------------------ | ---------------- | ------- | ---------- |
+| **Framework**      | Astro            | 5.x     | HIGH       |
+| **CMS**            | Prismic          | Latest  | HIGH       |
+| **Booking API**    | Hostaway         | REST    | HIGH       |
+| **Hosting**        | Cloudflare Pages | Latest  | MEDIUM\*   |
+| **Error Tracking** | Sentry           | Latest  | HIGH       |
+| **Analytics**      | GA4              | Latest  | HIGH       |
+| **Language**       | TypeScript       | 5.x     | HIGH       |
+| **Styling**        | Tailwind         | Latest  | HIGH       |
 
-*Cloudflare Pages support is shifting; monitor for potential migration to Workers.
+\*Cloudflare Pages support is shifting; monitor for potential migration to Workers.
 
 ## Key Gotchas & Workarounds
 
@@ -327,6 +354,7 @@ Example:
 ---
 
 **Sources:**
+
 - [Astro On-Demand Rendering Guide](https://docs.astro.build/en/guides/on-demand-rendering/)
 - [Astro Releases](https://github.com/withastro/astro/releases)
 - [Cloudflare Pages Astro Guide](https://developers.cloudflare.com/pages/framework-guides/deploy-an-astro-site/)
@@ -335,4 +363,4 @@ Example:
 - [Prismic & Astro Integration](https://docs.astro.build/en/guides/cms/prismic/)
 - [Hotel Booking System Design](https://phptravels.com/blog/hotel-reservation-system-design)
 
-*Last updated: 2026-05-05 with current ecosystem research*
+_Last updated: 2026-05-05 with current ecosystem research_

@@ -1,72 +1,85 @@
 ---
-import { toHTML } from '@portabletext/to-html'
-import { getSettings } from '../lib/sanity'
+import { toHTML } from '@portabletext/to-html';
+import { getSettings } from '../lib/sanity';
 
-const year = new Date().getFullYear()
+const year = new Date().getFullYear();
 
-const settings = await getSettings()
-const { footerSections = [], awardImages = [], directionsLink } = settings ?? {}
+const settings = await getSettings();
+const { footerSections = [], awardImages = [], directionsLink } = settings ?? {};
 
 function sectionToHTML(content: unknown[]): string {
   return toHTML(content as Parameters<typeof toHTML>[0], {
     components: {
       block: {
-        normal: ({ children }) => `<p class="font-serif font-[400] text-[17px] leading-[1.6] tracking-[0.02em]">${children}</p>`,
-        h4: ({ children }) => `<h4 class="font-serif text-[31px] leading-[1.2] mt-[4rem] mb-6">${children}</h4>`,
-        small: ({ children }) => `<p class="font-serif text-[14px] leading-[1.4] tracking-[0.01em]">${children}</p>`,
+        normal: ({ children }) =>
+          `<p class="font-serif font-[400] text-[17px] leading-[1.6] tracking-[0.02em]">${children}</p>`,
+        h4: ({ children }) =>
+          `<h4 class="font-serif text-[31px] leading-[1.2] mt-[4rem] mb-6">${children}</h4>`,
+        small: ({ children }) =>
+          `<p class="font-serif text-[14px] leading-[1.4] tracking-[0.01em]">${children}</p>`,
       },
       marks: {
         em: ({ children }) => `<em>${children}</em>`,
         link: ({ children, value }) => {
-          const target = value?.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : ''
-          return `<a href="${value?.href ?? '#'}"${target} class="hover:underline hover:text-sand-200 transition-colors">${children}</a>`
+          const target = value?.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : '';
+          return `<a href="${value?.href ?? '#'}"${target} class="hover:underline hover:text-sand-200 transition-colors">${children}</a>`;
         },
       },
     },
-  })
+  });
 }
 ---
 
 <footer class="bg-prussian-700 text-sand-100 max-w-[100vw] overflow-x-hidden">
-  <div class="grid grid-cols-6 desktop:grid-cols-8 gap-x-8 gap-y-10 px-6 pt-14 pb-6 desktop:gap-x-16 desktop:gap-y-12">
-    {footerSections.map((section, i) => {
-      const isFirst = i === 0;
-      return (
-        <section class:list={[
-          'desktop:col-span-2',
-          isFirst
-            ? 'col-span-6 desktop:col-start-2 desktop:row-start-1 desktop:row-span-3 flex flex-col'
-            : 'col-span-3'
-        ]}>
-          {section.content?.length > 0 && (
-            <div set:html={sectionToHTML(section.content)} />
-          )}
-        </section>
-      )
-    })}
+  <div
+    class="grid grid-cols-6 desktop:grid-cols-8 gap-x-8 gap-y-10 px-6 pt-14 pb-6 desktop:gap-x-16 desktop:gap-y-12"
+  >
+    {
+      footerSections.map((section, i) => {
+        const isFirst = i === 0;
+        return (
+          <section
+            class:list={[
+              'desktop:col-span-2',
+              isFirst
+                ? 'col-span-6 desktop:col-start-2 desktop:row-start-1 desktop:row-span-3 flex flex-col'
+                : 'col-span-3',
+            ]}
+          >
+            {section.content?.length > 0 && <div set:html={sectionToHTML(section.content)} />}
+          </section>
+        );
+      })
+    }
 
     <!-- Awards and subscribe always render, regardless of footerSections -->
     <section class="col-span-6 desktop:col-span-2 desktop:col-start-6">
-      {awardImages.length > 0 && (
-        <div>
-          <h3 class="font-serif text-[31px] leading-[1.2] mb-3">Awards</h3>
-          <div class="mb-16 flex flex-wrap items-center gap-4 opacity-90">
-            {awardImages.map(({ url, alt, linkUrl }) => {
-              const img = (
-                <img
-                  src={url}
-                  alt={alt}
-                  class="h-[2.5rem] w-auto object-contain"
-                  loading="lazy"
-                />
-              )
-              return linkUrl
-                ? <a href={linkUrl} target="_blank" rel="noopener noreferrer">{img}</a>
-                : img
-            })}
+      {
+        awardImages.length > 0 && (
+          <div>
+            <h3 class="font-serif text-[31px] leading-[1.2] mb-3">Awards</h3>
+            <div class="mb-16 flex flex-wrap items-center gap-4 opacity-90">
+              {awardImages.map(({ url, alt, linkUrl }) => {
+                const img = (
+                  <img
+                    src={url}
+                    alt={alt}
+                    class="h-[2.5rem] w-auto object-contain"
+                    loading="lazy"
+                  />
+                );
+                return linkUrl ? (
+                  <a href={linkUrl} target="_blank" rel="noopener noreferrer">
+                    {img}
+                  </a>
+                ) : (
+                  img
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
       <h3 class="font-serif text-[31px] leading-[1.2] mb-3">Subscribe</h3>
       <p class="font-serif italic text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 mb-5">
         Keep apprised of the latest events and promotions
@@ -89,7 +102,14 @@ function sectionToHTML(content: unknown[]): string {
     </section>
 
     <div class="col-span-6 desktop:col-span-8 text-center">
-      <p class="font-serif text-[14px] text-sand-100/80">&copy; {year} Bristol Inn Vermont. All rights reserved. | Design + Code by <a href="https://aleeshza.com" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-sand-200 transition-colors">Aleeshza Studio</a></p>
+      <p class="font-serif text-[14px] text-sand-100/80">
+        &copy; {year} Bristol Inn Vermont. All rights reserved. | Design + Code by <a
+          href="https://aleeshza.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:underline hover:text-sand-200 transition-colors">Aleeshza Studio</a
+        >
+      </p>
     </div>
   </div>
 </footer>

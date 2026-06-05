@@ -89,14 +89,14 @@ Error Tracking (Sentry)
 
 ### Data Sync Strategy
 
-| Data | Source | Sync | Freshness | Cache |
-|------|--------|------|-----------|-------|
-| Room listing | Hostaway | Daily build | 24h | 30d (static HTML) |
-| Room details | Hostaway | Daily build | 24h | 30d (static HTML) |
-| Room photos | Hostaway CDN | Referenced in build | Real-time | Browser (versioned URL) |
-| Availability | Hostaway | On-demand API | Real-time | 5-30min (edge) |
-| Rates | Hostaway | Daily build | 24h | Cloudflare edge cache |
-| CMS content | Prismic | On webhook/rebuild | On publish | 30d (static) |
+| Data         | Source       | Sync                | Freshness  | Cache                   |
+| ------------ | ------------ | ------------------- | ---------- | ----------------------- |
+| Room listing | Hostaway     | Daily build         | 24h        | 30d (static HTML)       |
+| Room details | Hostaway     | Daily build         | 24h        | 30d (static HTML)       |
+| Room photos  | Hostaway CDN | Referenced in build | Real-time  | Browser (versioned URL) |
+| Availability | Hostaway     | On-demand API       | Real-time  | 5-30min (edge)          |
+| Rates        | Hostaway     | Daily build         | 24h        | Cloudflare edge cache   |
+| CMS content  | Prismic      | On webhook/rebuild  | On publish | 30d (static)            |
 
 ## Component Boundaries
 
@@ -176,7 +176,7 @@ API responses:
 ```
 Static HTML pages:
   Cache-Control: public, max-age=2592000  (30 days)
-  
+
 Room listings / details:
   Cache-Control: public, max-age=86400  (1 day)
   Purge on: Daily rebuild, on-demand
@@ -260,6 +260,7 @@ Merge to main:
 ### Graceful Degradation
 
 **If Hostaway is down:**
+
 ```
 - Room listing pages still serve static HTML
 - Show cached room data from last successful build
@@ -269,6 +270,7 @@ Merge to main:
 ```
 
 **If Prismic is down:**
+
 ```
 - Static pages from last build still serve
 - No ability to publish new content until Prismic recovers
@@ -276,6 +278,7 @@ Merge to main:
 ```
 
 **If Cloudflare is down:**
+
 ```
 - No origin server to fall back to (static-only)
 - DNS failover to backup host (if configured)
@@ -283,6 +286,7 @@ Merge to main:
 ```
 
 **If GA4 fails:**
+
 ```
 - Site continues normally
 - No analytics collected
@@ -290,6 +294,7 @@ Merge to main:
 ```
 
 **If Sentry fails:**
+
 ```
 - Errors still logged to browser console
 - No error reporting, but site functions
@@ -297,61 +302,61 @@ Merge to main:
 
 ## Suggested Build Order
 
-| Phase | Task | Outcome | Dependencies |
-|-------|------|---------|--------------|
-| 1 | Astro setup + TypeScript config | Foundation, testing environment | Node 20+ |
-| 2 | Base layout + routing | Static pages render | — |
-| 3 | Hostaway API integration (read-only) | Fetch room data | Hostaway API key |
-| 4 | Generate room pages statically | All rooms visible | Phase 3 |
-| 5 | Prismic integration | Fetch CMS content | Prismic token |
-| 6 | Generic page template | Dynamic content pages | Phase 5 |
-| 7 | Availability API endpoint | Real-time checks | Phase 3 |
-| 8 | Booking flow UX | Date picker + availability check | Phase 7 |
-| 9 | Redirect to Hostaway | Complete booking flow | Phase 8 |
-| 10 | Contact form (frontend) | Contact page with form | — |
-| 11 | Contact form (backend API) | Email notifications | Mailer service |
-| 12 | Sentry integration | Error tracking | Sentry account |
-| 13 | GA4 integration | Analytics + page views | GA4 account |
-| 14 | Cloudflare Pages setup | Production deployment | Git repo |
-| 15 | Cache headers optimization | Performance tuning | Phase 14 |
+| Phase | Task                                 | Outcome                          | Dependencies     |
+| ----- | ------------------------------------ | -------------------------------- | ---------------- |
+| 1     | Astro setup + TypeScript config      | Foundation, testing environment  | Node 20+         |
+| 2     | Base layout + routing                | Static pages render              | —                |
+| 3     | Hostaway API integration (read-only) | Fetch room data                  | Hostaway API key |
+| 4     | Generate room pages statically       | All rooms visible                | Phase 3          |
+| 5     | Prismic integration                  | Fetch CMS content                | Prismic token    |
+| 6     | Generic page template                | Dynamic content pages            | Phase 5          |
+| 7     | Availability API endpoint            | Real-time checks                 | Phase 3          |
+| 8     | Booking flow UX                      | Date picker + availability check | Phase 7          |
+| 9     | Redirect to Hostaway                 | Complete booking flow            | Phase 8          |
+| 10    | Contact form (frontend)              | Contact page with form           | —                |
+| 11    | Contact form (backend API)           | Email notifications              | Mailer service   |
+| 12    | Sentry integration                   | Error tracking                   | Sentry account   |
+| 13    | GA4 integration                      | Analytics + page views           | GA4 account      |
+| 14    | Cloudflare Pages setup               | Production deployment            | Git repo         |
+| 15    | Cache headers optimization           | Performance tuning               | Phase 14         |
 
 **Critical path:** 1 → 2 → 3 → 4 → 7 → 8 → 9 (rooms + booking)
 
 ## Scalability Path
 
-| Scale | Rooms | Build Time | Architecture | Strategy |
-|-------|-------|-----------|--------------|----------|
-| MVP | 1-5 | 10-15s | Single Hostaway fetch | In-memory room cache |
-| Small | 10-50 | 30-45s | Paginate Hostaway queries | Batch fetches |
-| Medium | 50-500 | 2-3 min | Distributed fetch | Cloudflare KV cache + webhook rebuild |
-| Large | 500+ | 5-10 min | Real-time data layer | Redis + continuous deployment |
-| Enterprise | 1000+ | Continuous | Microservices | Dedicated API layer |
+| Scale      | Rooms  | Build Time | Architecture              | Strategy                              |
+| ---------- | ------ | ---------- | ------------------------- | ------------------------------------- |
+| MVP        | 1-5    | 10-15s     | Single Hostaway fetch     | In-memory room cache                  |
+| Small      | 10-50  | 30-45s     | Paginate Hostaway queries | Batch fetches                         |
+| Medium     | 50-500 | 2-3 min    | Distributed fetch         | Cloudflare KV cache + webhook rebuild |
+| Large      | 500+   | 5-10 min   | Real-time data layer      | Redis + continuous deployment         |
+| Enterprise | 1000+  | Continuous | Microservices             | Dedicated API layer                   |
 
 **For Bristol Inn (small inn, 3-10 rooms):** Start at MVP level, plan for "Small" during Phase 2.
 
 ## Common Architecture Mistakes (& How to Avoid)
 
-| Mistake | How It Manifests | Prevention |
-|---------|------------------|-----------|
-| Statically build availability | Site shows "Available" but Hostaway says "Booked" | Fetch availability on-demand; never bake into HTML |
-| Cache all API responses | User sees 30-min-old availability | Use short cache TTL (5-30min) or cache-busting |
-| No error handling for third-party APIs | Silent failures; users see partial pages | Implement try-catch, fallbacks, Sentry reporting |
-| Hardcode environment variables | API keys in source code; security breach | Use `.env` file + Cloudflare environment secrets |
-| No logging / observability | "It worked yesterday" — mysterious failures | Implement Sentry from day 1; log API calls |
-| Assuming Hostaway never changes | API responds differently; pages break | Version API responses; handle schema changes |
-| Ignoring mobile performance | Mobile users abandon during booking | Mobile-first testing, LCP < 2.5s on 4G |
-| Full site rebuild on every code change | 5-min wait for minor bug fix | Separate static content rebuild from code deploy |
+| Mistake                                | How It Manifests                                  | Prevention                                         |
+| -------------------------------------- | ------------------------------------------------- | -------------------------------------------------- |
+| Statically build availability          | Site shows "Available" but Hostaway says "Booked" | Fetch availability on-demand; never bake into HTML |
+| Cache all API responses                | User sees 30-min-old availability                 | Use short cache TTL (5-30min) or cache-busting     |
+| No error handling for third-party APIs | Silent failures; users see partial pages          | Implement try-catch, fallbacks, Sentry reporting   |
+| Hardcode environment variables         | API keys in source code; security breach          | Use `.env` file + Cloudflare environment secrets   |
+| No logging / observability             | "It worked yesterday" — mysterious failures       | Implement Sentry from day 1; log API calls         |
+| Assuming Hostaway never changes        | API responds differently; pages break             | Version API responses; handle schema changes       |
+| Ignoring mobile performance            | Mobile users abandon during booking               | Mobile-first testing, LCP < 2.5s on 4G             |
+| Full site rebuild on every code change | 5-min wait for minor bug fix                      | Separate static content rebuild from code deploy   |
 
 ## Key Decisions for Architecture
 
-| Decision | Rationale | Outcome |
-|----------|-----------|---------|
-| Static-first with on-demand availability | Balances fast page loads + real-time booking data | Room pages instant; availability always fresh |
-| Separate build for room data | Decouple content changes from code deployments | Can rebuild rooms daily without touching code |
-| Cloudflare Pages (for now) | Cheap, integrates with GitHub, PR previews | Revisit if on-demand rendering becomes critical |
-| No user accounts in v1 | Adds complexity without clear benefit | Faster launch; add later if repeat bookings justify |
-| Hybrid static+on-demand rendering | Best of both worlds: fast + fresh | Astro's sweet spot; proven pattern |
+| Decision                                 | Rationale                                         | Outcome                                             |
+| ---------------------------------------- | ------------------------------------------------- | --------------------------------------------------- |
+| Static-first with on-demand availability | Balances fast page loads + real-time booking data | Room pages instant; availability always fresh       |
+| Separate build for room data             | Decouple content changes from code deployments    | Can rebuild rooms daily without touching code       |
+| Cloudflare Pages (for now)               | Cheap, integrates with GitHub, PR previews        | Revisit if on-demand rendering becomes critical     |
+| No user accounts in v1                   | Adds complexity without clear benefit             | Faster launch; add later if repeat bookings justify |
+| Hybrid static+on-demand rendering        | Best of both worlds: fast + fresh                 | Astro's sweet spot; proven pattern                  |
 
 ---
 
-*Last updated: 2026-05-05 with current ecosystem research*
+_Last updated: 2026-05-05 with current ecosystem research_

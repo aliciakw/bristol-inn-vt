@@ -10,28 +10,36 @@ interface Props {
 const { images, ctaLabel, ctaUrl } = Astro.props;
 ---
 
-<div id="hero-carousel" class="relative w-full min-h-[480px] tablet:min-h-[600px] overflow-hidden bg-gray-900">
-  {images.map((img, index) => (
-    <div
-      class={`absolute inset-0 transition-opacity duration-700 ${index === 0 ? 'opacity-100' : 'opacity-0'}`}
-      data-slide
-    >
-      <Image
-        src={img.url}
-        alt={img.alt}
-        width={1440}
-        height={800}
-        format="webp"
-        loading={index === 0 ? 'eager' : 'lazy'}
-        class="w-full h-full object-cover"
-      />
-    </div>
-  ))}
+<div
+  id="hero-carousel"
+  class="relative w-full min-h-[480px] tablet:min-h-[600px] overflow-hidden bg-gray-900"
+>
+  {
+    images.map((img, index) => (
+      <div
+        class={`absolute inset-0 transition-opacity duration-700 ${index === 0 ? 'opacity-100' : 'opacity-0'}`}
+        data-slide
+      >
+        <Image
+          src={img.url}
+          alt={img.alt}
+          width={1440}
+          height={800}
+          format="webp"
+          loading={index === 0 ? 'eager' : 'lazy'}
+          class="w-full h-full object-cover"
+        />
+      </div>
+    ))
+  }
 
   <div class="absolute inset-0 bg-black/30 pointer-events-none"></div>
 
   <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-center text-white z-10">
-    <a href={ctaUrl} class="inline-block bg-slate-700 text-white px-6 py-3 rounded hover:bg-slate-800">
+    <a
+      href={ctaUrl}
+      class="inline-block bg-slate-700 text-white px-6 py-3 rounded hover:bg-slate-800"
+    >
       {ctaLabel}
     </a>
   </div>
@@ -44,12 +52,16 @@ const { images, ctaLabel, ctaUrl } = Astro.props;
     let currentIndex = 0;
 
     setInterval(() => {
+      // eslint-disable-next-line security/detect-object-injection
       slides[currentIndex].classList.remove('opacity-100');
+      // eslint-disable-next-line security/detect-object-injection
       slides[currentIndex].classList.add('opacity-0');
 
       currentIndex = (currentIndex + 1) % slides.length;
 
+      // eslint-disable-next-line security/detect-object-injection
       slides[currentIndex].classList.remove('opacity-0');
+      // eslint-disable-next-line security/detect-object-injection
       slides[currentIndex].classList.add('opacity-100');
     }, 5000);
   }

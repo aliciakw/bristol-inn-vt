@@ -29,7 +29,9 @@ const { id, name, rate, photo, amenities } = Astro.props;
 const formattedRate = Math.round(rate);
 ---
 
-<article class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md">
+<article
+  class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md"
+>
   <Image
     src={photo.url}
     alt={photo.caption || name}
@@ -45,6 +47,10 @@ const formattedRate = Math.round(rate);
     <div class="flex flex-wrap gap-2">
       {amenities.map((a) => <AmenityBadge label={a} />)}
     </div>
-    <a href={`/rooms/${id}`} class="inline-block mt-2 text-slate-700 font-normal underline-offset-2 hover:underline">View Room</a>
+    <a
+      href={`/rooms/${id}`}
+      class="inline-block mt-2 text-slate-700 font-normal underline-offset-2 hover:underline"
+      >View Room</a
+    >
   </div>
 </article>

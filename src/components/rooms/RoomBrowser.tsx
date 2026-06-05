@@ -28,7 +28,11 @@ interface Props {
   rooms: RoomBrowserRoom[];
 }
 
-function RoomGrid({ rooms, isLoading, availability }: {
+function RoomGrid({
+  rooms,
+  isLoading,
+  availability,
+}: {
   rooms: RoomBrowserRoom[];
   isLoading?: boolean;
   availability?: AvailabilityResult[];
@@ -43,7 +47,7 @@ function RoomGrid({ rooms, isLoading, availability }: {
           price={room.price}
           photo={room.photo}
           amenities={room.amenities}
-          availability={availability?.find(a => a.listingId === room.id)}
+          availability={availability?.find((a) => a.listingId === room.id)}
           isLoading={isLoading ?? false}
         />
       ))}
@@ -51,19 +55,26 @@ function RoomGrid({ rooms, isLoading, availability }: {
   );
 }
 
-function RoomSections({ rooms, availability }: {
+function RoomSections({
+  rooms,
+  availability,
+}: {
   rooms: RoomBrowserRoom[];
   availability: AvailabilityResult[];
 }) {
-  const available = rooms.filter(r => availability.find(a => a.listingId === r.id)?.available);
-  const unavailable = rooms.filter(r => !availability.find(a => a.listingId === r.id)?.available);
+  const available = rooms.filter((r) => availability.find((a) => a.listingId === r.id)?.available);
+  const unavailable = rooms.filter(
+    (r) => !availability.find((a) => a.listingId === r.id)?.available,
+  );
 
   return (
     <div className="flex flex-col gap-12">
       <section>
         <h2 className="text-2xl font-bold mb-6">Available Rooms &amp; Suites</h2>
         {available.length === 0 ? (
-          <p className="text-gray-600">No rooms are available for your selected dates and guest count.</p>
+          <p className="text-gray-600">
+            No rooms are available for your selected dates and guest count.
+          </p>
         ) : (
           <RoomGrid rooms={available} availability={availability} />
         )}
@@ -91,15 +102,16 @@ export function RoomBrowser({ rooms }: Props) {
       });
       const res = await fetch(`/api/rooms/availability?${qs.toString()}`);
       if (!res.ok) {
-        const body = await res.json().catch(() => ({})) as { error?: string };
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(body.error ?? 'Request failed');
       }
-      const availability = await res.json() as AvailabilityResult[];
+      const availability = (await res.json()) as AvailabilityResult[];
       setState({ status: 'results', availability });
     } catch (err) {
       setState({
         status: 'error',
-        message: err instanceof Error ? err.message : 'Unable to check availability. Please try again.',
+        message:
+          err instanceof Error ? err.message : 'Unable to check availability. Please try again.',
       });
     }
   }
@@ -127,7 +139,9 @@ export function RoomBrowser({ rooms }: Props) {
       )}
 
       {rooms.length === 0 ? (
-        <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
+        <p className="text-center text-gray-600">
+          No rooms available at this time. Please check back soon.
+        </p>
       ) : state.status === 'results' ? (
         <RoomSections rooms={rooms} availability={state.availability} />
       ) : (

@@ -47,7 +47,7 @@ interface RawListing {
 // ---------------------------------------------------------------------------
 
 interface RawCalendarDay {
-  date: string;        // "YYYY-MM-DD"
+  date: string; // "YYYY-MM-DD"
   isAvailable: 0 | 1;
   price: number;
   minimumStay: number;
@@ -98,7 +98,7 @@ function normalizeRoom(raw: RawListing): HostawayRoom {
     .slice()
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .slice(0, 6)
-    .map(img => ({
+    .map((img) => ({
       url: img.url,
       caption: img.caption || img.vrboCaption || '',
       sortOrder: img.sortOrder,
@@ -106,12 +106,11 @@ function normalizeRoom(raw: RawListing): HostawayRoom {
 
   if (!_firstImageLogged) {
     _firstImageLogged = true;
-    // eslint-disable-next-line no-console
     console.log('[hostaway] First image URL (add domain to image.remotePatterns):', photos[0]?.url);
   }
 
   const amenityNames = raw.listingAmenities
-    .map(a => AMENITY_NAMES[a.amenityId])
+    .map((a) => AMENITY_NAMES[a.amenityId])
     .filter((name): name is string => name !== undefined);
 
   return {
@@ -142,7 +141,7 @@ export async function getRooms(): Promise<HostawayRoom[]> {
   if (!res.ok) {
     throw new Error(`Hostaway listings failed: ${res.status}`);
   }
-  const data = await res.json() as { result: RawListing[] };
+  const data = (await res.json()) as { result: RawListing[] };
   return data.result.map(normalizeRoom);
 }
 
@@ -159,7 +158,7 @@ export async function getRoom(id: number): Promise<HostawayRoom | null> {
   if (!res.ok) {
     throw new Error(`Hostaway listing ${id} failed: ${res.status}`);
   }
-  const data = await res.json() as { result: RawListing };
+  const data = (await res.json()) as { result: RawListing };
   return normalizeRoom(data.result);
 }
 
@@ -185,13 +184,13 @@ export async function checkAvailability(
       if (!res.ok) {
         throw new Error(`Hostaway calendar for listing ${id} failed: ${res.status}`);
       }
-      const data = await res.json() as { result: RawCalendarDay[] };
-      const nights = data.result.filter(day => day.date >= checkIn && day.date < checkOut);
+      const data = (await res.json()) as { result: RawCalendarDay[] };
+      const nights = data.result.filter((day) => day.date >= checkIn && day.date < checkOut);
       const numNights = nights.length;
       const available =
         numNights > 0 &&
-        nights.every(day => day.isAvailable === 1) &&
-        nights.every(day => numNights >= day.minimumStay);
+        nights.every((day) => day.isAvailable === 1) &&
+        nights.every((day) => numNights >= day.minimumStay);
       return {
         listingId: id,
         available,
@@ -199,9 +198,9 @@ export async function checkAvailability(
       };
     }),
   );
-  return settled.map((result, i) =>
-    result.status === 'fulfilled'
-      ? result.value
-      : { listingId: listingIds[i]!, available: false },
-  );
+  return listingIds.map((id, i) => {
+    // eslint-disable-next-line security/detect-object-injection
+    const result = settled[i];
+    return result?.status === 'fulfilled' ? result.value : { listingId: id, available: false };
+  });
 }

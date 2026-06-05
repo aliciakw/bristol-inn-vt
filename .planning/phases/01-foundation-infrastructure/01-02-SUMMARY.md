@@ -5,6 +5,7 @@
 ## What Was Built
 
 Set up complete Cloudflare Workers deployment infrastructure with:
+
 - GitHub repository linked to Cloudflare via wrangler.toml
 - Automatic production deploys on merge to main branch
 - PR preview URLs auto-generating per feature branch
@@ -35,6 +36,7 @@ Plan assumed Cloudflare Pages with GitHub App webhook integration. Actual implem
 ## Next Phase (Phase 2)
 
 Phase 2 will:
+
 - Replace placeholder env var values with real API keys (Hostaway, Prismic)
 - Integrate Hostaway API to fetch real room data
 - Set up Prismic CMS integration

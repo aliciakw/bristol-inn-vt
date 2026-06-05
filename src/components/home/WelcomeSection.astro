@@ -1,16 +1,16 @@
 ---
-import { Image } from 'astro:assets'
-import TextStyle from '@components/ui/TextStyle.astro'
-import type { SanityImage, SanityResolvedLink } from '../../lib/sanity'
-import bristolLogo from '../../assets/bristol-inn-logo.png'
+import { Image } from 'astro:assets';
+import TextStyle from '@components/ui/TextStyle.astro';
+import type { SanityImage, SanityResolvedLink } from '../../lib/sanity';
+import bristolLogo from '../../assets/bristol-inn-logo.png';
 
 interface Props {
-  welcomeHeading?: string
-  welcomeDescription?: string
-  welcomeCTA?: SanityResolvedLink
-  welcomeImage?: SanityImage
-  directionsHref?: string
-  directionsLabel?: string
+  welcomeHeading?: string;
+  welcomeDescription?: string;
+  welcomeCTA?: SanityResolvedLink;
+  welcomeImage?: SanityImage;
+  directionsHref?: string;
+  directionsLabel?: string;
 }
 
 const {
@@ -20,27 +20,24 @@ const {
   welcomeImage,
   directionsHref,
   directionsLabel = 'find directions',
-} = Astro.props
+} = Astro.props;
 ---
 
 <section>
   <div class="px-[var(--grid-margin)]">
     <div class="Section__inner">
-      
       <div class="row-span-1 col-span-6 desktop:col-start-2">
-         {(welcomeHeading || welcomeDescription) && (
-          <TextStyle variant="h1" element="p">
-            {welcomeHeading && (
-              <span class="text-ink-900">{welcomeHeading} </span>
-            )}
-            {welcomeDescription && (
-              <span class="text-iron">{welcomeDescription}</span>
-            )}
-            
-          </TextStyle>
-        )} 
-        {welcomeCTA && (
-          <a
+        {
+          (welcomeHeading || welcomeDescription) && (
+            <TextStyle variant="h1" element="p">
+              {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
+              {welcomeDescription && <span class="text-iron">{welcomeDescription}</span>}
+            </TextStyle>
+          )
+        }
+        {
+          welcomeCTA && (
+            <a
               href={welcomeCTA.href}
               target={welcomeCTA.openInNewTab ? '_blank' : undefined}
               rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}
@@ -48,11 +45,14 @@ const {
             >
               {welcomeCTA.label}
             </a>
-        )}
+          )
+        }
       </div>
       <div class="col-span-2 desktop:col-start-2">
-          <!-- Address card -->
-        <div class="bg-white h-full shadow-md flex flex-col items-center justify-between p-6 desktop:p-8 gap-4">
+        <!-- Address card -->
+        <div
+          class="bg-white h-full shadow-md flex flex-col items-center justify-between p-6 desktop:p-8 gap-4"
+        >
           <Image
             src={bristolLogo}
             alt="Bristol Inn Vermont"
@@ -61,22 +61,29 @@ const {
             class="w-full max-w-[240px] desktop:max-w-[280px] object-contain"
           />
           <div class="text-center">
-            <TextStyle variant="paragraph" element="p" class="text-ink-900 underline decoration-solid leading-snug">
+            <TextStyle
+              variant="paragraph"
+              element="p"
+              class="text-ink-900 underline decoration-solid leading-snug"
+            >
               11 Main Street,<br />Bristol, VT 05401
             </TextStyle>
-            {directionsHref && (
-              <a
-                href={directionsHref}
-                class="font-serif text-caption desktop:text-caption-desktop text-ink-900 uppercase tracking-wide mt-1 inline-block hover:underline"
-              >
-                {directionsLabel}
-              </a>
-            )}
+            {
+              directionsHref && (
+                <a
+                  href={directionsHref}
+                  class="font-serif text-caption desktop:text-caption-desktop text-ink-900 uppercase tracking-wide mt-1 inline-block hover:underline"
+                >
+                  {directionsLabel}
+                </a>
+              )
+            }
           </div>
         </div>
-        </div>
-        <div class="col-span-4">
-          {welcomeImage?.url && (
+      </div>
+      <div class="col-span-4">
+        {
+          welcomeImage?.url && (
             <div class="flex-1 rounded-[16px] overflow-hidden">
               <Image
                 src={welcomeImage.url}
@@ -88,8 +95,9 @@ const {
                 class="w-full h-full object-cover"
               />
             </div>
-          )}
-        </div>
+          )
+        }
+      </div>
     </div>
   </div>
 </section>

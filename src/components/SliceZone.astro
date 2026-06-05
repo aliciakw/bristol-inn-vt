@@ -1,70 +1,70 @@
 ---
-import { toHTML } from '@portabletext/to-html'
-import { Image } from 'astro:assets'
-import type { SanityBlock } from '../lib/sanity'
+import { toHTML } from '@portabletext/to-html';
+import { Image } from 'astro:assets';
+import type { SanityBlock } from '../lib/sanity';
 
 interface Props {
-  blocks: SanityBlock[]
+  blocks: SanityBlock[];
 }
 
-const { blocks } = Astro.props
+const { blocks } = Astro.props;
 ---
 
-{(blocks ?? []).map((block) => {
-  if (block._type === 'block') {
-    return (
-      <div
-        class="text-base leading-relaxed max-w-prose my-6"
-        set:html={toHTML([block as SanityBlock])}
-      />
-    );
-  }
-
-  if (block._type === 'imageBlock') {
-    const image = block.image as { asset?: { url?: string }; alt?: string } | undefined;
-    const url = image?.asset?.url;
-    if (!url) return null;
-
-    const isFullWidth = (block.layout as string) === 'full';
-    const caption = block.caption as string | null | undefined;
-
-    return (
-      <figure class={isFullWidth ? 'my-6' : 'max-w-prose mx-auto my-6'}>
-        <Image
-          src={url}
-          alt={(image?.alt ?? '') as string}
-          width={isFullWidth ? 1200 : 800}
-          height={isFullWidth ? 600 : 500}
-          format="webp"
-          loading="lazy"
-          class={isFullWidth ? 'w-full object-cover' : 'w-full'}
+{
+  (blocks ?? []).map((block) => {
+    if (block._type === 'block') {
+      return (
+        <div
+          class="text-base leading-relaxed max-w-prose my-6"
+          set:html={toHTML([block as SanityBlock])}
         />
-        {caption && (
-          <figcaption class="text-sm mt-1 text-center">
-            {caption}
-          </figcaption>
-        )}
-      </figure>
-    );
-  }
+      );
+    }
 
-  if (block._type === 'ctaBlock') {
-    const cta = block.cta as { label?: string; href?: string; openInNewTab?: boolean } | undefined;
-    if (!cta?.label || !cta?.href) return null;
+    if (block._type === 'imageBlock') {
+      const image = block.image as { asset?: { url?: string }; alt?: string } | undefined;
+      const url = image?.asset?.url;
+      if (!url) return null;
 
-    return (
-      <div class="my-8 flex justify-center">
-        <a
-          href={cta.href}
-          target={cta.openInNewTab ? '_blank' : undefined}
-          rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}
-          class="inline-flex items-center px-8 py-3 rounded-full border border-ink-900 bg-lilac-200 font-serif text-ink-900 hover:bg-lilac-200/80 transition-colors"
-        >
-          {cta.label}
-        </a>
-      </div>
-    );
-  }
+      const isFullWidth = (block.layout as string) === 'full';
+      const caption = block.caption as string | null | undefined;
 
-  return null;
-})}
+      return (
+        <figure class={isFullWidth ? 'my-6' : 'max-w-prose mx-auto my-6'}>
+          <Image
+            src={url}
+            alt={(image?.alt ?? '') as string}
+            width={isFullWidth ? 1200 : 800}
+            height={isFullWidth ? 600 : 500}
+            format="webp"
+            loading="lazy"
+            class={isFullWidth ? 'w-full object-cover' : 'w-full'}
+          />
+          {caption && <figcaption class="text-sm mt-1 text-center">{caption}</figcaption>}
+        </figure>
+      );
+    }
+
+    if (block._type === 'ctaBlock') {
+      const cta = block.cta as
+        | { label?: string; href?: string; openInNewTab?: boolean }
+        | undefined;
+      if (!cta?.label || !cta?.href) return null;
+
+      return (
+        <div class="my-8 flex justify-center">
+          <a
+            href={cta.href}
+            target={cta.openInNewTab ? '_blank' : undefined}
+            rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}
+            class="inline-flex items-center px-8 py-3 rounded-full border border-ink-900 bg-lilac-200 font-serif text-ink-900 hover:bg-lilac-200/80 transition-colors"
+          >
+            {cta.label}
+          </a>
+        </div>
+      );
+    }
+
+    return null;
+  })
+}
