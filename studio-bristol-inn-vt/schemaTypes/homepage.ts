@@ -21,7 +21,7 @@ export const homepageType = defineType({
     defineField({
       name: 'galleryImages',
       title: 'Gallery Images',
-      description: 'Up to 4 photos shown in a full-width strip.',
+      description: 'A continuous strip of scrolling images.',
       type: 'array',
       of: [
         defineArrayMember({
@@ -30,7 +30,7 @@ export const homepageType = defineType({
           fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
         }),
       ],
-      validation: (Rule) => Rule.max(10),
+      validation: (Rule) => Rule.min(10).max(16),
     }),
 
     // Reservation section

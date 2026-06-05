@@ -7,25 +7,40 @@ interface Props {
 }
 
 const { images } = Astro.props;
-const visible = images.filter((img) => img.url).slice(0, 4);
+const visible = images.filter((img) => img.url);
 ---
 
 {
   visible.length > 0 && (
-    <div class="flex gap-4 py-4 overflow-hidden w-full">
-      {visible.map((img) => (
-        <div class="flex-1 aspect-[4/3] overflow-hidden">
-          <Image
-            src={img.url}
-            alt={img.alt}
-            width={432}
-            height={324}
-            format="webp"
-            loading="lazy"
-            class="w-full h-full object-cover"
-          />
-        </div>
-      ))}
+    <div class="overflow-hidden w-full pt-12 pb-4">
+      <div class="flex w-max gallery-scroll">
+        {[...visible, ...visible].map((img) => (
+          <div class="flex-none w-48 aspect-square overflow-hidden mr-4">
+            <Image src={img.url} alt={img.alt} width={600} height={600} format="webp" loading="lazy" class="w-full h-full object-cover" />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
+
+<style>
+  @keyframes gallery-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .gallery-scroll {
+    animation: gallery-scroll 80s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-scroll {
+      animation: none;
+    }
+  }
+</style>

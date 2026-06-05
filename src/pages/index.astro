@@ -9,40 +9,16 @@ import SliceZone from '../components/SliceZone.astro';
 
 const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 
-const {
-  welcomeHeading,
-  welcomeDescription,
-  welcomeCTA,
-  welcomeImage,
-  galleryImages,
-  reservationDescription,
-  reservationImage,
-  testimonial,
-  amenities,
-  body,
-} = homepage;
+const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, galleryImages, reservationHeading, reservationDescription, reservationImage, testimonial, amenities, body } = homepage;
 ---
 
-<BaseLayout
-  title="Bristol Inn — Vermont"
-  description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere."
->
-  <WelcomeSection
-    welcomeHeading={welcomeHeading}
-    welcomeDescription={welcomeDescription}
-    welcomeCTA={welcomeCTA}
-    welcomeImage={welcomeImage}
-    directionsHref={settings.directionsLink?.href}
-    directionsLabel={settings.directionsLink?.label}
-  />
+<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere.">
+  <WelcomeSection welcomeHeading={welcomeHeading} welcomeDescription={welcomeDescription} welcomeCTA={welcomeCTA} welcomeImage={welcomeImage} directionsHref={settings.directionsLink?.href} directionsLabel={settings.directionsLink?.label} />
 
   <GalleryStrip images={galleryImages ?? []} />
 
   <div class="bg-forest-400">
-    <ReservationSection
-      reservationDescription={reservationDescription}
-      reservationImage={reservationImage}
-    />
+    <ReservationSection reservationHeading={reservationHeading} reservationDescription={reservationDescription} reservationImage={reservationImage} />
 
     <TestimonialsSection testimonial={testimonial} amenities={amenities ?? []} />
 

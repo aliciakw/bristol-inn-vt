@@ -44,6 +44,7 @@ export type SanityHomepage = {
   welcomeCTA?: SanityResolvedLink;
   welcomeImage?: SanityImage;
   galleryImages: SanityImage[];
+  reservationHeading?: string;
   reservationDescription?: string;
   reservationImage?: SanityImage;
   testimonial?: { quote: string; author: string; role: string };
@@ -70,6 +71,7 @@ export async function getHomepage(): Promise<SanityHomepage> {
       "welcomeCTA": welcomeCTA${RESOLVE_LINK},
       "welcomeImage": welcomeImage{ "url": asset->url, "alt": coalesce(alt, "") },
       "galleryImages": galleryImages[]{ "url": asset->url, "alt": coalesce(alt, "") },
+      reservationHeading,
       reservationDescription,
       "reservationImage": reservationImage{ "url": asset->url, "alt": coalesce(alt, "") },
       "testimonial": testimonial{ quote, author, role },

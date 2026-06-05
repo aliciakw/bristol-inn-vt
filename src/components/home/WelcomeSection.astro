@@ -13,14 +13,7 @@ interface Props {
   directionsLabel?: string;
 }
 
-const {
-  welcomeHeading,
-  welcomeDescription,
-  welcomeCTA,
-  welcomeImage,
-  directionsHref,
-  directionsLabel = 'find directions',
-} = Astro.props;
+const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, directionsHref, directionsLabel = 'find directions' } = Astro.props;
 ---
 
 <section>
@@ -50,30 +43,15 @@ const {
       </div>
       <div class="col-span-2 desktop:col-start-2">
         <!-- Address card -->
-        <div
-          class="bg-white h-full shadow-md flex flex-col items-center justify-between p-6 desktop:p-8 gap-4"
-        >
-          <Image
-            src={bristolLogo}
-            alt="Bristol Inn Vermont"
-            width={280}
-            height={280}
-            class="w-full max-w-[240px] desktop:max-w-[280px] object-contain"
-          />
+        <div class="bg-white shadow-md flex flex-col items-center justify-between p-6 desktop:p-8 gap-4">
+          <Image src={bristolLogo} alt="Bristol Inn Vermont" width={280} height={280} class="w-full max-w-[240px] desktop:max-w-[280px] object-contain" />
           <div class="text-center">
-            <TextStyle
-              variant="paragraph"
-              element="p"
-              class="text-ink-900 underline decoration-solid leading-snug"
-            >
+            <TextStyle variant="paragraph" element="p" class="text-ink-900 underline decoration-solid leading-snug">
               11 Main Street,<br />Bristol, VT 05401
             </TextStyle>
             {
               directionsHref && (
-                <a
-                  href={directionsHref}
-                  class="font-serif text-caption desktop:text-caption-desktop text-ink-900 uppercase tracking-wide mt-1 inline-block hover:underline"
-                >
+                <a href={directionsHref} class="font-serif text-caption desktop:text-caption-desktop text-ink-900 uppercase tracking-wide mt-1 inline-block hover:underline">
                   {directionsLabel}
                 </a>
               )
@@ -85,15 +63,7 @@ const {
         {
           welcomeImage?.url && (
             <div class="flex-1 rounded-[16px] overflow-hidden">
-              <Image
-                src={welcomeImage.url}
-                alt={welcomeImage.alt}
-                width={825}
-                height={550}
-                format="webp"
-                loading="eager"
-                class="w-full h-full object-cover"
-              />
+              <Image src={welcomeImage.url} alt={welcomeImage.alt} width={825} height={550} format="webp" loading="eager" class="w-full h-full object-cover" />
             </div>
           )
         }
