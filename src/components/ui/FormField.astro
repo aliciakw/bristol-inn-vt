@@ -1,0 +1,19 @@
+---
+interface Props {
+  id: string;
+  label: string;
+  type?: string;
+  name?: string;
+  min?: string;
+  max?: string;
+  placeholder?: string;
+  class?: string;
+}
+
+const { id, label, type = 'text', name, min, max, placeholder, class: className } = Astro.props;
+---
+
+<div class={className}>
+  <label for={id} class="block font-serif font-medium text-ink-900 mb-1.5 text-sm">{label}</label>
+  <input id={id} name={name ?? id} type={type} min={min} max={max} placeholder={placeholder} class="w-full bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 appearance-none focus:outline-none focus:ring-1 focus:ring-ink-900" />
+</div>

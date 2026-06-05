@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import SliceZone from '../components/SliceZone.astro';
 import { RoomBrowser } from '../components/rooms/RoomBrowser';
 import { getPage } from '../lib/sanity';
 import { getRooms } from '../lib/hostaway';
@@ -28,7 +27,7 @@ const browserRooms = rooms.map((r) => ({
       </div>
     )
   } -->
-  <div class="Section px-[var(--grid-margin)]">
+  <div class="Section px-[var(--grid-margin)] mb-20">
     {(page?.body?.length ?? 0) === 0 && <h1 class="text-3xl font-bold text-gray-900 mb-8">{pageTitle}</h1>}
     <RoomBrowser client:load rooms={browserRooms} />
   </div>

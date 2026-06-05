@@ -1,0 +1,20 @@
+---
+interface Props {
+  name: string;
+  label: string;
+  id?: string;
+}
+
+const { name, label, id } = Astro.props;
+---
+
+<label class="flex items-center gap-3 cursor-pointer">
+  <span class="relative flex-none">
+    <input id={id} name={name} type="checkbox" class="peer sr-only" />
+    <span class="block size-[46px] bg-sand-050 border border-ink-900 rounded-[8px] peer-checked:bg-forest-400"></span>
+    <svg class="absolute inset-0 m-auto size-5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+      <polyline points="2,8 6,12 14,4"></polyline>
+    </svg>
+  </span>
+  <span class="font-serif text-paragraph desktop:text-paragraph-desktop text-ink-900">{label}</span>
+</label>
