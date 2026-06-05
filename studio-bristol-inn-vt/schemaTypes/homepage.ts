@@ -44,16 +44,36 @@ export const homepageType = defineType({
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
     }),
 
-    // Testimonial (compound object, like meta)
+    // Testimonials (array of up to 2 items: testimonial or image)
     defineField({
       name: 'testimonial',
-      title: 'Testimonial',
-      type: 'object',
-      fields: [
-        defineField({ name: 'quote', type: 'text', title: 'Quote', rows: 3 }),
-        defineField({ name: 'author', type: 'string', title: 'Author' }),
-        defineField({ name: 'role', type: 'string', title: 'Role', description: 'e.g. "Verified guest"' }),
+      title: 'Testimonials',
+      description: 'Up to 3 items — a testimonial quote or an image.',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'testimonialItem',
+          title: 'Testimonial',
+          fields: [
+            defineField({ name: 'quote', type: 'text', title: 'Quote', rows: 3 }),
+            defineField({ name: 'author', type: 'string', title: 'Author' }),
+            defineField({ name: 'role', type: 'string', title: 'Role', description: 'e.g. "Verified guest"' }),
+          ],
+          preview: {
+            select: { quote: 'quote', author: 'author' },
+            prepare({ quote, author }: { quote?: string; author?: string }) {
+              return { title: author ?? '(no author)', subtitle: quote }
+            },
+          },
+        }),
+        defineArrayMember({
+          type: 'image',
+          options: { hotspot: true },
+          fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+        }),
       ],
+      validation: (Rule) => Rule.max(3),
     }),
 
     // Amenities

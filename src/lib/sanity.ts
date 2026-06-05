@@ -38,6 +38,23 @@ export type SanityImage = {
   alt: string;
 };
 
+export type SanityTestimonialItem = {
+  _type: 'testimonialItem';
+  _key: string;
+  quote: string;
+  author: string;
+  role: string;
+};
+
+export type SanityTestimonialImageItem = {
+  _type: 'image';
+  _key: string;
+  url: string;
+  alt: string;
+};
+
+export type SanityTestimonialArrayItem = SanityTestimonialItem | SanityTestimonialImageItem;
+
 export type SanityHomepage = {
   welcomeHeading?: string;
   welcomeDescription?: string;
@@ -47,7 +64,7 @@ export type SanityHomepage = {
   reservationHeading?: string;
   reservationDescription?: string;
   reservationImage?: SanityImage;
-  testimonial?: { quote: string; author: string; role: string };
+  testimonial?: SanityTestimonialArrayItem[];
   amenities: string[];
   body: SanityBlock[];
 };
@@ -74,7 +91,12 @@ export async function getHomepage(): Promise<SanityHomepage> {
       reservationHeading,
       reservationDescription,
       "reservationImage": reservationImage{ "url": asset->url, "alt": coalesce(alt, "") },
-      "testimonial": testimonial{ quote, author, role },
+      "testimonial": testimonial[]{
+        _type,
+        _key,
+        _type == "testimonialItem" => { quote, author, role },
+        _type == "image" => { "url": asset->url, "alt": coalesce(alt, "") }
+      },
       "amenities": coalesce(amenities, []),
       "body": body[]{
         ...,

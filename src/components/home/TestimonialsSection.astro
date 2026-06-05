@@ -1,27 +1,30 @@
 ---
+import { Image } from 'astro:assets';
 import TextStyle from '@components/ui/TextStyle.astro';
+import type { SanityTestimonialArrayItem } from '../../lib/sanity';
 
 interface Props {
-  testimonial?: { quote: string; author: string; role: string };
+  testimonial?: SanityTestimonialArrayItem[];
   amenities: string[];
 }
 
 const { testimonial, amenities } = Astro.props;
 
-// Split amenities into two columns
 const mid = Math.ceil(amenities.length / 2);
 const col1 = amenities.slice(0, mid);
 const col2 = amenities.slice(mid);
+
+const cardBgClasses = ['bg-prussian-200', 'bg-sand-200', 'bg-lilac-200'];
 ---
 
-<section class="px-[var(--grid-margin)] desktop:px-0 pt-12">
+<section class="px-[var(--grid-margin)] desktop:px-0">
   <div class="Section__inner">
     <div class="row-span-1 col-span-6 desktop:col-start-2 flex flex-col gap-4">
       <TextStyle variant="h2" class="text-sand-050 text-center">
         {`You're in good hands`}
       </TextStyle>
     </div>
-    <div class="row-span-1 col-span-6 desktop:col-start-3 desktop:col-span-4 flex flex-col desktop:flex-row-reverse gap-4">
+    <div class="row-span-1 col-span-6 desktop:col-start-3 desktop:col-span-4 flex flex-col gap-4 mb-12">
       <!-- Amenities card -->
       {
         amenities.length > 0 && (
@@ -60,22 +63,44 @@ const col2 = amenities.slice(mid);
         )
       }
     </div>
-    <!-- Testimonial card -->
+    <!-- Testimonial items -->
     {
-      testimonial && (
-        <div class="bg-lilac-200 rounded-[16px] p-4 desktop:p-6 col-span-6 desktop:col-start-2 desktop:col-span-3 shrink-0">
-          <TextStyle variant="h5" element="p" class="text-ink-900 leading-snug">
-            &#8220;{testimonial.quote}&#8221;
-          </TextStyle>
-          <div class="mt-2 text-right">
-            <TextStyle variant="h5" element="p" class="text-ink-900 font-medium">
-              &#8212; {testimonial.author}
-            </TextStyle>
-            <TextStyle variant="caption" element="p" class="text-ink-900 mt-0.5">
-              {testimonial.role}
+      testimonial && testimonial.length > 0 && (
+        <>
+          <div class="col-span-6 desktop:col-start-2 desktop:col-span-6 flex flex-col desktop:flex-row items-center justify-center gap-4">
+            <TextStyle variant="h3" class="text-sand-050 text-center">
+              Guest Testimonials
             </TextStyle>
           </div>
-        </div>
+          <div class="col-span-6 desktop:col-start-2 desktop:col-span-6 flex flex-col desktop:flex-row items-start gap-4">
+            {testimonial.map((item, index) => {
+              if (item._type === 'testimonialItem') {
+                const cardBgClass = cardBgClasses[index % cardBgClasses.length];
+                return (
+                  <div class="flex-1 rounded-[16px] p-4 desktop:p-6 shrink-0" class:list={[cardBgClass]}>
+                    <TextStyle variant="h5" element="p" class="text-ink-900 leading-snug">
+                      &#8220;{item.quote}&#8221;
+                    </TextStyle>
+                    <div class="mt-2 text-right">
+                      <TextStyle variant="h5" element="p" class="text-ink-900 font-medium">
+                        &#8212; {item.author}
+                      </TextStyle>
+                      <TextStyle variant="caption" element="p" class="text-ink-900 mt-0.5">
+                        {item.role}
+                      </TextStyle>
+                    </div>
+                  </div>
+                );
+              } else {
+                return (
+                  <div class="flex-1  aspect-[4/3]">
+                    <Image src={item.url} alt={item.alt} width={600} height={450} format="webp" class="w-full h-full object-cover" />
+                  </div>
+                );
+              }
+            })}
+          </div>
+        </>
       )
     }
   </div>
