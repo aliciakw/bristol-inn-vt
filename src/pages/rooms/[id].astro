@@ -19,21 +19,23 @@ const metaDescription = room.description.slice(0, 160);
 ---
 
 <BaseLayout title={`${room.name} — Bristol Inn`} description={metaDescription}>
-  <div class="max-w-4xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-4">{room.name}</h1>
-    <p class="text-lg text-gray-700 mb-6">From ${Math.round(room.price)} / night</p>
-    <RoomGallery photos={room.photos} roomName={room.name} />
-    <p class="text-base leading-relaxed text-gray-700 my-6">{room.description}</p>
-    <h2 class="text-xl font-bold text-gray-900 mb-3">Amenities</h2>
-    <div class="flex flex-wrap gap-2">
-      {room.amenityNames.map((a) => <AmenityBadge label={a} />)}
+  <section class="px-[var(--grid-margin)]">
+    <div class="Section__inner">
+      <div class="row-span-1 col-span-6 desktop:col-span-3">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">{room.name}</h1>
+        <p class="text-lg text-gray-700 mb-6">From ${Math.round(room.price)} / night</p>
+
+        <p class="text-base leading-relaxed text-gray-700 my-6">{room.description}</p>
+        <h2 class="text-xl font-bold text-gray-900 mb-3">Amenities</h2>
+        <div class="flex flex-wrap gap-2">
+          {room.amenityNames.map((a) => <AmenityBadge label={a} />)}
+        </div>
+        {/* TODO Phase 3: replace with validated Hostaway booking redirect URL */}
+        <a href={`https://www.hostaway.com/book/${room.id}`} class="inline-block bg-slate-700 text-white px-6 py-3 rounded hover:bg-slate-800 mt-4" target="_blank" rel="noopener noreferrer">Book This Room</a>
+      </div>
+      <div class="row-span-1 col-span-6 desktop:col-span-5">
+        <RoomGallery photos={room.photos} roomName={room.name} />
+      </div>
     </div>
-    {/* TODO Phase 3: replace with validated Hostaway booking redirect URL */}
-    <a
-      href={`https://www.hostaway.com/book/${room.id}`}
-      class="inline-block bg-slate-700 text-white px-6 py-3 rounded hover:bg-slate-800 mt-4"
-      target="_blank"
-      rel="noopener noreferrer">Book This Room</a
-    >
-  </div>
+  </section>
 </BaseLayout>
