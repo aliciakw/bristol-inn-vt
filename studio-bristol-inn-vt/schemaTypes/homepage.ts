@@ -68,7 +68,8 @@ export const homepageType = defineType({
     // Flexible body (SliceZone)
     defineField({
       name: 'body',
-      title: 'Body',
+      title: 'Additional Content',
+      description: 'Renders below everything else on the homepage. Optional.',
       type: 'array',
       of: [
         defineArrayMember({ type: 'block' }),

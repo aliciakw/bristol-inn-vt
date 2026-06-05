@@ -16,10 +16,10 @@ const variantMap: Record<TextStyleVariant, { el: StyleableTextElement; classes: 
   h2: { el: 'h2', classes: 'font-serif text-h2 tablet:text-h2-tablet desktop:text-h2-desktop' },
   h3: { el: 'h3', classes: 'font-serif text-h3 tablet:text-h3-tablet desktop:text-h3-desktop' },
   h4: { el: 'h4', classes: 'font-serif text-h4 tablet:text-h4-tablet desktop:text-h4-desktop' },
+  h5: { el: 'h5', classes: 'font-serif text-h5 tablet:text-h5-tablet desktop:text-h5-desktop' },
   paragraph: {
     el: 'p',
-    classes:
-      'font-serif text-paragraph tablet:text-paragraph-tablet desktop:text-paragraph-desktop',
+    classes: 'font-serif text-paragraph tablet:text-paragraph-tablet desktop:text-paragraph-desktop',
   },
   caption: {
     el: 'span',
@@ -27,21 +27,10 @@ const variantMap: Record<TextStyleVariant, { el: StyleableTextElement; classes: 
   },
 };
 
-const {
-  variant = 'paragraph',
-  element,
-  bold,
-  truncate,
-  uppercase,
-  class: className,
-  style,
-} = Astro.props;
+const { variant = 'paragraph', element, bold, truncate, uppercase, class: className, style } = Astro.props;
 // eslint-disable-next-line security/detect-object-injection
 const { el: defaultEl, classes: defaultClasses } = variantMap[variant];
 const Tag = element ?? defaultEl;
 ---
 
-<Tag
-  class:list={[defaultClasses, className, { 'font-bold': bold, truncate, uppercase }]}
-  style={style}><slot /></Tag
->
+<Tag class:list={[defaultClasses, className, { 'font-bold': bold, truncate, uppercase }]} style={style}><slot /></Tag>

@@ -14,39 +14,19 @@ const col1 = amenities.slice(0, mid);
 const col2 = amenities.slice(mid);
 ---
 
-<section class="bg-forest-400 px-[var(--grid-margin)] pb-16 desktop:pb-24">
-  <div class="max-w-[1480px] mx-auto">
-    <!-- Heading -->
-    <TextStyle variant="h2" class="text-sand-050 text-center mb-10 desktop:mb-14">
-      You&#8217;re in good hands
-    </TextStyle>
-
-    <!-- Cards row -->
-    <div class="flex flex-col tablet:flex-row gap-6 desktop:gap-8 items-start">
-      <!-- Testimonial card -->
-      {
-        testimonial && (
-          <div class="bg-lilac-200 rounded-[16px] p-8 desktop:p-10 tablet:w-[40%] shrink-0">
-            <TextStyle variant="h4" element="p" class="text-ink-900 leading-snug">
-              &#8220;{testimonial.quote}&#8221;
-            </TextStyle>
-            <div class="mt-6 text-right">
-              <TextStyle variant="h3" element="p" class="text-ink-900">
-                &#8212; {testimonial.author}
-              </TextStyle>
-              <TextStyle variant="caption" element="p" class="text-ink-900 mt-0.5">
-                {testimonial.role}
-              </TextStyle>
-            </div>
-          </div>
-        )
-      }
-
+<section class="px-[var(--grid-margin)] desktop:px-0 pt-12">
+  <div class="Section__inner">
+    <div class="row-span-1 col-span-6 desktop:col-start-2 flex flex-col gap-4">
+      <TextStyle variant="h2" class="text-sand-050 text-center">
+        {`You're in good hands`}
+      </TextStyle>
+    </div>
+    <div class="row-span-1 col-span-6 desktop:col-start-3 desktop:col-span-4 flex flex-col desktop:flex-row-reverse gap-4">
       <!-- Amenities card -->
       {
         amenities.length > 0 && (
           <div class="flex-1 relative pt-6">
-            <div class="absolute top-0 left-8 bg-khaki-300 px-5 py-2.5 rounded-none">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 bg-khaki-300 px-5 py-2.5 rounded-none">
               <TextStyle variant="h4" element="span" bold class="text-ink-900">
                 Popular Amenities
               </TextStyle>
@@ -57,7 +37,7 @@ const col2 = amenities.slice(mid);
                 <ul class="flex-1 list-disc list-inside space-y-1.5">
                   {col1.map((item) => (
                     <li>
-                      <TextStyle variant="paragraph" element="span" class="text-ink-900">
+                      <TextStyle variant="h5" element="span" class="text-ink-900">
                         {item}
                       </TextStyle>
                     </li>
@@ -67,7 +47,7 @@ const col2 = amenities.slice(mid);
                   <ul class="flex-1 list-disc list-inside space-y-1.5">
                     {col2.map((item) => (
                       <li>
-                        <TextStyle variant="paragraph" element="span" class="text-ink-900">
+                        <TextStyle variant="h5" element="span" class="text-ink-900">
                           {item}
                         </TextStyle>
                       </li>
@@ -80,5 +60,23 @@ const col2 = amenities.slice(mid);
         )
       }
     </div>
+    <!-- Testimonial card -->
+    {
+      testimonial && (
+        <div class="bg-lilac-200 rounded-[16px] p-4 desktop:p-6 col-span-6 desktop:col-start-2 desktop:col-span-3 shrink-0">
+          <TextStyle variant="h5" element="p" class="text-ink-900 leading-snug">
+            &#8220;{testimonial.quote}&#8221;
+          </TextStyle>
+          <div class="mt-2 text-right">
+            <TextStyle variant="h5" element="p" class="text-ink-900 font-medium">
+              &#8212; {testimonial.author}
+            </TextStyle>
+            <TextStyle variant="caption" element="p" class="text-ink-900 mt-0.5">
+              {testimonial.role}
+            </TextStyle>
+          </div>
+        </div>
+      )
+    }
   </div>
 </section>
