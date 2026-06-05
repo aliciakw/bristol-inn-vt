@@ -17,6 +17,8 @@ General Best practices
 
 Styling
 - Compose Tailwind classnames for most styling. There may be on global reset.css file. Otherwise use inline styling for rare overrides.
+- The layout follows a 6 column grid for mobile and 8 column grid for desktop. Generally prefer CSS grid or flexbox rather than setting sizes explicitly or based on percentages, unless there is a valid reason
+- Use UI primitive components like TextStyle, Button, Link, FormInput to maintain consistency wherever possible.
 - mobile first styling, with (3) breakpoints: mobile, tablet / laptop, large monitors
 
 Integrations
