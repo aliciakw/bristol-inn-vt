@@ -14,13 +14,13 @@ interface Props {
 const { reservationHeading = 'Make a Reservation', reservationDescription, reservationImage } = Astro.props;
 ---
 
-<section class="px-[var(--grid-margin)] desktop:px-0 py-12">
+<section class="px-[var(--grid-margin)] desktop:px-0 py-12 bg-sand-200">
   <div class="Section__inner">
     <div class="row-span-1 col-span-6 desktop:col-start-2 flex flex-col gap-4">
-      <TextStyle variant="h2" class="text-sand-050 text-center">{reservationHeading}</TextStyle>
+      <TextStyle variant="h2" class="text-center">{reservationHeading}</TextStyle>
       {
         reservationDescription && (
-          <TextStyle variant="paragraph" element="p" class="text-sand-050">
+          <TextStyle variant="paragraph" element="p">
             {reservationDescription}
           </TextStyle>
         )

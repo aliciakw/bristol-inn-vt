@@ -132,3 +132,15 @@ html {
 }
 
 /* Animated Hamburger menu icon */
+
+.quick-fade-in {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.hover-italic {
+  transition: transform 0.15s ease-in-out;
+}
+.hover-italic:hover {
+  transform: skewX(-12deg);
+}

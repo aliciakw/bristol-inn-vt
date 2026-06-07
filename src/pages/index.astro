@@ -17,19 +17,17 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRight
 
   <GalleryStrip images={galleryImages ?? []} />
 
-  <div class="bg-forest-400">
-    <ReservationSection reservationHeading={reservationHeading} reservationDescription={reservationDescription} reservationImage={reservationImage} />
+  <ReservationSection reservationHeading={reservationHeading} reservationDescription={reservationDescription} reservationImage={reservationImage} />
 
-    <TestimonialsSection testimonial={testimonial} amenities={amenities ?? []} />
+  <TestimonialsSection testimonial={testimonial} amenities={amenities ?? []} />
 
-    {
-      body?.length > 0 && (
-        <div class="px-[var(--grid-margin)] pb-16 desktop:pb-24 text-sand-050">
-          <div class="max-w-[1480px] mx-auto">
-            <SliceZone blocks={body} />
-          </div>
+  {
+    body?.length > 0 && (
+      <div class="px-[var(--grid-margin)] pb-16 desktop:pb-24 text-sand-050">
+        <div class="max-w-[1480px] mx-auto">
+          <SliceZone blocks={body} />
         </div>
-      )
-    }
-  </div>
+      </div>
+    )
+  }
 </BaseLayout>

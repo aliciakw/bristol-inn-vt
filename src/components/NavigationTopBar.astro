@@ -28,14 +28,14 @@ const leftCta = settings?.leftCta?.label && settings?.leftCta?.href ? settings.l
 const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? settings.rightCta : { label: settings?.rightCta?.label, href: settings?.rightCta?.href, openInNewTab: false };
 ---
 
-<header id="nav-top-bar" class:list={['w-full h-16 desktop:h-[96px] sticky z-30 top-0 flex items-center shrink-0 pr-[50px]', `bg-${variant}`]}>
+<header id="nav-top-bar" class:list={['w-full h-16 desktop:h-[96px] sticky z-30 top-0 flex items-center shrink-0 px-[var(--grid-margin)]', `bg-${variant}`]}>
   <!-- Left (desktop only) -->
-  <div class="flex items-center gap-3 desktop:gap-6 pl-4 desktop:pl-6">
+  <div class="flex items-center gap-3 desktop:gap-6">
     <a
       href={leftCta.href}
       target={leftCta.openInNewTab ? '_blank' : undefined}
       rel={leftCta.openInNewTab ? 'noopener noreferrer' : undefined}
-      class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-khaki-200 border border-2 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 whitespace-nowrap hover:bg-khaki-300 transition-colors"
+      class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-khaki-200 border border-1 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 whitespace-nowrap hover:bg-khaki-300 transition-colors"
     >
       {leftCta.label}
     </a>
@@ -46,7 +46,7 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
     <a href="/" class="pointer-events-auto">
       {
         nameplateLogo ? (
-          <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-10 desktop:max-h-14 w-auto object-contain" />
+          <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-10 desktop:max-h-14 desktop:w-[21vw] object-contain" />
         ) : (
           <>
             <p class="font-serif font-medium text-[30px] desktop:text-[2.4375rem] leading-none tracking-[0.01em]" class:list={`text-${textColor}`}>
@@ -62,55 +62,49 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
   </div>
 
   <!-- Right (desktop only) -->
-  <div class="desktop:flex items-center ml-auto pr-4 gap-4">
+  <!-- <div class="desktop:flex items-center ml-auto mr-13 desktop:mr-14 gap-4">
+    
+  </div> -->
+
+  <div class="absolute z-[50] right-0 top-0 flex items-center gap-4">
     <a
       href={rightCta.href}
       target={rightCta.openInNewTab ? '_blank' : undefined}
       rel={rightCta.openInNewTab ? 'noopener noreferrer' : undefined}
-      class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-forest-400 border border-2 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-sand-100 whitespace-nowrap hover:opacity-90 transition-opacity"
+      class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-lilac-200 text-ink-900 border border-1 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] whitespace-nowrap hover:opacity-90 transition-opacity"
     >
       {rightCta.label}
     </a>
+    <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer h-16 desktop:h-[96px] mr-[var(--grid-margin)]">
+      <div class="w-9 h-9 flex flex-col justify-center items-stretch gap-[7px]">
+        <span class="line"></span>
+        <span class="line"></span>
+        <span class="line"></span>
+      </div>
+    </button>
   </div>
+
+  <!-- Nav drawer (slides in from right) -->
+  <nav id="nav-menu" aria-label="Site navigation" class="fixed inset-y-0 right-0 z-41 bg-prussian-700 text-white flex flex-col justify-center" aria-hidden="true">
+    <!-- Content -->
+    <div class="NavDrawer__Content quick-fade-in mb-10 px-[var(--grid-margin)] py-6 flex flex-col gap-12 items-start">
+      <!-- Nav links from Sanity -->
+      <ul>
+        {
+          sidebarLinks.map(({ label, href, openInNewTab }) => (
+            <li>
+              <a href={href} target={openInNewTab ? '_blank' : undefined} rel={openInNewTab ? 'noopener noreferrer' : undefined} class="font-serif text-[36px] leading-[1.5] hover:opacity-60 transition-opacity">
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
+
+  <div id="nav-backdrop" class="fixed inset-0 z-40 bg-ink-900/40 opacity-0 pointer-events-none transition-opacity duration-300" aria-hidden="true"></div>
 </header>
-
-<button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon absolute z-[50] right-0 top-0 flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer h-16 desktop:h-[96px] mr-2">
-  <div class="w-12 h-12 desktop:w-11 desktop:h-11 flex flex-col justify-center items-stretch gap-[5px]">
-    <span class="line"></span>
-    <span class="line"></span>
-    <span class="line"></span>
-  </div>
-</button>
-
-<!-- Nav drawer (slides in from right) -->
-<nav id="nav-menu" aria-label="Site navigation" class="fixed inset-y-0 right-0 z-41 bg-lilac-200 flex flex-col pb-12" aria-hidden="true">
-  <!-- Content -->
-  <div class="mb-10 p-6 desktop:p-7 flex flex-col gap-12 items-start">
-    <a
-      href={rightCta.href}
-      target={rightCta.openInNewTab ? '_blank' : undefined}
-      rel={rightCta.openInNewTab ? 'noopener noreferrer' : undefined}
-      class="inline-flex items-center justify-center h-11 px-6 rounded-full bg-lilac-200 border border-2 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 hover:bg-lilac-200/70 transition-colors"
-    >
-      {rightCta.label}
-    </a>
-
-    <!-- Nav links from Sanity -->
-    <ul>
-      {
-        sidebarLinks.map(({ label, href, openInNewTab }) => (
-          <li>
-            <a href={href} target={openInNewTab ? '_blank' : undefined} rel={openInNewTab ? 'noopener noreferrer' : undefined} class="font-serif font-medium text-[36px] leading-[1.5] text-ink-900 hover:opacity-60 transition-opacity">
-              {label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </div>
-</nav>
-
-<div id="nav-backdrop" class="fixed inset-0 z-40 bg-ink-900/40 opacity-0 pointer-events-none transition-opacity duration-300" aria-hidden="true"></div>
 
 <style>
   #nav-menu {
@@ -126,6 +120,14 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
     opacity: 1;
     overflow-y: auto;
   }
+
+  #nav-menu .NavDrawer__Content {
+    transition-delay: 0.2s;
+  }
+
+  #nav-menu.is-open .NavDrawer__Content {
+    opacity: 1;
+  }
   @media (min-width: 640px) {
     #nav-menu.is-open {
       width: 75%;
@@ -137,60 +139,64 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
     }
   }
 
-  .burger-icon .line {
-    height: 3px;
+  .line {
+    height: 2.5px;
     border-radius: 3px;
     background-color: var(--color-ink-900);
     transition: all 0.3s ease-in-out;
     z-index: 40;
   }
-  .burger-icon.is-open {
-    -webkit-transition: all 0.3s ease-in-out;
-    -o-transition: all 0.3s ease-in-out;
-    transition: all 0.3s ease-in-out;
-    -webkit-transition-delay: 0.6s;
-    -o-transition-delay: 0.6s;
-    transition-delay: 0.6s;
-    -webkit-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    -o-transform: rotate(45deg);
-    transform: rotate(45deg);
+  [aria-expanded='true'] .line {
+    background-color: var(--color-sand-050);
   }
-
-  .burger-icon.is-open .line:nth-child(2) {
-    width: 0px;
-  }
-
-  .burger-icon.is-open .line:nth-child(1),
-  .burger-icon.is-open .line:nth-child(3) {
-    -webkit-transition-delay: 0.3s;
-    -o-transition-delay: 0.3s;
-    transition-delay: 0.3s;
-  }
-
-  .burger-icon.is-open .line:nth-child(1) {
-    -webkit-transform: translateY(13px);
-    -ms-transform: translateY(13px);
-    -o-transform: translateY(13px);
-    transform: translateY(13px);
-  }
-
-  .burger-icon.is-open .line:nth-child(3) {
-    -webkit-transform: translateY(-13px) rotate(90deg);
-    -ms-transform: translateY(-13px) rotate(90deg);
-    -o-transform: translateY(-13px) rotate(90deg);
-    transform: translateY(-13px) rotate(90deg);
-  }
-
-  /* Burger → X when menu is open */
-  [aria-expanded='true'] .line:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
+  [aria-expanded='true'] .line:nth-child(1),
   [aria-expanded='true'] .line:nth-child(2) {
-    opacity: 0;
+    transition-property: transform;
+    transition-duration: 0.15s, 0.2s;
+    transition-timing-function: ease-in;
+    animation-delay: 0.3s;
+    /* Animate translateY first, then rotate after */
+  }
+
+  /* Animate only translateY initially */
+  /* Use ::after to sequence, or a keyframes for more control */
+  [aria-expanded='true'] .line:nth-child(1) {
+    transform: translateY(10px) rotate(0deg);
+    animation: nav-bar-burger-line1-down-rotate 0.3s forwards;
   }
   [aria-expanded='true'] .line:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
+    transform: translateY(-9px) rotate(-45deg);
+    animation: nav-bar-burger-line3-up-rotate 0.3s forwards;
+  }
+
+  [aria-expanded='true'] .line:nth-child(2) {
+    /* opacity: 0; */
+    width: 0px;
+    transition: width 0.3s ease-in-out;
+  }
+
+  @keyframes nav-bar-burger-line1-down-rotate {
+    0% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    75% {
+      transform: translateY(10px) rotate(0deg);
+    }
+    100% {
+      transform: translateY(10px) rotate(45deg);
+    }
+  }
+
+  @keyframes nav-bar-burger-line3-up-rotate {
+    0% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    75% {
+      transform: translateY(-8.5px) rotate(0deg);
+    }
+    100% {
+      transform: translateY(-8.5px) rotate(-45deg);
+    }
   }
 </style>
 
