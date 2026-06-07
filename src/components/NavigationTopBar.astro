@@ -1,7 +1,7 @@
 ---
 import { getSettings } from '../lib/sanity';
 
-export type NavigationVariant = 'sand-050' | 'white' | 'sand-100' | 'forest-400';
+export type NavigationVariant = 'sand-050' | 'white' | 'sand-100' | 'forest-400' | 'transparent';
 export type NavigationTextColor = 'ink-900' | 'sand-050';
 
 interface Props {
@@ -28,9 +28,9 @@ const leftCta = settings?.leftCta?.label && settings?.leftCta?.href ? settings.l
 const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? settings.rightCta : { label: settings?.rightCta?.label, href: settings?.rightCta?.href, openInNewTab: false };
 ---
 
-<header id="nav-top-bar" class:list={['w-full h-16 desktop:h-[96px] sticky z-30 top-0 flex items-center shrink-0 px-[var(--grid-margin)]', `bg-${variant}`]}>
+<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] sticky z-30 top-0 flex items-center shrink-0', `bg-${variant}`]}>
   <!-- Left (desktop only) -->
-  <div class="flex items-center gap-3 desktop:gap-6">
+  <div class="flex items-center gap-3 desktop:gap-6pl-[var(--grid-margin)] bg-white rounded-br-[32px] mt-[var(--nav-top-bar-height)] pt-4 pb-2 pr-2">
     <a
       href={leftCta.href}
       target={leftCta.openInNewTab ? '_blank' : undefined}
@@ -44,20 +44,21 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
   <!-- Center: logo -->
   <div class="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none select-none">
     <a href="/" class="pointer-events-auto">
-      {
-        nameplateLogo ? (
-          <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-10 desktop:max-h-14 desktop:w-[21vw] object-contain" />
-        ) : (
-          <>
-            <p class="font-serif font-medium text-[30px] desktop:text-[2.4375rem] leading-none tracking-[0.01em]" class:list={`text-${textColor}`}>
-              The Bristol Inn
-            </p>
-            <p class="font-serif font-normal text-[11px] desktop:text-[0.875rem] leading-[1.1] tracking-[0.01em] uppercase mt-0.5" class:list={`text-${textColor}`}>
-              19 Main Street, Bristol, Vermont, USA
-            </p>
-          </>
-        )
-      }
+      <div class="bg-white px-3 pb-2 pt-12 rounded-bl-[24px] rounded-br-[24px]">
+        {
+          nameplateLogo ? (
+            <div>
+              <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-10 desktop:max-h-14 desktop:w-[21vw] object-contain" />
+            </div>
+          ) : (
+            <>
+              <p class="font-serif font-medium text-[30px] desktop:text-[2.4375rem] leading-none tracking-[0.01em]" class:list={`text-${textColor}`}>
+                The Bristol Inn
+              </p>
+            </>
+          )
+        }
+      </div>
     </a>
   </div>
 
@@ -66,7 +67,7 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
     
   </div> -->
 
-  <div class="absolute z-[50] right-0 top-0 flex items-center gap-4">
+  <div class="absolute z-[50] bg-white rounded-bl-[32px] rounded-tl-[32px] mt-2 py-2 pl-2 right-0 top-0 flex items-center gap-4">
     <a
       href={rightCta.href}
       target={rightCta.openInNewTab ? '_blank' : undefined}
@@ -75,7 +76,7 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
     >
       {rightCta.label}
     </a>
-    <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer h-16 desktop:h-[96px] mr-[var(--grid-margin)]">
+    <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer mr-[var(--grid-margin)]">
       <div class="w-9 h-9 flex flex-col justify-center items-stretch gap-[7px]">
         <span class="line"></span>
         <span class="line"></span>

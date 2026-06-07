@@ -2,7 +2,6 @@
 import { Image } from 'astro:assets';
 import TextStyle from '@components/ui/TextStyle.astro';
 import type { SanityImage, SanityResolvedLink } from '../../lib/sanity';
-import bristolLogo from '../../assets/bristol-inn-logo.png';
 import bristolBadge from '../../assets/bristol-inn-badge.png';
 
 interface Props {
@@ -23,20 +22,20 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   <div class="col-span-6 desktop:col-span-8 h-[300px] tablet:h-[420px] desktop:h-[550px] relative overflow-hidden mb-8">
     {
       heroLeftImage?.url && (
-        <div class="absolute left-0 top-0 bottom-0 w-[calc(50%-6px)] desktop:w-[calc(50%-12px)] rounded-tr-[12px] rounded-br-[12px] desktop:rounded-tr-[16px] desktop:rounded-br-[16px] overflow-hidden">
+        <div class="absolute left-0 top-0 bottom-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-tr-[12px] rounded-br-[12px] desktop:rounded-tr-[16px] desktop:rounded-br-[16px] overflow-hidden">
           <Image src={heroLeftImage.url} alt={heroLeftImage.alt} width={900} height={550} format="webp" loading="eager" class="w-full h-full object-cover" />
         </div>
       )
     }
     {
       heroRightImage?.url && (
-        <div class="absolute right-0 top-0 bottom-0 w-[calc(50%-6px)] desktop:w-[calc(50%-12px)] rounded-tl-[12px] rounded-bl-[12px] desktop:rounded-tl-[16px] desktop:rounded-bl-[16px] overflow-hidden">
+        <div class="absolute right-0 top-0 bottom-0 w-[calc(50%-6px)] desktop:w-[calc(50%-12px)] rounded-tl-[12px] rounded-bl-[8px] desktop:rounded-tl-[16px] desktop:rounded-bl-[16px] overflow-hidden">
           <Image src={heroRightImage.url} alt={heroRightImage.alt} width={900} height={550} format="webp" loading="eager" class="w-full h-full object-cover" />
         </div>
       )
     }
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px] z-10">
-      <div class="w-full rounded-full bg-white shadow-lg flex items-center justify-center p-3 desktop:p-5">
+      <div class="w-full mt-4 rounded-full bg-white shadow-lg flex items-center justify-center p-3 desktop:p-5">
         <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
       </div>
     </div>

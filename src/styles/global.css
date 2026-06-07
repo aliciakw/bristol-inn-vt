@@ -105,13 +105,14 @@
   --grid-columns: 6;
   --grid-margin: 16px;
   --grid-gutter: 8px;
+  --nav-top-bar-height: 32px;
 }
 
 @media (min-width: 1024px) {
   :root {
     --grid-columns: 8;
     --grid-margin: 24px;
-    --grid-gutter: 32px;
+    --nav-top-bar-height: 32px;
   }
 }
 
