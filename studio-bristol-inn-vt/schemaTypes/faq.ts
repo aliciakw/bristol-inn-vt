@@ -5,6 +5,13 @@ export const faqItemType = defineType({
   title: 'FAQ Item',
   type: 'document',
   fields: [
+    defineField({ 
+      name: 'id', 
+      title: 'Slug', 
+      type: 'slug', 
+      validation: (Rule) => Rule.required().error('id is required to facilitate anchor links.'), 
+      description: 'URL slug used for this FAQ item; auto-generated from the question.'
+    }),
     defineField({ name: 'question', title: 'Question', type: 'string' }),
     defineField({ name: 'answer', title: 'Answer', type: 'array', of: [defineArrayMember({ type: 'block' })] }),
   ],
@@ -26,6 +33,7 @@ export const faqType = defineType({
   type: 'document',
   fields: [
     defineField({ name: 'title', title: 'Title', type: 'string' }),
+    defineField({ name: 'description', title: 'Description', type: 'text' }),
     defineField({ name: 'items', title: 'Items', type: 'array', of: [defineArrayMember({ name: 'faqItem', title: 'FAQ Item', type: 'faqItem' })] }),
   ],
   preview: {

@@ -1,0 +1,126 @@
+---
+import { toHTML } from '@portabletext/to-html';
+import TextStyle from '@components/ui/TextStyle.astro';
+import type { SanityFaqItem } from '../lib/sanity';
+
+type Props = Pick<SanityFaqItem, 'faqId' | 'question' | 'answer'>;
+
+const { faqId, question, answer } = Astro.props;
+const answerHtml = toHTML(answer ?? []);
+---
+
+<details class="faq-item border-b border-khaki-300">
+  <summary class="flex items-center justify-between gap-6 py-5 desktop:py-6 cursor-pointer" id={faqId}>
+    <TextStyle variant="h4" element="span" class="text-ink-900 transition-transform duration-150 ease-in-out
+  hover:[transform:skewX(-12deg)]">{question}</TextStyle>
+
+    <!-- +/− icon: two real spans so no pseudo-element scoping issues -->
+    <span class="faq-icon shrink-0 relative w-5 h-5" aria-hidden="true">
+      <!-- horizontal bar: always visible -->
+      <span class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-0.5 bg-khaki-300 rounded-sm"></span>
+      <!-- vertical bar: transitions away when open -->
+      <span class="faq-icon-v absolute inset-y-0 left-1/2 -translate-x-1/2 w-0.5 bg-khaki-300 rounded-sm origin-center transition-[transform,opacity] duration-300 ease-in-out"></span>
+    </span>
+  </summary>
+
+  <div class="faq-body overflow-hidden">
+    <div class="pb-10 desktop:pb-12 pr-10">
+      <div class="font-serif text-paragraph tablet:text-paragraph-tablet desktop:text-paragraph-desktop text-ink-900/90 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_a]:underline [&_strong]:font-medium [&_em]:italic" set:html={answerHtml} />
+    </div>
+  </div>
+</details>
+
+<style>
+  summary {
+    list-style: none;
+    /* offset sticky nav: h-16 mobile, h-[96px] desktop, plus a small gap */
+    scroll-margin-top: 5rem;
+  }
+  @media (min-width: 1024px) {
+    summary {
+      scroll-margin-top: 7.5rem;
+    }
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>
+
+<script>
+  function closeItem(details: HTMLDetailsElement, body: HTMLElement, iconV: HTMLElement) {
+    iconV.style.transform = '';
+    iconV.style.opacity = '';
+    const anim = body.animate([{ height: body.offsetHeight + 'px' }, { height: '0px' }], { duration: 150, easing: 'ease-in-out', fill: 'forwards' });
+    anim.onfinish = () => {
+      details.removeAttribute('open');
+      anim.cancel();
+    };
+  }
+
+  function openItem(details: HTMLDetailsElement, body: HTMLElement, iconV: HTMLElement, animated = true) {
+    details.setAttribute('open', '');
+    iconV.style.transform = 'translateX(-50%) scaleY(0)';
+    iconV.style.opacity = '0';
+    if (animated) {
+      const targetHeight = body.scrollHeight;
+      body.animate([{ height: '0px' }, { height: targetHeight + 'px' }], { duration: 300, easing: 'ease-out' });
+    }
+  }
+
+  const allItems = document.querySelectorAll<HTMLDetailsElement>('.faq-item');
+
+  allItems.forEach((details) => {
+    const summary = details.querySelector<HTMLElement>('summary');
+    const body = details.querySelector<HTMLElement>('.faq-body');
+    const iconV = details.querySelector<HTMLElement>('.faq-icon-v');
+
+    if (!summary || !body || !iconV) return;
+
+    summary.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      if (details.open) {
+        closeItem(details, body, iconV);
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      } else {
+        allItems.forEach((other) => {
+          if (other !== details && other.open) {
+            const otherBody = other.querySelector<HTMLElement>('.faq-body');
+            const otherIconV = other.querySelector<HTMLElement>('.faq-icon-v');
+            if (otherBody && otherIconV) closeItem(other, otherBody, otherIconV);
+          }
+        });
+        openItem(details, body, iconV);
+        const id = summary.id;
+        if (id) history.replaceState(null, '', `#${id}`);
+      }
+    });
+  });
+
+  function activateHash(hash: string, animated: boolean) {
+    if (!hash) return;
+    const target = document.getElementById(hash);
+    const details = target?.closest<HTMLDetailsElement>('.faq-item');
+    if (!details) return;
+    const body = details.querySelector<HTMLElement>('.faq-body');
+    const iconV = details.querySelector<HTMLElement>('.faq-icon-v');
+    if (!body || !iconV) return;
+    // Close any other open item first
+    allItems.forEach((other) => {
+      if (other !== details && other.open) {
+        const otherBody = other.querySelector<HTMLElement>('.faq-body');
+        const otherIconV = other.querySelector<HTMLElement>('.faq-icon-v');
+        if (otherBody && otherIconV) closeItem(other, otherBody, otherIconV);
+      }
+    });
+    if (!details.open) openItem(details, body, iconV, animated);
+  }
+
+  // Initial load: open without animation (browser already scrolled)
+  activateHash(window.location.hash.slice(1), false);
+
+  // Same-page navigation (e.g. footer link while already on /faq)
+  window.addEventListener('hashchange', () => {
+    activateHash(window.location.hash.slice(1), true);
+  });
+</script>

@@ -28,7 +28,7 @@ const leftCta = settings?.leftCta?.label && settings?.leftCta?.href ? settings.l
 const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? settings.rightCta : { label: settings?.rightCta?.label, href: settings?.rightCta?.href, openInNewTab: false };
 ---
 
-<header id="nav-top-bar" class:list={['w-full h-16 desktop:h-[96px] sticky z-30 top-0 flex items-center shrink-0', `bg-${variant}`]}>
+<header id="nav-top-bar" class:list={['w-full h-16 desktop:h-[96px] sticky z-30 top-0 flex items-center shrink-0 pr-[50px]', `bg-${variant}`]}>
   <!-- Left (desktop only) -->
   <div class="flex items-center gap-3 desktop:gap-6 pl-4 desktop:pl-6">
     <a
@@ -71,25 +71,19 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
     >
       {rightCta.label}
     </a>
-    <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon relative z-[60] flex flex-col justify-center items-center gap-[5px] w-12 h-12 shrink-0 cursor-pointer rounded-full desktop:w-10 desktop:h-10">
-      <span class="line"></span>
-      <span class="line"></span>
-      <span class="line"></span>
-    </button>
   </div>
 </header>
 
-<!-- Nav drawer (slides in from right) -->
-<nav id="nav-menu" aria-label="Site navigation" class="fixed inset-y-0 right-0 z-50 bg-lilac-200 flex flex-col pb-12" aria-hidden="true">
-  <!-- Close button -->
-  <div class="flex justify-end mb-10 p-3 desktop:pt-7 desktop:pr-4">
-    <button id="nav-menu-close" type="button" aria-label="Close navigation menu" class="flex items-center justify-center w-10 h-10 cursor-pointer text-ink-900">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M2 2L18 18M18 2L2 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-      </svg>
-    </button>
+<button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon absolute z-[50] right-0 top-0 flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer h-16 desktop:h-[96px] mr-2">
+  <div class="w-12 h-12 desktop:w-11 desktop:h-11 flex flex-col justify-center items-stretch gap-[5px]">
+    <span class="line"></span>
+    <span class="line"></span>
+    <span class="line"></span>
   </div>
+</button>
 
+<!-- Nav drawer (slides in from right) -->
+<nav id="nav-menu" aria-label="Site navigation" class="fixed inset-y-0 right-0 z-41 bg-lilac-200 flex flex-col pb-12" aria-hidden="true">
   <!-- Content -->
   <div class="mb-10 p-6 desktop:p-7 flex flex-col gap-12 items-start">
     <a
@@ -121,7 +115,7 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
 <style>
   #nav-menu {
     width: 0;
-    opacity: 0;
+    opacity: 1;
     overflow: hidden;
     transition:
       width 0.35s ease-in-out,
@@ -143,21 +137,49 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
     }
   }
 
-  .line {
-    display: block;
-    width: 20px;
-    height: 2px;
+  .burger-icon .line {
+    height: 3px;
+    border-radius: 3px;
     background-color: var(--color-ink-900);
-    border-radius: 2px;
-    transform-origin: center;
-    transition:
-      transform 0.3s ease-in-out,
-      opacity 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    z-index: 40;
   }
-  @media (min-width: 1024px) {
-    .line {
-      width: 24px;
-    }
+  .burger-icon.is-open {
+    -webkit-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    -webkit-transition-delay: 0.6s;
+    -o-transition-delay: 0.6s;
+    transition-delay: 0.6s;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
+  .burger-icon.is-open .line:nth-child(2) {
+    width: 0px;
+  }
+
+  .burger-icon.is-open .line:nth-child(1),
+  .burger-icon.is-open .line:nth-child(3) {
+    -webkit-transition-delay: 0.3s;
+    -o-transition-delay: 0.3s;
+    transition-delay: 0.3s;
+  }
+
+  .burger-icon.is-open .line:nth-child(1) {
+    -webkit-transform: translateY(13px);
+    -ms-transform: translateY(13px);
+    -o-transform: translateY(13px);
+    transform: translateY(13px);
+  }
+
+  .burger-icon.is-open .line:nth-child(3) {
+    -webkit-transform: translateY(-13px) rotate(90deg);
+    -ms-transform: translateY(-13px) rotate(90deg);
+    -o-transform: translateY(-13px) rotate(90deg);
+    transform: translateY(-13px) rotate(90deg);
   }
 
   /* Burger → X when menu is open */
@@ -174,7 +196,6 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
 
 <script>
   const toggle = document.getElementById('nav-menu-toggle');
-  const close = document.getElementById('nav-menu-close');
   const menu = document.getElementById('nav-menu');
   const backdrop = document.getElementById('nav-backdrop');
 
@@ -196,8 +217,16 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
     document.body.style.overflow = '';
   }
 
-  toggle?.addEventListener('click', openMenu);
-  close?.addEventListener('click', closeMenu);
+  function toggleMenu() {
+    if (toggle?.getAttribute('aria-expanded') === 'true') {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  }
+
+  toggle?.addEventListener('click', toggleMenu);
+  // close?.addEventListener('click', closeMenu);
   backdrop?.addEventListener('click', closeMenu);
 
   document.addEventListener('keydown', (e) => {

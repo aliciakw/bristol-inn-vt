@@ -136,6 +136,34 @@ export async function getPages(): Promise<Pick<SanityPage, 'uid'>[]> {
   return getClient().fetch<Pick<SanityPage, 'uid'>[]>(`*[_type == "page"]{ "uid": slug.current }`);
 }
 
+export type SanityFaqItem = {
+  _key: string;
+  faqId: string;
+  question: string;
+  answer: SanityBlock[];
+};
+
+export type SanityFaq = {
+  title?: string;
+  description?: string;
+  items: SanityFaqItem[];
+};
+
+export async function getFaq(): Promise<SanityFaq | null> {
+  return getClient().fetch<SanityFaq | null>(
+    `*[_type == "faq"][0]{
+      title,
+      description,
+      "items": items[]{
+        _key,
+        question,
+        answer,
+        "faqId": id.current
+      }
+    }`,
+  );
+}
+
 export type SanityLink = {
   label: string;
   href: string; // resolved from url or internalLink slug
