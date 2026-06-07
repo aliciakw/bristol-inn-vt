@@ -7,9 +7,10 @@ export type NavigationTextColor = 'ink-900' | 'sand-050';
 interface Props {
   variant?: NavigationVariant;
   textColor?: NavigationTextColor;
+  overlayHero?: boolean;
 }
 
-const { variant = 'sand-050', textColor = 'ink-900' } = Astro.props;
+const { variant = 'sand-050', textColor = 'ink-900', overlayHero = false } = Astro.props;
 
 const settings = await getSettings();
 
@@ -28,7 +29,7 @@ const leftCta = settings?.leftCta?.label && settings?.leftCta?.href ? settings.l
 const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? settings.rightCta : { label: settings?.rightCta?.label, href: settings?.rightCta?.href, openInNewTab: false };
 ---
 
-<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] sticky z-30 top-0 flex items-center shrink-0', `bg-${variant}`]}>
+<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0', overlayHero ? 'absolute' : 'sticky', `bg-${variant}`]}>
   <!-- Left (desktop only) -->
   <div class="relative flex items-center gap-3 desktop:gap-6pl-[var(--grid-margin)] mt-[var(--nav-top-bar-height)] pt-4 pb-2 pr-2">
     <div class="absolute inset-0 z-[41] bg-white rounded-br-[32px]" aria-hidden="true"></div>
@@ -207,6 +208,15 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
       transform: translateY(-8.5px) rotate(-45deg);
     }
   }
+
+  @keyframes nav-slide-down {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
 </style>
 
 <script>
@@ -249,4 +259,46 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
       closeMenu();
     }
   });
+
+  // Hero overlay: switch absolute → sticky once WelcomeSection leaves the viewport
+  const header = document.getElementById('nav-top-bar');
+  const heroImages = document.getElementById('welcome-hero');
+
+  if (header && heroImages && header.classList.contains('absolute')) {
+    function enterSticky() {
+      header.classList.replace('absolute', 'sticky');
+      header.style.animation = 'nav-slide-down 0.25s ease-out';
+      header.addEventListener(
+        'animationend',
+        () => {
+          header.style.animation = '';
+        },
+        { once: true },
+      );
+    }
+
+    function exitSticky() {
+      header.classList.replace('sticky', 'absolute');
+    }
+
+    // Fire when the hero images are almost gone — root shrunk 80px from top
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const scrolledPast = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+        if (scrolledPast) {
+          enterSticky();
+        } else if (!scrolledPast && header.classList.contains('sticky')) {
+          exitSticky();
+        }
+      },
+      { threshold: 0, rootMargin: '-80px 0px 0px 0px' },
+    );
+
+    observer.observe(heroImages);
+
+    // Handle hard-load with scroll offset (e.g. browser back)
+    if (window.scrollY > heroImages.offsetTop + heroImages.offsetHeight) {
+      header.classList.replace('absolute', 'sticky');
+    }
+  }
 </script>
