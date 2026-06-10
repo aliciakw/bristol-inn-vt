@@ -1,3 +1,5 @@
+import { ButtonLink } from '@components/ui/ButtonLink';
+
 interface Availability {
   available: boolean;
   pricePerNight?: number;
@@ -43,12 +45,12 @@ export function RoomCardReact({ id, name, price, photo, amenities, availability,
           ))}
         </div>
         <div className="flex flex-row gap-2 justify-end">
-          <a href={`/rooms/${id}`} className="inline-block mt-2 text-ink-900 font-normal underline-offset-2 hover:underline border-1 border-ink-900 bg-sand-200 rounded-full py-1 px-3" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
+          <ButtonLink href={`/rooms/${id}`} bg="sand-200" size="small" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
             More Info
-          </a>
-          <a href={`https://www.hostaway.com/book/${id}`} className="inline-block mt-2 text-ink-900 font-normal underline-offset-2 hover:underline border-1 border-ink-900 bg-prussian-200 rounded-full py-1 px-3" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
-            Book Now
-          </a>
+          </ButtonLink>
+          <ButtonLink href={`https://www.hostaway.com/book/${id}`} bg="prussian-200" size="small" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
+            Book Now!
+          </ButtonLink>
         </div>
       </div>
     </article>
