@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FormField } from '@components/ui/FormField';
+import { Button } from '@components/ui/Button';
 
 export interface SearchParams {
   checkIn: string;
@@ -79,8 +80,8 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
   }
 
   return (
-    <form onSubmit={handleSubmit} aria-label="Check room availability" className="mb-8">
-      <div className="flex flex-row flex-wrap gap-x-4 gap-y-3 items-end">
+    <form onSubmit={handleSubmit} aria-label="Check room availability">
+      <div className="flex flex-row items-start flex-wrap gap-x-4 gap-y-3 items-end">
         <FormField id="avail-check-in" label="Check-in" type="date" value={checkIn} min={today} onChange={handleCheckInChange} disabled={isLoading} error={errors.checkIn} className="flex-1 min-w-36" />
         <FormField
           id="avail-check-out"
@@ -112,14 +113,14 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
           className="w-24"
         />
 
-        <div className="flex gap-2 items-end pb-0.5">
-          <button type="submit" disabled={isLoading} className="px-6 py-3 rounded-[72px] border-2 border-ink-900 bg-lilac-200 font-serif text-ink-900 text-[18px] hover:bg-lilac-200/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+        <div className="flex gap-2 items-start pt-7 pb-0.5">
+          <Button type="submit" disabled={isLoading} bg="lilac-200">
             {isLoading ? 'Searching…' : 'Search'}
-          </button>
+          </Button>
           {hasResults && (
-            <button type="button" onClick={handleClear} disabled={isLoading} className="px-6 py-3 rounded-[72px] border-2 border-ink-900 bg-sand-050 font-serif text-ink-900 text-[18px] hover:bg-sand-100 disabled:opacity-50 transition-colors">
-              Clear
-            </button>
+            <Button bg="khaki-200" onClick={handleClear} disabled={isLoading}>
+              Reset
+            </Button>
           )}
         </div>
       </div>

@@ -1,6 +1,6 @@
-import type { AnchorHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes } from 'react';
 
-type Props = AnchorHTMLAttributes<HTMLAnchorElement> & {
+type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: 'default' | 'small';
   textColor?: 'ink-900' | 'white';
   bg?: 'prussian-700' | 'prussian-200' | 'lilac-200' | 'sand-200' | 'khaki-200';
@@ -24,14 +24,14 @@ const bgClasses: Record<NonNullable<Props['bg']>, string> = {
   'khaki-200': 'bg-khaki-200',
 };
 
-export function ButtonLink({ size = 'default', textColor = 'ink-900', bg = 'khaki-200', className, children, ...rest }: Props) {
+export function Button({ size = 'default', textColor = 'ink-900', bg = 'khaki-200', className, children, ...rest }: Props) {
   // eslint-disable-next-line security/detect-object-injection
   const variantClassNames = [sizeClasses[size], textColorClasses[textColor], bgClasses[bg]].join(' ');
   const classes = ['inline-flex items-center justify-center rounded-full border font-serif font-medium whitespace-nowrap hover:opacity-90 transition-opacity pointer', variantClassNames, className].filter(Boolean).join(' ');
 
   return (
-    <a className={classes} {...rest}>
+    <button className={classes} {...rest}>
       {children}
-    </a>
+    </button>
   );
 }

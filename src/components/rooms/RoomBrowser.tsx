@@ -104,14 +104,16 @@ export function RoomBrowser({ rooms }: Props) {
   const hasResults = state.status === 'results' || state.status === 'error';
 
   return (
-    <div>
-      <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} />
+    <div className="flex flex-col gap-8">
+      <div className="sticky top-[var(--nav-top-bar-height)] z-10 bg-sand-050 border-1 border-ink-900 rounded-lg px-4 pt-2 pb-3">
+        <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} />
 
-      {state.status === 'error' && (
-        <p role="alert" className="text-red-600 text-sm mb-6">
-          {state.message}
-        </p>
-      )}
+        {state.status === 'error' && (
+          <p role="alert" className="text-red-600 text-sm mb-6">
+            {state.message}
+          </p>
+        )}
+      </div>
 
       {rooms.length === 0 ? <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p> : state.status === 'results' ? <RoomSections rooms={rooms} availability={state.availability} /> : <RoomGrid rooms={rooms} isLoading={isLoading} />}
     </div>

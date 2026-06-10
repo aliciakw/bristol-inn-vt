@@ -35,6 +35,6 @@ const { href, size = 'default', textColor = 'ink-900', bg = 'khaki-200', class: 
 const variantClassNames = [sizeClasses[size], textColorClasses[textColor], bgClasses[bg]].join(' ');
 ---
 
-<a href={href} class:list={['inline-flex items-center justify-center rounded-full border font-serif font-medium whitespace-nowrap hover:opacity-90 transition-opacity', variantClassNames, className]} {...rest}>
+<a href={href} class:list={['inline-flex items-center justify-center rounded-full border font-serif font-medium whitespace-nowrap hover:opacity-90 transition-opacity pointer', variantClassNames, className]} {...rest}>
   <slot />
 </a>
