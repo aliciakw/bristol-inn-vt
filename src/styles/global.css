@@ -112,7 +112,7 @@
   :root {
     --grid-columns: 8;
     --grid-margin: 24px;
-    --nav-top-bar-height: 32px;
+    --nav-top-bar-height: 64px;
   }
 }
 

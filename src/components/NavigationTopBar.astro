@@ -29,53 +29,26 @@ const leftCta = settings?.leftCta?.label && settings?.leftCta?.href ? settings.l
 const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? settings.rightCta : { label: settings?.rightCta?.label, href: settings?.rightCta?.href, openInNewTab: false };
 ---
 
-<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0', overlayHero ? 'absolute' : 'sticky', `bg-${variant}`]}>
+<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0 sticky px-2 desktop:px-4', `bg-${variant}`]}>
   <!-- Left (desktop only) -->
-  <div class="relative flex items-center gap-3 desktop:gap-6pl-[var(--grid-margin)] mt-[var(--nav-top-bar-height)] pt-4 pb-2 pr-2">
-    <div class="absolute inset-0 z-[41] bg-white rounded-br-[32px]" aria-hidden="true"></div>
-    <a
-      href={leftCta.href}
-      target={leftCta.openInNewTab ? '_blank' : undefined}
-      rel={leftCta.openInNewTab ? 'noopener noreferrer' : undefined}
-      class="relative z-[42] hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-khaki-200 border border-1 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] text-ink-900 whitespace-nowrap hover:bg-khaki-300 transition-colors"
-    >
-      {leftCta.label}
-    </a>
-  </div>
-
-  <!-- White band: full header width, z-41 — above backdrop, below nav drawer -->
-  <div class="absolute inset-x-0 top-0 z-[41] h-[var(--nav-top-bar-height)] bg-white" aria-hidden="true"></div>
-
-  <!-- Center: logo — z-[50] keeps it above the nav drawer, same as the buttons -->
-  <div class="absolute left-1/2 -translate-x-1/2 z-[41] text-center pointer-events-none select-none">
-    <a href="/" class="pointer-events-auto">
-      <div class="relative px-3 pb-2 pt-12 rounded-bl-[24px] rounded-br-[24px]">
-        <div class="absolute inset-0 bg-white rounded-bl-[24px] rounded-br-[24px]" aria-hidden="true"></div>
-        <div class="relative">
-          {
-            nameplateLogo ? (
-              <div>
-                <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-10 desktop:max-h-14 desktop:w-[21vw] object-contain" />
-              </div>
-            ) : (
-              <>
-                <p class="font-serif font-medium text-[30px] desktop:text-[2.4375rem] leading-none tracking-[0.01em]" class:list={`text-${textColor}`}>
-                  The Bristol Inn
-                </p>
-              </>
-            )
-          }
-        </div>
-      </div>
-    </a>
-  </div>
-
+  <a href="/">
+    <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-10 desktop:max-h-14 desktop:w-[21vw] object-contain" />
+  </a>
   <!-- Right Container -->
-  <div class="absolute right-0 top-0 mt-2">
-    <!-- White bg pill: above backdrop (z-40), below nav drawer (z-[42]) -->
-    <div class="absolute inset-0 z-[41] bg-white rounded-bl-[32px] rounded-tl-[32px]" aria-hidden="true"></div>
-    <!-- Interactive content: always on top -->
-    <div id="nav-right-container" class="relative z-[50] py-2 pl-2 flex items-center gap-4">
+  <div class="flex flex-1 items-center justify-end">
+    <div class="relative z-[50] py-2 pl-2 flex items-center gap-4">
+      {
+        leftCta.label && leftCta.href && (
+          <a
+            href={leftCta.href}
+            target={leftCta.openInNewTab ? '_blank' : undefined}
+            rel={leftCta.openInNewTab ? 'noopener noreferrer' : undefined}
+            class="hidden desktop:inline-flex items-center justify-center h-11 px-5 rounded-full bg-khaki-200 text-ink-900 border border-1 border-ink-900 font-serif font-medium text-[21px] leading-none tracking-[-0.021em] whitespace-nowrap hover:opacity-90 transition-opacity"
+          >
+            {leftCta.label}
+          </a>
+        )
+      }
       <a
         href={rightCta.href}
         target={rightCta.openInNewTab ? '_blank' : undefined}
@@ -84,7 +57,7 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
       >
         {rightCta.label}
       </a>
-      <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer mr-[var(--grid-margin)]">
+      <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer">
         <div class="w-9 h-9 flex flex-col justify-center items-stretch gap-[7px]">
           <span class="line"></span>
           <span class="line"></span>

@@ -34,7 +34,8 @@ export const faqType = defineType({
   fields: [
     defineField({ name: 'title', title: 'Title', type: 'string' }),
     defineField({ name: 'description', title: 'Description', type: 'text' }),
-    defineField({ name: 'items', title: 'Items', type: 'array', of: [defineArrayMember({ name: 'faqItem', title: 'FAQ Item', type: 'faqItem' })] }),
+    defineField({ name: 'items', title: 'Items', type: 'array', of:  [
+      defineArrayMember({ name: 'faqItem', title: 'FAQ Item', type: 'faqItem' })] }),
   ],
   preview: {
     select: {

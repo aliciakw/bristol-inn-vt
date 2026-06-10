@@ -12,7 +12,7 @@ const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 const { welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, welcomeImage, galleryImages, reservationHeading, reservationDescription, reservationImage, testimonial, amenities, body } = homepage;
 ---
 
-<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere." backgroundColor="white" textColor="ink-900" navigationVariant="white" overlayHero={true}>
+<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere." backgroundColor="white" textColor="ink-900" navigationVariant="white">
   <WelcomeSection welcomeHeading={welcomeHeading} welcomeDescription={welcomeDescription} welcomeCTA={welcomeCTA} heroLeftImage={heroLeftImage} heroRightImage={heroRightImage} welcomeImage={welcomeImage} directionsHref={settings.directionsLink?.href} directionsLabel={settings.directionsLink?.label} />
 
   <GalleryStrip images={galleryImages ?? []} />
