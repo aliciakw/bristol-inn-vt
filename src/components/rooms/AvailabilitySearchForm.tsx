@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FormField } from '@components/ui/FormField';
+import { FormCheckbox } from '@components/ui/FormCheckbox';
 import { Button } from '@components/ui/Button';
 
 export interface SearchParams {
@@ -11,10 +12,11 @@ export interface SearchParams {
 }
 
 interface Props {
-  onSearch: (params: SearchParams) => void;
-  onClear: () => void;
-  isLoading: boolean;
-  hasResults: boolean;
+  navigateTo?: string;
+  onSearch?: (params: SearchParams) => void;
+  onClear?: () => void;
+  isLoading?: boolean;
+  hasResults?: boolean;
 }
 
 function localDateISO(offsetDays = 0): string {
@@ -23,7 +25,7 @@ function localDateISO(offsetDays = 0): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResults }: Props) {
+export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoading = false, hasResults = false }: Props) {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(2);
@@ -59,7 +61,16 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (validate()) onSearch({ checkIn, checkOut, guests, groundFloor, pets });
+    if (!validate()) return;
+    const params = { checkIn, checkOut, guests, groundFloor, pets };
+    if (navigateTo) {
+      const sp = new URLSearchParams({ checkIn, checkOut, guests: String(guests) });
+      if (groundFloor) sp.set('groundFloor', '1');
+      if (pets) sp.set('pets', '1');
+      window.location.href = `${navigateTo}?${sp.toString()}`;
+    } else {
+      onSearch?.(params);
+    }
   }
 
   function handleClear() {
@@ -69,7 +80,7 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
     setGroundFloor(false);
     setPets(false);
     setErrors({});
-    onClear();
+    onClear?.();
   }
 
   function handleCheckInChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -113,7 +124,22 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
           className="w-24"
         />
 
-        <div className="flex gap-2 items-start pt-7 pb-0.5">
+        <div className="w-full flex flex-col tablet:flex-row gap-4 tablet:gap-6 items-start">
+          <FormCheckbox name="groundFloor" label="Wheelchair Accessible" checked={groundFloor} onChange={(e) => setGroundFloor(e.target.checked)} disabled={isLoading} />
+          <FormCheckbox
+            name="pets"
+            label="Dogs Permitted"
+            checked={pets}
+            onChange={(e) => setPets(e.target.checked)}
+            disabled={isLoading}
+            clarification={
+              <a href="/faq#pet-policy" className="underline hover:opacity-70">
+                See Pet Policy
+              </a>
+            }
+          />
+        </div>
+        <div className="flex gap-2 items-start pb-0.5">
           <Button type="submit" disabled={isLoading} bg="lilac-200">
             {isLoading ? 'Searching…' : 'Search'}
           </Button>

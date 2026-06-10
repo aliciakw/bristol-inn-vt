@@ -30,6 +30,7 @@
   --breakpoint-desktop: 1024px;
 
   /* Colors */
+  --color-prussian-100: #d6dadb;
   --color-prussian-200: #b1bdc2;
   --color-prussian-500: #1f5168;
   --color-prussian-700: #20404f;
@@ -45,6 +46,7 @@
   --color-khaki-300: #cbbaa4;
   --color-forest-400: #465546;
   --color-iron: #5e5e5e;
+  --color-red-600: #d94f4f;
 
   /* Typography */
   --font-serif: 'David Libre', Georgia, serif;
@@ -92,6 +94,9 @@
   --text-paragraph-desktop: 1.125rem;
   --text-paragraph-desktop--line-height: 1.65;
 
+  --text-label: 1rem;
+  --text-label--line-height: 1.1;
+
   --text-caption: 0.75rem;
   --text-caption--line-height: 1.4;
   --text-caption-tablet: 0.8125rem;
@@ -106,6 +111,7 @@
   --grid-margin: 16px;
   --grid-gutter: 8px;
   --nav-top-bar-height: 32px;
+  font-size: 16px;
 }
 
 @media (min-width: 1024px) {
@@ -144,4 +150,13 @@ html {
 }
 .hover-italic:hover {
   transform: skewX(-12deg);
+}
+
+.inline-error {
+  color: var(--color-prussian-700);
+  font-size: 0.75rem;
+  font-style: italic;
+  background-color: var(--color-prussian-100);
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
 }

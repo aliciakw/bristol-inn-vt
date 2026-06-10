@@ -7,13 +7,33 @@ interface Props {
   min?: string;
   max?: string;
   placeholder?: string;
+  error?: string;
   class?: string;
 }
 
-const { id, label, type = 'text', name, min, max, placeholder, class: className } = Astro.props;
+const { id, label, type = 'text', name, min, max, placeholder, error, class: className } = Astro.props;
 ---
 
 <div class={className}>
   <label for={id} class="block font-serif font-medium text-ink-900 mb-1.5 text-sm">{label}</label>
-  <input id={id} name={name ?? id} type={type} min={min} max={max} placeholder={placeholder} class="w-full bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 appearance-none focus:outline-none focus:ring-1 focus:ring-ink-900" />
+  <input
+    id={id}
+    name={name ?? id}
+    type={type}
+    min={min}
+    max={max}
+    placeholder={placeholder}
+    aria-describedby={error ? `${id}-error` : undefined}
+    aria-invalid={error ? true : undefined}
+    class="w-full bg-sand-050 border border-ink-900 rounded-[8px] px-4 py-3 font-serif text-ink-900 appearance-none focus:outline-none focus:ring-1 focus:ring-ink-900"
+  />
+  {
+    error && (
+      <div class="mt-2">
+        <span id={`${id}-error`} class="inline-error">
+          {error}
+        </span>
+      </div>
+    )
+  }
 </div>
