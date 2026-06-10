@@ -105,7 +105,7 @@ export function RoomBrowser({ rooms }: Props) {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="sticky top-[var(--nav-top-bar-height)] z-10 bg-sand-050 border-1 border-ink-900 rounded-lg px-4 pt-2 pb-3">
+      <div className="sticky top-[var(--nav-top-bar-height)] z-10">
         <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} />
 
         {state.status === 'error' && (

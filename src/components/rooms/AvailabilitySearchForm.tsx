@@ -92,7 +92,7 @@ export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoadin
 
   return (
     <form onSubmit={handleSubmit} aria-label="Check room availability">
-      <div className="flex flex-row items-start flex-wrap gap-x-4 gap-y-3 items-end">
+      <div className="flex flex-row items-start flex-wrap gap-x-4 gap-y-3 items-end bg-sand-050 border-1 border-ink-900 rounded-lg px-4 pt-2 pb-3">
         <FormField id="avail-check-in" label="Check-in" type="date" value={checkIn} min={today} onChange={handleCheckInChange} disabled={isLoading} error={errors.checkIn} className="flex-1 min-w-36" />
         <FormField
           id="avail-check-out"
