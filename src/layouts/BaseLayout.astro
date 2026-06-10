@@ -4,6 +4,9 @@ import Footer from '@components/Footer.astro';
 import { getSettings } from '../lib/sanity';
 import type { SanityMeta } from '../lib/sanity';
 import '@styles/global.css';
+import fontRegular from '../assets/fonts/DavidLibre-Regular.ttf';
+import fontMedium from '../assets/fonts/DavidLibre-Medium.ttf';
+import fontBold from '../assets/fonts/DavidLibre-Bold.ttf';
 
 interface Props {
   title: string;
@@ -31,6 +34,9 @@ const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" as="font" type="font/ttf" href={fontRegular} crossorigin />
+    <link rel="preload" as="font" type="font/ttf" href={fontMedium} crossorigin />
+    <link rel="preload" as="font" type="font/ttf" href={fontBold} crossorigin />
 
     <title>{resolvedTitle}</title>
     {resolvedDescription && <meta name="description" content={resolvedDescription} />}
