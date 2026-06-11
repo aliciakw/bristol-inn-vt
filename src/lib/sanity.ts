@@ -67,6 +67,7 @@ export type SanityHomepage = {
   reservationHeadingIcon?: SanityImage;
   reservationDescription?: string;
   reservationImage?: SanityImage;
+  testimonialHeading?: string;
   testimonial?: SanityTestimonialArrayItem[];
   amenities: string[];
   body: SanityBlock[];
@@ -99,6 +100,7 @@ export async function getHomepage(): Promise<SanityHomepage> {
       "reservationHeadingIcon": reservationHeadingIcon{ "url": asset->url, "alt": coalesce(alt, "") },
       reservationDescription,
       "reservationImage": reservationImage{ "url": asset->url, "alt": coalesce(alt, "") },
+      testimonialHeading,
       "testimonial": testimonial[]{
         _type,
         _key,

@@ -1,107 +1,65 @@
 ---
-import { Image } from 'astro:assets';
 import TextStyle from '@components/ui/TextStyle.astro';
+import TestimonialCard from './TestimonialCard.astro';
+import { getSettings } from '../../lib/sanity';
 import type { SanityTestimonialArrayItem } from '../../lib/sanity';
 
 interface Props {
+  testimonialHeading?: string;
   testimonial?: SanityTestimonialArrayItem[];
-  amenities: string[];
+  amenities?: string[]; // kept for CMS compat
 }
 
-const { testimonial, amenities } = Astro.props;
+const { testimonialHeading = 'People say nice things about us', testimonial } = Astro.props;
 
-const mid = Math.ceil(amenities.length / 2);
-const col1 = amenities.slice(0, mid);
-const col2 = amenities.slice(mid);
+const settings = await getSettings();
+const awardImages = settings?.awardImages ?? [];
 
-const cardBgClasses = ['bg-prussian-200', 'bg-sand-200', 'bg-lilac-200'];
+const cardBgs = ['khaki-100', 'prussian-200', 'lilac-200'] as const;
+type CardBg = (typeof cardBgs)[number];
+
+const testimonialItems = testimonial?.filter((t) => t._type === 'testimonialItem') ?? [];
 ---
 
-<section class="px-[var(--grid-margin)] desktop:px-0">
+<section class="px-[var(--grid-margin)] desktop:px-0 py-12 overflow-hidden">
   <div class="Section__inner">
-    <div class="row-span-1 col-span-6 desktop:col-start-2 flex flex-col gap-4">
-      <TextStyle variant="h2" class="text-center">
-        {`You're in good hands`}
-      </TextStyle>
+    <div class="col-span-6 desktop:col-start-2 desktop:col-span-6 mb-8">
+      <TextStyle variant="h2" class="text-center">{testimonialHeading}</TextStyle>
     </div>
-    <div class="row-span-1 col-span-6 desktop:col-start-3 desktop:col-span-4 flex flex-col gap-4 mb-12">
-      <!-- Amenities card -->
-      {
-        amenities.length > 0 && (
-          <div class="flex-1 relative pt-6">
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 bg-khaki-300 px-5 py-2.5 rounded-none">
-              <TextStyle variant="h4" element="span" bold class="text-ink-900">
-                Popular Amenities
-              </TextStyle>
-            </div>
-
-            <div class="bg-khaki-200 rounded-[16px] pt-12 desktop:pt-14 pb-8 px-8 desktop:px-10 shadow-sm">
-              <div class="flex gap-6 desktop:gap-10">
-                <ul class="flex-1 list-disc list-inside space-y-1.5">
-                  {col1.map((item) => (
-                    <li>
-                      <TextStyle variant="h5" element="span" class="text-ink-900">
-                        {item}
-                      </TextStyle>
-                    </li>
-                  ))}
-                </ul>
-                {col2.length > 0 && (
-                  <ul class="flex-1 list-disc list-inside space-y-1.5">
-                    {col2.map((item) => (
-                      <li>
-                        <TextStyle variant="h5" element="span" class="text-ink-900">
-                          {item}
-                        </TextStyle>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          </div>
-        )
-      }
-    </div>
-    <!-- Testimonial items -->
-    {
-      testimonial && testimonial.length > 0 && (
-        <>
-          <div class="col-span-6 desktop:col-start-2 desktop:col-span-6 flex flex-col desktop:flex-row items-center justify-center gap-4">
-            <TextStyle variant="h3" class="text-center">
-              Guest Testimonials
-            </TextStyle>
-          </div>
-          <div class="col-span-6 desktop:col-start-2 desktop:col-span-6 flex flex-col desktop:flex-row items-start gap-4">
-            {testimonial.map((item, index) => {
-              if (item._type === 'testimonialItem') {
-                const cardBgClass = cardBgClasses[index % cardBgClasses.length];
-                return (
-                  <div class="flex-1 rounded-[16px] p-4 desktop:p-6 shrink-0" class:list={[cardBgClass]}>
-                    <TextStyle variant="h5" element="p" class="text-ink-900 leading-snug">
-                      &#8220;{item.quote}&#8221;
-                    </TextStyle>
-                    <div class="mt-2 text-right">
-                      <TextStyle variant="h5" element="p" class="text-ink-900 font-medium">
-                        &#8212; {item.author}
-                      </TextStyle>
-                      <TextStyle variant="caption" element="p" class="text-ink-900 mt-0.5">
-                        {item.role}
-                      </TextStyle>
-                    </div>
-                  </div>
-                );
-              } else {
-                return (
-                  <div class="flex-1  aspect-[4/3]">
-                    <Image src={item.url} alt={item.alt} width={600} height={450} format="webp" class="w-full h-full object-cover" />
-                  </div>
-                );
-              }
-            })}
-          </div>
-        </>
-      )
-    }
   </div>
+
+  {
+    testimonialItems.length > 0 && (
+      <div class:list={['flex flex-col tablet:flex-row tablet:overflow-x-auto tablet:items-start gap-4 tablet:gap-5 pb-4 px-[var(--grid-margin)] desktop:px-[calc((100%-1480px)/2+var(--grid-margin))]', testimonialItems.length <= 5 && 'tablet:justify-center']}>
+        {testimonialItems.map((item, index) => {
+          if (item._type !== 'testimonialItem') return null;
+          const bg = cardBgs[index % cardBgs.length] as CardBg;
+          return (
+            <div class:list={['w-full tablet:w-[313px] tablet:shrink-0', index % 2 === 0 ? 'tablet:mt-16' : '']}>
+              <TestimonialCard quote={item.quote} author={item.author} role={item.role} bg={bg} />
+            </div>
+          );
+        })}
+      </div>
+    )
+  }
+
+  {
+    awardImages.length > 0 && (
+      <div class="flex flex-wrap justify-center mx-auto items-center mt-20 gap-24 px-[var(--grid-margin)]">
+        <div class="flex flex-wrap justify-center mx-auto items-center gap-6">
+          {awardImages.map(({ url, alt, linkUrl }) => {
+            const img = <img src={url} alt={alt} class="h-20 w-auto object-contain" loading="lazy" />;
+            return linkUrl ? (
+              <a href={linkUrl} target="_blank" rel="noopener noreferrer">
+                {img}
+              </a>
+            ) : (
+              img
+            );
+          })}
+        </div>
+      </div>
+    )
+  }
 </section>

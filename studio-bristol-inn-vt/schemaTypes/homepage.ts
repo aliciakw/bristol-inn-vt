@@ -62,6 +62,7 @@ export const homepageType = defineType({
     }),
 
     // Testimonials (array of up to 2 items: testimonial or image)
+    defineField({ name: 'testimonialsHeading', title: 'Testimonials Heading', type: 'string' }),
     defineField({
       name: 'testimonial',
       title: 'Testimonials',

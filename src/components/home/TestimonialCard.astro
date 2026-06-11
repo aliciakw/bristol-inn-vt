@@ -1,0 +1,39 @@
+---
+import TextStyle from '@components/ui/TextStyle.astro';
+
+interface Props {
+  quote: string;
+  author: string;
+  role?: string;
+  bg?: 'khaki-100' | 'prussian-200' | 'lilac-200';
+}
+
+const { quote, author, role, bg = 'khaki-100' } = Astro.props;
+
+const bgClassNames = {
+  'khaki-100': 'bg-khaki-100',
+  'prussian-200': 'bg-prussian-200',
+  'lilac-200': 'bg-lilac-200',
+};
+
+// eslint-disable-next-line security/detect-object-injection
+const bgClass = bgClassNames[bg];
+---
+
+<div class:list={['rounded-[16px] p-4 desktop:p-6 flex flex-col gap-3 h-full', bgClass]}>
+  <TextStyle variant="paragraph" element="p" class="flex-1 leading-snug text-ink-900 tracking-tight">
+    &#8220;{quote}&#8221;
+  </TextStyle>
+  <div class="text-right">
+    <TextStyle variant="h3" element="p" class="text-ink-900 leading-snug">
+      &#8212; {author}
+    </TextStyle>
+    {
+      role && (
+        <TextStyle variant="caption" element="p" class="text-ink-900 mt-0.5">
+          {role}
+        </TextStyle>
+      )
+    }
+  </div>
+</div>

@@ -49,6 +49,7 @@ function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2 }: Ro
           {title}
         </TextStyle>
       )}
+      {/* eslint-disable-next-line security/detect-object-injection */}
       <div className={['grid grid-cols-1 tablet:grid-cols-2 gap-6', desktopColsClass[desktopCols]].join(' ')}>
         {rooms.map((room) => (
           <RoomCardReact
