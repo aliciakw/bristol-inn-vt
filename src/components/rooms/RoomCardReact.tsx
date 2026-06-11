@@ -19,9 +19,11 @@ interface Props {
   amenities: string[];
   availability?: Availability;
   isLoading: boolean;
+  bookingUrl: string;
+  detailUrl: string;
 }
 
-export function RoomCardReact({ id, name, bedroomsLabel, price, photo, availability, isLoading }: Props) {
+export function RoomCardReact({ name, bedroomsLabel, price, photo, availability, isLoading, bookingUrl, detailUrl }: Props) {
   const baseRate = Math.round(price);
   const isUnavailable = availability !== undefined && !availability.available;
   const dimmed = isLoading || isUnavailable;
@@ -36,7 +38,7 @@ export function RoomCardReact({ id, name, bedroomsLabel, price, photo, availabil
   return (
     <article className={['bg-white rounded-lg  shadow-sm ', dimmed ? 'opacity-50' : 'hover:shadow-md pointer', 'transition-opacity duration-150'].join(' ')}>
       <div className="relative">
-        <a href={`/rooms/${id}`}>
+        <a href={detailUrl}>
           <img src={photo.url} alt={photo.caption || name} width={600} height={400} loading="lazy" className="w-full object-cover aspect-[3/2] rounded-lg" />
         </a>
         <div className="absolute top-3 left-[12px] bg-white max-w-[calc(66%-24px)] rounded-sm">
@@ -51,10 +53,10 @@ export function RoomCardReact({ id, name, bedroomsLabel, price, photo, availabil
           {priceDisplay}
         </TextStyle>
         <div className="flex flex-row gap-2 justify-end absolute bottom-3 right-3">
-          <ButtonLink href={`https://www.hostaway.com/book/${id}`} bg="prussian-200" size="small" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
+          <ButtonLink href={bookingUrl} bg="prussian-200" size="small" target="_blank" rel="noopener noreferrer" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
             Book Now!
           </ButtonLink>
-          <ButtonLink href={`/rooms/${id}`} bg="sand-200" size="small" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
+          <ButtonLink href={detailUrl} bg="sand-200" size="small" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
             More Info
           </ButtonLink>
         </div>

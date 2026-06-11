@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, AnchorHTMLAttributes } from 'react';
 
 type PressableBaseProps = {
   size?: 'default' | 'small';
@@ -9,7 +9,7 @@ type PressableBaseProps = {
 };
 
 export type ButtonProps = Omit<HTMLAttributes<'button'>, 'class' | 'role'> & PressableBaseProps;
-export type ButtonLinkProps = Omit<HTMLAttributes<'a'>, 'class' | 'role'> & {
+export type ButtonLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'class' | 'role'> & {
   href: string;
 } & PressableBaseProps;
 

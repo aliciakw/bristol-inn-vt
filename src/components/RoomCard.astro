@@ -15,6 +15,7 @@
 
 import { Image } from 'astro:assets';
 import AmenityBadge from './AmenityBadge.astro';
+import { getBookingUrl } from '../lib/hostaway';
 
 interface Props {
   id: number;
@@ -38,6 +39,6 @@ const formattedRate = Math.round(rate);
       {amenities.map((a) => <AmenityBadge label={a} />)}
     </div>
     <a href={`/rooms/${id}`} class="inline-block mt-2 text-slate-700 font-normal underline-offset-2 hover:underline">More Info</a>
-    <a href={`https://www.hostaway.com/book/${id}`} class="inline-block mt-2 text-slate-700 font-normal underline-offset-2 hover:underline">Book Now</a>
+    <a href={getBookingUrl(id)} class="inline-block mt-2 text-slate-700 font-normal underline-offset-2 hover:underline">Book Now</a>
   </div>
 </article>

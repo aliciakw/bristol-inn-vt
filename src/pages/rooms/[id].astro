@@ -1,5 +1,5 @@
 ---
-import { getRooms } from '../../lib/hostaway';
+import { getRooms, getBookingUrl } from '../../lib/hostaway';
 import type { HostawayRoom } from '../../lib/hostaway';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import RoomGallery from '../../components/RoomGallery.astro';
@@ -30,8 +30,7 @@ const metaDescription = room.description.slice(0, 160);
         <div class="flex flex-wrap gap-2">
           {room.amenityNames.map((a) => <AmenityBadge label={a} />)}
         </div>
-        {/* TODO Phase 3: replace with validated Hostaway booking redirect URL */}
-        <a href={`https://www.hostaway.com/book/${room.id}`} class="inline-block bg-slate-700 text-white px-6 py-3 rounded hover:bg-slate-800 mt-4" target="_blank" rel="noopener noreferrer">Book This Room</a>
+        <a id="book-now-btn" href={getBookingUrl(room.id)} class="inline-block bg-slate-700 text-white px-6 py-3 rounded hover:bg-slate-800 mt-4" target="_blank" rel="noopener noreferrer">Book This Room</a>
       </div>
       <div class="row-span-1 col-span-6 desktop:col-span-5">
         <RoomGallery photos={room.photos} roomName={room.name} />
@@ -39,3 +38,16 @@ const metaDescription = room.description.slice(0, 160);
     </div>
   </section>
 </BaseLayout>
+
+<script define:vars={{ roomId: room.id }}>
+  const sp = new URLSearchParams(window.location.search);
+  const start = sp.get('start');
+  const end = sp.get('end');
+  const numberOfGuests = sp.get('numberOfGuests');
+  if (start && end && numberOfGuests) {
+    const btn = document.getElementById('book-now-btn');
+    if (btn) {
+      btn.href = `https://bristolsuites.holidayfuture.com/checkout/${roomId}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&numberOfGuests=${encodeURIComponent(numberOfGuests)}`;
+    }
+  }
+</script>

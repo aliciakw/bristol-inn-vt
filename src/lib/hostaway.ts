@@ -11,6 +11,7 @@
 
 import { HOSTAWAY_ACCESS_TOKEN } from 'astro:env/server';
 import { AMENITY_NAMES } from './hostaway-amenities';
+export { getBookingUrl } from './hostaway-urls';
 
 // ---------------------------------------------------------------------------
 // Internal raw API types (not exported)
