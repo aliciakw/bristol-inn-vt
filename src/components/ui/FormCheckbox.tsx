@@ -15,7 +15,7 @@ interface Props {
 export function FormCheckbox({ name, label, id, clarification, error, checked, onChange, disabled }: Props) {
   return (
     <div>
-      <label className="flex items-start gap-3 cursor-pointer">
+      <label className="flex items-center gap-3 cursor-pointer">
         <span className="relative flex-none">
           <input id={id} name={name} type="checkbox" className="peer sr-only" checked={checked} onChange={onChange} disabled={disabled} aria-describedby={error && id ? `${id}-error` : undefined} aria-invalid={error ? true : undefined} />
           <span className="block size-[32px] bg-white/50 border border-ink-900 rounded-[8px]" />
@@ -23,8 +23,8 @@ export function FormCheckbox({ name, label, id, clarification, error, checked, o
             <polyline points="2,8 6,12 14,4" />
           </svg>
         </span>
-        <span className="flex flex-col gap-0.5 pt-2">
-          <TextStyle variant="label" element="span" className="font-medium">
+        <span className="flex flex-col justify-center gap-0.5 min-h-[32px]">
+          <TextStyle variant="label" element="span" className="font-medium whitespace-nowrap overflow-hidden text-ellipsis">
             {label}
           </TextStyle>
           {clarification && (

@@ -51,6 +51,7 @@ export const homepageType = defineType({
 
     // Reservation section
     defineField({ name: 'reservationHeading', title: 'Reservation Heading', type: 'string' }),
+    defineField({ name: 'reservationHeadingIcon', title: 'Reservation Heading Icon', type: 'image', options: { hotspot: true } }),
     defineField({ name: 'reservationDescription', title: 'Reservation Description', type: 'text', rows: 4 }),
     defineField({
       name: 'reservationImage',

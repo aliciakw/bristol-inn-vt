@@ -9,7 +9,7 @@ import SliceZone from '../components/SliceZone.astro';
 
 const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 
-const { welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, welcomeImage, galleryImages, reservationHeading, reservationDescription, reservationImage, testimonial, amenities, body } = homepage;
+const { welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, welcomeImage, galleryImages, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, testimonial, amenities, body } = homepage;
 ---
 
 <BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere." backgroundColor="white" textColor="ink-900" navigationVariant="white">
@@ -17,7 +17,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRight
 
   <GalleryStrip images={galleryImages ?? []} />
 
-  <ReservationSection reservationHeading={reservationHeading} reservationDescription={reservationDescription} reservationImage={reservationImage} />
+  <ReservationSection reservationHeading={reservationHeading} reservationHeadingIcon={reservationHeadingIcon} reservationDescription={reservationDescription} reservationImage={reservationImage} />
 
   <TestimonialsSection testimonial={testimonial} amenities={amenities ?? []} />
 
