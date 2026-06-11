@@ -1,5 +1,7 @@
 import { defineType, defineField, defineArrayMember } from 'sanity'
 
+const reservedPageSlugs = ['faq'];
+
 export const pageType = defineType({
   name: 'page',
   title: 'Page',
@@ -19,6 +21,12 @@ export const pageType = defineType({
       type: 'slug',
       title: 'Slug',
       options: { source: 'title', maxLength: 96 },
+      validation: (Rule) => Rule.custom((value, context) => {
+        if (reservedPageSlugs.includes(value?.current ?? '')) {
+          return 'This slug is reserved for a special page.';
+        }
+        return true;
+      }),
     }),
     
     defineField({

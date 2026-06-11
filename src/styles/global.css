@@ -5,7 +5,7 @@
   src: url('../assets/fonts/DavidLibre-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @font-face {
@@ -13,7 +13,7 @@
   src: url('../assets/fonts/DavidLibre-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @font-face {
@@ -21,7 +21,7 @@
   src: url('../assets/fonts/DavidLibre-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @theme {
@@ -30,6 +30,7 @@
   --breakpoint-desktop: 1024px;
 
   /* Colors */
+  --color-prussian-100: #d6dadb;
   --color-prussian-200: #b1bdc2;
   --color-prussian-500: #1f5168;
   --color-prussian-700: #20404f;
@@ -45,6 +46,7 @@
   --color-khaki-300: #cbbaa4;
   --color-forest-400: #465546;
   --color-iron: #5e5e5e;
+  --color-red-600: #d94f4f;
 
   /* Typography */
   --font-serif: 'David Libre', Georgia, serif;
@@ -92,6 +94,9 @@
   --text-paragraph-desktop: 1.125rem;
   --text-paragraph-desktop--line-height: 1.65;
 
+  --text-label: 1rem;
+  --text-label--line-height: 1.1;
+
   --text-caption: 0.75rem;
   --text-caption--line-height: 1.4;
   --text-caption-tablet: 0.8125rem;
@@ -105,6 +110,8 @@
   --grid-columns: 6;
   --grid-margin: 16px;
   --grid-gutter: 8px;
+  --nav-top-bar-height: 32px;
+  font-size: 16px;
 }
 
 @media (min-width: 1024px) {
@@ -112,10 +119,12 @@
     --grid-columns: 8;
     --grid-margin: 24px;
     --grid-gutter: 32px;
+    --nav-top-bar-height: 64px;
   }
 }
 
 html {
+  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -131,48 +140,24 @@ html {
 }
 
 /* Animated Hamburger menu icon */
-.burger-icon .line {
-  width: 20px;
-  height: 2px;
-  border-radius: 2px;
-  background-color: var(--color-ink-900);
-  transition: all 0.3s ease-in-out;
-  z-index: 40;
-}
-.burger-icon.is-open {
-  -webkit-transition: all 0.3s ease-in-out;
-  -o-transition: all 0.3s ease-in-out;
-  transition: all 0.3s ease-in-out;
-  -webkit-transition-delay: 0.6s;
-  -o-transition-delay: 0.6s;
-  transition-delay: 0.6s;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
-  transform: rotate(45deg);
+
+.quick-fade-in {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
 }
 
-.burger-icon.is-open .line:nth-child(2) {
-  width: 0px;
+.hover-italic {
+  transition: transform 0.15s ease-in-out;
+}
+.hover-italic:hover {
+  transform: skewX(-12deg);
 }
 
-.burger-icon.is-open .line:nth-child(1),
-.burger-icon.is-open .line:nth-child(3) {
-  -webkit-transition-delay: 0.3s;
-  -o-transition-delay: 0.3s;
-  transition-delay: 0.3s;
-}
-
-.burger-icon.is-open .line:nth-child(1) {
-  -webkit-transform: translateY(13px);
-  -ms-transform: translateY(13px);
-  -o-transform: translateY(13px);
-  transform: translateY(13px);
-}
-
-.burger-icon.is-open .line:nth-child(3) {
-  -webkit-transform: translateY(-13px) rotate(90deg);
-  -ms-transform: translateY(-13px) rotate(90deg);
-  -o-transform: translateY(-13px) rotate(90deg);
-  transform: translateY(-13px) rotate(90deg);
+.inline-error {
+  color: var(--color-prussian-700);
+  font-size: 0.75rem;
+  font-style: italic;
+  background-color: var(--color-prussian-100);
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
 }

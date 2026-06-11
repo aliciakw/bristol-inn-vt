@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FormField } from '@components/ui/FormField';
+import { FormCheckbox } from '@components/ui/FormCheckbox';
+import { Button } from '@components/ui/Button';
+import { TextStyle } from '@components/ui/TextStyle';
 
 export interface SearchParams {
   checkIn: string;
@@ -10,10 +13,13 @@ export interface SearchParams {
 }
 
 interface Props {
-  onSearch: (params: SearchParams) => void;
-  onClear: () => void;
-  isLoading: boolean;
-  hasResults: boolean;
+  navigateTo?: string;
+  onSearch?: (params: SearchParams) => void;
+  onClear?: () => void;
+  isLoading?: boolean;
+  hasResults?: boolean;
+  showResetButton?: boolean;
+  automatic?: boolean;
 }
 
 function localDateISO(offsetDays = 0): string {
@@ -22,13 +28,15 @@ function localDateISO(offsetDays = 0): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResults }: Props) {
+export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoading = false, hasResults = false, showResetButton = false, automatic = false }: Props) {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(2);
   const [groundFloor, setGroundFloor] = useState(false);
   const [pets, setPets] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<'checkIn' | 'checkOut' | 'guests', string>>>({});
+  const userChangedRef = useRef(false);
+  const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const sp = new URLSearchParams(window.location.search);
@@ -45,20 +53,54 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
   const today = localDateISO();
   const minCheckOut = checkIn || localDateISO(1);
 
-  function validate(): boolean {
+  function getErrors() {
     const next: typeof errors = {};
     if (!checkIn) next.checkIn = 'Select a check-in date';
     else if (checkIn < today) next.checkIn = 'Check-in must be today or later';
     if (!checkOut) next.checkOut = 'Select a check-out date';
     else if (checkIn && checkOut <= checkIn) next.checkOut = 'Check-out must be after check-in';
     if (guests < 1 || guests > 20) next.guests = 'Guests must be between 1 and 20';
+    return next;
+  }
+
+  function validate(): boolean {
+    const next = getErrors();
     setErrors(next);
     return Object.keys(next).length === 0;
   }
 
+  useEffect(() => {
+    if (!automatic || !userChangedRef.current) return;
+    if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
+    autoTimerRef.current = setTimeout(() => {
+      if (Object.keys(getErrors()).length > 0) return;
+      const params = { checkIn, checkOut, guests, groundFloor, pets };
+      if (navigateTo) {
+        const sp = new URLSearchParams({ checkIn, checkOut, guests: String(guests) });
+        if (groundFloor) sp.set('groundFloor', '1');
+        if (pets) sp.set('pets', '1');
+        window.location.href = `${navigateTo}?${sp.toString()}`;
+      } else {
+        onSearch?.(params);
+      }
+    }, 300);
+    return () => {
+      if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
+    };
+  }, [checkIn, checkOut, guests, groundFloor, pets]);
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (validate()) onSearch({ checkIn, checkOut, guests, groundFloor, pets });
+    if (!validate()) return;
+    const params = { checkIn, checkOut, guests, groundFloor, pets };
+    if (navigateTo) {
+      const sp = new URLSearchParams({ checkIn, checkOut, guests: String(guests) });
+      if (groundFloor) sp.set('groundFloor', '1');
+      if (pets) sp.set('pets', '1');
+      window.location.href = `${navigateTo}?${sp.toString()}`;
+    } else {
+      onSearch?.(params);
+    }
   }
 
   function handleClear() {
@@ -68,10 +110,11 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
     setGroundFloor(false);
     setPets(false);
     setErrors({});
-    onClear();
+    onClear?.();
   }
 
   function handleCheckInChange(e: React.ChangeEvent<HTMLInputElement>) {
+    userChangedRef.current = true;
     const val = e.target.value;
     setCheckIn(val);
     if (checkOut && checkOut <= val) setCheckOut('');
@@ -79,8 +122,24 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
   }
 
   return (
-    <form onSubmit={handleSubmit} aria-label="Check room availability" className="mb-8">
-      <div className="flex flex-row flex-wrap gap-x-4 gap-y-3 items-end">
+    <form onSubmit={handleSubmit} aria-label="Check room availability" className="flex flex-col gap-3 bg-sand-050 border-1 border-ink-900 rounded-lg px-4 pt-2 pb-3">
+      <div className="flex flex-wrap desktop:flex-nowrap items-start gap-x-4 gap-y-3 ">
+        <FormField
+          id="avail-guests"
+          label="Number of Guests"
+          type="number"
+          value={guests}
+          min={1}
+          max={20}
+          onChange={(e) => {
+            userChangedRef.current = true;
+            setGuests(parseInt(e.target.value, 10) || 1);
+            setErrors((prev) => ({ ...prev, guests: undefined }));
+          }}
+          disabled={isLoading}
+          error={errors.guests}
+          className="flex-1 w-24 shrink-0"
+        />
         <FormField id="avail-check-in" label="Check-in" type="date" value={checkIn} min={today} onChange={handleCheckInChange} disabled={isLoading} error={errors.checkIn} className="flex-1 min-w-36" />
         <FormField
           id="avail-check-out"
@@ -89,6 +148,7 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
           value={checkOut}
           min={minCheckOut}
           onChange={(e) => {
+            userChangedRef.current = true;
             setCheckOut(e.target.value);
             setErrors((prev) => ({ ...prev, checkOut: undefined }));
           }}
@@ -96,30 +156,48 @@ export function AvailabilitySearchForm({ onSearch, onClear, isLoading, hasResult
           error={errors.checkOut}
           className="flex-1 min-w-36"
         />
-        <FormField
-          id="avail-guests"
-          label="Guests"
-          type="number"
-          value={guests}
-          min={1}
-          max={20}
-          onChange={(e) => {
-            setGuests(parseInt(e.target.value, 10) || 1);
-            setErrors((prev) => ({ ...prev, guests: undefined }));
-          }}
-          disabled={isLoading}
-          error={errors.guests}
-          className="w-24"
-        />
-
-        <div className="flex gap-2 items-end pb-0.5">
-          <button type="submit" disabled={isLoading} className="px-6 py-3 rounded-[72px] border-2 border-ink-900 bg-lilac-200 font-serif text-ink-900 text-[18px] hover:bg-lilac-200/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-            {isLoading ? 'Searching…' : 'Search'}
-          </button>
-          {hasResults && (
-            <button type="button" onClick={handleClear} disabled={isLoading} className="px-6 py-3 rounded-[72px] border-2 border-ink-900 bg-sand-050 font-serif text-ink-900 text-[18px] hover:bg-sand-100 disabled:opacity-50 transition-colors">
-              Clear
-            </button>
+      </div>
+      <div className="flex flex-row gap-6">
+        <div className="flex flex-col desktop:flex-row desktop:items-center gap-4 pr-4">
+          <TextStyle variant="label" element="span" className="font-medium whitespace-nowrap desktop:hidden">
+            Special Needs:
+          </TextStyle>
+          <FormCheckbox
+            name="pets"
+            label="Dogs Permitted"
+            checked={pets}
+            onChange={(e) => {
+              userChangedRef.current = true;
+              setPets(e.target.checked);
+            }}
+            disabled={isLoading}
+            clarification={
+              <a href="/faq#pet-policy" className="underline hover:opacity-70">
+                See Pet Policy
+              </a>
+            }
+          />
+          <FormCheckbox
+            name="groundFloor"
+            label="Wheelchair Accessible"
+            checked={groundFloor}
+            onChange={(e) => {
+              userChangedRef.current = true;
+              setGroundFloor(e.target.checked);
+            }}
+            disabled={isLoading}
+          />
+        </div>
+        <div className="flex flex-1 justify-stretch gap-2 shrink-0 pb-0.5 max-w-[200px]">
+          {!automatic && (
+            <Button type="submit" disabled={isLoading} bg="lilac-200" className="flex-1">
+              {isLoading ? 'Searching…' : 'Search'}
+            </Button>
+          )}
+          {showResetButton && hasResults && (
+            <Button bg="khaki-200" onClick={handleClear} disabled={isLoading}>
+              Reset
+            </Button>
           )}
         </div>
       </div>

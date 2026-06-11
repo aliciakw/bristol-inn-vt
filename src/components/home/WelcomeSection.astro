@@ -2,21 +2,44 @@
 import { Image } from 'astro:assets';
 import TextStyle from '@components/ui/TextStyle.astro';
 import type { SanityImage, SanityResolvedLink } from '../../lib/sanity';
-import bristolLogo from '../../assets/bristol-inn-logo.png';
+import bristolBadge from '../../assets/bristol-inn-badge.png';
 
 interface Props {
   welcomeHeading?: string;
   welcomeDescription?: string;
   welcomeCTA?: SanityResolvedLink;
   welcomeImage?: SanityImage;
+  heroLeftImage?: SanityImage;
+  heroRightImage?: SanityImage;
   directionsHref?: string;
   directionsLabel?: string;
 }
 
-const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, directionsHref, directionsLabel = 'find directions' } = Astro.props;
+const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftImage, heroRightImage, directionsHref, directionsLabel = 'find directions' } = Astro.props;
 ---
 
-<section>
+<section id="welcome-section">
+  <div id="welcome-hero" class="col-span-6 desktop:col-span-8 h-[300px] tablet:h-[420px] desktop:h-[550px] relative overflow-hidden mb-8">
+    {
+      heroLeftImage?.url && (
+        <div class="absolute left-0 top-0 bottom-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-tr-[12px] rounded-br-[12px] desktop:rounded-tr-[16px] desktop:rounded-br-[16px] overflow-hidden">
+          <Image src={heroLeftImage.url} alt={heroLeftImage.alt} width={900} height={550} format="webp" loading="eager" class="w-full h-full object-cover" />
+        </div>
+      )
+    }
+    {
+      heroRightImage?.url && (
+        <div class="absolute right-0 top-0 bottom-0 w-[calc(50%-6px)] desktop:w-[calc(50%-12px)] rounded-tl-[12px] rounded-bl-[8px] desktop:rounded-tl-[16px] desktop:rounded-bl-[16px] overflow-hidden">
+          <Image src={heroRightImage.url} alt={heroRightImage.alt} width={900} height={550} format="webp" loading="eager" class="w-full h-full object-cover" />
+        </div>
+      )
+    }
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px] z-10">
+      <div class="w-full mt-4 rounded-full bg-white shadow-lg flex items-center justify-center p-3 desktop:p-5">
+        <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
+      </div>
+    </div>
+  </div>
   <div class="px-[var(--grid-margin)]">
     <div class="Section__inner">
       <div class="row-span-1 col-span-6 desktop:col-start-2">
@@ -38,33 +61,6 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, directions
             >
               {welcomeCTA.label}
             </a>
-          )
-        }
-      </div>
-      <div class="col-span-2 desktop:col-start-2">
-        <!-- Address card -->
-        <div class="bg-white shadow-md flex flex-col items-center justify-between p-6 desktop:p-8 gap-4">
-          <Image src={bristolLogo} alt="Bristol Inn Vermont" width={280} height={280} class="w-full max-w-[240px] desktop:max-w-[280px] object-contain" />
-          <div class="text-center">
-            <TextStyle variant="paragraph" element="p" class="text-ink-900 underline decoration-solid leading-snug">
-              11 Main Street,<br />Bristol, VT 05401
-            </TextStyle>
-            {
-              directionsHref && (
-                <a href={directionsHref} class="font-serif text-caption desktop:text-caption-desktop text-ink-900 uppercase tracking-wide mt-1 inline-block hover:underline">
-                  {directionsLabel}
-                </a>
-              )
-            }
-          </div>
-        </div>
-      </div>
-      <div class="col-span-4">
-        {
-          welcomeImage?.url && (
-            <div class="flex-1 rounded-[16px] overflow-hidden">
-              <Image src={welcomeImage.url} alt={welcomeImage.alt} width={825} height={550} format="webp" loading="eager" class="w-full h-full object-cover" />
-            </div>
           )
         }
       </div>

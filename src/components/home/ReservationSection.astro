@@ -1,87 +1,56 @@
 ---
-import { Image } from 'astro:assets';
 import TextStyle from '@components/ui/TextStyle.astro';
-import FormField from '@components/ui/FormField.astro';
-import FormCheckbox from '@components/ui/FormCheckbox.astro';
+import { AvailabilitySearchForm } from '@components/rooms/AvailabilitySearchForm';
+import ButtonLink from '@components/ui/ButtonLink.astro';
 import type { SanityImage } from '../../lib/sanity';
+import { Image } from 'astro:assets';
 
 interface Props {
   reservationHeading?: string;
+  reservationHeadingIcon?: SanityImage;
   reservationDescription?: string;
-  reservationImage?: SanityImage;
+  reservationImage?: SanityImage; // unused in this layout, kept for CMS compat
+  logo?: string;
+  seeAllHref?: string;
 }
 
-const { reservationHeading = 'Make a Reservation', reservationDescription, reservationImage } = Astro.props;
+const { reservationHeading = 'Reserve your Stay, Today:', reservationHeadingIcon, reservationDescription, logo, seeAllHref } = Astro.props;
 ---
 
-<section class="px-[var(--grid-margin)] desktop:px-0 py-12">
+<section class="px-[var(--grid-margin)] desktop:px-0 py-12 bg-sand-200 rounded-b-[16px]">
   <div class="Section__inner">
-    <div class="row-span-1 col-span-6 desktop:col-start-2 flex flex-col gap-4">
-      <TextStyle variant="h2" class="text-sand-050 text-center">{reservationHeading}</TextStyle>
+    <!-- Heading block -->
+    <div class="col-span-6 desktop:col-start-2 desktop:col-span-6 flex flex-col items-center gap-4 mb-8">
+      {logo && <img src={logo} alt="" aria-hidden="true" class="w-24 h-24 object-contain" />}
+      {
+        reservationHeadingIcon && (
+          <div class="w-20 h-20 flex items-center justify-center">
+            <Image src={reservationHeadingIcon.url} alt={reservationHeadingIcon.alt} width={10} height={10} format="webp" loading="eager" class="w-full h-full object-contain" />
+          </div>
+        )
+      }
+      <TextStyle variant="h2" class="text-center">{reservationHeading}</TextStyle>
       {
         reservationDescription && (
-          <TextStyle variant="paragraph" element="p" class="text-sand-050">
+          <TextStyle variant="paragraph" element="p" class="max-w-2xl">
             {reservationDescription}
           </TextStyle>
         )
       }
     </div>
-    <div class="row-span-1 col-span-6 desktop:col-start-2 rounded-[16px] bg-sand-050 flex flex-row p-6">
-      <div class="flex flex-col flex-1">
-        <TextStyle variant="h3" class="text-ink-900 mb-6">Rooms &amp; Suites</TextStyle>
-        <div class="flex flex-col desktop:flex-row gap-8 desktop:gap-10">
-          <!-- Booking form -->
-          <form id="reservation-form" class="desktop:w-[55%] flex flex-col gap-5">
-            <div class="flex flex-col tablet:flex-row gap-4">
-              <FormField id="res-check-in" name="checkIn" label="Check in" type="date" class="flex-1" />
-              <FormField id="res-check-out" name="checkOut" label="Check out" type="date" class="flex-1" />
-            </div>
 
-            <FormField id="res-guests" name="guests" label="Guests" type="number" min="1" max="20" placeholder="2" class="tablet:w-36" />
-
-            <div class="flex flex-col tablet:flex-row gap-4 tablet:gap-8 items-start">
-              <FormCheckbox name="groundFloor" label="Wheelchair Accessible" />
-              <FormCheckbox name="pets" label="Dog-friendly" />
-            </div>
-
-            <a href="/faq#pet-policy" class="font-serif text-caption desktop:text-caption-desktop underline text-ink-900 hover:opacity-70 -mt-1 self-start">See Pet Policy</a>
-
-            <div class="pt-2">
-              <button type="submit" class="w-full tablet:w-auto px-12 py-2 rounded-[72px] border border-2 border-ink-900 bg-lilac-200 font-serif text-ink-900 text-[18px] hover:bg-lilac-200/80 transition-colors">Search</button>
-            </div>
-          </form>
-
-          <!-- Room photo -->
-          {
-            reservationImage?.url && (
-              <div class="flex-1 rounded-[16px] overflow-hidden aspect-[2/1] max-h-[320px]">
-                <Image src={reservationImage.url} alt={reservationImage.alt} width={549} height={403} format="webp" loading="lazy" class="w-full h-full object-cover" />
-              </div>
-            )
-          }
-        </div>
+    <!-- Search form -->
+    <div class="col-span-6 desktop:col-start-2 desktop:col-span-6 flex flex-col items-center gap-6">
+      <div class="w-full">
+        <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
       </div>
+      {
+        seeAllHref && (
+          <ButtonLink href={seeAllHref} bg="lilac-200">
+            See everything
+          </ButtonLink>
+        )
+      }
     </div>
   </div>
 </section>
-
-<script>
-  const form = document.getElementById('reservation-form') as HTMLFormElement | null;
-  form?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const data = new FormData(form);
-    const params = new URLSearchParams();
-
-    const checkIn = data.get('checkIn') as string;
-    const checkOut = data.get('checkOut') as string;
-    const guests = data.get('guests') as string;
-
-    if (checkIn) params.set('checkIn', checkIn);
-    if (checkOut) params.set('checkOut', checkOut);
-    if (guests) params.set('guests', guests);
-    if (data.get('groundFloor')) params.set('groundFloor', '1');
-    if (data.get('pets')) params.set('pets', '1');
-
-    window.location.href = `/rooms-and-suites?${params.toString()}`;
-  });
-</script>

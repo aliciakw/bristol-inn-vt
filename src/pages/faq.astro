@@ -1,0 +1,32 @@
+---
+import { getFaq } from '../lib/sanity';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import TextStyle from '@components/ui/TextStyle.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+
+const faq = await getFaq();
+const pageTitle = faq?.title ?? 'Frequently Asked Questions';
+---
+
+<BaseLayout title={`${pageTitle} — Bristol Inn`}>
+  <section class="px-[var(--grid-margin)]">
+    <div class="Section__inner">
+      <header class="col-span-6 desktop:col-span-8 pt-0 pb-8 desktop:py-8 flex flex-col gap-2">
+        <TextStyle variant="h1" element="h1" class="text-center">{pageTitle}</TextStyle>
+        <TextStyle variant="paragraph" element="p" class="text-center font-italic">{faq?.description}</TextStyle>
+      </header>
+
+      <div class="col-span-6 desktop:col-span-6 desktop:col-start-2 border-t border-khaki-300 mb-16 desktop:mb-24 mx-[var(--grid-margin)]">
+        {
+          faq?.items?.length ? (
+            faq.items.map((item) => <FaqAccordion faqId={item.faqId} question={item.question} answer={item.answer} />)
+          ) : (
+            <TextStyle variant="paragraph" element="p" class="text-iron py-10">
+              No FAQ items found. Add some in the CMS.
+            </TextStyle>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,27 +1,25 @@
 ---
-import NavigationTopBar from '@components/NavigationTopBar.astro';
+import NavigationTopBar, { type NavigationVariant, type NavigationTextColor } from '@components/NavigationTopBar.astro';
 import Footer from '@components/Footer.astro';
 import { getSettings } from '../lib/sanity';
 import type { SanityMeta } from '../lib/sanity';
 import '@styles/global.css';
+import fontRegular from '../assets/fonts/DavidLibre-Regular.ttf';
+import fontMedium from '../assets/fonts/DavidLibre-Medium.ttf';
+import fontBold from '../assets/fonts/DavidLibre-Bold.ttf';
 
 interface Props {
   title: string;
   description?: string; // plain-string fallback for non-CMS pages
   meta?: SanityMeta; // Sanity-backed meta for CMS pages
-  backgroundColor?: 'sand-100' | 'forest-400';
-  navigationVariant?: 'sand-100' | 'transparent' | 'forest-400';
-  textColor?: 'ink-900' | 'sand-050';
+  mainClassName?: string;
+  backgroundColor?: 'sand-050' | 'white' | 'sand-100' | 'forest-400';
+  navigationVariant?: NavigationVariant;
+  textColor?: NavigationTextColor;
+  overlayHero?: boolean;
 }
 
-const {
-  title,
-  description,
-  meta: pageMeta,
-  backgroundColor = 'sand-100',
-  textColor = 'ink-900',
-  navigationVariant,
-} = Astro.props;
+const { title, description, meta: pageMeta, backgroundColor = 'sand-050', textColor = 'ink-900', mainClassName, navigationVariant, overlayHero } = Astro.props;
 
 const settings = await getSettings();
 const siteMeta = settings?.meta;
@@ -36,6 +34,9 @@ const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" as="font" type="font/ttf" href={fontRegular} crossorigin />
+    <link rel="preload" as="font" type="font/ttf" href={fontMedium} crossorigin />
+    <link rel="preload" as="font" type="font/ttf" href={fontBold} crossorigin />
 
     <title>{resolvedTitle}</title>
     {resolvedDescription && <meta name="description" content={resolvedDescription} />}
@@ -52,16 +53,10 @@ const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
     {resolvedDescription && <meta name="twitter:description" content={resolvedDescription} />}
     {resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
   </head>
-  <body
-    class:list={[
-      'flex flex-col min-h-screen font-serif',
-      `bg-${backgroundColor}`,
-      `text-${textColor}`,
-    ]}
-  >
+  <body class:list={['flex flex-col min-h-screen font-serif', `bg-${backgroundColor}`, `text-${textColor}`]}>
     <div class="flex flex-col flex-1">
-      <NavigationTopBar variant={navigationVariant} textColor={textColor} />
-      <main class="flex-1">
+      <NavigationTopBar variant={navigationVariant} textColor={textColor} overlayHero={overlayHero} />
+      <main class:list={['flex-1 mb-16', mainClassName]}>
         <slot />
       </main>
     </div>

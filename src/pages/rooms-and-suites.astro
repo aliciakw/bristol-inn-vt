@@ -3,6 +3,8 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import { RoomBrowser } from '../components/rooms/RoomBrowser';
 import { getPage } from '../lib/sanity';
 import { getRooms } from '../lib/hostaway';
+import SliceZone from '../components/SliceZone.astro';
+import TextStyle from '@components/ui/TextStyle.astro';
 
 const [page, rooms] = await Promise.all([getPage('rooms-and-suites'), getRooms()]);
 
@@ -18,17 +20,16 @@ const browserRooms = rooms.map((r) => ({
 }));
 ---
 
-<BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta} backgroundColor="forest-400" textColor="sand-050" navigationVariant="forest-400">
-  <!-- {
-    (page?.body?.length ?? 0) > 0 && (
-      <div class="max-w-3xl mx-auto px-4 pt-8 pb-4">
-        <h1 class="text-3xl font-medium mb-6">{pageTitle}</h1>
-        <SliceZone blocks={page!.body} />
+<BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta}>
+  <div class="Section">
+    <div class="Section__inner">
+      <div class="row-span-1 col-span-6 desktop:col-start-2">
+        <TextStyle variant="h1" element="h1" bold>{pageTitle}</TextStyle>
+        {page?.body?.length > 0 && <SliceZone blocks={page.body} />}
       </div>
-    )
-  } -->
-  <div class="Section px-[var(--grid-margin)] mb-20">
-    {(page?.body?.length ?? 0) === 0 && <h1 class="text-3xl font-bold text-gray-900 mb-8">{pageTitle}</h1>}
-    <RoomBrowser client:load rooms={browserRooms} />
+      <div class="row-span-1 col-span-6 desktop:col-start-2">
+        <RoomBrowser client:load rooms={browserRooms} />
+      </div>
+    </div>
   </div>
 </BaseLayout>

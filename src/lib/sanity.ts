@@ -59,11 +59,15 @@ export type SanityHomepage = {
   welcomeHeading?: string;
   welcomeDescription?: string;
   welcomeCTA?: SanityResolvedLink;
+  heroLeftImage?: SanityImage;
+  heroRightImage?: SanityImage;
   welcomeImage?: SanityImage;
   galleryImages: SanityImage[];
   reservationHeading?: string;
+  reservationHeadingIcon?: SanityImage;
   reservationDescription?: string;
   reservationImage?: SanityImage;
+  testimonialsHeading?: string;
   testimonial?: SanityTestimonialArrayItem[];
   amenities: string[];
   body: SanityBlock[];
@@ -80,17 +84,23 @@ const HOMEPAGE_ID = '6e561f5f-23ec-49fa-863f-141c005904c3';
 
 const RESOLVE_LINK = `{ label, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
 
+const RESOLVE_BUTTON_LINK = `{ label, color, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
+
 export async function getHomepage(): Promise<SanityHomepage> {
   return getClient().fetch<SanityHomepage>(
     `*[_type == "homepage" && _id == $id][0]{
       welcomeHeading,
       welcomeDescription,
       "welcomeCTA": welcomeCTA${RESOLVE_LINK},
+      "heroLeftImage": heroLeftImage{ "url": asset->url, "alt": coalesce(alt, "") },
+      "heroRightImage": heroRightImage{ "url": asset->url, "alt": coalesce(alt, "") },
       "welcomeImage": welcomeImage{ "url": asset->url, "alt": coalesce(alt, "") },
       "galleryImages": galleryImages[]{ "url": asset->url, "alt": coalesce(alt, "") },
       reservationHeading,
+      "reservationHeadingIcon": reservationHeadingIcon{ "url": asset->url, "alt": coalesce(alt, "") },
       reservationDescription,
       "reservationImage": reservationImage{ "url": asset->url, "alt": coalesce(alt, "") },
+      testimonialsHeading,
       "testimonial": testimonial[]{
         _type,
         _key,
@@ -130,6 +140,34 @@ export async function getPages(): Promise<Pick<SanityPage, 'uid'>[]> {
   return getClient().fetch<Pick<SanityPage, 'uid'>[]>(`*[_type == "page"]{ "uid": slug.current }`);
 }
 
+export type SanityFaqItem = {
+  _key: string;
+  faqId: string;
+  question: string;
+  answer: SanityBlock[];
+};
+
+export type SanityFaq = {
+  title?: string;
+  description?: string;
+  items: SanityFaqItem[];
+};
+
+export async function getFaq(): Promise<SanityFaq | null> {
+  return getClient().fetch<SanityFaq | null>(
+    `*[_type == "faq"][0]{
+      title,
+      description,
+      "items": items[]{
+        _key,
+        question,
+        answer,
+        "faqId": id.current
+      }
+    }`,
+  );
+}
+
 export type SanityLink = {
   label: string;
   href: string; // resolved from url or internalLink slug
@@ -147,8 +185,18 @@ export type SanityAwardImage = {
   linkUrl?: string;
 };
 
+export type SanityButtonLink = {
+  label: string;
+  color?: string;
+  href: string;
+  openInNewTab: boolean;
+};
+
 export type SanitySettings = {
   meta?: SanityMeta;
+  nameplateLogo?: string;
+  leftCta?: SanityButtonLink;
+  rightCta?: SanityButtonLink;
   sidebarLinks: SanityLink[];
   footerSections: SanityFooterSection[];
   awardImages: SanityAwardImage[];
@@ -165,6 +213,9 @@ export async function getSettings(): Promise<SanitySettings> {
         ogDescription,
         "ogImage": ogImage.asset->{ "url": url }
       },
+      "nameplateLogo": nameplateLogo.asset->url,
+      "leftCta": leftCta${RESOLVE_BUTTON_LINK},
+      "rightCta": rightCta${RESOLVE_BUTTON_LINK},
       "sidebarLinks": sidebarLinks[]{
         label,
         "href": select(
