@@ -29,7 +29,7 @@ export function RoomCardReact({ id, name, price, photo, availability, isLoading 
   if (!isLoading && availability?.available && availability.pricePerNight !== undefined) {
     priceDisplay = `$${Math.round(availability.pricePerNight)} / night`;
   } else {
-    priceDisplay = `From $${baseRate} / night`;
+    priceDisplay = `From $${baseRate}`;
   }
 
   return (
@@ -38,12 +38,12 @@ export function RoomCardReact({ id, name, price, photo, availability, isLoading 
         <a href={`/rooms/${id}`}>
           <img src={photo.url} alt={photo.caption || name} width={600} height={400} loading="lazy" className="w-full object-cover aspect-[3/2] rounded-lg" />
         </a>
-        <div className="absolute top-3 left-[-12px] bg-white max-w-[calc(66%-24px)]">
+        <div className="absolute top-3 left-[12px] bg-white max-w-[calc(66%-24px)] rounded-sm">
           <TextStyle variant="h5" element="h5" className="font-medium px-2 py-1">
             {name}
           </TextStyle>
         </div>
-        <TextStyle variant="caption" element="span" className="absolute top-3 right-3 bg-white/80 text-ink-900 backdrop-blur-sm px-3 py-1.5 rounded-full">
+        <TextStyle variant="caption" element="span" className="absolute top-3 right-3 bg-white/80 text-ink-900 backdrop-blur-sm max-w-[calc(33%)] whitespace-nowrap overflow-hidden text-ellipsis px-3 py-1.5 rounded-sm">
           {priceDisplay}
         </TextStyle>
         <div className="flex flex-row gap-2 justify-end absolute bottom-3 right-3">

@@ -28,14 +28,20 @@ interface Props {
   rooms: RoomBrowserRoom[];
 }
 
+const desktopColsClass = {
+  2: '',
+  3: 'desktop:grid-cols-3',
+} satisfies Record<number, string>;
+
 interface RoomGridProps {
   title?: string;
   rooms: RoomBrowserRoom[];
   isLoading?: boolean;
   availability?: AvailabilityResult[];
+  desktopCols?: 2 | 3;
 }
 
-function RoomGrid({ title, rooms, isLoading, availability }: RoomGridProps) {
+function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2 }: RoomGridProps) {
   return (
     <section className="flex flex-col gap-6">
       {title && (
@@ -43,7 +49,7 @@ function RoomGrid({ title, rooms, isLoading, availability }: RoomGridProps) {
           {title}
         </TextStyle>
       )}
-      <div className="grid grid-cols-1 tablet:grid-cols-2 gap-6">
+      <div className={['grid grid-cols-1 tablet:grid-cols-2 gap-6', desktopColsClass[desktopCols]].join(' ')}>
         {rooms.map((room) => (
           <RoomCardReact
             key={room.id}
@@ -72,7 +78,7 @@ function RoomSections({ rooms, availability }: { rooms: RoomBrowserRoom[]; avail
   return (
     <div className="flex flex-col gap-12">
       <RoomGrid title={`Available (${available.length})`} rooms={available} availability={availability} />
-      {unavailable.length > 0 && <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} />}
+      {unavailable.length > 0 && <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} desktopCols={3} />}
     </div>
   );
 }
