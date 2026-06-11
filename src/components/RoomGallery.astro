@@ -13,9 +13,12 @@ interface Props {
   /** Up to 6 photos; already sliced by the Hostaway lib (D-04) */
   photos: Array<{ url: string; caption: string }>;
   roomName: string;
+  layout?: 'heroFirst' | 'default';
 }
 
-const { photos, roomName } = Astro.props;
+const { photos, roomName, layout = 'default' } = Astro.props;
+const heroImage = layout === 'heroFirst' ? photos[0] : null;
+const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
 ---
 
 {
@@ -25,27 +28,11 @@ const { photos, roomName } = Astro.props;
     </div>
   ) : (
     <>
-      <Image
-        src={photos[0].url}
-        alt={photos[0].caption || `${roomName} — photo 1`}
-        width={1200}
-        height={800}
-        format="webp"
-        loading="eager"
-        class="w-full object-cover rounded"
-      />
-      {photos.slice(1).length > 0 && (
+      {heroImage && <Image src={photos[0].url} alt={photos[0].caption || `${roomName} — photo 1`} width={1200} height={800} format="webp" loading="eager" class="w-full object-cover rounded" />}
+      {gridImages.length > 0 && (
         <div class="grid grid-cols-2 tablet:grid-cols-3 gap-2 mt-2">
-          {photos.slice(1).map((p, i) => (
-            <Image
-              src={p.url}
-              alt={p.caption || `${roomName} — photo ${i + 2}`}
-              width={1200}
-              height={800}
-              format="webp"
-              loading="lazy"
-              class="w-full object-cover rounded"
-            />
+          {gridImages.map((p, i) => (
+            <Image src={p.url} alt={p.caption || `${roomName} — photo ${i + 2}`} width={1200} height={800} format="webp" loading="lazy" class="w-full object-cover rounded" />
           ))}
         </div>
       )}

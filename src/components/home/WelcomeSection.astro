@@ -19,7 +19,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 ---
 
 <section id="welcome-section">
-  <div id="welcome-hero" class="col-span-6 desktop:col-span-8 h-[300px] tablet:h-[420px] desktop:h-[550px] relative overflow-hidden mb-8">
+  <div id="welcome-hero" class="col-span-6 desktop:col-span-8 h-[300px] tablet:h-[420px] desktop:h-[calc(100vh-140px)] relative overflow-hidden mb-8">
     {
       heroLeftImage?.url && (
         <div class="absolute left-0 top-0 bottom-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-tr-[12px] rounded-br-[12px] desktop:rounded-tr-[16px] desktop:rounded-br-[16px] overflow-hidden">

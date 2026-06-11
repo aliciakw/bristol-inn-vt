@@ -19,7 +19,7 @@ interface Props {
   overlayHero?: boolean;
 }
 
-const { title, description, meta: pageMeta, backgroundColor = 'sand-050', textColor = 'ink-900', mainClassName, navigationVariant, overlayHero } = Astro.props;
+const { title, description, meta: pageMeta, backgroundColor = 'white', textColor = 'ink-900', mainClassName, navigationVariant = 'white' } = Astro.props;
 
 const settings = await getSettings();
 const siteMeta = settings?.meta;
@@ -56,7 +56,7 @@ const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
   </head>
   <body class:list={['flex flex-col min-h-screen font-serif', `bg-${backgroundColor}`, `text-${textColor}`]}>
     <div class="flex flex-col flex-1">
-      <NavigationTopBar variant={navigationVariant} textColor={textColor} overlayHero={overlayHero} />
+      <NavigationTopBar variant={navigationVariant} />
       <main class:list={['flex-1 mb-16', mainClassName]}>
         <slot />
       </main>

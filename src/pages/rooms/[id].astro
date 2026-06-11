@@ -5,6 +5,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import RoomGallery from '../../components/RoomGallery.astro';
 import AmenityBadge from '../../components/AmenityBadge.astro';
 import { RoomDetailHeader } from '../../components/rooms/RoomDetailHeader';
+import TextStyle from '@components/ui/TextStyle.astro';
 
 export async function getStaticPaths() {
   const rooms = await getRooms();
@@ -17,21 +18,25 @@ export async function getStaticPaths() {
 type Props = { room: HostawayRoom };
 const { room } = Astro.props;
 const metaDescription = room.description.slice(0, 160);
+
+const [heroImage, ...images] = room.photos;
 ---
 
-<BaseLayout title={`${room.name} — Bristol Inn`} description={metaDescription}>
+<BaseLayout title={`${room.name} — Bristol Inn`} description={metaDescription} backgroundColor="white" navigationVariant="white">
   <section class="Section">
-    <div class="Section__inner">
-      <div class="row-span-1 col-span-6 tablet:col-span-3 desktop:pl-13 Xdesktop:col-start-2 Xdesktop:col-span-2">
+    <div class="Section__inner pb-[var(--nav-top-bar-height)]">
+      <div class="row-span-1 col-span-6 tablet:col-span-2 desktop:col-span-3 flex flex-col gap-4 tablet:sticky tablet:top-[var(--nav-top-bar-height)] tablet:self-start tablet:max-h-[calc(100vh-var(--nav-top-bar-height))] tablet:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <img src={room.photos[0].url} alt={room.photos[0].caption || `${room.name}`} width={1200} height={800} loading="eager" fetchpriority="high" decoding="sync" class="w-full object-cover rounded aspect-[4/3] mb-4 tablet:hidden" />
         <RoomDetailHeader client:load roomId={room.id} name={room.name} bedroomsLabel={room.bedroomsLabel} personCapacity={room.personCapacity} floorNumber={room.floorNumber} basePrice={room.price} />
-        <p class="text-base leading-relaxed text-gray-700 my-6">{room.description}</p>
-        <h2 class="text-xl font-bold text-gray-900 mb-3">Amenities</h2>
-        <div class="flex flex-wrap gap-2">
+        <TextStyle variant="paragraph" class="font-bold desktop:mt-4">Description</TextStyle>
+        <TextStyle variant="caption" class="leading-relaxed text-gray-700">{room.description}</TextStyle>
+        <TextStyle variant="paragraph" class="font-bold">Amenities</TextStyle>
+        <div class="flex flex-wrap gap-2 pb-[var(--nav-top-bar-height)]">
           {room.amenityNames.map((a) => <AmenityBadge label={a} />)}
         </div>
       </div>
-      <div class="row-span-1 col-span-6 desktop:col-span-5 desktop:pr-13">
-        <RoomGallery photos={room.photos} roomName={room.name} />
+      <div class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-5">
+        <RoomGallery photos={room.photos.slice(1)} roomName={room.name} layout="heroFirst" />
       </div>
     </div>
   </section>

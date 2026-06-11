@@ -40,13 +40,15 @@ export function RoomDetailHeader({ roomId, name, bedroomsLabel, personCapacity, 
 
   const personCapacityLabel = `Up to ${personCapacity} ${personCapacity === 1 ? 'guest' : 'guests'}`;
   const bookingDateLabel = booking ? `${formatDate(booking.start)} – ${formatDate(booking.end)}` : null;
+  const estimatedPriceLabel = `From $${Math.round(basePrice)} / night`;
   const bookingPriceLabel = booking ? `$${Math.round(booking?.pricePerNight)} / night` : null;
   const numberOfGuestsLabel = `${booking?.numberOfGuests} ${booking?.numberOfGuests === 1 ? 'guest' : 'guests'}`;
   const floorNumberLabel = floorNumber !== undefined ? `Floor ${floorNumber}` : null;
-  const meta = [bedroomsLabel, floorNumberLabel, personCapacityLabel].filter(Boolean).join(' · ');
+  const meta = [bedroomsLabel, floorNumberLabel, personCapacityLabel, estimatedPriceLabel].filter(Boolean).join(' · ');
+  const bookingDetails = [bookingPriceLabel, bookingDateLabel, numberOfGuestsLabel].filter(Boolean).join(' · ');
 
   return (
-    <div className="flex flex-col mb-6 bg-white p-4 rounded-sm">
+    <div className="flex flex-col bg-white p-4 rounded-sm">
       <TextStyle variant="h2" element="h1" className="line-height-tight">
         {name}
       </TextStyle>
@@ -54,26 +56,21 @@ export function RoomDetailHeader({ roomId, name, bedroomsLabel, personCapacity, 
         {meta}
       </TextStyle>
 
-      <div className="flex flex-col gap-1 mt-3">
+      {booking ? (
+        <TextStyle variant="h5" element="p" className="font-medium mt-2">
+          {bookingDetails}
+        </TextStyle>
+      ) : null}
+      <div className="flex flex-col justify-between mt-6 desktop:max-w-[50%]">
         {booking ? (
-          <div className="flex flex-row gap-2">
-            <TextStyle variant="h5" element="p" className="font-medium">
-              {bookingPriceLabel}
-            </TextStyle>
-            <TextStyle variant="paragraph" element="span" className="ml-2 text-iron">
-              {bookingDateLabel} · {numberOfGuestsLabel}
-            </TextStyle>
-          </div>
+          <ButtonLink href={bookingUrl} bg="prussian-700" textColor="white" target="_blank" className="hover:bg-prussian-500" rel="noopener noreferrer">
+            Book Now!
+          </ButtonLink>
         ) : (
-          <TextStyle variant="h4" element="p">
-            From ${Math.round(basePrice)} / night
-          </TextStyle>
+          <ButtonLink href={bookingUrl} bg="khaki-200" target="_blank" rel="noopener noreferrer">
+            Make a Reservation
+          </ButtonLink>
         )}
-      </div>
-      <div className="flex flex-col justify-between mt-6">
-        <ButtonLink href={bookingUrl} bg="prussian-700" textColor="white" target="_blank" className="hover:bg-prussian-500" rel="noopener noreferrer">
-          {booking ? 'Book Now!' : 'Reserve This Room'}
-        </ButtonLink>
       </div>
     </div>
   );
