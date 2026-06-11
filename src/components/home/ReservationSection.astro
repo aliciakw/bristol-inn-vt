@@ -2,8 +2,7 @@
 import TextStyle from '@components/ui/TextStyle.astro';
 import { AvailabilitySearchForm } from '@components/rooms/AvailabilitySearchForm';
 import ButtonLink from '@components/ui/ButtonLink.astro';
-import type { SanityImage } from '../../lib/sanity';
-import { Image } from 'astro:assets';
+import { buildSanityImageUrl, type SanityImage } from '../../lib/sanity';
 
 interface Props {
   reservationHeading?: string;
@@ -25,7 +24,7 @@ const { reservationHeading = 'Reserve your Stay, Today:', reservationHeadingIcon
       {
         reservationHeadingIcon && (
           <div class="w-20 h-20 flex items-center justify-center">
-            <Image src={reservationHeadingIcon.url} alt={reservationHeadingIcon.alt} width={10} height={10} format="webp" loading="eager" class="w-full h-full object-contain" />
+            <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
           </div>
         )
       }

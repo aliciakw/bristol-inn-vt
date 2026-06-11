@@ -1,6 +1,5 @@
 ---
-import { Image } from 'astro:assets';
-import type { SanityImage } from '../../lib/sanity';
+import { buildSanityImageUrl, type SanityImage } from '../../lib/sanity';
 
 interface Props {
   images: SanityImage[];
@@ -16,7 +15,7 @@ const visible = images.filter((img) => img.url);
       <div class="flex w-max gallery-scroll">
         {[...visible, ...visible].map((img) => (
           <div class="flex-none w-48 aspect-square overflow-hidden mr-4">
-            <Image src={img.url} alt={img.alt} width={600} height={600} format="webp" loading="lazy" class="w-full h-full object-cover" />
+            <img src={buildSanityImageUrl(img.url, { width: 400, height: 400 })} alt={img.alt} width={192} height={192} loading="lazy" decoding="async" class="w-full h-full object-cover" />
           </div>
         ))}
       </div>

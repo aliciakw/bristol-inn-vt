@@ -52,6 +52,7 @@ const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
     <meta name="twitter:title" content={resolvedTitle} />
     {resolvedDescription && <meta name="twitter:description" content={resolvedDescription} />}
     {resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
+    <slot name="head" />
   </head>
   <body class:list={['flex flex-col min-h-screen font-serif', `bg-${backgroundColor}`, `text-${textColor}`]}>
     <div class="flex flex-col flex-1">
