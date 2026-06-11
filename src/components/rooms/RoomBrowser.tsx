@@ -7,6 +7,7 @@ import { TextStyle } from '@components/ui/TextStyle';
 interface RoomBrowserRoom {
   id: number;
   name: string;
+  bedroomsLabel: string;
   price: number;
   personCapacity: number;
   numberOfBeds?: number;
@@ -56,6 +57,7 @@ function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2 }: Ro
             key={room.id}
             id={room.id}
             name={room.name}
+            bedroomsLabel={room.bedroomsLabel}
             personCapacity={room.personCapacity}
             numberOfBeds={room.numberOfBeds}
             numberOfBathrooms={room.numberOfBathrooms}

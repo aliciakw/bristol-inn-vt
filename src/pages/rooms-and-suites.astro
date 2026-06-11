@@ -13,6 +13,7 @@ const pageTitle = page?.title || 'Rooms & Suites';
 const browserRooms = rooms.map((r) => ({
   id: r.id,
   name: r.name,
+  bedroomsLabel: r.bedroomsLabel,
   price: r.price,
   personCapacity: r.personCapacity,
   photo: r.photos[0] ?? { url: '', caption: '' },

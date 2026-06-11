@@ -67,6 +67,8 @@ export interface RoomAvailability {
 export interface HostawayRoom {
   id: number;
   name: string;
+  /** Human-readable bedroom count, e.g. "2 Bedrooms" or "1 Bedroom" */
+  bedroomsLabel: string;
   description: string;
   /** Base nightly rate (from raw "price" field) */
   price: number;
@@ -109,13 +111,13 @@ function normalizeRoom(raw: RawListing): HostawayRoom {
     console.log('[hostaway] First image URL (add domain to image.remotePatterns):', photos[0]?.url);
   }
 
-  const amenityNames = raw.listingAmenities
-    .map((a) => AMENITY_NAMES[a.amenityId])
-    .filter((name): name is string => name !== undefined);
+  const amenityNames = raw.listingAmenities.map((a) => AMENITY_NAMES[a.amenityId]).filter((name): name is string => name !== undefined);
 
+  const n = raw.bedroomsNumber;
   return {
     id: raw.id,
-    name: raw.name,
+    name: raw.name.replace(/\s*\(\d+ Bedrooms?\)\s*$/i, '').trim(),
+    bedroomsLabel: n === 1 ? '1 Bedroom' : `${n} Bedrooms`,
     description: raw.description,
     price: raw.price,
     photos,
@@ -170,11 +172,7 @@ export async function getRoom(id: number): Promise<HostawayRoom | null> {
  * NOTE: RawCalendarDay shape is based on Hostaway v1 docs — validate against
  * the live API response on first run and adjust field names if needed.
  */
-export async function checkAvailability(
-  listingIds: number[],
-  checkIn: string,
-  checkOut: string,
-): Promise<RoomAvailability[]> {
+export async function checkAvailability(listingIds: number[], checkIn: string, checkOut: string): Promise<RoomAvailability[]> {
   const settled = await Promise.allSettled(
     listingIds.map(async (id): Promise<RoomAvailability> => {
       const url = `${BASE_URL}/listings/${id}/calendar?startDate=${checkIn}&endDate=${checkOut}`;
@@ -187,10 +185,7 @@ export async function checkAvailability(
       const data = (await res.json()) as { result: RawCalendarDay[] };
       const nights = data.result.filter((day) => day.date >= checkIn && day.date < checkOut);
       const numNights = nights.length;
-      const available =
-        numNights > 0 &&
-        nights.every((day) => day.isAvailable === 1) &&
-        nights.every((day) => numNights >= day.minimumStay);
+      const available = numNights > 0 && nights.every((day) => day.isAvailable === 1) && nights.every((day) => numNights >= day.minimumStay);
       return {
         listingId: id,
         available,
