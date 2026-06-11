@@ -2,12 +2,16 @@ import { useState, useEffect } from 'react';
 import { AvailabilitySearchForm } from './AvailabilitySearchForm';
 import type { SearchParams } from './AvailabilitySearchForm';
 import { RoomCardReact } from './RoomCardReact';
+import { TextStyle } from '@components/ui/TextStyle';
 
 interface RoomBrowserRoom {
   id: number;
   name: string;
   price: number;
   personCapacity: number;
+  numberOfBeds?: number;
+  numberOfBathrooms?: number;
+  dogsAllowed?: boolean;
   photo: { url: string; caption: string };
   amenities: string[];
 }
@@ -24,13 +28,40 @@ interface Props {
   rooms: RoomBrowserRoom[];
 }
 
-function RoomGrid({ rooms, isLoading, availability }: { rooms: RoomBrowserRoom[]; isLoading?: boolean; availability?: AvailabilityResult[] }) {
+interface RoomGridProps {
+  title?: string;
+  rooms: RoomBrowserRoom[];
+  isLoading?: boolean;
+  availability?: AvailabilityResult[];
+}
+
+function RoomGrid({ title, rooms, isLoading, availability }: RoomGridProps) {
   return (
-    <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6">
-      {rooms.map((room) => (
-        <RoomCardReact key={room.id} id={room.id} name={room.name} price={room.price} photo={room.photo} amenities={room.amenities} availability={availability?.find((a) => a.listingId === room.id)} isLoading={isLoading ?? false} />
-      ))}
-    </div>
+    <section className="flex flex-col gap-6">
+      {title && (
+        <TextStyle variant="h4" element="h2" className="">
+          {title}
+        </TextStyle>
+      )}
+      <div className="grid grid-cols-1 tablet:grid-cols-2 gap-6">
+        {rooms.map((room) => (
+          <RoomCardReact
+            key={room.id}
+            id={room.id}
+            name={room.name}
+            personCapacity={room.personCapacity}
+            numberOfBeds={room.numberOfBeds}
+            numberOfBathrooms={room.numberOfBathrooms}
+            dogsAllowed={room.dogsAllowed}
+            price={room.price}
+            photo={room.photo}
+            amenities={room.amenities}
+            availability={availability?.find((a) => a.listingId === room.id)}
+            isLoading={isLoading ?? false}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -40,16 +71,8 @@ function RoomSections({ rooms, availability }: { rooms: RoomBrowserRoom[]; avail
 
   return (
     <div className="flex flex-col gap-12">
-      <section>
-        <h2 className="text-2xl font-bold mb-6">Available Rooms &amp; Suites</h2>
-        {available.length === 0 ? <p className="text-gray-600">No rooms are available for your selected dates and guest count.</p> : <RoomGrid rooms={available} availability={availability} />}
-      </section>
-      {unavailable.length > 0 && (
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Other Room Options</h2>
-          <RoomGrid rooms={unavailable} availability={availability} />
-        </section>
-      )}
+      <RoomGrid title={`Available (${available.length})`} rooms={available} availability={availability} />
+      {unavailable.length > 0 && <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} />}
     </div>
   );
 }
@@ -104,9 +127,9 @@ export function RoomBrowser({ rooms }: Props) {
   const hasResults = state.status === 'results' || state.status === 'error';
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="sticky top-[var(--nav-top-bar-height)] z-10">
-        <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} />
+    <div className="flex flex-col gap-12">
+      <div className="top-[var(--nav-top-bar-height)] z-10">
+        <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} />
 
         {state.status === 'error' && (
           <p role="alert" className="text-red-600 text-sm mb-6">
@@ -115,7 +138,7 @@ export function RoomBrowser({ rooms }: Props) {
         )}
       </div>
 
-      {rooms.length === 0 ? <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p> : state.status === 'results' ? <RoomSections rooms={rooms} availability={state.availability} /> : <RoomGrid rooms={rooms} isLoading={isLoading} />}
+      {rooms.length === 0 ? <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p> : state.status === 'results' ? <RoomSections rooms={rooms} availability={state.availability} /> : <RoomGrid title={`Everything (${rooms.length})`} rooms={rooms} isLoading={isLoading} />}
     </div>
   );
 }
