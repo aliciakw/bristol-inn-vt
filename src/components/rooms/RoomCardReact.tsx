@@ -23,7 +23,7 @@ interface Props {
   detailUrl: string;
 }
 
-export function RoomCardReact({ name, bedroomsLabel, price, photo, availability, isLoading, bookingUrl, detailUrl }: Props) {
+export function RoomCardReact({ name, bedroomsLabel, personCapacity, price, photo, availability, isLoading, bookingUrl, detailUrl }: Props) {
   const baseRate = Math.round(price);
   const isUnavailable = availability !== undefined && !availability.available;
   const dimmed = isLoading || isUnavailable;
@@ -46,17 +46,17 @@ export function RoomCardReact({ name, bedroomsLabel, price, photo, availability,
             {name}
           </TextStyle>
           <TextStyle variant="caption" element="p" className="px-2 pb-1 text-iron">
-            {bedroomsLabel}
+            {bedroomsLabel} · Up to {personCapacity} {personCapacity === 1 ? 'guest' : 'guests'}
           </TextStyle>
         </div>
         <TextStyle variant="caption" element="span" className="absolute top-3 right-3 bg-white/80 text-ink-900 backdrop-blur-sm max-w-[calc(33%)] whitespace-nowrap overflow-hidden text-ellipsis px-3 py-1.5 rounded-sm">
           {priceDisplay}
         </TextStyle>
         <div className="flex flex-row gap-2 justify-end absolute bottom-3 right-3">
-          <ButtonLink href={bookingUrl} bg="prussian-200" size="small" target="_blank" rel="noopener noreferrer" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
+          <ButtonLink href={bookingUrl} bg="prussian-200" size="x-small" target="_blank" rel="noopener noreferrer" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
             Book Now!
           </ButtonLink>
-          <ButtonLink href={detailUrl} bg="sand-200" size="small" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
+          <ButtonLink href={detailUrl} bg="sand-200" size="x-small" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
             More Info
           </ButtonLink>
         </div>

@@ -39,6 +39,7 @@ interface RawListing {
   bedroomsNumber: number;
   bathroomsNumber: number;
   personCapacity: number;
+  floor?: number;
   listingImages: RawListingImage[];
   listingAmenities: RawListingAmenity[];
 }
@@ -79,6 +80,8 @@ export interface HostawayRoom {
   bedroomsNumber: number;
   bathroomsNumber: number;
   personCapacity: number;
+  /** Floor number within the building, if provided by Hostaway */
+  floorNumber?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -126,6 +129,7 @@ function normalizeRoom(raw: RawListing): HostawayRoom {
     bedroomsNumber: raw.bedroomsNumber,
     bathroomsNumber: raw.bathroomsNumber,
     personCapacity: raw.personCapacity,
+    floorNumber: raw.floor,
   };
 }
 

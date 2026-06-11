@@ -130,6 +130,13 @@ html {
   text-rendering: optimizeLegibility;
 }
 
+.Section {
+  padding: 0 var(--grid-margin);
+  @media screen and (min-width: 1024px) {
+    padding: 0;
+  }
+}
+
 .Section__inner {
   max-width: 1480px;
   display: grid;

@@ -1,9 +1,10 @@
 ---
-import { getRooms, getBookingUrl } from '../../lib/hostaway';
+import { getRooms } from '../../lib/hostaway';
 import type { HostawayRoom } from '../../lib/hostaway';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import RoomGallery from '../../components/RoomGallery.astro';
 import AmenityBadge from '../../components/AmenityBadge.astro';
+import { RoomDetailHeader } from '../../components/rooms/RoomDetailHeader';
 
 export async function getStaticPaths() {
   const rooms = await getRooms();
@@ -19,35 +20,19 @@ const metaDescription = room.description.slice(0, 160);
 ---
 
 <BaseLayout title={`${room.name} — Bristol Inn`} description={metaDescription}>
-  <section class="px-[var(--grid-margin)]">
+  <section class="Section">
     <div class="Section__inner">
-      <div class="row-span-1 col-span-6 desktop:col-span-3">
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">{room.name}</h1>
-        <p class="text-lg text-gray-700 mb-6">From ${Math.round(room.price)} / night</p>
-
+      <div class="row-span-1 col-span-6 tablet:col-span-3 desktop:pl-13 Xdesktop:col-start-2 Xdesktop:col-span-2">
+        <RoomDetailHeader client:load roomId={room.id} name={room.name} bedroomsLabel={room.bedroomsLabel} personCapacity={room.personCapacity} floorNumber={room.floorNumber} basePrice={room.price} />
         <p class="text-base leading-relaxed text-gray-700 my-6">{room.description}</p>
         <h2 class="text-xl font-bold text-gray-900 mb-3">Amenities</h2>
         <div class="flex flex-wrap gap-2">
           {room.amenityNames.map((a) => <AmenityBadge label={a} />)}
         </div>
-        <a id="book-now-btn" href={getBookingUrl(room.id)} class="inline-block bg-slate-700 text-white px-6 py-3 rounded hover:bg-slate-800 mt-4" target="_blank" rel="noopener noreferrer">Book This Room</a>
       </div>
-      <div class="row-span-1 col-span-6 desktop:col-span-5">
+      <div class="row-span-1 col-span-6 desktop:col-span-5 desktop:pr-13">
         <RoomGallery photos={room.photos} roomName={room.name} />
       </div>
     </div>
   </section>
 </BaseLayout>
-
-<script define:vars={{ roomId: room.id }}>
-  const sp = new URLSearchParams(window.location.search);
-  const start = sp.get('start');
-  const end = sp.get('end');
-  const numberOfGuests = sp.get('numberOfGuests');
-  if (start && end && numberOfGuests) {
-    const btn = document.getElementById('book-now-btn');
-    if (btn) {
-      btn.href = `https://bristolsuites.holidayfuture.com/checkout/${roomId}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&numberOfGuests=${encodeURIComponent(numberOfGuests)}`;
-    }
-  }
-</script>

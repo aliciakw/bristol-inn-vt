@@ -70,7 +70,7 @@ function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2, last
             availability={availability?.find((a) => a.listingId === room.id)}
             isLoading={isLoading ?? false}
             bookingUrl={lastSearch ? getCheckoutUrl(room.id, lastSearch) : getBookingUrl(room.id)}
-            detailUrl={getDetailUrl(room.id, lastSearch ?? undefined)}
+            detailUrl={getDetailUrl(room.id, lastSearch ? { ...lastSearch, pricePerNight: availability?.find((a) => a.listingId === room.id)?.pricePerNight } : undefined)}
           />
         ))}
       </div>

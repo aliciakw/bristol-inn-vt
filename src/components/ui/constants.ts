@@ -1,14 +1,18 @@
 import type { HTMLAttributes, AnchorHTMLAttributes } from 'react';
 
 type PressableBaseProps = {
-  size?: 'default' | 'small';
+  size?: 'default' | 'small' | 'x-small';
   textColor?: 'ink-900' | 'white';
   bg?: 'prussian-700' | 'prussian-200' | 'lilac-200' | 'sand-200' | 'khaki-200';
   class?: string;
   tabIndex?: number;
 };
 
-export type ButtonProps = Omit<HTMLAttributes<'button'>, 'class' | 'role'> & PressableBaseProps;
+export type ButtonProps = Omit<HTMLAttributes<'button'>, 'class' | 'role'> &
+  PressableBaseProps & {
+    disabled?: boolean;
+    type?: 'button' | 'submit' | 'reset';
+  };
 export type ButtonLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'class' | 'role'> & {
   href: string;
 } & PressableBaseProps;
@@ -16,8 +20,9 @@ export type ButtonLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'cla
 export const buttonDefaultClasses = 'inline-flex items-center justify-center rounded-full border font-serif font-medium whitespace-nowrap hover:opacity-90 transition-opacity pointer';
 
 export const buttonSizeClasses = {
-  default: 'h-10 px-5 text-[21px] leading-none tracking-[-0.021em]',
-  small: 'h-8 px-3 text-[15px] leading-none tracking-[-0.02em]',
+  default: 'h-10 px-5 text-[21px] leading-none tracking-[-0.02em]',
+  small: 'h-9 px-3 text-[18px] leading-none tracking-[-0.02em]',
+  'x-small': 'h-8 px-3 text-[15px] leading-none tracking-[-0.02em]',
 } satisfies Record<NonNullable<ButtonProps['size']>, string>;
 
 export const buttonTextColorClasses = {
