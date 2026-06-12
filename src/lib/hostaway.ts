@@ -10,7 +10,6 @@
  */
 
 import { HOSTAWAY_ACCESS_TOKEN } from 'astro:env/server';
-import { AMENITY_NAMES } from './hostaway-amenities';
 export { getBookingUrl } from './hostaway-urls';
 
 // ---------------------------------------------------------------------------
@@ -28,6 +27,7 @@ interface RawListingImage {
 
 interface RawListingAmenity {
   id: number;
+  amenityName: string;
   amenityId: number;
 }
 
@@ -82,6 +82,8 @@ export interface HostawayRoom {
   personCapacity: number;
   /** Floor number within the building, if provided by Hostaway */
   floorNumber?: number;
+  dogsAllowed: boolean;
+  groundFloor: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -89,6 +91,36 @@ export interface HostawayRoom {
 // ---------------------------------------------------------------------------
 
 const BASE_URL = 'https://api.hostaway.com/v1';
+const PETS_ALLOWED_AMENITY_ID = 37;
+
+const FLOOR_WORD_MAP: Record<string, number> = {
+  first: 1,
+  second: 2,
+  third: 3,
+  fourth: 4,
+  fifth: 5,
+  sixth: 6,
+  seventh: 7,
+  eighth: 8,
+  ninth: 9,
+  tenth: 10,
+};
+
+function guessFloorNumber(description: string): number | undefined {
+  // "3rd floor", "2nd floor", "1st floor"
+  const ordinal = description.match(/\b(\d+)(?:st|nd|rd|th)\s+floor\b/i);
+  if (ordinal) return parseInt(ordinal[1], 10);
+
+  // "first floor", "second floor", etc.
+  const word = description.match(/\b(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\s+floor\b/i);
+  if (word) return FLOOR_WORD_MAP[word[1].toLowerCase()];
+
+  // "floor 3"
+  const numeric = description.match(/\bfloor\s+(\d+)\b/i);
+  if (numeric) return parseInt(numeric[1], 10);
+
+  return undefined;
+}
 
 /** Log the first image URL exactly once so the developer can determine the
  *  Hostaway CDN domain and add it to image.remotePatterns in astro.config.mjs.
@@ -115,9 +147,11 @@ function normalizeRoom(raw: RawListing): HostawayRoom {
     console.log('[hostaway] First image URL (add domain to image.remotePatterns):', photos[0]?.url);
   }
 
-  const amenityNames = raw.listingAmenities.map((a) => AMENITY_NAMES[a.amenityId]).filter((name): name is string => name !== undefined);
+  const amenityNames = raw.listingAmenities.map((a) => a.amenityName);
 
   const n = raw.bedroomsNumber;
+  const floorNumber = raw.floor || guessFloorNumber(raw.description);
+  console.log('----> floorNumber', floorNumber, raw.description, raw.floor);
   return {
     id: raw.id,
     name: raw.name.replace(/\s*\(\d+ Bedrooms?\)\s*$/i, '').trim(),
@@ -129,7 +163,9 @@ function normalizeRoom(raw: RawListing): HostawayRoom {
     bedroomsNumber: raw.bedroomsNumber,
     bathroomsNumber: raw.bathroomsNumber,
     personCapacity: raw.personCapacity,
-    floorNumber: raw.floor,
+    floorNumber,
+    dogsAllowed: raw.listingAmenities.some((a) => a.amenityId === PETS_ALLOWED_AMENITY_ID),
+    groundFloor: floorNumber === 1,
   };
 }
 

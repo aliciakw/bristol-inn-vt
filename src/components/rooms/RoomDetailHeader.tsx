@@ -43,12 +43,12 @@ export function RoomDetailHeader({ roomId, name, bedroomsLabel, personCapacity, 
   const estimatedPriceLabel = `From $${Math.round(basePrice)} / night`;
   const bookingPriceLabel = booking ? `$${Math.round(booking?.pricePerNight)} / night` : null;
   const numberOfGuestsLabel = `${booking?.numberOfGuests} ${booking?.numberOfGuests === 1 ? 'guest' : 'guests'}`;
-  const floorNumberLabel = floorNumber !== undefined ? `Floor ${floorNumber}` : null;
+  const floorNumberLabel = floorNumber !== undefined ? `${floorNumber === 1 ? '1st' : floorNumber === 2 ? '2nd' : floorNumber === 3 ? '3rd' : floorNumber} Floor` : '';
   const meta = [bedroomsLabel, floorNumberLabel, personCapacityLabel, estimatedPriceLabel].filter(Boolean).join(' · ');
   const bookingDetails = [bookingPriceLabel, bookingDateLabel, numberOfGuestsLabel].filter(Boolean).join(' · ');
 
   return (
-    <div className="flex flex-col bg-white p-4 rounded-sm">
+    <div className="flex flex-col">
       <TextStyle variant="h2" element="h1" className="line-height-tight">
         {name}
       </TextStyle>

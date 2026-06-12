@@ -28,7 +28,7 @@ const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
     </div>
   ) : (
     <>
-      {heroImage && <Image src={photos[0].url} alt={photos[0].caption || `${roomName} — photo 1`} width={1200} height={800} format="webp" loading="eager" class="w-full object-cover rounded" />}
+      {heroImage && <Image src={photos[0].url} alt={photos[0].caption || `${roomName} — photo 1`} width={1200} height={800} format="webp" loading="eager" class="w-full object-cover rounded-xl aspect-[4/3]" />}
       {gridImages.length > 0 && (
         <div class="grid grid-cols-2 tablet:grid-cols-3 gap-2 mt-2">
           {gridImages.map((p, i) => (

@@ -16,6 +16,7 @@ const browserRooms = rooms.map((r) => ({
   bedroomsLabel: r.bedroomsLabel,
   price: r.price,
   personCapacity: r.personCapacity,
+  floorNumber: r.floorNumber,
   photo: r.photos[0] ?? { url: '', caption: '' },
   amenities: r.amenityNames.slice(0, 3),
 }));

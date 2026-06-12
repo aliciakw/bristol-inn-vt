@@ -11,6 +11,7 @@ interface RoomBrowserRoom {
   bedroomsLabel: string;
   price: number;
   personCapacity: number;
+  floorNumber?: number;
   numberOfBeds?: number;
   numberOfBathrooms?: number;
   dogsAllowed?: boolean;
@@ -61,6 +62,7 @@ function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2, last
             name={room.name}
             bedroomsLabel={room.bedroomsLabel}
             personCapacity={room.personCapacity}
+            floorNumber={room.floorNumber}
             numberOfBeds={room.numberOfBeds}
             numberOfBathrooms={room.numberOfBathrooms}
             dogsAllowed={room.dogsAllowed}
@@ -119,6 +121,8 @@ export function RoomBrowser({ rooms }: Props) {
         checkOut: params.checkOut,
         guests: String(params.guests),
       });
+      if (params.pets) qs.set('pets', '1');
+      if (params.groundFloor) qs.set('groundFloor', '1');
       const res = await fetch(`/api/rooms/availability?${qs.toString()}`);
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };

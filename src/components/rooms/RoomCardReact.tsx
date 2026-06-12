@@ -11,6 +11,7 @@ interface Props {
   name: string;
   bedroomsLabel: string;
   personCapacity: number;
+  floorNumber?: number;
   numberOfBeds?: number;
   numberOfBathrooms?: number;
   dogsAllowed?: boolean;
@@ -23,7 +24,7 @@ interface Props {
   detailUrl: string;
 }
 
-export function RoomCardReact({ name, bedroomsLabel, personCapacity, price, photo, availability, isLoading, bookingUrl, detailUrl }: Props) {
+export function RoomCardReact({ name, bedroomsLabel, personCapacity, floorNumber, price, photo, availability, isLoading, bookingUrl, detailUrl }: Props) {
   const baseRate = Math.round(price);
   const isUnavailable = availability !== undefined && !availability.available;
   const dimmed = isLoading || isUnavailable;
@@ -34,6 +35,8 @@ export function RoomCardReact({ name, bedroomsLabel, personCapacity, price, phot
   } else {
     priceDisplay = `From $${baseRate}`;
   }
+
+  const floorNumberLabel = floorNumber !== undefined ? ` ·${floorNumber === 1 ? '1st' : floorNumber === 2 ? '2nd' : floorNumber === 3 ? '3rd' : floorNumber} Floor` : '';
 
   return (
     <article className={['bg-white rounded-lg  shadow-sm ', dimmed ? 'opacity-50' : 'hover:shadow-md pointer', 'transition-opacity duration-150'].join(' ')}>
@@ -46,7 +49,8 @@ export function RoomCardReact({ name, bedroomsLabel, personCapacity, price, phot
             {name}
           </TextStyle>
           <TextStyle variant="caption" element="p" className="px-2 pb-1 text-iron">
-            {bedroomsLabel} · Up to {personCapacity} {personCapacity === 1 ? 'guest' : 'guests'}
+            {bedroomsLabel}· Up to {personCapacity} {personCapacity === 1 ? 'guest' : 'guests'}
+            {floorNumberLabel}
           </TextStyle>
         </div>
         <TextStyle variant="caption" element="span" className="absolute top-3 right-3 bg-white/80 text-ink-900 backdrop-blur-sm max-w-[calc(33%)] whitespace-nowrap overflow-hidden text-ellipsis px-3 py-1.5 rounded-sm">
