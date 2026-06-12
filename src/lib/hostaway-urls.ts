@@ -11,7 +11,7 @@ export function getCheckoutUrl(hostawayId: number, params: { checkIn: string; ch
   return `https://bristolsuites.holidayfuture.com/checkout/${hostawayId}?${qs.toString()}`;
 }
 
-export function getDetailUrl(hostawayId: number, params?: { checkIn: string; checkOut: string; guests: number; pricePerNight?: number }): string {
+export function getDetailUrl(hostawayId: number, params?: { checkIn: string; checkOut: string; guests: number; pricePerNight?: number; pets?: boolean }): string {
   const base = `/rooms/${hostawayId}`;
   if (!params) return base;
   const qs = new URLSearchParams({
@@ -20,5 +20,6 @@ export function getDetailUrl(hostawayId: number, params?: { checkIn: string; che
     numberOfGuests: String(params.guests),
   });
   if (params.pricePerNight !== undefined) qs.set('pricePerNight', String(params.pricePerNight));
+  if (params.pets) qs.set('pets', '1');
   return `${base}?${qs.toString()}`;
 }

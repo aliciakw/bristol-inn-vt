@@ -43,9 +43,10 @@ interface RoomGridProps {
   availability?: AvailabilityResult[];
   desktopCols?: 2 | 3;
   lastSearch?: SearchParams | null;
+  emptyStateMessage?: string;
 }
 
-function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2, lastSearch }: RoomGridProps) {
+function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2, lastSearch, emptyStateMessage }: RoomGridProps) {
   return (
     <section className="flex flex-col gap-6">
       {title && (
@@ -55,6 +56,11 @@ function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2, last
       )}
       {/* eslint-disable-next-line security/detect-object-injection */}
       <div className={['grid grid-cols-1 tablet:grid-cols-2 gap-6', desktopColsClass[desktopCols]].join(' ')}>
+        {rooms.length === 0 && emptyStateMessage && (
+          <TextStyle variant="caption" element="p" className="text-gray-600">
+            {emptyStateMessage}
+          </TextStyle>
+        )}
         {rooms.map((room) => (
           <RoomCardReact
             key={room.id}
@@ -86,7 +92,7 @@ function RoomSections({ rooms, availability, lastSearch }: { rooms: RoomBrowserR
 
   return (
     <div className="flex flex-col gap-12">
-      <RoomGrid title={`Available (${available.length})`} rooms={available} availability={availability} lastSearch={lastSearch} />
+      <RoomGrid title={`Available (${available.length})`} rooms={available} availability={availability} lastSearch={lastSearch} emptyStateMessage="No rooms matched your search." />
       {unavailable.length > 0 && <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} desktopCols={3} lastSearch={lastSearch} />}
     </div>
   );

@@ -25,7 +25,8 @@ const [heroImage, ...images] = room.photos;
   <section class="Section">
     <div class="Section__inner pb-[var(--nav-top-bar-height)]">
       <div class="row-span-1 col-span-6 tablet:col-span-2 desktop:col-span-3 flex flex-col gap-4 tablet:sticky tablet:top-[var(--nav-top-bar-height)] tablet:self-start tablet:max-h-[calc(100vh-var(--nav-top-bar-height))] tablet:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <img src={room.photos[0].url} alt={room.photos[0].caption || `${room.name}`} width={1200} height={800} loading="eager" fetchpriority="high" decoding="sync" class="w-full object-cover rounded aspect-[4/3] mb-4 tablet:hidden" />
+        <a id="back-to-rooms" href="/rooms-and-suites" class="text-sm text-iron hover:text-ink-900 transition-colors w-fit">← Back to Rooms</a>
+        <img src={room.photos[0].url} alt={room.photos[0].caption || `${room.name}`} width={1200} height={800} loading="eager" fetchpriority="high" decoding="sync" class="w-full object-cover rounded-xl aspect-[5/3] mt-4 desktop:hidden" />
         <RoomDetailHeader client:load roomId={room.id} name={room.name} bedroomsLabel={room.bedroomsLabel} personCapacity={room.personCapacity} floorNumber={room.floorNumber} basePrice={room.price} />
         <TextStyle variant="paragraph" class="font-bold desktop:mt-4">Description</TextStyle>
         <TextStyle variant="caption" class="leading-relaxed text-gray-700">{room.description}</TextStyle>
@@ -35,9 +36,22 @@ const [heroImage, ...images] = room.photos;
         </div>
       </div>
       <div class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-5">
-        <RoomGallery photos={room.photos.slice(1)} roomName={room.name} layout="heroFirst" />
+        <TextStyle variant="paragraph" class="font-bold desktop:hidden">Gallery</TextStyle>
+        <RoomGallery photos={room.photos} roomName={room.name} layout="heroFirst" />
       </div>
     </div>
   </section>
   <div class="fixed z-10 top-0 bottom-0 bg-white width-[400px]"></div>
 </BaseLayout>
+
+<script>
+  const sp = new URLSearchParams(window.location.search);
+  const start = sp.get('start');
+  const end = sp.get('end');
+  const guests = sp.get('numberOfGuests');
+  if (start && end && guests) {
+    const back = new URLSearchParams({ checkIn: start, checkOut: end, guests });
+    if (sp.get('pets') === '1') back.set('pets', '1');
+    document.getElementById('back-to-rooms')?.setAttribute('href', `/rooms-and-suites?${back.toString()}`);
+  }
+</script>
