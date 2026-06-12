@@ -72,6 +72,7 @@ function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2, last
             numberOfBeds={room.numberOfBeds}
             numberOfBathrooms={room.numberOfBathrooms}
             dogsAllowed={room.dogsAllowed}
+            lastSearch={lastSearch}
             price={room.price}
             photo={room.photo}
             amenities={room.amenities}

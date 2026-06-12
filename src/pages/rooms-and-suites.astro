@@ -17,6 +17,7 @@ const browserRooms = rooms.map((r) => ({
   price: r.price,
   personCapacity: r.personCapacity,
   floorNumber: r.floorNumber,
+  dogsAllowed: r.dogsAllowed,
   photo: r.photos[0] ?? { url: '', caption: '' },
   amenities: r.amenityNames.slice(0, 3),
 }));

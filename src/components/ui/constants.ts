@@ -3,7 +3,7 @@ import type { HTMLAttributes, AnchorHTMLAttributes } from 'react';
 type PressableBaseProps = {
   size?: 'default' | 'small' | 'x-small';
   textColor?: 'ink-900' | 'white';
-  bg?: 'prussian-700' | 'prussian-200' | 'lilac-200' | 'sand-200' | 'khaki-200';
+  bg?: 'prussian-700' | 'prussian-500' | 'prussian-200' | 'lilac-200' | 'sand-200' | 'khaki-200';
   class?: string;
   tabIndex?: number;
 };
@@ -17,7 +17,7 @@ export type ButtonLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'cla
   href: string;
 } & PressableBaseProps;
 
-export const buttonDefaultClasses = 'inline-flex items-center justify-center rounded-full border font-serif font-medium whitespace-nowrap hover:opacity-90 transition-opacity pointer';
+export const buttonDefaultClasses = 'inline-flex items-center justify-center rounded-full border font-serif font-medium whitespace-nowrap transition-colors duration-150 pointer';
 
 export const buttonSizeClasses = {
   default: 'h-10 px-5 text-[21px] leading-none tracking-[-0.02em]',
@@ -32,6 +32,7 @@ export const buttonTextColorClasses = {
 
 export const buttonBgClasses = {
   'prussian-700': 'bg-prussian-700',
+  'prussian-500': 'bg-prussian-500',
   'prussian-200': 'bg-prussian-200',
   'lilac-200': 'bg-lilac-200',
   'sand-200': 'bg-sand-200',
