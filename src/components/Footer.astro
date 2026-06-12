@@ -11,12 +11,9 @@ function sectionToHTML(content: unknown[]): string {
   return toHTML(content as Parameters<typeof toHTML>[0], {
     components: {
       block: {
-        normal: ({ children }) =>
-          `<p class="font-serif font-[400] text-[17px] leading-[1.6] tracking-[0.02em]">${children}</p>`,
-        h4: ({ children }) =>
-          `<h4 class="font-serif text-[31px] leading-[1.2] mt-[4rem] mb-6">${children}</h4>`,
-        small: ({ children }) =>
-          `<p class="font-serif text-[14px] leading-[1.4] tracking-[0.01em]">${children}</p>`,
+        normal: ({ children }) => `<p class="font-serif font-[400] text-[17px] leading-[1.6] tracking-[0.02em]">${children}</p>`,
+        h4: ({ children }) => `<h4 class="font-serif text-[31px] leading-[1.2] mt-[4rem] mb-6">${children}</h4>`,
+        small: ({ children }) => `<p class="font-serif text-[14px] leading-[1.4] tracking-[0.01em]">${children}</p>`,
       },
       marks: {
         em: ({ children }) => `<em>${children}</em>`,
@@ -31,84 +28,26 @@ function sectionToHTML(content: unknown[]): string {
 ---
 
 <footer class="bg-prussian-700 text-sand-100 max-w-[100vw] overflow-x-hidden">
-  <div
-    class="grid grid-cols-6 desktop:grid-cols-8 gap-x-8 gap-y-10 px-6 pt-14 pb-6 desktop:gap-x-16 desktop:gap-y-12"
-  >
+  <div class="grid grid-cols-6 desktop:grid-cols-8 gap-x-8 gap-y-10 px-6 pt-14 pb-6 desktop:gap-x-16 desktop:gap-y-12">
     {
       footerSections.map((section, i) => {
         const isFirst = i === 0;
-        return (
-          <section
-            class:list={[
-              'desktop:col-span-2',
-              isFirst
-                ? 'col-span-6 desktop:col-start-2 desktop:row-start-1 desktop:row-span-3 flex flex-col'
-                : 'col-span-3',
-            ]}
-          >
-            {section.content?.length > 0 && <div set:html={sectionToHTML(section.content)} />}
-          </section>
-        );
+        return <section class:list={['desktop:col-span-2', isFirst ? 'col-span-6 desktop:col-start-2 desktop:row-start-1 desktop:row-span-3 flex flex-col' : 'col-span-3']}>{section.content?.length > 0 && <div set:html={sectionToHTML(section.content)} />}</section>;
       })
     }
 
-    <!-- Awards and subscribe always render, regardless of footerSections -->
-    <section class="col-span-6 desktop:col-span-2 desktop:col-start-6">
-      {
-        awardImages.length > 0 && (
-          <div>
-            <h3 class="font-serif text-[31px] leading-[1.2] mb-3">Awards</h3>
-            <div class="mb-16 flex flex-wrap items-center gap-4 opacity-90">
-              {awardImages.map(({ url, alt, linkUrl }) => {
-                const img = (
-                  <img
-                    src={url}
-                    alt={alt}
-                    class="h-[2.5rem] w-auto object-contain"
-                    loading="lazy"
-                  />
-                );
-                return linkUrl ? (
-                  <a href={linkUrl} target="_blank" rel="noopener noreferrer">
-                    {img}
-                  </a>
-                ) : (
-                  img
-                );
-              })}
-            </div>
-          </div>
-        )
-      }
+    <section class="col-span-6 desktop:col-span-2 desktop:col-start">
       <h3 class="font-serif text-[31px] leading-[1.2] mb-3">Subscribe</h3>
-      <p class="font-serif italic text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 mb-5">
-        Keep apprised of the latest events and promotions
-      </p>
+      <p class="font-serif italic text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 mb-5">Keep apprised of the latest events and promotions</p>
       <form class="flex gap-2" method="post" action="/api/subscribe">
-        <input
-          type="email"
-          name="email"
-          placeholder="you@email.com"
-          required
-          class="flex-1 min-w-0 h-11 px-5 rounded-full bg-sand-100 border border-ink-900 font-serif text-[17px] text-ink-900 placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-ink-900"
-        />
-        <button
-          type="submit"
-          class="shrink-0 h-11 px-5 rounded-full bg-khaki-300 border-2 border-ink-900 font-serif font-medium text-[16px] text-ink-900 hover:opacity-90 transition-opacity"
-        >
-          Subscribe
-        </button>
+        <input type="email" name="email" placeholder="you@email.com" required class="flex-1 min-w-0 h-11 px-5 rounded-full bg-sand-100 border border-ink-900 font-serif text-[17px] text-ink-900 placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-ink-900" />
+        <button type="submit" class="shrink-0 h-11 px-5 rounded-full bg-khaki-300 border-2 border-ink-900 font-serif font-medium text-[16px] text-ink-900 hover:opacity-90 transition-opacity"> Subscribe </button>
       </form>
     </section>
 
     <div class="col-span-6 desktop:col-span-8 text-center">
       <p class="font-serif text-[14px] text-sand-100/80">
-        &copy; {year} Bristol Inn Vermont. All rights reserved. | Design + Code by <a
-          href="https://aleeshza.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hover:underline hover:text-sand-200 transition-colors">Aleeshza Studio</a
-        >
+        &copy; {year} Bristol Inn Vermont. All rights reserved. | Design + Code by <a href="https://aleeshza.com" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-sand-200 transition-colors">Aleeshza Studio</a>
       </p>
     </div>
   </div>
