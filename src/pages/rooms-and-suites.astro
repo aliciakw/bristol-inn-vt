@@ -13,14 +13,17 @@ const pageTitle = page?.title || 'Rooms & Suites';
 const browserRooms = rooms.map((r) => ({
   id: r.id,
   name: r.name,
+  bedroomsLabel: r.bedroomsLabel,
   price: r.price,
   personCapacity: r.personCapacity,
+  floorNumber: r.floorNumber,
+  dogsAllowed: r.dogsAllowed,
   photo: r.photos[0] ?? { url: '', caption: '' },
   amenities: r.amenityNames.slice(0, 3),
 }));
 ---
 
-<BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta}>
+<BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta} backgroundColor="white" navigationVariant="white">
   <div class="Section">
     <div class="Section__inner">
       <div class="row-span-1 col-span-6 desktop:col-start-2">

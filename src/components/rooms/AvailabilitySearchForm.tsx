@@ -190,7 +190,7 @@ export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoadin
         </div>
         <div className="flex flex-1 justify-stretch gap-2 shrink-0 pb-0.5 max-w-[200px]">
           {!automatic && (
-            <Button type="submit" disabled={isLoading} bg="lilac-200" className="flex-1">
+            <Button size="default" type="submit" disabled={isLoading} bg="prussian-500" textColor="white" className="flex-1 hover:bg-prussian-700">
               {isLoading ? 'Searching…' : 'Search'}
             </Button>
           )}

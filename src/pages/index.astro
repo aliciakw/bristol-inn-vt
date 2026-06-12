@@ -1,5 +1,5 @@
 ---
-import { getHomepage, getSettings } from '../lib/sanity';
+import { getHomepage, getSettings, buildSanityImageUrl } from '../lib/sanity';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import WelcomeSection from '../components/home/WelcomeSection.astro';
 import GalleryStrip from '../components/home/GalleryStrip.astro';
@@ -10,9 +10,16 @@ import SliceZone from '../components/SliceZone.astro';
 const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 
 const { welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, welcomeImage, galleryImages, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, testimonialsHeading, testimonial, amenities, body } = homepage;
+
+const heroLeftPreload = heroLeftImage?.url ? buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 }) : null;
+const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 }) : null;
 ---
 
-<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere." backgroundColor="white" textColor="ink-900" navigationVariant="white">
+<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere." backgroundColor="white" textColor="ink-900" navigationVariant="transparent">
+  <Fragment slot="head">
+    {heroLeftPreload && <link rel="preload" as="image" href={heroLeftPreload} fetchpriority="high" />}
+    {heroRightPreload && <link rel="preload" as="image" href={heroRightPreload} fetchpriority="high" />}
+  </Fragment>
   <WelcomeSection welcomeHeading={welcomeHeading} welcomeDescription={welcomeDescription} welcomeCTA={welcomeCTA} heroLeftImage={heroLeftImage} heroRightImage={heroRightImage} welcomeImage={welcomeImage} directionsHref={settings.directionsLink?.href} directionsLabel={settings.directionsLink?.label} />
 
   <GalleryStrip images={galleryImages ?? []} />

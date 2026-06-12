@@ -1,6 +1,23 @@
 import { createClient, type SanityClient } from '@sanity/client';
 import { SANITY_API_TOKEN } from 'astro:env/server';
 
+export type SanityImageUrlOptions = {
+  width?: number;
+  height?: number;
+  quality?: number;
+  fit?: 'crop' | 'clip' | 'fill' | 'fillmax' | 'max' | 'scale' | 'min';
+};
+
+export function buildSanityImageUrl(url: string, options: SanityImageUrlOptions = {}): string {
+  if (!url || !url.includes('cdn.sanity.io')) return url;
+  const params = new URLSearchParams({ auto: 'format' });
+  if (options.width) params.set('w', String(options.width));
+  if (options.height) params.set('h', String(options.height));
+  if (options.quality !== undefined) params.set('q', String(options.quality));
+  if (options.fit) params.set('fit', options.fit);
+  return `${url}?${params.toString()}`;
+}
+
 const PROJECT_ID = '4rk27ty6';
 const DATASET = 'production';
 const API_VERSION = '2025-06-02';

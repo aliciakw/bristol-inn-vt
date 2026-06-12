@@ -3,12 +3,15 @@ import { AvailabilitySearchForm } from './AvailabilitySearchForm';
 import type { SearchParams } from './AvailabilitySearchForm';
 import { RoomCardReact } from './RoomCardReact';
 import { TextStyle } from '@components/ui/TextStyle';
+import { getBookingUrl, getCheckoutUrl, getDetailUrl } from '@lib/hostaway-urls';
 
 interface RoomBrowserRoom {
   id: number;
   name: string;
+  bedroomsLabel: string;
   price: number;
   personCapacity: number;
+  floorNumber?: number;
   numberOfBeds?: number;
   numberOfBathrooms?: number;
   dogsAllowed?: boolean;
@@ -39,9 +42,11 @@ interface RoomGridProps {
   isLoading?: boolean;
   availability?: AvailabilityResult[];
   desktopCols?: 2 | 3;
+  lastSearch?: SearchParams | null;
+  emptyStateMessage?: string;
 }
 
-function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2 }: RoomGridProps) {
+function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2, lastSearch, emptyStateMessage }: RoomGridProps) {
   return (
     <section className="flex flex-col gap-6">
       {title && (
@@ -51,20 +56,30 @@ function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2 }: Ro
       )}
       {/* eslint-disable-next-line security/detect-object-injection */}
       <div className={['grid grid-cols-1 tablet:grid-cols-2 gap-6', desktopColsClass[desktopCols]].join(' ')}>
+        {rooms.length === 0 && emptyStateMessage && (
+          <TextStyle variant="caption" element="p" className="text-gray-600">
+            {emptyStateMessage}
+          </TextStyle>
+        )}
         {rooms.map((room) => (
           <RoomCardReact
             key={room.id}
             id={room.id}
             name={room.name}
+            bedroomsLabel={room.bedroomsLabel}
             personCapacity={room.personCapacity}
+            floorNumber={room.floorNumber}
             numberOfBeds={room.numberOfBeds}
             numberOfBathrooms={room.numberOfBathrooms}
             dogsAllowed={room.dogsAllowed}
+            lastSearch={lastSearch}
             price={room.price}
             photo={room.photo}
             amenities={room.amenities}
             availability={availability?.find((a) => a.listingId === room.id)}
             isLoading={isLoading ?? false}
+            bookingUrl={lastSearch ? getCheckoutUrl(room.id, lastSearch) : getBookingUrl(room.id)}
+            detailUrl={getDetailUrl(room.id, lastSearch ? { ...lastSearch, pricePerNight: availability?.find((a) => a.listingId === room.id)?.pricePerNight } : undefined)}
           />
         ))}
       </div>
@@ -72,20 +87,21 @@ function RoomGrid({ title, rooms, isLoading, availability, desktopCols = 2 }: Ro
   );
 }
 
-function RoomSections({ rooms, availability }: { rooms: RoomBrowserRoom[]; availability: AvailabilityResult[] }) {
+function RoomSections({ rooms, availability, lastSearch }: { rooms: RoomBrowserRoom[]; availability: AvailabilityResult[]; lastSearch: SearchParams }) {
   const available = rooms.filter((r) => availability.find((a) => a.listingId === r.id)?.available);
   const unavailable = rooms.filter((r) => !availability.find((a) => a.listingId === r.id)?.available);
 
   return (
     <div className="flex flex-col gap-12">
-      <RoomGrid title={`Available (${available.length})`} rooms={available} availability={availability} />
-      {unavailable.length > 0 && <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} desktopCols={3} />}
+      <RoomGrid title={`Available (${available.length})`} rooms={available} availability={availability} lastSearch={lastSearch} emptyStateMessage="No rooms matched your search." />
+      {unavailable.length > 0 && <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} desktopCols={3} lastSearch={lastSearch} />}
     </div>
   );
 }
 
 export function RoomBrowser({ rooms }: Props) {
   const [state, setState] = useState<SearchState>({ status: 'idle' });
+  const [lastSearch, setLastSearch] = useState<SearchParams | null>(null);
 
   useEffect(() => {
     const sp = new URLSearchParams(window.location.search);
@@ -104,6 +120,7 @@ export function RoomBrowser({ rooms }: Props) {
   }, []);
 
   async function handleSearch(params: SearchParams) {
+    setLastSearch(params);
     setState({ status: 'loading' });
     try {
       const qs = new URLSearchParams({
@@ -111,6 +128,8 @@ export function RoomBrowser({ rooms }: Props) {
         checkOut: params.checkOut,
         guests: String(params.guests),
       });
+      if (params.pets) qs.set('pets', '1');
+      if (params.groundFloor) qs.set('groundFloor', '1');
       const res = await fetch(`/api/rooms/availability?${qs.toString()}`);
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
@@ -128,6 +147,7 @@ export function RoomBrowser({ rooms }: Props) {
 
   function handleClear() {
     setState({ status: 'idle' });
+    setLastSearch(null);
   }
 
   const isLoading = state.status === 'loading';
@@ -145,7 +165,13 @@ export function RoomBrowser({ rooms }: Props) {
         )}
       </div>
 
-      {rooms.length === 0 ? <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p> : state.status === 'results' ? <RoomSections rooms={rooms} availability={state.availability} /> : <RoomGrid title={`Everything (${rooms.length})`} rooms={rooms} isLoading={isLoading} />}
+      {rooms.length === 0 ? (
+        <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
+      ) : state.status === 'results' && lastSearch ? (
+        <RoomSections rooms={rooms} availability={state.availability} lastSearch={lastSearch} />
+      ) : (
+        <RoomGrid title={`Everything (${rooms.length})`} rooms={rooms} isLoading={isLoading} lastSearch={lastSearch} />
+      )}
     </div>
   );
 }

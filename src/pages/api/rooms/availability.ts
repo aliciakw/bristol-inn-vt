@@ -22,10 +22,7 @@ export async function GET({ url }: APIContext): Promise<Response> {
   const guests = parseInt(guestsRaw, 10);
 
   if (!isValidDate(checkIn) || !isValidDate(checkOut)) {
-    return Response.json(
-      { error: 'checkIn and checkOut must be valid YYYY-MM-DD dates' },
-      { status: 400 },
-    );
+    return Response.json({ error: 'checkIn and checkOut must be valid YYYY-MM-DD dates' }, { status: 400 });
   }
   if (checkIn < localDateISO(-1)) {
     return Response.json({ error: 'checkIn must be today or in the future' }, { status: 400 });
@@ -37,22 +34,23 @@ export async function GET({ url }: APIContext): Promise<Response> {
     return Response.json({ error: 'guests must be an integer between 1 and 20' }, { status: 400 });
   }
 
+  const pets = url.searchParams.get('pets') === '1';
+  const groundFloor = url.searchParams.get('groundFloor') === '1';
+
   try {
     const rooms = await getRooms();
-    const eligible = rooms.filter((r) => r.personCapacity >= guests);
+    let eligible = rooms.filter((r) => r.personCapacity >= guests);
+    if (pets) eligible = eligible.filter((r) => r.dogsAllowed);
+    if (groundFloor) eligible = eligible.filter((r) => r.groundFloor);
+
     const listingIds = eligible.map((r) => r.id);
     const results = await checkAvailability(listingIds, checkIn, checkOut);
 
-    // Rooms filtered out by capacity are always "not available" for this guest count
-    const capacityExcluded = rooms
-      .filter((r) => r.personCapacity < guests)
-      .map((r) => ({ listingId: r.id, available: false }));
+    // Rooms filtered out by capacity or amenity are always "not available"
+    const excluded = rooms.filter((r) => !eligible.some((e) => e.id === r.id)).map((r) => ({ listingId: r.id, available: false }));
 
-    return Response.json([...results, ...capacityExcluded]);
+    return Response.json([...results, ...excluded]);
   } catch {
-    return Response.json(
-      { error: 'Unable to check availability. Please try again.' },
-      { status: 500 },
-    );
+    return Response.json({ error: 'Unable to check availability. Please try again.' }, { status: 500 });
   }
 }

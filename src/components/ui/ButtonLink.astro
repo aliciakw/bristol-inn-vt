@@ -1,40 +1,10 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
+import { makeButtonClasses, type ButtonLinkProps } from './constants';
 
-type AnchorProps = { href: string } & Omit<HTMLAttributes<'a'>, 'class'>;
-
-type Props = AnchorProps & {
-  size?: 'default' | 'small';
-  textColor?: 'ink-900' | 'white';
-  bg?: 'prussian-700' | 'prussian-200' | 'lilac-200' | 'sand-200' | 'khaki-200';
-  class?: string;
-  tabIndex?: number;
-};
-
-const sizeClasses = {
-  default: 'h-11 px-5 text-[21px] leading-none tracking-[-0.021em]',
-  small: 'h-8 px-3 text-[15px] leading-none tracking-[-0.02em]',
-} satisfies Record<NonNullable<Props['size']>, string>;
-
-const textColorClasses = {
-  'ink-900': 'text-ink-900 border-ink-900',
-  white: 'text-white border-white',
-} satisfies Record<NonNullable<Props['textColor']>, string>;
-
-const bgClasses = {
-  'prussian-700': 'bg-prussian-700',
-  'lilac-200': 'bg-lilac-200',
-  'sand-200': 'bg-sand-200',
-  'khaki-200': 'bg-khaki-200',
-  'prussian-200': 'bg-prussian-200',
-} satisfies Record<NonNullable<Props['bg']>, string>;
-
-const { href, size = 'default', textColor = 'ink-900', bg = 'khaki-200', class: className, ...rest } = Astro.props;
-
-// eslint-disable-next-line security/detect-object-injection
-const variantClassNames = [sizeClasses[size], textColorClasses[textColor], bgClasses[bg]].join(' ');
+const { href, size = 'default', textColor = 'ink-900', bg = 'khaki-200', class: className, ...rest } = Astro.props as ButtonLinkProps;
+const classes = makeButtonClasses(size, textColor, bg, className);
 ---
 
-<a href={href} class:list={['inline-flex items-center justify-center rounded-full border font-serif font-medium whitespace-nowrap hover:opacity-90 transition-opacity pointer', variantClassNames, className]} {...rest}>
+<a {...rest} href={href} role="link" class={classes}>
   <slot />
 </a>

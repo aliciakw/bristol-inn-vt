@@ -6,12 +6,10 @@ export type NavigationVariant = 'sand-050' | 'white' | 'sand-100' | 'forest-400'
 export type NavigationTextColor = 'ink-900' | 'sand-050';
 
 interface Props {
-  variant?: NavigationVariant;
-  textColor?: NavigationTextColor;
-  overlayHero?: boolean;
+  variant: NavigationVariant;
 }
 
-const { variant = 'sand-050', textColor = 'ink-900', overlayHero = false } = Astro.props;
+const { variant } = Astro.props;
 
 const settings = await getSettings();
 
@@ -32,27 +30,29 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
 
 <header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0 sticky px-2 desktop:px-4', `bg-${variant}`]}>
   <!-- Left (desktop only) -->
-  <a href="/">
-    <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-10 desktop:max-h-14 desktop:w-[21vw] object-contain" />
+  <a href="/" class="flex">
+    <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-7 object-contain" />
   </a>
   <!-- Right Container -->
   <div class="flex flex-1 items-center justify-end">
-    <div class="relative z-[50] py-2 pl-2 flex items-center gap-4">
-      {
-        leftCta.label && leftCta.href && (
-          <ButtonLink href={leftCta.href} target={leftCta.openInNewTab ? '_blank' : undefined} rel={leftCta.openInNewTab ? 'noopener noreferrer' : undefined} bg="khaki-200" class="hidden desktop:inline-flex">
-            {leftCta.label}
-          </ButtonLink>
-        )
-      }
-      {
-        rightCta.label && rightCta.href && (
-          <ButtonLink href={rightCta.href} target={rightCta.openInNewTab ? '_blank' : undefined} rel={rightCta.openInNewTab ? 'noopener noreferrer' : undefined} bg="lilac-200" class="hidden desktop:inline-flex">
-            {rightCta.label}
-          </ButtonLink>
-        )
-      }
-      <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer">
+    <div class="relative z-[50] py-2 pl-2 flex items-center gap-2">
+      <div class="hidden tablet:inline-flex gap-2">
+        {
+          leftCta.label && leftCta.href && (
+            <ButtonLink href={leftCta.href} target={leftCta.openInNewTab ? '_blank' : undefined} rel={leftCta.openInNewTab ? 'noopener noreferrer' : undefined} bg="khaki-200" size="small" class="desktop:inline-flex">
+              {leftCta.label}
+            </ButtonLink>
+          )
+        }
+        {
+          rightCta.label && rightCta.href && (
+            <ButtonLink href={rightCta.href} target={rightCta.openInNewTab ? '_blank' : undefined} rel={rightCta.openInNewTab ? 'noopener noreferrer' : undefined} bg="lilac-200" size="small" class="">
+              {rightCta.label}
+            </ButtonLink>
+          )
+        }
+      </div>
+      <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer ml-2">
         <div class="w-9 h-9 flex flex-col justify-center items-stretch gap-[7px]">
           <span class="line"></span>
           <span class="line"></span>
