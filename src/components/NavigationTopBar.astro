@@ -28,7 +28,7 @@ const leftCta = settings?.leftCta?.label && settings?.leftCta?.href ? settings.l
 const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? settings.rightCta : { label: settings?.rightCta?.label, href: settings?.rightCta?.href, openInNewTab: false };
 ---
 
-<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0 sticky px-2 desktop:px-4', `bg-${variant}`]}>
+<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0 sticky px-2 desktop:px-3', `bg-${variant}`]}>
   <!-- Left (desktop only) -->
   <a href="/" class="flex">
     <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-7 object-contain" />
@@ -52,7 +52,7 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
           )
         }
       </div>
-      <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer ml-2">
+      <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer ml-1">
         <div class="w-9 h-9 flex flex-col justify-center items-stretch gap-[7px]">
           <span class="line"></span>
           <span class="line"></span>

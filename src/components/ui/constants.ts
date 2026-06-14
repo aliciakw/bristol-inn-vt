@@ -17,7 +17,7 @@ export type ButtonLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'cla
   href: string;
 } & PressableBaseProps;
 
-export const buttonDefaultClasses = 'inline-flex items-center justify-center rounded-full border font-serif font-medium whitespace-nowrap transition-colors duration-150 pointer';
+export const buttonDefaultClasses = 'inline-flex items-center justify-center rounded-full border font-serif font-medium whitespace-nowrap transition-all duration-250 hover:shadow-md pointer';
 
 export const buttonSizeClasses = {
   default: 'h-10 px-5 text-[21px] leading-none tracking-[-0.02em]',
@@ -35,7 +35,7 @@ export const buttonBgClasses = {
   'prussian-500': 'bg-prussian-500',
   'prussian-200': 'bg-prussian-200',
   'lilac-200': 'bg-lilac-200',
-  'sand-200': 'bg-sand-200',
+  'sand-200': 'bg-sand-200 hover:bg-sand-100',
   'khaki-200': 'bg-khaki-200',
 } satisfies Record<NonNullable<ButtonProps['bg']>, string>;
 

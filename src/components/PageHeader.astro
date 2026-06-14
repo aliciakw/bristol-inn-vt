@@ -1,0 +1,35 @@
+---
+import TextStyle from '@components/ui/TextStyle.astro';
+import SliceZone from './SliceZone.astro';
+import { buildSanityImageUrl, type SanityPage } from '../lib/sanity';
+
+interface Props extends Pick<SanityPage, 'title' | 'introduction' | 'heroImage'> {}
+
+const { title, introduction, heroImage } = Astro.props;
+---
+
+<div class="pb-[var(--grid-margin)]">
+  <div class="Section__inner">
+    <div class="row-span-1 col-span-6 desktop:col-span-4 pt-32 gap-6">
+      <TextStyle variant="h1" element="h1" class="mb-4" bold>{title}</TextStyle>
+      {introduction?.length > 0 && <SliceZone blocks={introduction} />}
+    </div>
+    {
+      heroImage?.url && (
+        <div class="row-span-1 col-span-6 desktop:col-span-4 bg-lilac-200 overflow-hidden aspect-[5/3] rounded-bl-[16px] rounded-br-[16px]">
+          <img
+            src={buildSanityImageUrl(heroImage.url, { width: 900, height: 700 })}
+            srcset={`${buildSanityImageUrl(heroImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(heroImage.url, { width: 900, height: 700 })} 900w`}
+            sizes="(max-width: 1280px) 40vw, 560px"
+            alt={heroImage.alt}
+            width={900}
+            height={700}
+            loading="eager"
+            class="w-full h-full object-cover"
+          />
+        </div>
+      )
+    }
+    <slot />
+  </div>
+</div>

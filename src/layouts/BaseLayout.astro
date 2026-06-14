@@ -16,10 +16,10 @@ interface Props {
   backgroundColor?: 'sand-050' | 'white' | 'sand-100' | 'forest-400';
   navigationVariant?: NavigationVariant;
   textColor?: NavigationTextColor;
-  overlayHero?: boolean;
+  offsetNavigation?: boolean;
 }
 
-const { title, description, meta: pageMeta, backgroundColor = 'white', textColor = 'ink-900', mainClassName, navigationVariant = 'white' } = Astro.props;
+const { title, description, meta: pageMeta, backgroundColor = 'white', textColor = 'ink-900', mainClassName, navigationVariant = 'transparent', offsetNavigation = false } = Astro.props;
 
 const settings = await getSettings();
 const siteMeta = settings?.meta;
@@ -57,7 +57,7 @@ const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
   <body class:list={['flex flex-col min-h-screen font-serif', `bg-${backgroundColor}`, `text-${textColor}`]}>
     <div class="flex flex-col flex-1">
       <NavigationTopBar variant={navigationVariant} />
-      <main class:list={['flex-1 mb-16', mainClassName]}>
+      <main class:list={['flex-1 mb-16', offsetNavigation ? 'mt-[-16px] desktop:mt-[-64px]' : '', mainClassName]}>
         <slot />
       </main>
     </div>
