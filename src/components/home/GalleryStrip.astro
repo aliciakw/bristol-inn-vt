@@ -11,10 +11,10 @@ const visible = images.filter((img) => img.url);
 
 {
   visible.length > 0 && (
-    <div class="overflow-hidden w-full pt-12 pb-4">
+    <div class=" w-full relative overflow-hidden">
       <div class="flex w-max gallery-scroll">
         {[...visible, ...visible].map((img) => (
-          <div class="flex-none w-48 aspect-square overflow-hidden mr-4">
+          <div class="flex-none w-[25vh] aspect-square overflow-x-hidden mr-4">
             <img src={buildSanityImageUrl(img.url, { width: 400, height: 400 })} alt={img.alt} width={192} height={192} loading="lazy" decoding="async" class="w-full h-full object-cover" />
           </div>
         ))}

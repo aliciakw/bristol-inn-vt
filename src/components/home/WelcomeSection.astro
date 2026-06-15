@@ -4,6 +4,9 @@ import TextStyle from '@components/ui/TextStyle.astro';
 import { buildSanityImageUrl, type SanityImage, type SanityResolvedLink } from '../../lib/sanity';
 import bristolBadge from '../../assets/bristol-inn-badge.png';
 import ButtonLink from '@components/ui/ButtonLink.astro';
+import GalleryStrip from '@components/home/GalleryStrip.astro';
+import ReservationSection from '@components/home/ReservationSection.astro';
+import { AvailabilitySearchForm } from '@components/rooms/AvailabilitySearchForm';
 
 interface Props {
   welcomeHeading?: string;
@@ -12,74 +15,139 @@ interface Props {
   welcomeImage?: SanityImage;
   heroLeftImage?: SanityImage;
   heroRightImage?: SanityImage;
+  galleryImages?: SanityImage[];
   directionsHref?: string;
   directionsLabel?: string;
+  reservationHeading?: string;
+  reservationHeadingIcon?: SanityImage;
+  reservationDescription?: string;
+  reservationImage?: SanityImage;
+  logo?: string;
 }
 
-const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftImage, heroRightImage, directionsHref, directionsLabel = 'find directions' } = Astro.props;
+const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftImage, heroRightImage, directionsHref, directionsLabel = 'find directions', reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, logo, galleryImages } = Astro.props;
 ---
 
-<section id="welcome-section">
-  <div id="welcome-hero" class="col-span-6 desktop:col-span-8 h-[400px] tablet:h-[420px] desktop:h-[calc(100vh-140px)] relative overflow-hidden">
-    {
-      heroLeftImage?.url && (
-        <div class="absolute left-0 top-[var(--nav-top-bar-height)] bottom-[var(--grid-margin)] w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-tr-[12px] rounded-br-[12px] desktop:rounded-tr-xl desktop:rounded-br-xl overflow-hidden">
-          <img
-            src={buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })}
-            srcset={`${buildSanityImageUrl(heroLeftImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })} 900w`}
-            sizes="(max-width: 1280px) 50vw, 740px"
-            alt={heroLeftImage.alt}
-            width={900}
-            height={550}
-            loading="eager"
-            fetchpriority="high"
-            decoding="sync"
-            class="w-full h-full object-cover"
-          />
+<div>
+  <section id="welcome-section" class="pt-[80vh] pb-[var(--nav-top-bar-height)]">
+    <div id="welcome-content" class="relative z-[10]">
+      <div class="flex items-center justify-center" id="welcome-badge-region">
+        <div class="w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px]">
+          <div class="w-full mt-4 rounded-full bg-white shadow-lg flex items-center justify-center p-3 desktop:p-5">
+            <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
+          </div>
         </div>
-      )
-    }
-    {
-      heroRightImage?.url && (
-        <div class="absolute right-0 top-[var(--nav-top-bar-height)] bottom-[var(--grid-margin)] w-[calc(50%-6px)] desktop:w-[calc(50%-12px)] rounded-tl-[12px] rounded-bl-[8px] desktop:rounded-tl-[16px] desktop:rounded-bl-[16px] overflow-hidden">
-          <img
-            src={buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })}
-            srcset={`${buildSanityImageUrl(heroRightImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })} 900w`}
-            sizes="(max-width: 1280px) 50vw, 740px"
-            alt={heroRightImage.alt}
-            width={900}
-            height={550}
-            loading="eager"
-            fetchpriority="high"
-            decoding="sync"
-            class="w-full h-full object-cover"
-          />
+      </div>
+
+      <div class="flex flex-col gap-[var(--grid-gap)] translate-y-[-32px] bg-white rounded-xl w-[70vw] mx-auto p-[var(--grid-margin)]">
+        <!-- Welcome section -->
+        <div class="flex">
+          {
+            (welcomeHeading || welcomeDescription || welcomeCTA) && (
+              <TextStyle variant="h1" element="p">
+                {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
+                {welcomeDescription && <span class="text-iron">{welcomeDescription} </span>}
+                {welcomeCTA && (
+                  <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
+                    {welcomeCTA.label}
+                  </ButtonLink>
+                )}
+              </TextStyle>
+            )
+          }
         </div>
-      )
-    }
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px] z-10">
-      <div class="w-full mt-4 rounded-full bg-white shadow-lg flex items-center justify-center p-3 desktop:p-5">
-        <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
+
+        <!-- Reservation section -->
+        <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-margin)]">
+          <!-- {logo && <img src={logo} alt="" aria-hidden="true" class="w-24 h-24 object-contain" />} -->
+
+          {
+            reservationImage && (
+              <div class="mx-[var(--grid-margin)] aspect-[5/3] w-[33vw] mx-auto my-8 overflow-hidden rounded-xl">
+                <img
+                  src={buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })}
+                  srcset={`${buildSanityImageUrl(reservationImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })} 900w`}
+                  sizes="(max-width: 1280px) 40vw, 560px"
+                  alt={reservationImage.alt}
+                  width={900}
+                  height={700}
+                  loading="eager"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            )
+          }
+
+          <TextStyle variant="h2" class="text-center">{reservationHeading}</TextStyle>
+          {
+            reservationDescription && (
+              <TextStyle variant="paragraph" element="p" class="max-w-2xl mt-2 mb-[var(--grid-gutter)]">
+                {reservationDescription}
+              </TextStyle>
+            )
+          }
+
+          <div class="w-2xl">
+            <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
+          </div>
+
+          <div class="flex items-center justify-center mt-[var(--grid-margin)]">
+            {
+              reservationHeadingIcon && (
+                <div class="w-20 h-20 flex items-center justify-center">
+                  <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
+                </div>
+              )
+            }
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="px-[var(--grid-margin)]">
-    <div class="Section__inner">
-      <div class="row-span-1 col-span-6 desktop:col-start-2">
-        {
-          (welcomeHeading || welcomeDescription || welcomeCTA) && (
-            <TextStyle variant="h1" element="p">
-              {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
-              {welcomeDescription && <span class="text-iron">{welcomeDescription} </span>}
-              {welcomeCTA && (
-                <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
-                  {welcomeCTA.label}
-                </ButtonLink>
-              )}
-            </TextStyle>
-          )
-        }
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
+
+  <style>
+    #welcome-section {
+      --welcome-hero-h: 400px;
+    }
+
+    @media (min-width: 768px) {
+      #welcome-section {
+        --welcome-hero-h: 420px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      #welcome-section {
+        --welcome-hero-h: calc(100vh - 140px);
+      }
+    }
+
+    #welcome-hero {
+      height: var(--welcome-hero-h);
+    }
+
+    #welcome-content {
+      margin-top: calc(-1 * var(--welcome-hero-h));
+    }
+
+    #welcome-badge-region {
+      height: var(--welcome-hero-h);
+    }
+
+    .welcome-hero-image {
+      opacity: 0;
+      animation: heroFadeIn 1s ease-out 0.15s both;
+    }
+  </style>
+
+  <style is:global>
+    @keyframes heroFadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</div>

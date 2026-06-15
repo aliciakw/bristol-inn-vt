@@ -20,21 +20,85 @@ const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImag
     {heroLeftPreload && <link rel="preload" as="image" href={heroLeftPreload} fetchpriority="high" />}
     {heroRightPreload && <link rel="preload" as="image" href={heroRightPreload} fetchpriority="high" />}
   </Fragment>
-  <WelcomeSection welcomeHeading={welcomeHeading} welcomeDescription={welcomeDescription} welcomeCTA={welcomeCTA} heroLeftImage={heroLeftImage} heroRightImage={heroRightImage} welcomeImage={welcomeImage} directionsHref={settings.directionsLink?.href} directionsLabel={settings.directionsLink?.label} />
+  <div class="fixed w-full h-[calc(100vh-120px))] z-[-1]">
+    {
+      heroLeftImage?.url && (
+        <div class="welcome-hero-image absolute left-0 top-0 bottom-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-tr-[12px] rounded-br-[12px] desktop:rounded-tr-xl desktop:rounded-br-xl overflow-hidden">
+          <img
+            src={buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })}
+            srcset={`${buildSanityImageUrl(heroLeftImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })} 900w`}
+            sizes="(max-width: 1280px) 50vw, 740px"
+            alt={heroLeftImage.alt}
+            width={900}
+            height={550}
+            loading="eager"
+            fetchpriority="high"
+            decoding="sync"
+            class="w-full h-full object-cover"
+          />
+        </div>
+      )
+    }
+    {
+      heroRightImage?.url && (
+        <div class="welcome-hero-image absolute right-0 top-0 bottom-0 w-[calc(50%-6px)] desktop:w-[calc(50%-12px)] rounded-tl-[12px] rounded-bl-[8px] desktop:rounded-tl-[16px] desktop:rounded-bl-[16px] overflow-hidden">
+          <img
+            src={buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })}
+            srcset={`${buildSanityImageUrl(heroRightImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })} 900w`}
+            sizes="(max-width: 1280px) 50vw, 740px"
+            alt={heroRightImage.alt}
+            width={900}
+            height={550}
+            loading="eager"
+            fetchpriority="high"
+            decoding="sync"
+            class="w-full h-full object-cover"
+          />
+        </div>
+      )
+    }
+  </div>
 
-  <GalleryStrip images={galleryImages ?? []} />
+  <WelcomeSection
+    welcomeHeading={welcomeHeading}
+    welcomeDescription={welcomeDescription}
+    welcomeCTA={welcomeCTA}
+    heroLeftImage={heroLeftImage}
+    heroRightImage={heroRightImage}
+    welcomeImage={welcomeImage}
+    directionsHref={settings.directionsLink?.href}
+    directionsLabel={settings.directionsLink?.label}
+    reservationHeading={reservationHeading}
+    reservationHeadingIcon={reservationHeadingIcon}
+    reservationDescription={reservationDescription}
+    reservationImage={reservationImage}
+    galleryImages={galleryImages}
+    logo={settings.logo}
+  />
 
-  <ReservationSection reservationHeading={reservationHeading} reservationHeadingIcon={reservationHeadingIcon} reservationDescription={reservationDescription} reservationImage={reservationImage} />
+  <div class="mb-[64px]">
+    <GalleryStrip images={galleryImages ?? []} />
+  </div>
+
+  <!-- <ReservationSection reservationHeading={reservationHeading} reservationHeadingIcon={reservationHeadingIcon} reservationDescription={reservationDescription} reservationImage={reservationImage} /> -->
 
   <TestimonialsSection testimonialsHeading={testimonialsHeading} testimonial={testimonial} amenities={amenities ?? []} />
-
-  {
-    body?.length > 0 && (
-      <div class="px-[var(--grid-margin)] pb-16 desktop:pb-24 text-sand-050">
-        <div class="max-w-[1480px] mx-auto">
-          <SliceZone blocks={body} />
-        </div>
-      </div>
-    )
-  }
 </BaseLayout>
+
+<style>
+  .welcome-hero-image {
+    opacity: 0;
+    animation: heroFadeIn 1s ease-out 0.15s both;
+  }
+</style>
+
+<style is:global>
+  @keyframes heroFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>
