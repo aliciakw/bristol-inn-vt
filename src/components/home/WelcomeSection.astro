@@ -28,231 +28,242 @@ interface Props {
 const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftImage, heroRightImage, directionsHref, directionsLabel = 'find directions', reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, logo, galleryImages } = Astro.props;
 ---
 
-<div class="pt-[16px]">
-  <div id="welcome-hero" class="fixed w-full z-[-1]">
-    {
-      heroLeftImage?.url && (
-        <div class="welcome-hero-image hero-image-left absolute left-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-r-xl bg-prussian-700 overflow-hidden">
-          <img
-            src={buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })}
-            srcset={`${buildSanityImageUrl(heroLeftImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })} 900w`}
-            sizes="(max-width: 1280px) 50vw, 740px"
-            alt={heroLeftImage.alt}
-            width={900}
-            height={550}
-            loading="eager"
-            fetchpriority="high"
-            decoding="sync"
-            class="w-full h-full object-cover"
-          />
-          <div class="absolute inset-0 mix-blend-multiply bg-stone-300 pointer-events-none" aria-hidden="true" />
-        </div>
-      )
-    }
-    {
-      heroRightImage?.url && (
-        <div class="welcome-hero-image hero-image-right absolute right-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-l-xl bg-prussian-700 overflow-hidden">
-          <img
-            src={buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })}
-            srcset={`${buildSanityImageUrl(heroRightImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })} 900w`}
-            sizes="(max-width: 1280px) 50vw, 740px"
-            alt={heroRightImage.alt}
-            width={900}
-            height={550}
-            loading="eager"
-            fetchpriority="high"
-            decoding="sync"
-            class="w-full h-full object-cover"
-          />
-          <div class="absolute inset-0 mix-blend-multiply bg-stone-300 pointer-events-none" aria-hidden="true" />
-        </div>
-      )
-    }
-  </div>
-  <section id="welcome-section" class="">
-    <div class="relative z-[10]">
-      <div class="flex items-center justify-center" id="welcome-badge-region">
-        <div id="bristol-badge" class="w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px]">
-          <div class="w-full mt-4 rounded-full bg-white shadow-lg flex items-center justify-center p-3 desktop:p-5">
-            <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
-          </div>
-        </div>
+<div id="welcome-hero" class="fixed w-full z-[-1] bg-white pt-[16px]">
+  {
+    heroLeftImage?.url && (
+      <div class="welcome-hero-image hero-image-left absolute left-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-r-xl bg-prussian-700 overflow-hidden">
+        <img
+          src={buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })}
+          srcset={`${buildSanityImageUrl(heroLeftImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })} 900w`}
+          sizes="(max-width: 1280px) 50vw, 740px"
+          alt={heroLeftImage.alt}
+          width={900}
+          height={550}
+          loading="eager"
+          fetchpriority="high"
+          decoding="sync"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 mix-blend-multiply bg-stone-300 pointer-events-none" aria-hidden="true" />
       </div>
+    )
+  }
+  {
+    heroRightImage?.url && (
+      <div class="welcome-hero-image hero-image-right absolute right-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-l-xl bg-prussian-700 overflow-hidden">
+        <img
+          src={buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })}
+          srcset={`${buildSanityImageUrl(heroRightImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })} 900w`}
+          sizes="(max-width: 1280px) 50vw, 740px"
+          alt={heroRightImage.alt}
+          width={900}
+          height={550}
+          loading="eager"
+          fetchpriority="high"
+          decoding="sync"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 mix-blend-multiply bg-stone-300 pointer-events-none" aria-hidden="true" />
+      </div>
+    )
+  }
+</div>
 
-      <div id="welcome-section-content" class="flex flex-col gap-[var(--grid-gap)] bg-white rounded-xl w-[70vw] mx-auto p-[var(--grid-margin)]">
-        <!-- Welcome section -->
-        <div class="flex">
-          {
-            (welcomeHeading || welcomeDescription || welcomeCTA) && (
-              <TextStyle variant="h1" element="p">
-                {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
-                {welcomeDescription && <span class="text-iron">{welcomeDescription} </span>}
-                {welcomeCTA && (
-                  <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
-                    {welcomeCTA.label}
-                  </ButtonLink>
-                )}
-              </TextStyle>
-            )
-          }
-        </div>
-
-        <!-- Reservation section -->
-        <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-margin)]">
-          <!-- {logo && <img src={logo} alt="" aria-hidden="true" class="w-24 h-24 object-contain" />} -->
-
-          {
-            reservationImage && (
-              <div class="mx-[var(--grid-margin)] aspect-[5/3] w-[33vw] mx-auto my-8 overflow-hidden rounded-xl">
-                <img
-                  src={buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })}
-                  srcset={`${buildSanityImageUrl(reservationImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })} 900w`}
-                  sizes="(max-width: 1280px) 40vw, 560px"
-                  alt={reservationImage.alt}
-                  width={900}
-                  height={700}
-                  loading="eager"
-                  class="w-full h-full object-cover"
-                />
-              </div>
-            )
-          }
-
-          <TextStyle variant="h2" class="text-center">{reservationHeading}</TextStyle>
-          {
-            reservationDescription && (
-              <TextStyle variant="paragraph" element="p" class="max-w-2xl mt-2 mb-[var(--grid-gutter)]">
-                {reservationDescription}
-              </TextStyle>
-            )
-          }
-
-          <div class="w-2xl">
-            <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
-          </div>
-
-          <div class="flex items-center justify-center mt-[var(--grid-margin)]">
-            {
-              reservationHeadingIcon && (
-                <div class="w-20 h-20 flex items-center justify-center">
-                  <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
-                </div>
-              )
-            }
-          </div>
+<section id="welcome-section">
+  <div class="relative z-[10] mb-[64px]">
+    <div class="flex items-center justify-center" id="welcome-badge-region">
+      <div id="bristol-badge" class="w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px]">
+        <div class="w-full mt-4 rounded-full bg-white shadow-lg flex items-center justify-center p-3 desktop:p-5">
+          <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
         </div>
       </div>
     </div>
-  </section>
 
-  <style>
-    #welcome-badge-region {
-      height: var(--welcome-hero-h);
-    }
+    <div id="welcome-section-content" class="bg-lilac-200 flex flex-col gap-[var(--grid-gap)] bg-white rounded-xl w-[70vw] mx-auto p-[var(--grid-margin)]">
+      <!-- Welcome section -->
+      <div class="flex">
+        {
+          (welcomeHeading || welcomeDescription || welcomeCTA) && (
+            <TextStyle variant="h1" element="p">
+              {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
+              {welcomeDescription && <span class="text-iron">{welcomeDescription} </span>}
+              {welcomeCTA && (
+                <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
+                  {welcomeCTA.label}
+                </ButtonLink>
+              )}
+            </TextStyle>
+          )
+        }
+      </div>
 
-    #welcome-section-content {
-      transition: box-shadow 0.4s ease;
-    }
+      <!-- Reservation section -->
+      <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-margin)]">
+        <!-- {logo && <img src={logo} alt="" aria-hidden="true" class="w-24 h-24 object-contain" />} -->
 
-    #welcome-section-content.shadow-visible {
-      box-shadow:
-        0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
-    }
+        {
+          reservationImage && (
+            <div class="mx-[var(--grid-margin)] aspect-[5/3] w-[33vw] mx-auto my-8 overflow-hidden rounded-xl">
+              <img
+                src={buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })}
+                srcset={`${buildSanityImageUrl(reservationImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })} 900w`}
+                sizes="(max-width: 1280px) 40vw, 560px"
+                alt={reservationImage.alt}
+                width={900}
+                height={700}
+                loading="eager"
+                class="w-full h-full object-cover"
+              />
+            </div>
+          )
+        }
 
-    .welcome-hero-image {
-      opacity: 0; /* held by animation-fill-mode: both until animation starts */
-    }
+        <TextStyle variant="h2" class="text-center">{reservationHeading}</TextStyle>
+        {
+          reservationDescription && (
+            <TextStyle variant="paragraph" element="p" class="max-w-2xl mt-2 mb-[var(--grid-gutter)]">
+              {reservationDescription}
+            </TextStyle>
+          )
+        }
 
-    .hero-image-left {
-      animation-delay: 2s;
-      animation: heroSlideInLeft 0.5s ease-out 0.05s both;
-    }
+        <div class="w-2xl">
+          <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
+        </div>
 
-    .hero-image-right {
-      animation-delay: 2s;
-      animation: heroSlideInRight 0.5s ease-out 0.05s both;
-    }
-  </style>
+        <div class="flex items-center justify-center mt-[var(--grid-margin)]">
+          {
+            reservationHeadingIcon && (
+              <div class="w-20 h-20 flex items-center justify-center">
+                <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <style is:global>
+<style>
+  #welcome-badge-region {
+    height: var(--welcome-hero-h);
+  }
+
+  #welcome-hero {
+    height: var(--welcome-hero-h);
+    will-change: transform, opacity;
+  }
+
+  #bristol-badge {
+    will-change: transform;
+  }
+
+  #welcome-section-content {
+    transition: box-shadow 0.4s ease;
+  }
+
+  #welcome-section-content.shadow-visible {
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  #color-block {
+    position: relative;
+    z-index: -2;
+    /* --color-tint-pct is driven by JS scroll progress (0% → 100%) */
+    background-color: color-mix(in srgb, var(--color-sand-200) var(--color-tint-pct, 0%), white);
+  }
+
+  .welcome-hero-image {
+    top: 0;
+    bottom: 0;
+    opacity: 0; /* held by animation-fill-mode: both until animation starts */
+  }
+
+  .hero-image-left {
+    animation-delay: 2s;
+    animation: heroSlideInLeft 0.5s ease-out 0.05s both;
+  }
+
+  .hero-image-right {
+    animation-delay: 2s;
+    animation: heroSlideInRight 0.5s ease-out 0.05s both;
+  }
+</style>
+
+<style is:global>
+  :root {
+    --welcome-hero-h: 400px;
+  }
+
+  @media (min-width: 768px) {
     :root {
-      --welcome-hero-h: 400px;
+      --welcome-hero-h: 420px;
     }
+  }
 
-    @media (min-width: 768px) {
-      :root {
-        --welcome-hero-h: 420px;
-      }
+  @media (min-width: 1024px) {
+    :root {
+      /* full viewport minus top nav + bottom chrome; tune this to set hero height */
+      --welcome-hero-h: calc(100vh - 274px);
     }
+  }
 
-    @media (min-width: 1024px) {
-      :root {
-        /* full viewport minus top nav + bottom chrome; tune this to set hero height */
-        --welcome-hero-h: calc(100vh - 274px);
-      }
+  @keyframes heroSlideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
     }
-
-    @keyframes heroSlideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-100%);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
+  }
 
-    @keyframes heroSlideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(100%);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+  @keyframes heroSlideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
     }
-
-    @keyframes badgeEntrance {
-      0% {
-        scale: 0.7;
-        opacity: 0;
-      }
-      70% {
-        scale: 1.06;
-        opacity: 1;
-      }
-      100% {
-        scale: 1;
-      }
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
+  }
 
-    #bristol-badge {
-      /* 0% 50%: layout-left edge at vertical centre. Because JS applies
+  @keyframes badgeEntrance {
+    0% {
+      scale: 0.7;
+      opacity: 0;
+    }
+    70% {
+      scale: 1.06;
+      opacity: 1;
+    }
+    100% {
+      scale: 1;
+    }
+  }
+
+  #bristol-badge {
+    /* 0% 50%: layout-left edge at vertical centre. Because JS applies
          transform: translateX(-50%) first, the element's visual centre
          coincides with its layout-left edge — so this keeps the scale
          pivot on the visual centre rather than drifting right. */
-      transform-origin: 0% 50%;
-      animation: badgeEntrance 0.4s ease-in-out 0.35s both;
-    }
-  </style>
-</div>
+    transform-origin: 0% 50%;
+    animation: badgeEntrance 0.4s ease-in-out 0.35s both;
+  }
+</style>
+
 <script>
   // ── Animation tuning ───────────────────────────────────────────────────────
   // Adjust these values to change timing and feel without touching the logic.
 
-  const GALLERY_PUSH_FROM_BOTTOM_PX = Math.round(window.innerHeight * 0.25) - 32;
-  // Hero starts sliding up when the gallery strip is this many px from the
-  // bottom of the viewport. Larger value = push begins sooner.
-
-  const HERO_DIM_OPACITY = 0.7;
-  // Hero images fade to this opacity as the badge scrolls toward the top.
-
-  const HERO_DIM_BADGE_START_PX = Math.round(window.innerHeight * 0.75);
-  // Badge viewport-top (px) at which hero dimming begins.
-  // Dimming completes when badge reaches the very top of the screen (0 px).
+  const HERO_PUSH_CONTENT_GAP_PX = 64;
+  // Hero starts sliding up when #welcome-section-content is this many px
+  // above the hero's bottom edge.
 
   const BADGE_CONTENT_GAP_PX = 80;
   // Minimum gap (px) between badge bottom and content top once the badge
@@ -264,15 +275,27 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 
   const CONTENT_SHADOW_SCROLL_PX = 64;
   // Page scroll distance (px) at which the content card's drop shadow fades in.
+
+  const HERO_EXPAND_START_SCROLL = 128;
+  // Hero starts expanding once the user has scrolled this far.
+  // Grows at 1px per 1px of scroll until it hits HERO_EXPAND_MAX_PCT.
+
+  const BODY_BACKGROUND_COLOR_START_SCROLL = HERO_EXPAND_START_SCROLL;
+  const BODY_BACKGROUND_COLOR_TRANSITION_INTERVAL = Math.round(window.innerHeight * 0.25);
+
+  const HERO_EXPAND_MAX_PCT = 0.12;
+  // Hero grows by at most this fraction beyond its initial height (0.15 = 15%).
   // ───────────────────────────────────────────────────────────────────────────
 
   const hero = document.getElementById('welcome-hero');
-  const gallery = document.getElementById('gallery-strip-wrapper');
   const badge = document.getElementById('bristol-badge');
   const content = document.getElementById('welcome-section-content');
+  const colorBlock = document.getElementById('color-block');
+  const body = document.body;
 
   let badgeFixedTop = 0;
   let badgeHeight = 0; // cached on init; only changes on resize
+  let heroInitialHeight = 0;
 
   function initBadge() {
     if (!badge) return;
@@ -295,24 +318,69 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
     window.addEventListener('resize', initBadge, { passive: true });
   }
 
-  // Hero slides up as the gallery strip enters from the bottom of the screen
+  function initHeroHeight() {
+    if (!hero) return;
+    hero.style.height = ''; // clear any JS override so offsetHeight reflects CSS
+    heroInitialHeight = hero.offsetHeight;
+  }
+
+  if (hero) {
+    initHeroHeight();
+    window.addEventListener(
+      'resize',
+      () => {
+        initHeroHeight();
+        updateHeroHeight();
+      },
+      { passive: true },
+    );
+  }
+
+  // Hero expands from its initial height to 100vh as user scrolls past the trigger
+  function updateHeroHeight() {
+    if (!hero) return;
+    const scroll = window.scrollY;
+    if (scroll <= HERO_EXPAND_START_SCROLL) {
+      hero.style.height = '';
+      return;
+    }
+
+    const growthCoefficient = 0.5;
+    const grown = (scroll - HERO_EXPAND_START_SCROLL) * growthCoefficient;
+    const maxHeight = heroInitialHeight * (1 + HERO_EXPAND_MAX_PCT);
+    hero.style.height = `${Math.min(maxHeight, heroInitialHeight + grown)}px`;
+  }
+
+  // Hero slides up once #welcome-section-content is within HERO_PUSH_CONTENT_GAP_PX of the hero bottom
   function updateHeroPush() {
-    if (!hero || !gallery) return;
-    const galleryTop = gallery.getBoundingClientRect().top;
-    const pushThreshold = window.innerHeight - GALLERY_PUSH_FROM_BOTTOM_PX;
-    const overshoot = galleryTop - pushThreshold; // negative once gallery crosses the line
+    if (!hero || !content) return;
+    const heroBottom = hero.offsetHeight; // hero is position:fixed at top:0
+    const contentTop = content.getBoundingClientRect().top;
+    const overshoot = contentTop - (heroBottom - HERO_PUSH_CONTENT_GAP_PX);
     hero.style.transform = overshoot < 0 ? `translateY(${overshoot}px)` : '';
   }
 
-  // Hero dims as the badge floats up toward the top of the screen
-  function updateHeroOpacity() {
-    if (!hero || !badge) return;
-    const badgeTop = badge.getBoundingClientRect().top;
-    if (badgeTop <= HERO_DIM_BADGE_START_PX) {
-      const progress = Math.min(1, Math.max(0, (HERO_DIM_BADGE_START_PX - badgeTop) / HERO_DIM_BADGE_START_PX));
-      hero.style.opacity = String(1 - (1 - HERO_DIM_OPACITY) * progress);
+  /* Body background color blends from white → sand-200 while the
+     hero scale animation is in progress.
+     This transition should be complete once the hero moves out of view.
+     The transition will happen in reverse if the user scrolls bac up and the hero comes in to focus again.
+  */
+  function updateBodyBackgroundColor() {
+    if (!body) return;
+    const startColor = '#ffffff';
+    const endColor = '#ded6d2'; // sand-200
+    const scrollY = window.scrollY;
+
+    if (scrollY <= BODY_BACKGROUND_COLOR_START_SCROLL) {
+      body.style.backgroundColor = '';
+    } else if (scrollY < BODY_BACKGROUND_COLOR_START_SCROLL + BODY_BACKGROUND_COLOR_TRANSITION_INTERVAL) {
+      const startColorPercentage = Math.round(((scrollY - BODY_BACKGROUND_COLOR_START_SCROLL) / BODY_BACKGROUND_COLOR_TRANSITION_INTERVAL) * 100);
+      const endColorPercentage = 100 - startColorPercentage;
+
+      const backgroundColorStyle = `color-mix(in hsl increasing hue, ${startColor} ${startColorPercentage}%, ${endColor} ${endColorPercentage}%)`;
+      body.style.backgroundColor = backgroundColorStyle;
     } else {
-      hero.style.opacity = '';
+      body.style.backgroundColor = endColor;
     }
   }
 
@@ -322,20 +390,38 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
     content.classList.toggle('shadow-visible', window.scrollY >= CONTENT_SHADOW_SCROLL_PX);
   }
 
+  // Color block blends from white → sand-200 over the first CONTENT_SHADOW_SCROLL_PX of scroll
+  function updateColorBlock() {
+    if (!colorBlock) return;
+    const progress = Math.min(1, window.scrollY / CONTENT_SHADOW_SCROLL_PX);
+    colorBlock.style.setProperty('--color-tint-pct', `${progress * 100}%`);
+  }
+
   // Badge stays pinned until content comes within BADGE_CONTENT_GAP_PX,
-  // then floats above the content maintaining that gap
+  // then floats above the content maintaining that gap.
+  // Uses translateY instead of `top` so movement stays on the GPU compositor.
   function updateBadgePosition() {
     if (!badge || !content) return;
     const contentTop = content.getBoundingClientRect().top;
     const threshold = badgeFixedTop + badgeHeight + BADGE_CONTENT_GAP_PX;
-    badge.style.top = contentTop <= threshold ? `${contentTop - BADGE_CONTENT_GAP_PX - badgeHeight}px` : `${badgeFixedTop}px`;
+    const dy = contentTop <= threshold ? contentTop - BADGE_CONTENT_GAP_PX - badgeHeight - badgeFixedTop : 0;
+    badge.style.transform = `translateX(-50%) translateY(${dy}px)`;
   }
 
+  let rafPending = false;
+
   function onScroll() {
-    updateHeroPush();
-    updateHeroOpacity();
-    updateBadgePosition();
-    updateContentShadow();
+    if (rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(() => {
+      updateHeroHeight();
+      updateBodyBackgroundColor();
+      updateHeroPush();
+      updateBadgePosition();
+      updateContentShadow();
+      updateColorBlock();
+      rafPending = false;
+    });
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });

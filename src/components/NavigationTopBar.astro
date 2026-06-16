@@ -7,9 +7,10 @@ export type NavigationTextColor = 'ink-900' | 'sand-050';
 
 interface Props {
   variant: NavigationVariant;
+  shadow?: boolean;
 }
 
-const { variant } = Astro.props;
+const { variant, shadow = false } = Astro.props;
 
 const settings = await getSettings();
 
@@ -28,7 +29,7 @@ const leftCta = settings?.leftCta?.label && settings?.leftCta?.href ? settings.l
 const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? settings.rightCta : { label: settings?.rightCta?.label, href: settings?.rightCta?.href, openInNewTab: false };
 ---
 
-<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0 sticky px-2 desktop:px-3', `bg-${variant}`, variant !== 'transparent' && `shadow-lg`]}>
+<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0 sticky px-2 desktop:px-3', `bg-${variant}`, shadow && `shadow-lg`]}>
   <div class="hidden tablet:inline-flex gap-2">
     <!-- {
           rightCta.label && rightCta.href && (

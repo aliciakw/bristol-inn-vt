@@ -16,10 +16,12 @@ interface Props {
   backgroundColor?: 'sand-050' | 'white' | 'sand-100' | 'forest-400';
   navigationVariant?: NavigationVariant;
   textColor?: NavigationTextColor;
+  bottomSpacer?: boolean;
+  bodyClass?: string;
   offsetNavigation?: boolean;
 }
 
-const { title, description, meta: pageMeta, backgroundColor = 'white', textColor = 'ink-900', mainClassName, navigationVariant = 'transparent', offsetNavigation = false } = Astro.props;
+const { title, description, meta: pageMeta, backgroundColor = 'white', textColor = 'ink-900', mainClassName, navigationVariant = 'transparent', offsetNavigation = false, bottomSpacer = true, bodyClass = '' } = Astro.props;
 
 const settings = await getSettings();
 const siteMeta = settings?.meta;
@@ -54,10 +56,10 @@ const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
     {resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
     <slot name="head" />
   </head>
-  <body class:list={['flex flex-col min-h-screen font-serif', `bg-${backgroundColor}`, `text-${textColor}`]}>
+  <body class:list={['flex flex-col min-h-screen font-serif', `bg-${backgroundColor}`, `text-${textColor}`, bodyClass]}>
     <div class="flex flex-col flex-1">
       <NavigationTopBar variant={navigationVariant} />
-      <main class:list={['flex-1 mb-16', offsetNavigation ? 'mt-[-16px] desktop:mt-[-64px]' : '', mainClassName]}>
+      <main class:list={['flex-1', bottomSpacer ? 'mb-16' : '', offsetNavigation ? 'mt-[-16px] desktop:mt-[-64px]' : '', mainClassName]}>
         <slot />
       </main>
     </div>
