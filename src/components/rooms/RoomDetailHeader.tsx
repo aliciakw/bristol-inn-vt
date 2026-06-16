@@ -55,7 +55,6 @@ export function RoomDetailHeader({ roomId, name, bedroomsLabel, personCapacity, 
       <TextStyle variant="label" element="p" className="text-iron mt-1">
         {meta}
       </TextStyle>
-
       {booking ? (
         <TextStyle variant="h5" element="p" className="font-medium mt-2">
           {bookingDetails}
@@ -67,7 +66,7 @@ export function RoomDetailHeader({ roomId, name, bedroomsLabel, personCapacity, 
             Book Now!
           </ButtonLink>
         ) : (
-          <ButtonLink href={bookingUrl} bg="khaki-200" target="_blank" rel="noopener noreferrer">
+          <ButtonLink href={bookingUrl} bg="sand-200" target="_blank" rel="noopener noreferrer">
             Make a Reservation
           </ButtonLink>
         )}

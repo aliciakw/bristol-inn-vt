@@ -59,7 +59,7 @@ const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
   <body class:list={['flex flex-col min-h-screen font-serif', `bg-${backgroundColor}`, `text-${textColor}`, bodyClass]}>
     <div class="flex flex-col flex-1">
       <NavigationTopBar variant={navigationVariant} />
-      <main class:list={['flex-1', bottomSpacer ? 'mb-16' : '', offsetNavigation ? 'mt-[-16px] desktop:mt-[-64px]' : '', mainClassName]}>
+      <main class:list={['flex-1', bottomSpacer ? 'mb-16' : '', offsetNavigation ? 'mt-[-48px] desktop:mt-[-72px]' : '', mainClassName]}>
         <slot />
       </main>
     </div>

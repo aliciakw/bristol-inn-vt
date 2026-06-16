@@ -22,21 +22,23 @@ const [heroImage, ...images] = room.photos;
 ---
 
 <BaseLayout title={`${room.name} — Bristol Inn`} description={metaDescription} navigationVariant="transparent">
-  <section class="Section mt-[-3.5rem]">
+  <section class="Section">
+    <a id="back-to-rooms" href="/rooms-and-suites" class="text-sm text-iron hover:text-ink-900 transition-colors w-fit">← Back to Rooms</a>
     <div class="Section__inner pb-[var(--nav-top-bar-height)]">
       <div class="row-span-1 col-span-6 tablet:col-span-2 desktop:col-span-3 flex flex-col gap-4 tablet:sticky tablet:top-[var(--nav-top-bar-height)] tablet:self-start tablet:max-h-[calc(100vh-var(--nav-top-bar-height))] tablet:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <a id="back-to-rooms" href="/rooms-and-suites" class="text-sm text-iron hover:text-ink-900 transition-colors w-fit">← Back to Rooms</a>
-        <img src={room.photos[0].url} alt={room.photos[0].caption || `${room.name}`} width={1200} height={800} loading="eager" fetchpriority="high" decoding="sync" class="w-full object-cover rounded-xl aspect-[5/3] mt-4 desktop:hidden" />
-        <RoomDetailHeader client:load roomId={room.id} name={room.name} bedroomsLabel={room.bedroomsLabel} personCapacity={room.personCapacity} floorNumber={room.floorNumber} basePrice={room.price} />
-        <TextStyle variant="paragraph" class="font-bold desktop:mt-4">Description</TextStyle>
+        <img src={room.photos[0].url} alt={room.photos[0].caption || `${room.name}`} width={1200} height={800} loading="eager" fetchpriority="high" decoding="sync" class="w-full object-cover rounded-xl aspect-[5/3] mt-4 tablet:hidden" />
+        <div class="tablet:mt-18 mb-4">
+          <RoomDetailHeader client:load roomId={room.id} name={room.name} bedroomsLabel={room.bedroomsLabel} personCapacity={room.personCapacity} floorNumber={room.floorNumber} basePrice={room.price} />
+        </div>
+        <TextStyle variant="paragraph" class="font-bold tablet:mt-4">Description</TextStyle>
         <TextStyle variant="caption" class="leading-relaxed text-gray-700">{room.description}</TextStyle>
         <TextStyle variant="paragraph" class="font-bold">Amenities</TextStyle>
-        <div class="flex flex-wrap gap-2 pb-[var(--nav-top-bar-height)]">
+        <div class="flex flex-wrap gap-2 desktop:pb-[var(--nav-top-bar-height)]">
           {room.amenityNames.map((a) => <AmenityBadge label={a} />)}
         </div>
       </div>
-      <div class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-5">
-        <TextStyle variant="paragraph" class="font-bold desktop:hidden">Gallery</TextStyle>
+      <div class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-5 desktop:mt-[-86px]">
+        <TextStyle variant="paragraph" class="font-bold my-4 tablet:hidden">Gallery</TextStyle>
         <RoomGallery photos={room.photos} roomName={room.name} layout="heroFirst" />
       </div>
     </div>

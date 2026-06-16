@@ -28,7 +28,7 @@ interface Props {
 const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftImage, heroRightImage, directionsHref, directionsLabel = 'find directions', reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, logo, galleryImages } = Astro.props;
 ---
 
-<div id="welcome-hero" class="fixed w-full z-[-1] bg-white pt-[16px]">
+<div id="welcome-hero" class="fixed w-full z-[-1] bg-white">
   {
     heroLeftImage?.url && (
       <div class="welcome-hero-image hero-image-left absolute left-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-r-xl bg-prussian-700 overflow-hidden">
@@ -79,7 +79,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
       </div>
     </div>
 
-    <div id="welcome-section-content" class="bg-lilac-200 flex flex-col gap-[var(--grid-gap)] bg-white rounded-xl w-[70vw] mx-auto p-[var(--grid-margin)]">
+    <div id="welcome-section-content" class="bg-lilac-200 flex flex-col bg-white rounded-xl w-[66vw] mx-auto p-12">
       <!-- Welcome section -->
       <div class="flex">
         {
@@ -134,7 +134,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
         <div class="flex items-center justify-center mt-[var(--grid-margin)]">
           {
             reservationHeadingIcon && (
-              <div class="w-20 h-20 flex items-center justify-center">
+              <div id="reservation-heading-icon" class="w-20 h-20 flex items-center justify-center">
                 <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
               </div>
             )
@@ -235,10 +235,10 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 
   @keyframes badgeEntrance {
     0% {
-      scale: 0.7;
+      scale: 0.2;
       opacity: 0;
     }
-    70% {
+    80% {
       scale: 1.06;
       opacity: 1;
     }

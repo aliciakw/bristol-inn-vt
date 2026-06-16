@@ -25,7 +25,9 @@ const browserRooms = rooms.map((r) => ({
 ---
 
 <BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta} backgroundColor="white" navigationVariant="transparent" offsetNavigation>
-  <PageHeader title={pageTitle} introduction={page?.introduction} heroImage={page?.heroImage} />
+  <div class="Section">
+    <PageHeader title={pageTitle} introduction={page?.introduction} heroImage={page?.heroImage} />
+  </div>
   <div class="Section">
     <div class="Section__inner">
       <div class="row-span-1 col-span-6 desktop:col-start-2">
