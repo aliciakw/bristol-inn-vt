@@ -29,17 +29,57 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 ---
 
 <div>
-  <section id="welcome-section" class="pt-[80vh] pb-[var(--nav-top-bar-height)]">
-    <div id="welcome-content" class="relative z-[10]">
+  <div id="welcome-hero" class="fixed w-full z-[-1]">
+    {
+      heroLeftImage?.url && (
+        <div class="welcome-hero-image absolute left-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-r-xl bg-prussian-700 overflow-hidden">
+          <img
+            src={buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })}
+            srcset={`${buildSanityImageUrl(heroLeftImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })} 900w`}
+            sizes="(max-width: 1280px) 50vw, 740px"
+            alt={heroLeftImage.alt}
+            width={900}
+            height={550}
+            loading="eager"
+            fetchpriority="high"
+            decoding="sync"
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 mix-blend-multiply bg-stone-300 pointer-events-none" aria-hidden="true" />
+        </div>
+      )
+    }
+    {
+      heroRightImage?.url && (
+        <div class="welcome-hero-image absolute right-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-l-xl bg-prussian-700 overflow-hidden">
+          <img
+            src={buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })}
+            srcset={`${buildSanityImageUrl(heroRightImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })} 900w`}
+            sizes="(max-width: 1280px) 50vw, 740px"
+            alt={heroRightImage.alt}
+            width={900}
+            height={550}
+            loading="eager"
+            fetchpriority="high"
+            decoding="sync"
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 mix-blend-multiply bg-stone-300 pointer-events-none" aria-hidden="true" />
+        </div>
+      )
+    }
+  </div>
+  <section id="welcome-section" class="">
+    <div class="relative z-[10] sticky">
       <div class="flex items-center justify-center" id="welcome-badge-region">
-        <div class="w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px]">
+        <div id="bristol-badge" class="sticky w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px]">
           <div class="w-full mt-4 rounded-full bg-white shadow-lg flex items-center justify-center p-3 desktop:p-5">
             <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
           </div>
         </div>
       </div>
 
-      <div class="flex flex-col gap-[var(--grid-gap)] translate-y-[-32px] bg-white rounded-xl w-[70vw] mx-auto p-[var(--grid-margin)]">
+      <div id="welcome-section-content" class="flex flex-col gap-[var(--grid-gap)] bg-white shadow-lg rounded-xl w-[70vw] mx-auto p-[var(--grid-margin)]">
         <!-- Welcome section -->
         <div class="flex">
           {
@@ -106,26 +146,6 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   </section>
 
   <style>
-    #welcome-section {
-      --welcome-hero-h: 400px;
-    }
-
-    @media (min-width: 768px) {
-      #welcome-section {
-        --welcome-hero-h: 420px;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      #welcome-section {
-        --welcome-hero-h: calc(100vh - 140px);
-      }
-    }
-
-    #welcome-hero {
-      height: var(--welcome-hero-h);
-    }
-
     #welcome-content {
       margin-top: calc(-1 * var(--welcome-hero-h));
     }
@@ -141,6 +161,22 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   </style>
 
   <style is:global>
+    :root {
+      --welcome-hero-h: 400px;
+    }
+
+    @media (min-width: 768px) {
+      :root {
+        --welcome-hero-h: 420px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      :root {
+        --welcome-hero-h: calc(100vh - 274px);
+      }
+    }
+
     @keyframes heroFadeIn {
       from {
         opacity: 0;
@@ -151,3 +187,71 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
     }
   </style>
 </div>
+<script>
+  const hero = document.getElementById('welcome-hero');
+  const gallery = document.getElementById('gallery-strip-wrapper');
+  const badge = document.getElementById('bristol-badge');
+  const content = document.getElementById('welcome-section-content');
+
+  const GALLERY_TRIGGER_OFFSET = Math.round(window.innerHeight * 0.25) - 32;
+  const BADGE_FADE_START = Math.round(window.innerHeight * 0.75);
+  const BADGE_FADE_END = 0;
+  const BADGE_SPACER = 64 + 16; // gap between badge bottom and content top
+
+  let badgeFixedTop = 0;
+
+  function initBadge() {
+    if (!badge) return;
+    const badgeRegion = document.getElementById('welcome-badge-region');
+    if (!badgeRegion) return;
+    // getBoundingClientRect().top is viewport-relative; adding scrollY gives the
+    // document-absolute top, which equals the fixed `top` value at scroll=0.
+    const regionDocTop = badgeRegion.getBoundingClientRect().top + window.scrollY;
+    badgeFixedTop = regionDocTop + (badgeRegion.offsetHeight - badge.offsetHeight) / 2 - 32;
+    badge.style.position = 'fixed';
+    badge.style.left = '50%';
+    badge.style.transform = 'translateX(-50%)';
+    badge.style.margin = '0';
+    badge.style.top = `${badgeFixedTop}px`;
+  }
+
+  if (badge) {
+    initBadge();
+    window.addEventListener('resize', initBadge, { passive: true });
+  }
+
+  function update() {
+    const vh = window.innerHeight;
+
+    if (hero && gallery) {
+      const galleryTop = gallery.getBoundingClientRect().top;
+      const galleryTrigger = vh - GALLERY_TRIGGER_OFFSET;
+      hero.style.transform = galleryTop < galleryTrigger ? `translateY(${galleryTop - galleryTrigger}px)` : '';
+    }
+
+    if (badge) {
+      const badgeTop = badge.getBoundingClientRect().top;
+      const badgeHeight = badge.offsetHeight;
+
+      if (hero) {
+        if (badgeTop <= BADGE_FADE_START) {
+          const progress = Math.min(1, Math.max(0, (BADGE_FADE_START - badgeTop) / (BADGE_FADE_START - BADGE_FADE_END)));
+          hero.style.opacity = String(1 - 0.3 * progress);
+        } else {
+          hero.style.opacity = '';
+        }
+      }
+
+      // Badge stays fixed until content is BADGE_SPACER below badge bottom;
+      // after that badge floats above content maintaining the spacer gap.
+      if (content) {
+        const contentTop = content.getBoundingClientRect().top;
+        const threshold = badgeFixedTop + badgeHeight + BADGE_SPACER;
+        badge.style.top = contentTop <= threshold ? `${contentTop - BADGE_SPACER - badgeHeight}px` : `${badgeFixedTop}px`;
+      }
+    }
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+</script>
