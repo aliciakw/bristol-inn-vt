@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { ArrowRight } from 'lucide-react';
 import TextStyle from '@components/ui/TextStyle.astro';
 import { buildSanityImageUrl, type SanityImage, type SanityResolvedLink } from '../../lib/sanity';
 import bristolBadge from '../../assets/bristol-inn-badge.png';
@@ -88,9 +89,12 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
               {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
               {welcomeDescription && <span class="text-iron">{welcomeDescription} </span>}
               {welcomeCTA && (
-                <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
-                  {welcomeCTA.label}
-                </ButtonLink>
+                <span class="cta-arrow-group inline-flex items-center align-middle gap-1">
+                  <ArrowRight size={28} className="cta-arrow text-ink-900" aria-hidden="true" />
+                  <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
+                    {welcomeCTA.label}
+                  </ButtonLink>
+                </span>
               )}
             </TextStyle>
           )
@@ -196,6 +200,15 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 <style is:global>
   :root {
     --welcome-hero-h: calc(100vh - 2 * var(--nav-top-bar-height));
+  }
+
+  .cta-arrow {
+    transition: transform 0.2s ease;
+    margin-right: 6px;
+  }
+
+  .cta-arrow-group:hover .cta-arrow {
+    transform: translateX(2px);
   }
 
   @keyframes heroSlideInLeft {
