@@ -32,7 +32,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   <div id="welcome-hero" class="fixed w-full z-[-1]">
     {
       heroLeftImage?.url && (
-        <div class="welcome-hero-image absolute left-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-r-xl bg-prussian-700 overflow-hidden">
+        <div class="welcome-hero-image hero-image-left absolute left-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-r-xl bg-prussian-700 overflow-hidden">
           <img
             src={buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })}
             srcset={`${buildSanityImageUrl(heroLeftImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })} 900w`}
@@ -51,7 +51,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
     }
     {
       heroRightImage?.url && (
-        <div class="welcome-hero-image absolute right-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-l-xl bg-prussian-700 overflow-hidden">
+        <div class="welcome-hero-image hero-image-right absolute right-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-l-xl bg-prussian-700 overflow-hidden">
           <img
             src={buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })}
             srcset={`${buildSanityImageUrl(heroRightImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })} 900w`}
@@ -161,8 +161,17 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
     }
 
     .welcome-hero-image {
-      opacity: 0;
-      animation: heroFadeIn 1s ease-out 0.15s both;
+      opacity: 0; /* held by animation-fill-mode: both until animation starts */
+    }
+
+    .hero-image-left {
+      animation-delay: 2s;
+      animation: heroSlideInLeft 0.5s ease-out 0.05s both;
+    }
+
+    .hero-image-right {
+      animation-delay: 2s;
+      animation: heroSlideInRight 0.5s ease-out 0.05s both;
     }
   </style>
 
@@ -184,12 +193,25 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
       }
     }
 
-    @keyframes heroFadeIn {
+    @keyframes heroSlideInLeft {
       from {
         opacity: 0;
+        transform: translateX(-100%);
       }
       to {
         opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes heroSlideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
       }
     }
 
