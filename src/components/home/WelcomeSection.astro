@@ -28,7 +28,7 @@ interface Props {
 const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftImage, heroRightImage, directionsHref, directionsLabel = 'find directions', reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, logo, galleryImages } = Astro.props;
 ---
 
-<div>
+<div class="pt-[16px]">
   <div id="welcome-hero" class="fixed w-full z-[-1]">
     {
       heroLeftImage?.url && (
@@ -79,7 +79,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
         </div>
       </div>
 
-      <div id="welcome-section-content" class="flex flex-col gap-[var(--grid-gap)] bg-white shadow-lg rounded-xl w-[70vw] mx-auto p-[var(--grid-margin)]">
+      <div id="welcome-section-content" class="flex flex-col gap-[var(--grid-gap)] bg-white rounded-xl w-[70vw] mx-auto p-[var(--grid-margin)]">
         <!-- Welcome section -->
         <div class="flex">
           {
@@ -150,6 +150,16 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
       height: var(--welcome-hero-h);
     }
 
+    #welcome-section-content {
+      transition: box-shadow 0.4s ease;
+    }
+
+    #welcome-section-content.shadow-visible {
+      box-shadow:
+        0 10px 15px -3px rgb(0 0 0 / 0.1),
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
     .welcome-hero-image {
       opacity: 0;
       animation: heroFadeIn 1s ease-out 0.15s both;
@@ -182,6 +192,29 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
         opacity: 1;
       }
     }
+
+    @keyframes badgeEntrance {
+      0% {
+        scale: 0.7;
+        opacity: 0;
+      }
+      70% {
+        scale: 1.06;
+        opacity: 1;
+      }
+      100% {
+        scale: 1;
+      }
+    }
+
+    #bristol-badge {
+      /* 0% 50%: layout-left edge at vertical centre. Because JS applies
+         transform: translateX(-50%) first, the element's visual centre
+         coincides with its layout-left edge — so this keeps the scale
+         pivot on the visual centre rather than drifting right. */
+      transform-origin: 0% 50%;
+      animation: badgeEntrance 0.4s ease-in-out 0.35s both;
+    }
   </style>
 </div>
 <script>
@@ -206,6 +239,9 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   const BADGE_VERTICAL_OFFSET_PX = -32;
   // Nudge badge up (negative) or down (positive) from the vertical centre
   // of #welcome-badge-region.
+
+  const CONTENT_SHADOW_SCROLL_PX = 64;
+  // Page scroll distance (px) at which the content card's drop shadow fades in.
   // ───────────────────────────────────────────────────────────────────────────
 
   const hero = document.getElementById('welcome-hero');
@@ -258,6 +294,12 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
     }
   }
 
+  // Content card shadow fades in after the user scrolls CONTENT_SHADOW_SCROLL_PX
+  function updateContentShadow() {
+    if (!content) return;
+    content.classList.toggle('shadow-visible', window.scrollY >= CONTENT_SHADOW_SCROLL_PX);
+  }
+
   // Badge stays pinned until content comes within BADGE_CONTENT_GAP_PX,
   // then floats above the content maintaining that gap
   function updateBadgePosition() {
@@ -271,6 +313,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
     updateHeroPush();
     updateHeroOpacity();
     updateBadgePosition();
+    updateContentShadow();
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
