@@ -79,9 +79,9 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
       </div>
     </div>
 
-    <div id="welcome-section-content" class="bg-lilac-200 flex flex-col bg-white rounded-xl w-[66vw] mx-auto p-12">
+    <div id="welcome-section-content" class="flex flex-col bg-white rounded-xl max-w-4xl mx-auto pt-10 px-12 pb-12">
       <!-- Welcome section -->
-      <div class="flex">
+      <div class="flex mx-auto">
         {
           (welcomeHeading || welcomeDescription || welcomeCTA) && (
             <TextStyle variant="h1" element="p">
@@ -98,7 +98,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
       </div>
 
       <!-- Reservation section -->
-      <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-margin)]">
+      <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-gutter)]">
         <!-- {logo && <img src={logo} alt="" aria-hidden="true" class="w-24 h-24 object-contain" />} -->
 
         {
@@ -131,7 +131,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
           <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
         </div>
 
-        <div class="flex items-center justify-center mt-[var(--grid-margin)]">
+        <div class="flex items-center justify-center mt-[var(--grid-gutter)]">
           {
             reservationHeadingIcon && (
               <div id="reservation-heading-icon" class="w-20 h-20 flex items-center justify-center">
@@ -281,7 +281,6 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   // Grows at 1px per 1px of scroll until it hits HERO_EXPAND_MAX_PCT.
 
   const BODY_BACKGROUND_COLOR_START_SCROLL = HERO_EXPAND_START_SCROLL;
-  const BODY_BACKGROUND_COLOR_TRANSITION_INTERVAL = Math.round(window.innerHeight * 0.25);
 
   const HERO_EXPAND_MAX_PCT = 0.12;
   // Hero grows by at most this fraction beyond its initial height (0.15 = 15%).
@@ -315,7 +314,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 
   if (badge) {
     initBadge();
-    window.addEventListener('resize', initBadge, { passive: true });
+    // window.addEventListener('resize', initBadge, { passive: true });
   }
 
   function initHeroHeight() {
@@ -326,14 +325,14 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 
   if (hero) {
     initHeroHeight();
-    window.addEventListener(
-      'resize',
-      () => {
-        initHeroHeight();
-        updateHeroHeight();
-      },
-      { passive: true },
-    );
+    // window.addEventListener(
+    //   'resize',
+    //   () => {
+    //     initHeroHeight();
+    //     updateHeroHeight();
+    //   },
+    //   { passive: true },
+    // );
   }
 
   // Hero expands from its initial height to 100vh as user scrolls past the trigger
@@ -367,18 +366,11 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   */
   function updateBodyBackgroundColor() {
     if (!body) return;
-    const startColor = '#ffffff';
     const endColor = '#ded6d2'; // sand-200
     const scrollY = window.scrollY;
 
     if (scrollY <= BODY_BACKGROUND_COLOR_START_SCROLL) {
       body.style.backgroundColor = '';
-    } else if (scrollY < BODY_BACKGROUND_COLOR_START_SCROLL + BODY_BACKGROUND_COLOR_TRANSITION_INTERVAL) {
-      const startColorPercentage = Math.round(((scrollY - BODY_BACKGROUND_COLOR_START_SCROLL) / BODY_BACKGROUND_COLOR_TRANSITION_INTERVAL) * 100);
-      const endColorPercentage = 100 - startColorPercentage;
-
-      const backgroundColorStyle = `color-mix(in hsl increasing hue, ${startColor} ${startColorPercentage}%, ${endColor} ${endColorPercentage}%)`;
-      body.style.backgroundColor = backgroundColorStyle;
     } else {
       body.style.backgroundColor = endColor;
     }
@@ -426,4 +418,5 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+  window.addEventListener('resize', onScroll, { passive: true });
 </script>

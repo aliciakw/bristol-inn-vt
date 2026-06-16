@@ -1,7 +1,7 @@
 ---
 import { toHTML } from '@portabletext/to-html';
-import { Image } from 'astro:assets';
-import type { SanityBlock } from '../lib/sanity';
+import ImageComponent from '@components/ui/ImageComponent.astro';
+import { buildSanityImageUrl, type SanityBlock } from '../lib/sanity';
 
 interface Props {
   blocks: SanityBlock[];
@@ -23,10 +23,21 @@ const { blocks } = Astro.props;
 
       const isFullWidth = (block.layout as string) === 'full';
       const caption = block.caption as string | null | undefined;
+      const fullWidth = isFullWidth ? 1200 : 800;
+      const fullHeight = isFullWidth ? 600 : 500;
 
       return (
         <figure class={isFullWidth ? 'my-6' : 'max-w-prose mx-auto my-6'}>
-          <Image src={url} alt={(image?.alt ?? '') as string} width={isFullWidth ? 1200 : 800} height={isFullWidth ? 600 : 500} format="webp" loading="lazy" class={isFullWidth ? 'w-full object-cover' : 'w-full'} />
+          <ImageComponent
+            src={buildSanityImageUrl(url, { width: fullWidth, height: fullHeight })}
+            srcset={`${buildSanityImageUrl(url, { width: fullWidth / 2, height: fullHeight / 2 })} ${fullWidth / 2}w, ${buildSanityImageUrl(url, { width: fullWidth, height: fullHeight })} ${fullWidth}w`}
+            alt={(image?.alt ?? '') as string}
+            width={fullWidth}
+            height={fullHeight}
+            loading="lazy"
+            fadeIn
+            imgClass={isFullWidth ? 'w-full object-cover' : 'w-full'}
+          />
           {caption && <figcaption class="text-sm mt-1 text-center">{caption}</figcaption>}
         </figure>
       );

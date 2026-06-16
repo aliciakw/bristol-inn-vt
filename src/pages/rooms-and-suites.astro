@@ -25,15 +25,15 @@ const browserRooms = rooms.map((r) => ({
 ---
 
 <BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta} backgroundColor="white" navigationVariant="transparent" offsetNavigation>
-  <div class="Section">
-    <PageHeader title={pageTitle} introduction={page?.introduction} heroImage={page?.heroImage} />
+  <div class="Section bg-sand-200">
+    <PageHeader title={pageTitle} introduction={page?.introduction} heroImage={page?.heroImage} className="pb-12" />
   </div>
   <div class="Section">
     <div class="Section__inner">
-      <div class="row-span-1 col-span-6 desktop:col-start-2">
+      <div class="row-span-1 col-span-6">
         {page?.body?.length > 0 && <SliceZone blocks={page.body} />}
       </div>
-      <div class="row-span-1 col-span-6 desktop:col-start-3">
+      <div class="row-span-1 col-span-6">
         <RoomBrowser client:load rooms={browserRooms} />
       </div>
     </div>

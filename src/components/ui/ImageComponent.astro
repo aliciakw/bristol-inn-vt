@@ -1,0 +1,23 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  srcset?: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
+  loading?: 'eager' | 'lazy';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  decoding?: 'sync' | 'async' | 'auto';
+  class?: string;
+  preloadClasses?: string;
+  imgClass?: string;
+  fadeIn?: boolean;
+}
+
+const { src, alt, srcset, sizes, width, height, loading = 'lazy', fetchpriority, decoding = loading === 'eager' ? 'sync' : 'async', class: className, preloadClasses = 'bg-ink-900/20', imgClass, fadeIn = false, ...rest } = Astro.props;
+---
+
+<div class:list={[preloadClasses, className]}>
+  <img src={src} srcset={srcset} sizes={sizes} alt={alt} width={width} height={height} loading={loading} fetchpriority={fetchpriority} decoding={decoding} class:list={[imgClass, { 'image-fade-in': fadeIn }]} {...rest} />
+</div>
