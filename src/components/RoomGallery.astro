@@ -38,12 +38,12 @@ const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
           height={800}
           loading="eager"
           fadeIn
-          class="w-full rounded-xl aspect-[4/3] overflow-hidden"
-          imgClass="w-full h-full object-cover"
+          class="w-full rounded-xl aspect-[4/3] overflow-hidden group"
+          imgClass="w-full h-full object-cover transition duration-150 ease-out group-hover:scale-105 group-hover:opacity-90"
         />
       )}
       {gridImages.length > 0 && (
-        <div class="grid grid-cols-2 gap-3 mt-3">
+        <div class="grid grid-cols-2 desktop:grid-cols-3 gap-3 mt-3">
           {gridImages.map((p, i) => (
             <ImageComponent
               src={buildSanityImageUrl(p.url, { width: 1200, height: 800 })}
@@ -53,8 +53,8 @@ const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
               height={800}
               loading="lazy"
               fadeIn
-              class="w-full rounded-xl overflow-hidden"
-              imgClass="w-full h-full object-cover"
+              class="w-full rounded-xl overflow-hidden group"
+              imgClass="w-full h-full object-cover transition duration-150 ease-out group-hover:scale-105 group-hover:opacity-90"
             />
           ))}
         </div>

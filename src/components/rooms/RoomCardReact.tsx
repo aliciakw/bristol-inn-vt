@@ -29,7 +29,7 @@ interface Props {
   lastSearch?: SearchParams | null;
 }
 
-export function RoomCardReact({ room, availability, isLoading, bookingUrl, detailUrl, lastSearch }: Props) {
+export function RoomCardReact({ room, availability, isLoading, detailUrl }: Props) {
   const { name, bedroomsLabel, dogsAllowed, price, photo, floorNumber, personCapacity } = room;
   const baseRate = Math.round(price);
   const isUnavailable = availability !== undefined && !availability.available;
@@ -43,33 +43,22 @@ export function RoomCardReact({ room, availability, isLoading, bookingUrl, detai
   const infoText = [bedroomsLabel, personCapacityLabel, floorNumberLabel, estimatedPriceLabel].filter(Boolean).join(' · ');
 
   return (
-    <a href={lastSearch ? detailUrl : bookingUrl} className="pointer">
+    <a href={detailUrl} className="pointer group">
       <article className={['bg-white rounded-lg shadow-lg', dimmed ? 'opacity-50' : '', 'transition-opacity duration-150'].join(' ')}>
         <div className="rounded-sm">
-          <div className="flex flex-col justify-between bg-sand-100 p-1 border-1 border-ink-900 rounded-t-lg px-2 relative">
-            <TextStyle variant="h4" element="h5" className="overflow-hidden text-ellipsis font-medium line-clamp-1 mt-1">
+          <div className="flex flex-col justify-between bg-sand-050 text-prussian-700 p-1 border-1 border-ink-900 rounded-t-lg px-2 relative group-hover:shadow-lg group-hover:text-prussian-500 transition-colors duration-700 ease-out">
+            <TextStyle variant="h4" element="h5" className="overflow-hidden text-ellipsis font-medium line-clamp-1 mt-1 transition-colors duration-700 ease-out">
               {name}
             </TextStyle>
             <div className="flex flex-row">
               <TextStyle variant="caption" element="p" className="max-w-[calc(100%)] text-nowrap overflow-hidden text-ellipsis text-iron">
                 {infoText}
               </TextStyle>
-              {/* <div className="absolute top-2 right-2">
-                {!isUnavailable && !!lastSearch ? (
-                  <ButtonLink href={bookingUrl} bg="prussian-500" textColor="white" size="x-small" className="hover:bg-prussian-700 border-0" target="_blank" rel="noopener noreferrer" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
-                    Book Now!
-                  </ButtonLink>
-                ) : (
-                  <ButtonLink href={detailUrl} textColor="ink-900" size="x-small" className="bg-white/80 border-0" target="_blank" rel="noopener noreferrer" aria-disabled={isUnavailable || undefined} tabIndex={isUnavailable ? -1 : undefined}>
-                    More Info
-                  </ButtonLink>
-                )}
-              </div> */}
             </div>
           </div>
 
           <div className="relative bg-ink-900/20 rounded-b-xl overflow-hidden">
-            <img src={photo.url} alt={photo.caption || name} width={600} height={400} loading="lazy" className="w-full object-cover aspect-[3/2] transition-opacity duration-300" />
+            <img src={photo.url} alt={photo.caption || name} width={600} height={400} loading="lazy" className="w-full object-cover aspect-[3/2] transition duration-700 ease-out group-hover:scale-103 group-hover:opacity-60" />
             <div className="absolute bottom-2 right-2 left-2 flex gap-1 justify-between items-end">
               {actualPrice && (
                 <TextStyle variant="h4" element="span" className="bg-white border-3 border-white text-black max-w-[calc(50%)] whitespace-nowrap overflow-hidden text-ellipsis px-2 py-[2px] rounded-full tracking-tight px-4 shadow-sm">
