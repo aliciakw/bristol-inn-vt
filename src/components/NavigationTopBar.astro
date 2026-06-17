@@ -30,26 +30,10 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
 ---
 
 <header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0 sticky px-[var(--grid-margin)] desktop:pl-[var(--grid-gutter)] desktop:pr-1', `bg-${variant}`, shadow && `shadow-lg`]}>
-  <div class="hidden tablet:inline-flex gap-2">
-    <!-- {
-          rightCta.label && rightCta.href && (
-            <ButtonLink href={rightCta.href} target={rightCta.openInNewTab ? '_blank' : undefined} rel={rightCta.openInNewTab ? 'noopener noreferrer' : undefined} bg="lilac-200" size="small" class="">
-              {rightCta.label}
-            </ButtonLink>
-          )
-        } -->
-    <!-- {
-          leftCta.label && leftCta.href && (
-            <ButtonLink href={leftCta.href} target={leftCta.openInNewTab ? '_blank' : undefined} rel={leftCta.openInNewTab ? 'noopener noreferrer' : undefined} bg="khaki-200" size="small" class="desktop:inline-flex">
-              {leftCta.label}
-            </ButtonLink>
-          )
-        } -->
-  </div>
   <!-- Left (desktop only) -->
   <div class="flex">
     <a href="/" class="flex">
-      <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-7 object-contain" />
+      <img id="nameplate-logo" src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-7 object-contain" />
     </a>
   </div>
 
