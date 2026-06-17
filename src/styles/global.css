@@ -119,7 +119,7 @@
   :root {
     --grid-columns: 8;
     --grid-margin: 104px;
-    --grid-gutter: 64px;
+    --grid-gutter: 16px;
     --nav-top-bar-height: 72px;
   }
 }
@@ -162,6 +162,10 @@ html {
 .fade-in-1000 {
   opacity: 0;
   animation: fadeInAnimation 1s ease-in-out 0.05s both;
+}
+.fade-in-1000--delay-1000 {
+  opacity: 0;
+  animation: fadeInAnimation 1s ease-in-out 1s both;
 }
 
 @keyframes fadeInAnimation {

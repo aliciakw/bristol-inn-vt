@@ -58,7 +58,7 @@ function RoomGrid({ title, rooms, isLoading, availability, lastSearch }: RoomGri
         </TextStyle>
       )}
       {}
-      <div className={['grid grid-cols-1 tablet:grid-cols-2 gap-6'].join(' ')}>
+      <div className={['grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-[var(--grid-gutter)]'].join(' ')}>
         {rooms.map((room) => {
           const roomAvailability = availability?.find((a) => a.listingId === room.id);
           const { bookingUrl, detailUrl } = getRoomUrls(room.id, lastSearch, roomAvailability?.pricePerNight);

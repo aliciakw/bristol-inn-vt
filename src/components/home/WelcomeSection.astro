@@ -8,6 +8,7 @@ import ButtonLink from '@components/ui/ButtonLink.astro';
 import { AvailabilitySearchForm } from '@components/rooms/AvailabilitySearchForm';
 
 interface Props {
+  coverColor?: string;
   welcomeHeading?: string;
   welcomeDescription?: string;
   welcomeCTA?: SanityResolvedLink;
@@ -24,10 +25,10 @@ interface Props {
   logo?: string;
 }
 
-const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, logo, galleryImages } = Astro.props;
+const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA,  heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage } = Astro.props;
 ---
 
-<div id="welcome-hero" class="fixed w-full z-[-1] fade-in-1000">
+<div id="welcome-hero" class:list={['fixed w-full z-[-1]', coverColor ? 'fade-in-1000--delay-1000' : 'fade-in-1000']}>
   {
     heroLeftImage?.url && (
       <div class="WelcomeSection___HeroImageContainer">
@@ -68,10 +69,12 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   }
 </div>
 
-<section id="welcome-section">
-  <div class="relative z-[10]">
+{coverColor && <div id="cover" class="h-[100vh] w-[100vw] absolute pointer-events-none top-0 left-0 z-9" style={`background-color: ${coverColor}`}></div>}
 
-    <div class="flex items-center justify-center h-[75vh] mb-[var(--grid-gutter)]">
+<section id="welcome-section">
+  <div class="relative z-10">
+    <!-- Badge region -->
+    <div class="flex items-center justify-center h-[75vh] mb-[var(--grid-gutter)] z-20">
       <svg aria-hidden="true" focusable="false" class="absolute w-0 h-0 overflow-hidden">
         <defs>
           <clipPath id="badge-oval" clipPathUnits="objectBoundingBox">
@@ -85,76 +88,90 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
         </div>
       </div>
     </div>
+  </div>
 
-    <div id="welcome-section-content" class="flex flex-col bg-white rounded-xl max-w-4xl mx-auto pt-10 px-12 pb-12">
-      <!-- Welcome section -->
-      <div class="flex mx-auto">
-        {
-          (welcomeHeading || welcomeDescription || welcomeCTA) && (
-            <TextStyle variant="h1" element="p">
-              {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
-              {welcomeDescription && <span class="text-iron">{welcomeDescription} </span>}
-              {welcomeCTA && (
-                <span class="cta-arrow-group inline-flex items-center align-middle gap-1">
-                  <ArrowRight size={28} className="cta-arrow text-ink-900" aria-hidden="true" />
-                  <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
-                    {welcomeCTA.label}
-                  </ButtonLink>
-                </span>
-              )}
-            </TextStyle>
-          )
-        }
+  <div id="welcome-section-content" class="flex flex-col bg-white rounded-xl max-w-4xl mx-auto pt-10 px-12 pb-12 z-8">
+    <!-- Welcome section -->
+    <div class="flex mx-auto">
+      {
+        (welcomeHeading || welcomeDescription || welcomeCTA) && (
+          <TextStyle variant="h1" element="p">
+            {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
+            {welcomeDescription && <span class="text-iron">{welcomeDescription} </span>}
+            {welcomeCTA && (
+              <span class="cta-arrow-group inline-flex items-center align-middle gap-1">
+                <ArrowRight size={28} className="cta-arrow text-ink-900" aria-hidden="true" />
+                <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
+                  {welcomeCTA.label}
+                </ButtonLink>
+              </span>
+            )}
+          </TextStyle>
+        )
+      }
+    </div>
+
+    <!-- Reservation section -->
+    <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-gutter)]">
+      {
+        reservationImage && (
+          <div class="mx-[var(--grid-margin)] aspect-[5/3] w-[33vw] mx-auto my-8 overflow-hidden rounded-xl">
+            <img
+              src={buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })}
+              srcset={`${buildSanityImageUrl(reservationImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })} 900w`}
+              sizes="(max-width: 1280px) 40vw, 560px"
+              alt={reservationImage.alt}
+              width={900}
+              height={700}
+              loading="eager"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        )
+      }
+
+      <TextStyle variant="h2" class="text-center">{reservationHeading}</TextStyle>
+      {
+        reservationDescription && (
+          <TextStyle variant="paragraph" element="p" class="max-w-2xl mt-2 mb-[var(--grid-gutter)]">
+            {reservationDescription}
+          </TextStyle>
+        )
+      }
+
+      <div class="w-2xl">
+        <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
       </div>
 
-      <!-- Reservation section -->
-      <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-gutter)]">
-
+      <div class="flex items-center justify-center mt-[var(--grid-gutter)]">
         {
-          reservationImage && (
-            <div class="mx-[var(--grid-margin)] aspect-[5/3] w-[33vw] mx-auto my-8 overflow-hidden rounded-xl">
-              <img
-                src={buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })}
-                srcset={`${buildSanityImageUrl(reservationImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })} 900w`}
-                sizes="(max-width: 1280px) 40vw, 560px"
-                alt={reservationImage.alt}
-                width={900}
-                height={700}
-                loading="eager"
-                class="w-full h-full object-cover"
-              />
+          reservationHeadingIcon && (
+            <div id="reservation-heading-icon" class="w-20 h-20 flex items-center justify-center">
+              <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
             </div>
           )
         }
-
-        <TextStyle variant="h2" class="text-center">{reservationHeading}</TextStyle>
-        {
-          reservationDescription && (
-            <TextStyle variant="paragraph" element="p" class="max-w-2xl mt-2 mb-[var(--grid-gutter)]">
-              {reservationDescription}
-            </TextStyle>
-          )
-        }
-
-        <div class="w-2xl">
-          <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
-        </div>
-
-        <div class="flex items-center justify-center mt-[var(--grid-gutter)]">
-          {
-            reservationHeadingIcon && (
-              <div id="reservation-heading-icon" class="w-20 h-20 flex items-center justify-center">
-                <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
-              </div>
-            )
-          }
-        </div>
       </div>
     </div>
   </div>
+  <!-- </div> -->
 </section>
 
 <style>
+  #cover {
+    will-change: transform;
+    animation: coverSlideUp 0.6s ease-in-out 1s forwards;
+  }
+
+  @keyframes coverSlideUp {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-100%);
+    }
+  }
+
   #welcome-badge-region {
     height: var(--welcome-hero-h);
   }
@@ -209,14 +226,14 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
     left: 0;
     border-top-right-radius: 0.75rem;
     border-bottom-right-radius: 0.75rem;
-    animation: heroSlideInLeft 0.5s ease-out 0.05s both;
+    animation: heroSlideInLeft 0.5s ease-out 1.05s both;
   }
 
   .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--right) {
     right: 0;
     border-top-left-radius: 0.75rem;
     border-bottom-left-radius: 0.75rem;
-    animation: heroSlideInRight 0.5s ease-out 0.05s both;
+    animation: heroSlideInRight 0.5s ease-out 1.05s both;
   }
 </style>
 
@@ -286,7 +303,11 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   const CONTENT_SHADOW_SCROLL_PX = 64;
   // Page scroll distance (px) at which the content card's drop shadow fades in.
 
-  const HERO_EXPAND_START_SCROLL = 0.25 * window.innerHeight
+  const HERO_BLUR_START_SCROLL = 0.25 * window.innerHeight;
+  const HERO_BLUR_MAX_PX = 8;
+  const HERO_BLUR_GROWTH_RATE = 0.01;
+
+  const HERO_EXPAND_START_SCROLL = 0.25 * window.innerHeight;
   // Hero starts expanding once the user has scrolled this far.
   // Grows at 1px per 1px of scroll until it hits HERO_EXPAND_MAX_PCT.
 
@@ -295,12 +316,6 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 
   const HERO_EXPAND_GROWTH_RATE = 0.25;
   // Hero grows by this rate per 1px of scroll, up until it hits HERO_EXPAND_MAX_PCT.
-
-  const AUTO_SCROLL_DELAY_MS = 750;
-  // Delay after load before the page auto-scrolls to reveal the content card.
-
-  const AUTO_SCROLL_AMOUNT_PX = 72;
-  // Distance to auto-scroll; matches HERO_EXPAND_START_SCROLL so #welcome-section-content overlays the hero.
   // ───────────────────────────────────────────────────────────────────────────
 
   const hero = document.getElementById('welcome-hero');
@@ -337,6 +352,19 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
     (heroRightImage as HTMLElement).style.height = `${newHeight}px`;
   }
 
+  function updateHeroBlur() {
+    if (!hero || !heroLeftImage || !heroRightImage) return;
+    const scroll = window.scrollY;
+    if (scroll < HERO_BLUR_START_SCROLL) {
+      return;
+    }
+    const grown = (scroll - HERO_BLUR_START_SCROLL) * HERO_BLUR_GROWTH_RATE;
+    // const blurAmount = Math.min(HERO_BLUR_MAX_PX, HERO_BLUR_MAX_PX + grown);
+    const blurAmount = 1;
+    (heroLeftImage as HTMLElement).style.filter = `blur(${blurAmount}px)`;
+    (heroRightImage as HTMLElement).style.filter = `blur(${blurAmount}px)`;
+  }
+
   // Hero slides up once #welcome-section-content is within HERO_PUSH_CONTENT_GAP_PX of the hero bottom
   function updateHeroPush() {
     if (!hero || !content) return;
@@ -358,7 +386,8 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
     if (rafPending) return;
     rafPending = true;
     requestAnimationFrame(() => {
-      updateHeroHeight();
+      // updateHeroHeight();
+      updateHeroBlur();
       updateHeroPush();
       updateContentShadow();
       rafPending = false;

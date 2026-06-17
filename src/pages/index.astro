@@ -7,7 +7,7 @@ import TestimonialsSection from '../components/home/TestimonialsSection.astro';
 
 const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 
-const { welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, welcomeImage, galleryImages, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, testimonialsHeading, testimonial, amenities, body } = homepage;
+const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, welcomeImage, galleryImages, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, testimonialsHeading, testimonial, amenities, body } = homepage;
 
 const heroLeftPreload = heroLeftImage?.url ? buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 }) : null;
 const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 }) : null;
@@ -19,6 +19,7 @@ const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImag
     {heroRightPreload && <link rel="preload" as="image" href={heroRightPreload} fetchpriority="high" />}
   </Fragment>
   <WelcomeSection
+    coverColor={coverColor}
     welcomeHeading={welcomeHeading}
     welcomeDescription={welcomeDescription}
     welcomeCTA={welcomeCTA}
@@ -35,8 +36,8 @@ const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImag
     logo={settings.logo}
   />
 
-  <div id="gallery-strip-wrapper" class="pt-[144px] pb-[64px]">
+  <div id="gallery-strip-wrapper" class="pt-[144px] pb-4">
+    <TestimonialsSection testimonialsHeading={testimonialsHeading} testimonial={testimonial} amenities={amenities ?? []} />
     <GalleryStrip images={galleryImages ?? []} />
   </div>
-  <TestimonialsSection testimonialsHeading={testimonialsHeading} testimonial={testimonial} amenities={amenities ?? []} />
 </BaseLayout>

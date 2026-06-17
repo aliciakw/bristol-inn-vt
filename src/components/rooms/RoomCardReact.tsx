@@ -57,7 +57,7 @@ export function RoomCardReact({ room, availability, isLoading, detailUrl }: Prop
             </div>
           </div>
 
-          <div className="relative bg-ink-900/20 overflow-hidden">
+          <div className="relative bg-sand-200 overflow-hidden">
             <img src={photo.url} alt={photo.caption || name} width={600} height={400} loading="lazy" className="w-full object-cover aspect-[3/2] transition duration-700 ease-out group-hover:scale-103 group-hover:opacity-60" />
             <div className="absolute bottom-2 right-2 left-2 flex gap-1 justify-between items-end">
               {actualPrice && (

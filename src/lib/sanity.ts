@@ -73,6 +73,7 @@ export type SanityTestimonialImageItem = {
 export type SanityTestimonialArrayItem = SanityTestimonialItem | SanityTestimonialImageItem;
 
 export type SanityHomepage = {
+  coverColor?: string;
   welcomeHeading?: string;
   welcomeDescription?: string;
   welcomeCTA?: SanityResolvedLink;
@@ -108,6 +109,7 @@ const RESOLVE_BUTTON_LINK = `{ label, color, "href": select(linkType == "interna
 export async function getHomepage(): Promise<SanityHomepage> {
   return getClient().fetch<SanityHomepage>(
     `*[_type == "homepage" && _id == $id][0]{
+      coverColor,
       welcomeHeading,
       welcomeDescription,
       "welcomeCTA": welcomeCTA${RESOLVE_LINK},
