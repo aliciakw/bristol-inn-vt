@@ -69,8 +69,6 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImag
   }
 </div>
 
-{coverColor && <div id="cover" class="h-[100vh] w-[100vw] absolute pointer-events-none top-0 left-0 z-9" style={`background-color: ${coverColor}`} />}
-
 <section id="welcome-section">
   <div class="relative z-10">
     <!-- Badge region -->
@@ -159,6 +157,12 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImag
 
 <style>
   #cover {
+    position: absolute;
+    inset: 0;
+    height: 100vh;
+    width: 100vw;
+    pointer-events: none;
+    z-index: 9;
     will-change: transform;
     animation: coverSlideUp 0.6s ease-in-out 1s forwards;
   }
@@ -226,14 +230,14 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImag
     left: 0;
     border-top-right-radius: 0.75rem;
     border-bottom-right-radius: 0.75rem;
-    animation: heroSlideInLeft 0.5s ease-out 1.05s both;
+    animation: heroSlideInLeft 0.5s ease-out 0.75s both;
   }
 
   .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--right) {
     right: 0;
     border-top-left-radius: 0.75rem;
     border-bottom-left-radius: 0.75rem;
-    animation: heroSlideInRight 0.5s ease-out 1.05s both;
+    animation: heroSlideInRight 0.5s ease-out 0.75s both;
   }
 </style>
 
@@ -292,11 +296,35 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImag
   }
 </style>
 
-<script>
+<script define:vars={{ coverColor }}>
   const hero = document.getElementById('welcome-hero');
   const heroLeftImage = document.getElementById('WelcomeSection___HeroImage--left');
   const heroRightImage = document.getElementById('WelcomeSection___HeroImage--right');
   const content = document.getElementById('welcome-section-content');
+
+  const skipIntro = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.scrollY > 32;
+
+  if (coverColor && !skipIntro) {
+    const cover = document.createElement('div');
+    cover.id = 'cover';
+    cover.style.backgroundColor = coverColor;
+    document.body.appendChild(cover);
+  }
+
+  if (skipIntro) {
+    const leftContainer = heroLeftImage?.parentElement as HTMLElement | null;
+    const rightContainer = heroRightImage?.parentElement as HTMLElement | null;
+    if (leftContainer) {
+      leftContainer.style.animation = 'none';
+      leftContainer.style.opacity = '1';
+      leftContainer.style.transform = 'translateX(0)';
+    }
+    if (rightContainer) {
+      rightContainer.style.animation = 'none';
+      rightContainer.style.opacity = '1';
+      rightContainer.style.transform = 'translateX(0)';
+    }
+  }
 
   // ── Animation tuning ───────────────────────────────────────────────────────
   // Adjust these values to change timing and feel without touching the logic.

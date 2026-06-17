@@ -165,7 +165,7 @@ html {
 }
 .fade-in-1000--delay-1000 {
   opacity: 0;
-  animation: fadeInAnimation 1s ease-in-out 1s both;
+  animation: fadeInAnimation 1s ease-in-out 0.7s both;
 }
 
 @keyframes fadeInAnimation {

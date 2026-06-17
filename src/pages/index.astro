@@ -36,8 +36,10 @@ const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImag
     logo={settings.logo}
   />
 
-  <div id="gallery-strip-wrapper" class="pt-[144px] pb-[var(--page-margin)]">
+  <div id="gallery-strip-wrapper" class="pt-[144px]">
     <TestimonialsSection testimonialsHeading={testimonialsHeading} testimonial={testimonial} amenities={amenities ?? []} />
-    <GalleryStrip images={galleryImages ?? []} />
+    <div class="pt-12 bg-white pb-[var(--page-margin)]">
+      <GalleryStrip images={galleryImages ?? []} />
+    </div>
   </div>
 </BaseLayout>
