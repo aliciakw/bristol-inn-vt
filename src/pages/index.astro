@@ -13,7 +13,7 @@ const heroLeftPreload = heroLeftImage?.url ? buildSanityImageUrl(heroLeftImage.u
 const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 }) : null;
 ---
 
-<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere." backgroundColor="white" textColor="ink-900" navigationVariant="transparent" bottomSpacer={false} bodyClass="transition-colors duration-300">
+<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere." backgroundColor="white" textColor="ink-900" navigationVariant="transparent" offsetNavigation={true} bottomSpacer={false} bodyClass="transition-colors duration-300">
   <Fragment slot="head">
     {heroLeftPreload && <link rel="preload" as="image" href={heroLeftPreload} fetchpriority="high" />}
     {heroRightPreload && <link rel="preload" as="image" href={heroRightPreload} fetchpriority="high" />}
@@ -35,11 +35,8 @@ const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImag
     logo={settings.logo}
   />
 
-  <div id="gallery-strip-wrapper" class="py-[64px] bg-white">
+  <div id="gallery-strip-wrapper" class="pt-[144px] pb-[64px]">
     <GalleryStrip images={galleryImages ?? []} />
   </div>
-
-  <!-- <ReservationSection reservationHeading={reservationHeading} reservationHeadingIcon={reservationHeadingIcon} reservationDescription={reservationDescription} reservationImage={reservationImage} /> -->
-
   <TestimonialsSection testimonialsHeading={testimonialsHeading} testimonial={testimonial} amenities={amenities ?? []} />
 </BaseLayout>

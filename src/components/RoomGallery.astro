@@ -39,7 +39,7 @@ const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
           loading="eager"
           fadeIn
           class="w-full rounded-xl aspect-[4/3] overflow-hidden group"
-          imgClass="w-full h-full object-cover transition duration-150 ease-out group-hover:scale-105 group-hover:opacity-90"
+          imgClass="w-full h-full object-cover"
         />
       )}
       {gridImages.length > 0 && (
@@ -54,7 +54,7 @@ const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
               loading="lazy"
               fadeIn
               class="w-full rounded-xl overflow-hidden group"
-              imgClass="w-full h-full object-cover transition duration-150 ease-out group-hover:scale-105 group-hover:opacity-90"
+              imgClass="w-full h-full object-cover"
             />
           ))}
         </div>

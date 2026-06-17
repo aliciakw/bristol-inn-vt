@@ -107,6 +107,7 @@
 
 /* Grid layout variables */
 :root {
+  --page-margin: 8px;
   --grid-columns: 6;
   --grid-margin: 16px;
   --grid-gutter: 8px;

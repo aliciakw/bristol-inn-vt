@@ -5,6 +5,8 @@ import TextStyle from '@components/ui/TextStyle.astro';
 import { buildSanityImageUrl, type SanityImage, type SanityResolvedLink } from '../../lib/sanity';
 import bristolBadge from '../../assets/bristol-inn-badge.png';
 import ButtonLink from '@components/ui/ButtonLink.astro';
+import GalleryStrip from '@components/home/GalleryStrip.astro';
+import ReservationSection from '@components/home/ReservationSection.astro';
 import { AvailabilitySearchForm } from '@components/rooms/AvailabilitySearchForm';
 
 interface Props {
@@ -24,45 +26,45 @@ interface Props {
   logo?: string;
 }
 
-const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, logo, galleryImages } = Astro.props;
+const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftImage, heroRightImage, directionsHref, directionsLabel = 'find directions', reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, logo, galleryImages } = Astro.props;
 ---
 
-<div id="welcome-hero" class="fixed w-full z-[-1]">
+<div id="welcome-hero" class="fixed w-full z-[-1] bg-white">
   {
     heroLeftImage?.url && (
-      <div class="WelcomeSection___HeroImageContainer">
+      <div class="welcome-hero-image hero-image-left absolute left-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-r-xl bg-prussian-700 overflow-hidden">
         <img
-          id="WelcomeSection___HeroImage--left"
-          src={buildSanityImageUrl(heroLeftImage.url, { width: 1000, height: 1000 })}
-          srcset={`${buildSanityImageUrl(heroLeftImage.url, { width: 450, height: 450 })} 450w, ${buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 900 })} 900w`}
+          src={buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })}
+          srcset={`${buildSanityImageUrl(heroLeftImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })} 900w`}
           sizes="(max-width: 1280px) 50vw, 740px"
           alt={heroLeftImage.alt}
-          width={1200}
-          height={800}
+          width={900}
+          height={550}
           loading="eager"
           fetchpriority="high"
           decoding="sync"
           class="w-full h-full object-cover"
         />
+        <div class="absolute inset-0 mix-blend-multiply bg-stone-300 pointer-events-none" aria-hidden="true" />
       </div>
     )
   }
   {
     heroRightImage?.url && (
-      <div class="WelcomeSection___HeroImageContainer">
+      <div class="welcome-hero-image hero-image-right absolute right-0 w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-l-xl bg-prussian-700 overflow-hidden">
         <img
-          id="WelcomeSection___HeroImage--right"
           src={buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })}
-          srcset={`${buildSanityImageUrl(heroRightImage.url, { width: 450, height: 450 })} 450w, ${buildSanityImageUrl(heroRightImage.url, { width: 900, height: 900 })} 900w`}
+          srcset={`${buildSanityImageUrl(heroRightImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })} 900w`}
           sizes="(max-width: 1280px) 50vw, 740px"
           alt={heroRightImage.alt}
-          width={1200}
-          height={800}
+          width={900}
+          height={550}
           loading="eager"
           fetchpriority="high"
           decoding="sync"
           class="w-full h-full object-cover"
         />
+        <div class="absolute inset-0 mix-blend-multiply bg-stone-300 pointer-events-none" aria-hidden="true" />
       </div>
     )
   }
@@ -71,15 +73,8 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 <section id="welcome-section">
   <div class="relative z-[10] mb-[64px]">
     <div class="flex items-center justify-center" id="welcome-badge-region">
-      <svg aria-hidden="true" focusable="false" class="absolute w-0 h-0 overflow-hidden">
-        <defs>
-          <clipPath id="badge-oval" clipPathUnits="objectBoundingBox">
-            <ellipse cx="0.5" cy="0.5" rx="0.466" ry="0.49"></ellipse>
-          </clipPath>
-        </defs>
-      </svg>
       <div id="bristol-badge" class="w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px]">
-        <div class="badge-face w-full h-full mt-4 bg-white p-3 desktop:p-5">
+        <div class="w-full mt-4 rounded-full bg-white shadow-lg flex items-center justify-center p-3 desktop:p-5">
           <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
         </div>
       </div>
@@ -165,25 +160,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   }
 
   #bristol-badge {
-    position: sticky;
-    top: calc(50vh - var(--page-margin) - min(22vw, 140px));
     will-change: transform;
-  }
-
-  @media (min-width: 640px) {
-    #bristol-badge {
-      top: calc(50vh - var(--page-margin) - min(17.5vw, 140px));
-    }
-  }
-
-  @media (min-width: 1024px) {
-    #bristol-badge {
-      top: calc(50vh - var(--page-margin) - min(12vw, 140px));
-    }
-  }
-
-  .badge-face {
-    clip-path: url(#badge-oval);
   }
 
   #welcome-section-content {
@@ -196,33 +173,33 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
       0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
-  .WelcomeSection___HeroImageContainer {
-    position: absolute;
-    overflow: hidden;
-    top: var(--page-margin);
-    opacity: 0; /* held by animation-fill-mode: both until animation starts */
-    width: calc(50% - 0.5 * var(--page-margin));
-    height: calc(100vh - 2 * var(--page-margin));
+  #color-block {
+    position: relative;
+    z-index: -2;
+    /* --color-tint-pct is driven by JS scroll progress (0% → 100%) */
+    background-color: color-mix(in srgb, var(--color-sand-200) var(--color-tint-pct, 0%), white);
   }
 
-  .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--left) {
-    left: 0;
-    border-top-right-radius: 0.75rem;
-    border-bottom-right-radius: 0.75rem;
+  .welcome-hero-image {
+    top: 0;
+    bottom: 0;
+    opacity: 0; /* held by animation-fill-mode: both until animation starts */
+  }
+
+  .hero-image-left {
+    animation-delay: 2s;
     animation: heroSlideInLeft 0.5s ease-out 0.05s both;
   }
 
-  .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--right) {
-    right: 0;
-    border-top-left-radius: 0.75rem;
-    border-bottom-left-radius: 0.75rem;
+  .hero-image-right {
+    animation-delay: 2s;
     animation: heroSlideInRight 0.5s ease-out 0.05s both;
   }
 </style>
 
 <style is:global>
   :root {
-    --welcome-hero-h: calc(100vh - 2 * var(--page-margin));
+    --welcome-hero-h: calc(100vh - 2 * var(--nav-top-bar-height));
   }
 
   .cta-arrow {
@@ -271,6 +248,11 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   }
 
   #bristol-badge {
+    /* 0% 50%: layout-left edge at vertical centre. Because JS applies
+         transform: translateX(-50%) first, the element's visual centre
+         coincides with its layout-left edge — so this keeps the scale
+         pivot on the visual centre rather than drifting right. */
+    transform-origin: 0% 50%;
     animation: badgeEntrance 0.4s ease-in-out 0.35s both;
   }
 </style>
@@ -283,18 +265,25 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   // Hero starts sliding up when #welcome-section-content is this many px
   // above the hero's bottom edge.
 
+  const BADGE_CONTENT_GAP_PX = 128;
+  // Minimum gap (px) between badge bottom and content top once the badge
+  // releases from its fixed position and floats above the content.
+
+  const BADGE_VERTICAL_OFFSET_PX = -32;
+  // Nudge badge up (negative) or down (positive) from the vertical centre
+  // of #welcome-badge-region.
+
   const CONTENT_SHADOW_SCROLL_PX = 64;
   // Page scroll distance (px) at which the content card's drop shadow fades in.
 
-  const HERO_EXPAND_START_SCROLL = 72;
+  const HERO_EXPAND_START_SCROLL = 128;
   // Hero starts expanding once the user has scrolled this far.
   // Grows at 1px per 1px of scroll until it hits HERO_EXPAND_MAX_PCT.
 
-  const HERO_EXPAND_MAX_PCT = 0.1;
-  // Hero grows by at most this fraction beyond its initial height (0.15 = 15%).
+  const BODY_BACKGROUND_COLOR_START_SCROLL = HERO_EXPAND_START_SCROLL;
 
-  const HERO_EXPAND_GROWTH_RATE = 0.25;
-  // Hero grows by this rate per 1px of scroll, up until it hits HERO_EXPAND_MAX_PCT.
+  const HERO_EXPAND_MAX_PCT = 0.12;
+  // Hero grows by at most this fraction beyond its initial height (0.15 = 15%).
 
   const AUTO_SCROLL_DELAY_MS = 750;
   // Delay after load before the page auto-scrolls to reveal the content card.
@@ -304,17 +293,37 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   // ───────────────────────────────────────────────────────────────────────────
 
   const hero = document.getElementById('welcome-hero');
-  const heroLeftImage = document.getElementById('WelcomeSection___HeroImage--left');
-  const heroRightImage = document.getElementById('WelcomeSection___HeroImage--right');
+  const badge = document.getElementById('bristol-badge');
   const content = document.getElementById('welcome-section-content');
+  const colorBlock = document.getElementById('color-block');
+  const body = document.body;
 
+  let badgeFixedTop = 0;
+  let badgeHeight = 0; // cached on init; only changes on resize
   let heroInitialHeight = 0;
 
-  function initHeroHeight() {
-    if (!heroLeftImage || !heroRightImage) return;
+  function initBadge() {
+    if (!badge) return;
+    const badgeRegion = document.getElementById('welcome-badge-region');
+    if (!badgeRegion) return;
+    badgeHeight = badge.offsetHeight;
+    // getBoundingClientRect().top is viewport-relative; + scrollY converts it
+    // to a document-absolute Y, which equals the fixed `top` at scroll = 0.
+    const regionDocTop = badgeRegion.getBoundingClientRect().top + window.scrollY;
+    badgeFixedTop = regionDocTop + (badgeRegion.offsetHeight - badgeHeight) / 2 + BADGE_VERTICAL_OFFSET_PX;
+    badge.style.position = 'fixed';
+    badge.style.left = '50%';
+    badge.style.transform = 'translateX(-50%)';
+    badge.style.margin = '0';
+    badge.style.top = `${badgeFixedTop}px`;
+  }
 
-    heroLeftImage.style.height = '';
-    heroRightImage.style.height = '';
+  if (badge) {
+    initBadge();
+    // window.addEventListener('resize', initBadge, { passive: true });
+  }
+
+  function initHeroHeight() {
     if (!hero) return;
     hero.style.height = ''; // clear any JS override so offsetHeight reflects CSS
     heroInitialHeight = hero.offsetHeight;
@@ -322,31 +331,79 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 
   if (hero) {
     initHeroHeight();
+    // window.addEventListener(
+    //   'resize',
+    //   () => {
+    //     initHeroHeight();
+    //     updateHeroHeight();
+    //   },
+    //   { passive: true },
+    // );
   }
 
   // Hero expands from its initial height to 100vh as user scrolls past the trigger
   function updateHeroHeight() {
-    if (!hero || !heroLeftImage || !heroRightImage) return;
+    if (!hero) return;
     const scroll = window.scrollY;
-    const grown = (scroll - HERO_EXPAND_START_SCROLL) * HERO_EXPAND_GROWTH_RATE;
-    const newHeight = Math.min(heroInitialHeight * (1 + HERO_EXPAND_MAX_PCT), heroInitialHeight + grown);
-    (heroLeftImage as HTMLElement).style.height = `${newHeight}px`;
-    (heroRightImage as HTMLElement).style.height = `${newHeight}px`;
+    if (scroll <= HERO_EXPAND_START_SCROLL) {
+      hero.style.height = '';
+      return;
+    }
+
+    const growthCoefficient = 0.5;
+    const grown = (scroll - HERO_EXPAND_START_SCROLL) * growthCoefficient;
+    const maxHeight = heroInitialHeight * (1 + HERO_EXPAND_MAX_PCT);
+    hero.style.height = `${Math.min(maxHeight, heroInitialHeight + grown)}px`;
   }
 
   // Hero slides up once #welcome-section-content is within HERO_PUSH_CONTENT_GAP_PX of the hero bottom
   function updateHeroPush() {
     if (!hero || !content) return;
     const heroBottom = hero.offsetHeight; // hero is position:fixed at top:0
-    const contentBottom = content.getBoundingClientRect().bottom;
-    const overshoot = contentBottom - (heroBottom - HERO_PUSH_CONTENT_GAP_PX);
+    const contentTop = content.getBoundingClientRect().top;
+    const overshoot = contentTop - (heroBottom - HERO_PUSH_CONTENT_GAP_PX);
     hero.style.transform = overshoot < 0 ? `translateY(${overshoot}px)` : '';
+  }
+
+  /* Body background color blends from white → sand-200 while the
+     hero scale animation is in progress.
+     This transition should be complete once the hero moves out of view.
+     The transition will happen in reverse if the user scrolls bac up and the hero comes in to focus again.
+  */
+  function updateBodyBackgroundColor() {
+    if (!body) return;
+    const endColor = '#ded6d2'; // sand-200
+    const scrollY = window.scrollY;
+
+    if (scrollY <= BODY_BACKGROUND_COLOR_START_SCROLL) {
+      body.style.backgroundColor = '';
+    } else {
+      body.style.backgroundColor = endColor;
+    }
   }
 
   // Content card shadow fades in after the user scrolls CONTENT_SHADOW_SCROLL_PX
   function updateContentShadow() {
     if (!content) return;
     content.classList.toggle('shadow-visible', window.scrollY >= CONTENT_SHADOW_SCROLL_PX);
+  }
+
+  // Color block blends from white → sand-200 over the first CONTENT_SHADOW_SCROLL_PX of scroll
+  function updateColorBlock() {
+    if (!colorBlock) return;
+    const progress = Math.min(1, window.scrollY / CONTENT_SHADOW_SCROLL_PX);
+    colorBlock.style.setProperty('--color-tint-pct', `${progress * 100}%`);
+  }
+
+  // Badge stays pinned until content comes within BADGE_CONTENT_GAP_PX,
+  // then floats above the content maintaining that gap.
+  // Uses translateY instead of `top` so movement stays on the GPU compositor.
+  function updateBadgePosition() {
+    if (!badge || !content) return;
+    const contentTop = content.getBoundingClientRect().top;
+    const threshold = badgeFixedTop + badgeHeight + BADGE_CONTENT_GAP_PX;
+    const dy = contentTop <= threshold ? contentTop - BADGE_CONTENT_GAP_PX - badgeHeight - badgeFixedTop : 0;
+    badge.style.transform = `translateX(-50%) translateY(${dy}px)`;
   }
 
   let rafPending = false;
@@ -356,8 +413,11 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
     rafPending = true;
     requestAnimationFrame(() => {
       updateHeroHeight();
+      updateBodyBackgroundColor();
       updateHeroPush();
+      updateBadgePosition();
       updateContentShadow();
+      updateColorBlock();
       rafPending = false;
     });
   }
