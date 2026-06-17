@@ -43,10 +43,10 @@ export function RoomCardReact({ room, availability, isLoading, detailUrl }: Prop
   const infoText = [bedroomsLabel, personCapacityLabel, floorNumberLabel, estimatedPriceLabel].filter(Boolean).join(' · ');
 
   return (
-    <a href={detailUrl} className="pointer group">
-      <article className={['bg-white rounded-lg shadow-lg', dimmed ? 'opacity-50' : '', 'transition-opacity duration-150'].join(' ')}>
+    <a href={detailUrl} className="pointer group fade-in-500">
+      <article className={['bg-white rounded-xl shadow-lg border-ink-900 border-1 overflow-hidden', dimmed ? 'opacity-50' : '', 'transition-opacity duration-150'].join(' ')}>
         <div className="rounded-sm">
-          <div className="flex flex-col justify-between bg-sand-050 text-prussian-700 p-1 border-1 border-ink-900 rounded-t-lg px-2 relative group-hover:shadow-lg group-hover:text-prussian-500 transition-colors duration-700 ease-out">
+          <div className="flex flex-col justify-between bg-sand-100 group-hover:bg-sand-050/50 text-prussian-700 p-1 border-b-1 border-ink-900 rounded-t-lg px-2 relative group-hover:shadow-lg group-hover:text-prussian-500 transition-colors duration-700 ease-out">
             <TextStyle variant="h4" element="h5" className="overflow-hidden text-ellipsis font-medium line-clamp-1 mt-1 transition-colors duration-700 ease-out">
               {name}
             </TextStyle>
@@ -57,7 +57,7 @@ export function RoomCardReact({ room, availability, isLoading, detailUrl }: Prop
             </div>
           </div>
 
-          <div className="relative bg-ink-900/20 rounded-b-xl overflow-hidden">
+          <div className="relative bg-ink-900/20 overflow-hidden">
             <img src={photo.url} alt={photo.caption || name} width={600} height={400} loading="lazy" className="w-full object-cover aspect-[3/2] transition duration-700 ease-out group-hover:scale-103 group-hover:opacity-60" />
             <div className="absolute bottom-2 right-2 left-2 flex gap-1 justify-between items-end">
               {actualPrice && (

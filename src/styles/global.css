@@ -147,18 +147,24 @@ html {
 }
 
 /* Animated Hamburger menu icon */
-
-.quick-fade-in {
+.fade-in-200 {
   opacity: 0;
-  transition: opacity 0.2s ease-in-out;
+  transition: fadeInAnimation 0.2s ease-in-out;
+}
+.fade-in-500 {
+  opacity: 0;
+  animation: fadeInAnimation 0.5s ease-in-out 0.05s both;
+}
+.fade-in-750 {
+  opacity: 0;
+  animation: fadeInAnimation 0.75s ease-in-out 0.05s both;
+}
+.fade-in-1000 {
+  opacity: 0;
+  animation: fadeInAnimation 1s ease-in-out 0.05s both;
 }
 
-.image-fade-in {
-  opacity: 0;
-  animation: imageFadeIn 0.5s ease-out 0.05s both;
-}
-
-@keyframes imageFadeIn {
+@keyframes fadeInAnimation {
   from {
     opacity: 0;
   }

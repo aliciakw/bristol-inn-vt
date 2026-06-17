@@ -27,7 +27,7 @@ interface Props {
 const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, logo, galleryImages } = Astro.props;
 ---
 
-<div id="welcome-hero" class="fixed w-full z-[-1]">
+<div id="welcome-hero" class="fixed w-full z-[-1] fade-in-1000">
   {
     heroLeftImage?.url && (
       <div class="WelcomeSection___HeroImageContainer">
@@ -69,8 +69,9 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 </div>
 
 <section id="welcome-section">
-  <div class="relative z-[10] mb-[64px]">
-    <div class="flex items-center justify-center" id="welcome-badge-region">
+  <div class="relative z-[10]">
+
+    <div class="flex items-center justify-center h-[75vh] mb-[var(--grid-gutter)]">
       <svg aria-hidden="true" focusable="false" class="absolute w-0 h-0 overflow-hidden">
         <defs>
           <clipPath id="badge-oval" clipPathUnits="objectBoundingBox">
@@ -79,7 +80,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
         </defs>
       </svg>
       <div id="bristol-badge" class="w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px]">
-        <div class="badge-face w-full h-full mt-4 bg-white p-3 desktop:p-5">
+        <div class="badge-face w-full h-full mt-4 fade-in-500 bg-white p-3 desktop:p-5">
           <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
         </div>
       </div>
@@ -108,7 +109,6 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
 
       <!-- Reservation section -->
       <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-gutter)]">
-        <!-- {logo && <img src={logo} alt="" aria-hidden="true" class="w-24 h-24 object-contain" />} -->
 
         {
           reservationImage && (
@@ -271,7 +271,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   }
 
   #bristol-badge {
-    animation: badgeEntrance 0.4s ease-in-out 0.35s both;
+    /* animation: badgeEntrance 0.4s ease-in-out 0.35s both; */
   }
 </style>
 
@@ -286,7 +286,7 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   const CONTENT_SHADOW_SCROLL_PX = 64;
   // Page scroll distance (px) at which the content card's drop shadow fades in.
 
-  const HERO_EXPAND_START_SCROLL = 72;
+  const HERO_EXPAND_START_SCROLL = 0.25 * window.innerHeight
   // Hero starts expanding once the user has scrolled this far.
   // Grows at 1px per 1px of scroll until it hits HERO_EXPAND_MAX_PCT.
 
@@ -328,6 +328,9 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   function updateHeroHeight() {
     if (!hero || !heroLeftImage || !heroRightImage) return;
     const scroll = window.scrollY;
+    if (scroll < HERO_EXPAND_START_SCROLL) {
+      return;
+    }
     const grown = (scroll - HERO_EXPAND_START_SCROLL) * HERO_EXPAND_GROWTH_RATE;
     const newHeight = Math.min(heroInitialHeight * (1 + HERO_EXPAND_MAX_PCT), heroInitialHeight + grown);
     (heroLeftImage as HTMLElement).style.height = `${newHeight}px`;
@@ -369,12 +372,12 @@ const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftIm
   // Auto-scroll once on load so the content card overlays the hero without
   // requiring the user to scroll first. Skipped if the user has already
   // scrolled by the time the timer fires, or if they prefer reduced motion.
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!prefersReducedMotion) {
-    setTimeout(() => {
-      if (window.scrollY === 0) {
-        window.scrollTo({ top: AUTO_SCROLL_AMOUNT_PX, behavior: 'smooth' });
-      }
-    }, AUTO_SCROLL_DELAY_MS);
-  }
+  // const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // if (!prefersReducedMotion) {
+  //   setTimeout(() => {
+  //     if (window.scrollY === 0) {
+  //       window.scrollTo({ top: AUTO_SCROLL_AMOUNT_PX, behavior: 'smooth' });
+  //     }
+  //   }, AUTO_SCROLL_DELAY_MS);
+  // }
 </script>
