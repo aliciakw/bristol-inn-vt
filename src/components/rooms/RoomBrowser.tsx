@@ -5,18 +5,6 @@ import { RoomCardReact, type RoomBrowserRoom } from './RoomCardReact';
 import { TextStyle } from '@components/ui/TextStyle';
 import { getBookingUrl, getCheckoutUrl, getDetailUrl } from '@lib/hostaway-urls';
 
-// interface RoomBrowserRoom {
-//   id: number;
-//   name: string;
-//   price: number;
-//   personCapacity: number;
-//   numberOfBeds?: number;
-//   numberOfBathrooms?: number;
-//   dogsAllowed?: boolean;
-//   photo: { url: string; caption: string };
-//   amenities: string[];
-// }
-
 interface AvailabilityResult {
   listingId: number;
   available: boolean;
@@ -135,7 +123,7 @@ export function RoomBrowser({ rooms }: Props) {
 
   return (
     <div className="flex flex-col gap-12">
-      <div className="top-[var(--nav-top-bar-height)] z-10">
+      <div className="top-[var(--nav-top-bar-height)] z-10 desktop:max-w-[66.66%]">
         <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} />
 
         {state.status === 'error' && (

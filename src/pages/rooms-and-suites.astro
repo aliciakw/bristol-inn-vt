@@ -33,7 +33,7 @@ const browserRooms = rooms.map((r) => ({
       <div class="row-span-1 col-span-6">
         {page?.body?.length > 0 && <SliceZone blocks={page.body} />}
       </div>
-      <div class="row-span-1 col-span-6">
+      <div class="row-span-1 col-span-6 desktop:col-span-8">
         <RoomBrowser client:load rooms={browserRooms} />
       </div>
     </div>

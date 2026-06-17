@@ -25,7 +25,7 @@ interface Props {
   logo?: string;
 }
 
-const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA,  heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage } = Astro.props;
+const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage } = Astro.props;
 ---
 
 <div id="welcome-hero" class:list={['fixed w-full z-[-1]', coverColor ? 'fade-in-1000--delay-1000' : 'fade-in-1000']}>
@@ -69,12 +69,12 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA,  heroLeftIma
   }
 </div>
 
-{coverColor && <div id="cover" class="h-[100vh] w-[100vw] absolute pointer-events-none top-0 left-0 z-9" style={`background-color: ${coverColor}`}></div>}
+{coverColor && <div id="cover" class="h-[100vh] w-[100vw] absolute pointer-events-none top-0 left-0 z-9" style={`background-color: ${coverColor}`} />}
 
 <section id="welcome-section">
   <div class="relative z-10">
     <!-- Badge region -->
-    <div class="flex items-center justify-center h-[75vh] mb-[var(--grid-gutter)] z-20">
+    <div class="flex items-center justify-center h-[75vh] mb-[var(--nav-top-bar-height)] z-20">
       <svg aria-hidden="true" focusable="false" class="absolute w-0 h-0 overflow-hidden">
         <defs>
           <clipPath id="badge-oval" clipPathUnits="objectBoundingBox">
@@ -293,6 +293,11 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA,  heroLeftIma
 </style>
 
 <script>
+  const hero = document.getElementById('welcome-hero');
+  const heroLeftImage = document.getElementById('WelcomeSection___HeroImage--left');
+  const heroRightImage = document.getElementById('WelcomeSection___HeroImage--right');
+  const content = document.getElementById('welcome-section-content');
+
   // ── Animation tuning ───────────────────────────────────────────────────────
   // Adjust these values to change timing and feel without touching the logic.
 
@@ -304,10 +309,13 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA,  heroLeftIma
   // Page scroll distance (px) at which the content card's drop shadow fades in.
 
   const HERO_BLUR_START_SCROLL = 0.25 * window.innerHeight;
-  const HERO_BLUR_MAX_PX = 8;
-  const HERO_BLUR_GROWTH_RATE = 0.01;
+  // Scroll distance (px) at which blur and dim reach their maximum values.
+  const HERO_BLUR_END_SCROLL = 0.85 * window.innerHeight;
+  const HERO_BLUR_MAX_PX = 1.5;
+  // Brightness at maximum scroll (1 = no change, 0 = black). 0.45 ≈ 55% dim.
+  const HERO_DIM_MIN_BRIGHTNESS = 0.75;
 
-  const HERO_EXPAND_START_SCROLL = 0.25 * window.innerHeight;
+  const HERO_EXPAND_START_SCROLL = content ? content.getBoundingClientRect().bottom - window.innerHeight * 0.75 : 0.5 * window.innerHeight;
   // Hero starts expanding once the user has scrolled this far.
   // Grows at 1px per 1px of scroll until it hits HERO_EXPAND_MAX_PCT.
 
@@ -318,11 +326,6 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA,  heroLeftIma
   // Hero grows by this rate per 1px of scroll, up until it hits HERO_EXPAND_MAX_PCT.
   // ───────────────────────────────────────────────────────────────────────────
 
-  const hero = document.getElementById('welcome-hero');
-  const heroLeftImage = document.getElementById('WelcomeSection___HeroImage--left');
-  const heroRightImage = document.getElementById('WelcomeSection___HeroImage--right');
-  const content = document.getElementById('welcome-section-content');
-
   let heroInitialHeight = 0;
 
   function initHeroHeight() {
@@ -330,6 +333,8 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA,  heroLeftIma
 
     heroLeftImage.style.height = '';
     heroRightImage.style.height = '';
+    heroLeftImage.style.filter = '';
+    heroRightImage.style.filter = '';
     if (!hero) return;
     hero.style.height = ''; // clear any JS override so offsetHeight reflects CSS
     heroInitialHeight = hero.offsetHeight;
@@ -353,16 +358,19 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA,  heroLeftIma
   }
 
   function updateHeroBlur() {
-    if (!hero || !heroLeftImage || !heroRightImage) return;
+    if (!heroLeftImage || !heroRightImage) return;
     const scroll = window.scrollY;
-    if (scroll < HERO_BLUR_START_SCROLL) {
+    const progress = Math.max(0, Math.min(1, (scroll - HERO_BLUR_START_SCROLL) / (HERO_BLUR_END_SCROLL - HERO_BLUR_START_SCROLL)));
+    if (progress === 0) {
+      (heroLeftImage as HTMLElement).style.filter = '';
+      (heroRightImage as HTMLElement).style.filter = '';
       return;
     }
-    const grown = (scroll - HERO_BLUR_START_SCROLL) * HERO_BLUR_GROWTH_RATE;
-    // const blurAmount = Math.min(HERO_BLUR_MAX_PX, HERO_BLUR_MAX_PX + grown);
-    const blurAmount = 1;
-    (heroLeftImage as HTMLElement).style.filter = `blur(${blurAmount}px)`;
-    (heroRightImage as HTMLElement).style.filter = `blur(${blurAmount}px)`;
+    const blur = progress * HERO_BLUR_MAX_PX;
+    const brightness = 1 - progress * (1 - HERO_DIM_MIN_BRIGHTNESS);
+    const filter = `blur(${blur.toFixed(2)}px) brightness(${brightness.toFixed(3)})`;
+    (heroLeftImage as HTMLElement).style.filter = filter;
+    (heroRightImage as HTMLElement).style.filter = filter;
   }
 
   // Hero slides up once #welcome-section-content is within HERO_PUSH_CONTENT_GAP_PX of the hero bottom
@@ -386,7 +394,7 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA,  heroLeftIma
     if (rafPending) return;
     rafPending = true;
     requestAnimationFrame(() => {
-      // updateHeroHeight();
+      updateHeroHeight();
       updateHeroBlur();
       updateHeroPush();
       updateContentShadow();

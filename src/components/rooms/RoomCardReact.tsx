@@ -46,19 +46,19 @@ export function RoomCardReact({ room, availability, isLoading, detailUrl }: Prop
     <a href={detailUrl} className="pointer group fade-in-500">
       <article className={['bg-white rounded-xl shadow-lg border-ink-900 border-1 overflow-hidden', dimmed ? 'opacity-50' : '', 'transition-opacity duration-150'].join(' ')}>
         <div className="rounded-sm">
-          <div className="flex flex-col justify-between bg-sand-100 group-hover:bg-sand-050/50 text-prussian-700 p-1 border-b-1 border-ink-900 rounded-t-lg px-2 relative group-hover:shadow-lg group-hover:text-prussian-500 transition-colors duration-700 ease-out">
-            <TextStyle variant="h4" element="h5" className="overflow-hidden text-ellipsis font-medium line-clamp-1 mt-1 transition-colors duration-700 ease-out">
+          <div className="flex flex-col justify-center bg-sand-100 group-hover:bg-sand-050/50 border-b-1 border-ink-900 px-3 pt-2 pb-2 gap-1 rounded-t-lg relative group-hover:shadow-lg group-hover:text-prussian-500 transition-colors duration-700 ease-out">
+            <TextStyle variant="h4" element="h5" className="text-prussian-700 overflow-hidden text-ellipsis font-medium leading-none line-clamp-1 mt-1 transition-colors duration-700 ease-out">
               {name}
             </TextStyle>
             <div className="flex flex-row">
-              <TextStyle variant="caption" element="p" className="max-w-[calc(100%)] text-nowrap overflow-hidden text-ellipsis text-iron">
+              <TextStyle variant="caption" element="p" className="max-w-[calc(100%)] text-nowrap overflow-hidden leading-none text-ellipsis text-iron">
                 {infoText}
               </TextStyle>
             </div>
           </div>
 
-          <div className="relative bg-sand-200 overflow-hidden">
-            <img src={photo.url} alt={photo.caption || name} width={600} height={400} loading="lazy" className="w-full object-cover aspect-[3/2] transition duration-700 ease-out group-hover:scale-103 group-hover:opacity-60" />
+          <div className="relative bg-sand-050 overflow-hidden">
+            <img src={photo.url} alt={photo.caption || name} width={600} height={400} loading="lazy" className="w-full object-cover aspect-[3/2] transition duration-300 ease-out group-hover:opacity-80" />
             <div className="absolute bottom-2 right-2 left-2 flex gap-1 justify-between items-end">
               {actualPrice && (
                 <TextStyle variant="h4" element="span" className="bg-white border-3 border-white text-black max-w-[calc(50%)] whitespace-nowrap overflow-hidden text-ellipsis px-2 py-[2px] rounded-full tracking-tight px-4 shadow-sm">
