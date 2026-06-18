@@ -1,6 +1,8 @@
 ---
 import { toHTML } from '@portabletext/to-html';
 import { getSettings } from '../lib/sanity';
+import TextStyle from '@components/ui/TextStyle.astro';
+import Button from '@components/ui/Button.astro';
 
 const year = new Date().getFullYear();
 
@@ -27,23 +29,31 @@ function sectionToHTML(content: unknown[]): string {
 }
 ---
 
-<footer class="bg-prussian-700 text-sand-100 max-w-[100vw] overflow-x-hidden">
+<footer class="bg-prussian-500 text-white max-w-[100vw] overflow-x-hidden">
   <div class="grid grid-cols-6 desktop:grid-cols-8 gap-x-8 gap-y-10 px-6 pt-14 pb-6 desktop:gap-x-16 desktop:gap-y-12">
     {
       footerSections.map((section, i) => {
         const isFirst = i === 0;
-        return <section class:list={['desktop:col-span-2', isFirst ? 'col-span-6 desktop:col-start-2 desktop:row-start-1 desktop:row-span-3 flex flex-col' : 'col-span-3']}>{section.content?.length > 0 && <div set:html={sectionToHTML(section.content)} />}</section>;
+        return (
+          <section class:list={['desktop:col-span-2', isFirst ? 'col-span-6 desktop:col-start-2 desktop:row-start-1 desktop:row-span-3 flex flex-col' : 'col-span-3']}>
+            {section.content?.length > 0 && <div set:html={sectionToHTML(section.content)} />}
+
+            {i === footerSections.length - 1 && (
+              <section class="col-span-6 desktop:col-span-2 desktop:col-start mt-[var(--grid-gutter)] flex flex-col gap-4">
+                <TextStyle variant="h4">Subscribe</TextStyle>
+                <TextStyle variant="caption">Our newsletter includes events, deals, and more.</TextStyle>
+                <form class="relative">
+                  <input type="email" name="email" placeholder="you@email.com" required class="flex-1 h-11 w-full px-5 mr-[-40px] rounded-full bg-sand-100 border border-ink-900 font-serif text-[17px] text-ink-900 placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-khaki-200 focus:ring-offset-1" />
+                  <Button type="submit" size="small" class="absolute right-0 top-0 h-11 shrink-0" bg="khaki-200">
+                    Subscribe
+                  </Button>
+                </form>
+              </section>
+            )}
+          </section>
+        );
       })
     }
-
-    <section class="col-span-6 desktop:col-span-2 desktop:col-start">
-      <h3 class="font-serif text-[31px] leading-[1.2] mb-3">Subscribe</h3>
-      <p class="font-serif italic text-[18px] leading-[1.4] tracking-[0.01em] text-sand-100 mb-5">Keep apprised of the latest events and promotions</p>
-      <form class="flex gap-2" method="post" action="/api/subscribe">
-        <input type="email" name="email" placeholder="you@email.com" required class="flex-1 min-w-0 h-11 px-5 rounded-full bg-sand-100 border border-ink-900 font-serif text-[17px] text-ink-900 placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-ink-900" />
-        <button type="submit" class="shrink-0 h-11 px-5 rounded-full bg-khaki-300 border-2 border-ink-900 font-serif font-medium text-[16px] text-ink-900 hover:opacity-90 transition-opacity"> Subscribe </button>
-      </form>
-    </section>
 
     <div class="col-span-6 desktop:col-span-8 text-center">
       <p class="font-serif text-[14px] text-sand-100/80">

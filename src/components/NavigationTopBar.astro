@@ -7,9 +7,10 @@ export type NavigationTextColor = 'ink-900' | 'sand-050';
 
 interface Props {
   variant: NavigationVariant;
+  shadow?: boolean;
 }
 
-const { variant } = Astro.props;
+const { variant, shadow = false } = Astro.props;
 
 const settings = await getSettings();
 
@@ -28,18 +29,21 @@ const leftCta = settings?.leftCta?.label && settings?.leftCta?.href ? settings.l
 const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? settings.rightCta : { label: settings?.rightCta?.label, href: settings?.rightCta?.href, openInNewTab: false };
 ---
 
-<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0 sticky px-2 desktop:px-4', `bg-${variant}`]}>
+<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0 sticky px-[var(--grid-margin)] desktop:pl-[var(--grid-gutter)] desktop:pr-1', `bg-${variant}`, shadow && `shadow-lg`]}>
   <!-- Left (desktop only) -->
-  <a href="/" class="flex">
-    <img src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-7 object-contain" />
-  </a>
+  <div class="flex">
+    <a href="/" class="flex">
+      <img id="nameplate-logo" src={nameplateLogo} alt="Bristol Inn, Vermont" class="max-h-7 object-contain" />
+    </a>
+  </div>
+
   <!-- Right Container -->
-  <div class="flex flex-1 items-center justify-end">
-    <div class="relative z-[50] py-2 pl-2 flex items-center gap-2">
+  <div class="flex flex-1 items-center justify-end mr-[6px]">
+    <div class="relative z-[50] flex items-center gap-2">
       <div class="hidden tablet:inline-flex gap-2">
         {
           leftCta.label && leftCta.href && (
-            <ButtonLink href={leftCta.href} target={leftCta.openInNewTab ? '_blank' : undefined} rel={leftCta.openInNewTab ? 'noopener noreferrer' : undefined} bg="khaki-200" size="small" class="desktop:inline-flex">
+            <ButtonLink href={leftCta.href} target={leftCta.openInNewTab ? '_blank' : undefined} rel={leftCta.openInNewTab ? 'noopener noreferrer' : undefined} size="small" class="bg-sand-200 hover:bg-sand-100 desktop:inline-flex">
               {leftCta.label}
             </ButtonLink>
           )
@@ -52,7 +56,7 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
           )
         }
       </div>
-      <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer ml-2">
+      <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer desktop:w-16 ml-2">
         <div class="w-9 h-9 flex flex-col justify-center items-stretch gap-[7px]">
           <span class="line"></span>
           <span class="line"></span>
@@ -63,9 +67,9 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
   </div>
 
   <!-- Nav drawer (slides in from right) -->
-  <nav id="nav-menu" aria-label="Site navigation" class="fixed inset-y-0 right-0 z-[43] bg-prussian-700 text-white flex flex-col justify-center" aria-hidden="true">
+  <nav id="nav-menu" aria-label="Site navigation" class="fixed inset-y-0 right-0 z-[43] bg-prussian-500 text-white flex flex-col justify-center" aria-hidden="true">
     <!-- Content -->
-    <div class="NavDrawer__Content quick-fade-in mb-10 px-[var(--grid-margin)] py-6 flex flex-col gap-12 items-start">
+    <div class="NavDrawer__Content fade-in-200 mb-10 px-[var(--grid-margin)] py-6 flex flex-col gap-12 items-start">
       <!-- Nav links from Sanity -->
       <ul>
         {

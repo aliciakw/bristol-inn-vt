@@ -7,7 +7,8 @@
  * No JavaScript — static scrollable grid only (carousel is Phase 5 / ROOM-06).
  */
 
-import { Image } from 'astro:assets';
+import ImageComponent from '@components/ui/ImageComponent.astro';
+import { buildSanityImageUrl } from '@lib/sanity';
 
 interface Props {
   /** Up to 6 photos; already sliced by the Hostaway lib (D-04) */
@@ -28,11 +29,33 @@ const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
     </div>
   ) : (
     <>
-      {heroImage && <Image src={photos[0].url} alt={photos[0].caption || `${roomName} — photo 1`} width={1200} height={800} format="webp" loading="eager" class="w-full object-cover rounded-xl aspect-[4/3]" />}
+      {heroImage && (
+        <ImageComponent
+          src={buildSanityImageUrl(photos[0].url, { width: 1200, height: 800 })}
+          srcset={`${buildSanityImageUrl(photos[0].url, { width: 600, height: 400 })} 600w, ${buildSanityImageUrl(photos[0].url, { width: 1200, height: 800 })} 1200w`}
+          alt={photos[0].caption || `${roomName} — photo 1`}
+          width={1200}
+          height={800}
+          loading="eager"
+          fadeIn
+          class="w-full rounded-xl aspect-[4/3] overflow-hidden group"
+          imgClass="w-full h-full object-cover"
+        />
+      )}
       {gridImages.length > 0 && (
-        <div class="grid grid-cols-2 gap-3 mt-3">
+        <div class="grid grid-cols-2 desktop:grid-cols-3 gap-3 mt-3">
           {gridImages.map((p, i) => (
-            <Image src={p.url} alt={p.caption || `${roomName} — photo ${i + 2}`} width={1200} height={800} format="webp" loading="lazy" class="w-full object-cover rounded-xl" />
+            <ImageComponent
+              src={buildSanityImageUrl(p.url, { width: 1200, height: 800 })}
+              srcset={`${buildSanityImageUrl(p.url, { width: 600, height: 400 })} 600w, ${buildSanityImageUrl(p.url, { width: 1200, height: 800 })} 1200w`}
+              alt={p.caption || `${roomName} — photo ${i + 2}`}
+              width={1200}
+              height={800}
+              loading="lazy"
+              fadeIn
+              class="w-full rounded-xl overflow-hidden group"
+              imgClass="w-full h-full object-cover"
+            />
           ))}
         </div>
       )}

@@ -1,91 +1,448 @@
 ---
 import { Image } from 'astro:assets';
+import { ArrowRight } from 'lucide-react';
 import TextStyle from '@components/ui/TextStyle.astro';
 import { buildSanityImageUrl, type SanityImage, type SanityResolvedLink } from '../../lib/sanity';
 import bristolBadge from '../../assets/bristol-inn-badge.png';
+import ButtonLink from '@components/ui/ButtonLink.astro';
+import { AvailabilitySearchForm } from '@components/rooms/AvailabilitySearchForm';
 
 interface Props {
+  coverColor?: string;
   welcomeHeading?: string;
   welcomeDescription?: string;
   welcomeCTA?: SanityResolvedLink;
   welcomeImage?: SanityImage;
   heroLeftImage?: SanityImage;
   heroRightImage?: SanityImage;
+  galleryImages?: SanityImage[];
   directionsHref?: string;
   directionsLabel?: string;
+  reservationHeading?: string;
+  reservationHeadingIcon?: SanityImage;
+  reservationDescription?: string;
+  reservationImage?: SanityImage;
+  logo?: string;
 }
 
-const { welcomeHeading, welcomeDescription, welcomeCTA, welcomeImage, heroLeftImage, heroRightImage, directionsHref, directionsLabel = 'find directions' } = Astro.props;
+const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage } = Astro.props;
 ---
 
+<div id="welcome-hero" class:list={['fixed w-full z-[-1]', coverColor ? 'fade-in-1000--delay-1000' : 'fade-in-1000']}>
+  {
+    heroLeftImage?.url && (
+      <div class="WelcomeSection___HeroImageContainer">
+        <img
+          id="WelcomeSection___HeroImage--left"
+          src={buildSanityImageUrl(heroLeftImage.url, { width: 1000, height: 1000 })}
+          srcset={`${buildSanityImageUrl(heroLeftImage.url, { width: 450, height: 450 })} 450w, ${buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 900 })} 900w`}
+          sizes="(max-width: 1280px) 50vw, 740px"
+          alt={heroLeftImage.alt}
+          width={1200}
+          height={800}
+          loading="eager"
+          fetchpriority="high"
+          decoding="sync"
+          class="w-full h-full object-cover"
+        />
+      </div>
+    )
+  }
+  {
+    heroRightImage?.url && (
+      <div class="WelcomeSection___HeroImageContainer">
+        <img
+          id="WelcomeSection___HeroImage--right"
+          src={buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })}
+          srcset={`${buildSanityImageUrl(heroRightImage.url, { width: 450, height: 450 })} 450w, ${buildSanityImageUrl(heroRightImage.url, { width: 900, height: 900 })} 900w`}
+          sizes="(max-width: 1280px) 50vw, 740px"
+          alt={heroRightImage.alt}
+          width={1200}
+          height={800}
+          loading="eager"
+          fetchpriority="high"
+          decoding="sync"
+          class="w-full h-full object-cover"
+        />
+      </div>
+    )
+  }
+</div>
+
 <section id="welcome-section">
-  <div id="welcome-hero" class="col-span-6 desktop:col-span-8 h-[400px] tablet:h-[420px] desktop:h-[calc(100vh-140px)] relative overflow-hidden">
-    {
-      heroLeftImage?.url && (
-        <div class="absolute left-0 top-[var(--nav-top-bar-height)] bottom-[var(--grid-margin)] w-[calc(50%-6px)] desktop:w-[calc(50%-8px)] rounded-tr-[12px] rounded-br-[12px] desktop:rounded-tr-xl desktop:rounded-br-xl overflow-hidden">
-          <img
-            src={buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })}
-            srcset={`${buildSanityImageUrl(heroLeftImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 })} 900w`}
-            sizes="(max-width: 1280px) 50vw, 740px"
-            alt={heroLeftImage.alt}
-            width={900}
-            height={550}
-            loading="eager"
-            fetchpriority="high"
-            decoding="sync"
-            class="w-full h-full object-cover"
-          />
+  <div class="relative z-10">
+    <!-- Badge region -->
+    <div class="flex items-center justify-center h-[75vh] mb-[var(--nav-top-bar-height)] z-20">
+      <svg aria-hidden="true" focusable="false" class="absolute w-0 h-0 overflow-hidden">
+        <defs>
+          <clipPath id="badge-oval" clipPathUnits="objectBoundingBox">
+            <ellipse cx="0.5" cy="0.5" rx="0.466" ry="0.49"></ellipse>
+          </clipPath>
+        </defs>
+      </svg>
+      <div id="bristol-badge" class="w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px]">
+        <div class="badge-face w-full h-full mt-4 fade-in-500 bg-white p-3 desktop:p-5">
+          <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
         </div>
-      )
-    }
-    {
-      heroRightImage?.url && (
-        <div class="absolute right-0 top-[var(--nav-top-bar-height)] bottom-[var(--grid-margin)] w-[calc(50%-6px)] desktop:w-[calc(50%-12px)] rounded-tl-[12px] rounded-bl-[8px] desktop:rounded-tl-[16px] desktop:rounded-bl-[16px] overflow-hidden">
-          <img
-            src={buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })}
-            srcset={`${buildSanityImageUrl(heroRightImage.url, { width: 450, height: 275 })} 450w, ${buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 })} 900w`}
-            sizes="(max-width: 1280px) 50vw, 740px"
-            alt={heroRightImage.alt}
-            width={900}
-            height={550}
-            loading="eager"
-            fetchpriority="high"
-            decoding="sync"
-            class="w-full h-full object-cover"
-          />
-        </div>
-      )
-    }
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px] z-10">
-      <div class="w-full mt-4 rounded-full bg-white shadow-lg flex items-center justify-center p-3 desktop:p-5">
-        <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
       </div>
     </div>
   </div>
-  <div class="px-[var(--grid-margin)]">
-    <div class="Section__inner">
-      <div class="row-span-1 col-span-6 desktop:col-start-2">
+
+  <div id="welcome-section-content" class="flex flex-col bg-white rounded-xl max-w-4xl mx-auto pt-10 px-12 pb-12 z-8">
+    <!-- Welcome section -->
+    <div class="flex mx-auto">
+      {
+        (welcomeHeading || welcomeDescription || welcomeCTA) && (
+          <TextStyle variant="h1" element="p">
+            {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
+            {welcomeDescription && <span class="text-iron">{welcomeDescription} </span>}
+            {welcomeCTA && (
+              <span class="cta-arrow-group inline-flex items-center align-middle gap-1">
+                <ArrowRight size={28} className="cta-arrow text-ink-900" aria-hidden="true" />
+                <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
+                  {welcomeCTA.label}
+                </ButtonLink>
+              </span>
+            )}
+          </TextStyle>
+        )
+      }
+    </div>
+
+    <!-- Reservation section -->
+    <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-gutter)]">
+      {
+        reservationImage && (
+          <div class="mx-[var(--grid-margin)] aspect-[5/3] w-[33vw] mx-auto my-8 overflow-hidden rounded-xl">
+            <img
+              src={buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })}
+              srcset={`${buildSanityImageUrl(reservationImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })} 900w`}
+              sizes="(max-width: 1280px) 40vw, 560px"
+              alt={reservationImage.alt}
+              width={900}
+              height={700}
+              loading="eager"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        )
+      }
+
+      <TextStyle variant="h2" class="text-center">{reservationHeading}</TextStyle>
+      {
+        reservationDescription && (
+          <TextStyle variant="paragraph" element="p" class="max-w-2xl mt-2 mb-[var(--grid-gutter)]">
+            {reservationDescription}
+          </TextStyle>
+        )
+      }
+
+      <div class="w-2xl">
+        <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
+      </div>
+
+      <div class="flex items-center justify-center mt-[var(--grid-gutter)]">
         {
-          (welcomeHeading || welcomeDescription) && (
-            <TextStyle variant="h1" element="p">
-              {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
-              {welcomeDescription && <span class="text-iron">{welcomeDescription}</span>}
-            </TextStyle>
-          )
-        }
-        {
-          welcomeCTA && (
-            <a
-              href={welcomeCTA.href}
-              target={welcomeCTA.openInNewTab ? '_blank' : undefined}
-              rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}
-              class="inline-flex items-center px-6 py-2.5 rounded-full border-2 border-ink-900 bg-sand-100 font-serif text-ink-900 text-[18px] hover:bg-sand-200 transition-colors mt-4"
-            >
-              {welcomeCTA.label}
-            </a>
+          reservationHeadingIcon && (
+            <div id="reservation-heading-icon" class="w-20 h-20 flex items-center justify-center">
+              <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
+            </div>
           )
         }
       </div>
     </div>
   </div>
+  <!-- </div> -->
 </section>
+
+<style>
+  #cover {
+    position: absolute;
+    inset: 0;
+    height: 100vh;
+    width: 100vw;
+    pointer-events: none;
+    z-index: 9;
+    will-change: transform;
+    animation: coverSlideUp 0.6s ease-in-out 1s forwards;
+  }
+
+  @keyframes coverSlideUp {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-100%);
+    }
+  }
+
+  #welcome-badge-region {
+    height: var(--welcome-hero-h);
+  }
+
+  #welcome-hero {
+    height: var(--welcome-hero-h);
+    will-change: transform, opacity;
+  }
+
+  #bristol-badge {
+    position: sticky;
+    top: calc(50vh - var(--page-margin) - min(22vw, 140px));
+    will-change: transform;
+  }
+
+  @media (min-width: 640px) {
+    #bristol-badge {
+      top: calc(50vh - var(--page-margin) - min(17.5vw, 140px));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    #bristol-badge {
+      top: calc(50vh - var(--page-margin) - min(12vw, 140px));
+    }
+  }
+
+  .badge-face {
+    clip-path: url(#badge-oval);
+  }
+
+  #welcome-section-content {
+    transition: box-shadow 0.4s ease;
+  }
+
+  #welcome-section-content.shadow-visible {
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .WelcomeSection___HeroImageContainer {
+    position: absolute;
+    overflow: hidden;
+    top: var(--page-margin);
+    opacity: 0; /* held by animation-fill-mode: both until animation starts */
+    width: calc(50% - 0.5 * var(--page-margin));
+    height: calc(100vh - 2 * var(--page-margin));
+  }
+
+  .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--left) {
+    left: 0;
+    border-top-right-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+    animation: heroSlideInLeft 0.5s ease-out 0.75s both;
+  }
+
+  .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--right) {
+    right: 0;
+    border-top-left-radius: 0.75rem;
+    border-bottom-left-radius: 0.75rem;
+    animation: heroSlideInRight 0.5s ease-out 0.75s both;
+  }
+</style>
+
+<style is:global>
+  :root {
+    --welcome-hero-h: calc(100vh - 2 * var(--page-margin));
+  }
+
+  .cta-arrow {
+    transition: transform 0.2s ease;
+    margin-right: 6px;
+  }
+
+  .cta-arrow-group:hover .cta-arrow {
+    transform: translateX(2px);
+  }
+
+  @keyframes heroSlideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes heroSlideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes badgeEntrance {
+    0% {
+      scale: 0.2;
+      opacity: 0;
+    }
+    80% {
+      scale: 1.06;
+      opacity: 1;
+    }
+    100% {
+      scale: 1;
+    }
+  }
+
+  #bristol-badge {
+    /* animation: badgeEntrance 0.4s ease-in-out 0.35s both; */
+  }
+</style>
+
+<script define:vars={{ coverColor }}>
+  const hero = document.getElementById('welcome-hero');
+  const heroLeftImage = document.getElementById('WelcomeSection___HeroImage--left');
+  const heroRightImage = document.getElementById('WelcomeSection___HeroImage--right');
+  const content = document.getElementById('welcome-section-content');
+
+  const skipIntro = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.scrollY > 32;
+
+  if (coverColor && !skipIntro) {
+    const cover = document.createElement('div');
+    cover.id = 'cover';
+    cover.style.backgroundColor = coverColor;
+    document.body.appendChild(cover);
+  }
+
+  if (skipIntro) {
+    const leftContainer = heroLeftImage?.parentElement as HTMLElement | null;
+    const rightContainer = heroRightImage?.parentElement as HTMLElement | null;
+    if (leftContainer) {
+      leftContainer.style.animation = 'none';
+      leftContainer.style.opacity = '1';
+      leftContainer.style.transform = 'translateX(0)';
+    }
+    if (rightContainer) {
+      rightContainer.style.animation = 'none';
+      rightContainer.style.opacity = '1';
+      rightContainer.style.transform = 'translateX(0)';
+    }
+  }
+
+  // ── Animation tuning ───────────────────────────────────────────────────────
+  // Adjust these values to change timing and feel without touching the logic.
+
+  const HERO_PUSH_CONTENT_GAP_PX = 64;
+  // Hero starts sliding up when #welcome-section-content is this many px
+  // above the hero's bottom edge.
+
+  const CONTENT_SHADOW_SCROLL_PX = 64;
+  // Page scroll distance (px) at which the content card's drop shadow fades in.
+
+  const HERO_BLUR_START_SCROLL = 0.25 * window.innerHeight;
+  // Scroll distance (px) at which blur and dim reach their maximum values.
+  const HERO_BLUR_END_SCROLL = 0.85 * window.innerHeight;
+  const HERO_BLUR_MAX_PX = 1.5;
+  // Brightness at maximum scroll (1 = no change, 0 = black). 0.45 ≈ 55% dim.
+  const HERO_DIM_MIN_BRIGHTNESS = 0.75;
+
+  const HERO_EXPAND_START_SCROLL = content ? content.getBoundingClientRect().bottom - window.innerHeight * 0.75 : 0.5 * window.innerHeight;
+  // Hero starts expanding once the user has scrolled this far.
+  // Grows at 1px per 1px of scroll until it hits HERO_EXPAND_MAX_PCT.
+
+  const HERO_EXPAND_MAX_PCT = 0.1;
+  // Hero grows by at most this fraction beyond its initial height (0.15 = 15%).
+
+  const HERO_EXPAND_GROWTH_RATE = 0.25;
+  // Hero grows by this rate per 1px of scroll, up until it hits HERO_EXPAND_MAX_PCT.
+  // ───────────────────────────────────────────────────────────────────────────
+
+  let heroInitialHeight = 0;
+
+  function initHeroHeight() {
+    if (!heroLeftImage || !heroRightImage) return;
+
+    heroLeftImage.style.height = '';
+    heroRightImage.style.height = '';
+    heroLeftImage.style.filter = '';
+    heroRightImage.style.filter = '';
+    if (!hero) return;
+    hero.style.height = ''; // clear any JS override so offsetHeight reflects CSS
+    heroInitialHeight = hero.offsetHeight;
+  }
+
+  if (hero) {
+    initHeroHeight();
+  }
+
+  // Hero expands from its initial height to 100vh as user scrolls past the trigger
+  function updateHeroHeight() {
+    if (!hero || !heroLeftImage || !heroRightImage) return;
+    const scroll = window.scrollY;
+    if (scroll < HERO_EXPAND_START_SCROLL) {
+      return;
+    }
+    const grown = (scroll - HERO_EXPAND_START_SCROLL) * HERO_EXPAND_GROWTH_RATE;
+    const newHeight = Math.min(heroInitialHeight * (1 + HERO_EXPAND_MAX_PCT), heroInitialHeight + grown);
+    (heroLeftImage as HTMLElement).style.height = `${newHeight}px`;
+    (heroRightImage as HTMLElement).style.height = `${newHeight}px`;
+  }
+
+  function updateHeroBlur() {
+    if (!heroLeftImage || !heroRightImage) return;
+    const scroll = window.scrollY;
+    const progress = Math.max(0, Math.min(1, (scroll - HERO_BLUR_START_SCROLL) / (HERO_BLUR_END_SCROLL - HERO_BLUR_START_SCROLL)));
+    if (progress === 0) {
+      (heroLeftImage as HTMLElement).style.filter = '';
+      (heroRightImage as HTMLElement).style.filter = '';
+      return;
+    }
+    const blur = progress * HERO_BLUR_MAX_PX;
+    const brightness = 1 - progress * (1 - HERO_DIM_MIN_BRIGHTNESS);
+    const filter = `blur(${blur.toFixed(2)}px) brightness(${brightness.toFixed(3)})`;
+    (heroLeftImage as HTMLElement).style.filter = filter;
+    (heroRightImage as HTMLElement).style.filter = filter;
+  }
+
+  // Hero slides up once #welcome-section-content is within HERO_PUSH_CONTENT_GAP_PX of the hero bottom
+  function updateHeroPush() {
+    if (!hero || !content) return;
+    const heroBottom = hero.offsetHeight; // hero is position:fixed at top:0
+    const contentBottom = content.getBoundingClientRect().bottom;
+    const overshoot = contentBottom - (heroBottom - HERO_PUSH_CONTENT_GAP_PX);
+    hero.style.transform = overshoot < 0 ? `translateY(${overshoot}px)` : '';
+  }
+
+  // Content card shadow fades in after the user scrolls CONTENT_SHADOW_SCROLL_PX
+  function updateContentShadow() {
+    if (!content) return;
+    content.classList.toggle('shadow-visible', window.scrollY >= CONTENT_SHADOW_SCROLL_PX);
+  }
+
+  let rafPending = false;
+
+  function onScroll() {
+    if (rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(() => {
+      updateHeroHeight();
+      updateHeroBlur();
+      updateHeroPush();
+      updateContentShadow();
+      rafPending = false;
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  window.addEventListener('resize', onScroll, { passive: true });
+
+  // Auto-scroll once on load so the content card overlays the hero without
+  // requiring the user to scroll first. Skipped if the user has already
+  // scrolled by the time the timer fires, or if they prefer reduced motion.
+  // const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // if (!prefersReducedMotion) {
+  //   setTimeout(() => {
+  //     if (window.scrollY === 0) {
+  //       window.scrollTo({ top: AUTO_SCROLL_AMOUNT_PX, behavior: 'smooth' });
+  //     }
+  //   }, AUTO_SCROLL_DELAY_MS);
+  // }
+</script>

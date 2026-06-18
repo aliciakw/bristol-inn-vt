@@ -1,7 +1,7 @@
 ---
 import { toHTML } from '@portabletext/to-html';
-import { Image } from 'astro:assets';
-import type { SanityBlock } from '../lib/sanity';
+import ImageComponent from '@components/ui/ImageComponent.astro';
+import { buildSanityImageUrl, type SanityBlock } from '../lib/sanity';
 
 interface Props {
   blocks: SanityBlock[];
@@ -13,12 +13,7 @@ const { blocks } = Astro.props;
 {
   (blocks ?? []).map((block) => {
     if (block._type === 'block') {
-      return (
-        <div
-          class="text-base leading-relaxed max-w-prose my-6"
-          set:html={toHTML([block as SanityBlock])}
-        />
-      );
+      return <div class="text-base leading-relaxed max-w-prose" set:html={toHTML([block as SanityBlock])} />;
     }
 
     if (block._type === 'imageBlock') {
@@ -28,17 +23,20 @@ const { blocks } = Astro.props;
 
       const isFullWidth = (block.layout as string) === 'full';
       const caption = block.caption as string | null | undefined;
+      const fullWidth = isFullWidth ? 1200 : 800;
+      const fullHeight = isFullWidth ? 600 : 500;
 
       return (
         <figure class={isFullWidth ? 'my-6' : 'max-w-prose mx-auto my-6'}>
-          <Image
-            src={url}
+          <ImageComponent
+            src={buildSanityImageUrl(url, { width: fullWidth, height: fullHeight })}
+            srcset={`${buildSanityImageUrl(url, { width: fullWidth / 2, height: fullHeight / 2 })} ${fullWidth / 2}w, ${buildSanityImageUrl(url, { width: fullWidth, height: fullHeight })} ${fullWidth}w`}
             alt={(image?.alt ?? '') as string}
-            width={isFullWidth ? 1200 : 800}
-            height={isFullWidth ? 600 : 500}
-            format="webp"
+            width={fullWidth}
+            height={fullHeight}
             loading="lazy"
-            class={isFullWidth ? 'w-full object-cover' : 'w-full'}
+            fadeIn
+            imgClass={isFullWidth ? 'w-full object-cover' : 'w-full'}
           />
           {caption && <figcaption class="text-sm mt-1 text-center">{caption}</figcaption>}
         </figure>
@@ -46,19 +44,12 @@ const { blocks } = Astro.props;
     }
 
     if (block._type === 'ctaBlock') {
-      const cta = block.cta as
-        | { label?: string; href?: string; openInNewTab?: boolean }
-        | undefined;
+      const cta = block.cta as { label?: string; href?: string; openInNewTab?: boolean } | undefined;
       if (!cta?.label || !cta?.href) return null;
 
       return (
         <div class="my-8 flex justify-center">
-          <a
-            href={cta.href}
-            target={cta.openInNewTab ? '_blank' : undefined}
-            rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}
-            class="inline-flex items-center px-8 py-3 rounded-full border border-ink-900 bg-lilac-200 font-serif text-ink-900 hover:bg-lilac-200/80 transition-colors"
-          >
+          <a href={cta.href} target={cta.openInNewTab ? '_blank' : undefined} rel={cta.openInNewTab ? 'noopener noreferrer' : undefined} class="inline-flex items-center px-8 py-3 rounded-full border border-ink-900 bg-lilac-200 font-serif text-ink-900 hover:bg-lilac-200/80 transition-colors">
             {cta.label}
           </a>
         </div>

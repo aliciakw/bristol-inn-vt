@@ -1,0 +1,43 @@
+---
+import TextStyle from '@components/ui/TextStyle.astro';
+import ImageComponent from '@components/ui/ImageComponent.astro';
+import SliceZone from './SliceZone.astro';
+import { buildSanityImageUrl, type SanityPage } from '../lib/sanity';
+
+interface Props extends Pick<SanityPage, 'title' | 'introduction' | 'heroImage'> {
+  className?: string;
+}
+
+const { title, introduction, heroImage, className } = Astro.props;
+---
+
+<div class={className}>
+  <div class="Section__inner">
+    <div class="row-span-1 col-span-3 desktop:col-span-4 pt-40 gap-6">
+      <TextStyle variant="h1" element="h1" class="mt-[var(--grid-margin)] tablet:mt-0 tablet:mb-4" bold>{title}</TextStyle>
+      <div class="hidden tablet:block">
+        {introduction?.length > 0 && <SliceZone blocks={introduction} />}
+      </div>
+    </div>
+    {
+      heroImage?.url && (
+        <ImageComponent
+          src={buildSanityImageUrl(heroImage.url, { width: 900, height: 700 })}
+          srcset={`${buildSanityImageUrl(heroImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(heroImage.url, { width: 900, height: 700 })} 900w`}
+          sizes="(max-width: 1280px) 40vw, 560px"
+          alt={heroImage.alt}
+          width={900}
+          height={700}
+          loading="eager"
+          fadeIn
+          class="row-span-1 col-span-3 desktop:col-span-4 overflow-hidden aspect-[5/3.5] rounded-bl-[16px] rounded-br-[16px]"
+          imgClass="w-full h-full object-cover"
+        />
+      )
+    }
+    <div class="row-span-1 col-span-6 tablet:hidden">
+      {introduction?.length > 0 && <SliceZone blocks={introduction} />}
+    </div>
+    <slot />
+  </div>
+</div>

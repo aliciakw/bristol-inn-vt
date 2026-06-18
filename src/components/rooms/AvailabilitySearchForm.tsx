@@ -92,6 +92,12 @@ export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoadin
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
+
+    const reservationHeadingIcon = document.getElementById('reservation-heading-icon');
+    if (reservationHeadingIcon) {
+      reservationHeadingIcon.classList.add('animate-spin');
+    }
+
     const params = { checkIn, checkOut, guests, groundFloor, pets };
     if (navigateTo) {
       const sp = new URLSearchParams({ checkIn, checkOut, guests: String(guests) });

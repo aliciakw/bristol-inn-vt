@@ -107,6 +107,7 @@
 
 /* Grid layout variables */
 :root {
+  --page-margin: 8px;
   --grid-columns: 6;
   --grid-margin: 16px;
   --grid-gutter: 8px;
@@ -117,24 +118,22 @@
 @media (min-width: 1024px) {
   :root {
     --grid-columns: 8;
-    --grid-margin: 48px;
-    --grid-gutter: 32px;
-    --nav-top-bar-height: 64px;
+    --grid-margin: 104px;
+    --grid-gutter: 16px;
+    --nav-top-bar-height: 72px;
   }
 }
 
 html {
   scroll-behavior: smooth;
+  overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
 .Section {
-  padding: 0 var(--grid-gutter);
-  @media screen and (min-width: 1024px) {
-    padding: 0;
-  }
+  padding: 0 var(--grid-margin);
 }
 
 .Section__inner {
@@ -143,14 +142,39 @@ html {
   grid-template-columns: repeat(var(--grid-columns), 1fr);
   gap: var(--grid-gutter);
   margin: 0 auto;
-  padding: 0 var(--grid-margin);
+
+  /* padding: 0 var(--grid-margin); */
 }
 
 /* Animated Hamburger menu icon */
-
-.quick-fade-in {
+.fade-in-200 {
   opacity: 0;
-  transition: opacity 0.2s ease-in-out;
+  transition: fadeInAnimation 0.2s ease-in-out;
+}
+.fade-in-500 {
+  opacity: 0;
+  animation: fadeInAnimation 0.5s ease-in-out 0.05s both;
+}
+.fade-in-750 {
+  opacity: 0;
+  animation: fadeInAnimation 0.75s ease-in-out 0.05s both;
+}
+.fade-in-1000 {
+  opacity: 0;
+  animation: fadeInAnimation 1s ease-in-out 0.05s both;
+}
+.fade-in-1000--delay-1000 {
+  opacity: 0;
+  animation: fadeInAnimation 1s ease-in-out 0.7s both;
+}
+
+@keyframes fadeInAnimation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .hover-italic {
@@ -167,4 +191,17 @@ html {
   background-color: var(--color-prussian-100);
   border-radius: 0.25rem;
   padding: 0.25rem 0.5rem;
+}
+
+/* Animations */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

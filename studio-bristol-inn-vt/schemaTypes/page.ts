@@ -28,7 +28,19 @@ export const pageType = defineType({
         return true;
       }),
     }),
-    
+    defineField({
+      name: 'introduction',
+      title: 'Introduction',
+      type: 'array',
+      of: [defineArrayMember({ type: 'block' })],
+    }),
+    defineField({
+      name: 'heroImage',
+      type: 'image',
+      title: 'Hero Image',
+      options: { hotspot: true },
+      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+    }),
     defineField({
       name: 'body',
       title: 'Body',

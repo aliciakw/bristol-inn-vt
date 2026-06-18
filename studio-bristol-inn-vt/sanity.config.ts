@@ -1,6 +1,7 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
+import {colorInput} from '@sanity/color-input'
 import {schemaTypes} from './schemaTypes'
 
 const HOMEPAGE_ID = '6e561f5f-23ec-49fa-863f-141c005904c3'
@@ -51,6 +52,7 @@ export default defineConfig({
           ]),
     }),
     visionTool(),
+    colorInput(),
   ],
 
   schema: {

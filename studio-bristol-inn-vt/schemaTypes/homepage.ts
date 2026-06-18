@@ -1,4 +1,5 @@
 import { defineType, defineField, defineArrayMember } from 'sanity'
+import { ColorSwatchInput } from './ColorSwatchInput'
 
 export const homepageType = defineType({
   name: 'homepage',
@@ -6,6 +7,13 @@ export const homepageType = defineType({
   type: 'document',
   fields: [
     // Welcome section
+    defineField({
+      name: 'coverColor',
+      title: 'Cover Color',
+      description: 'Background color of the intro cover that slides away on page load.',
+      type: 'string',
+      components: {input: ColorSwatchInput},
+    }),
     defineField({ name: 'welcomeHeading', title: 'Welcome Heading', type: 'string' }),
     defineField({ name: 'welcomeDescription', title: 'Welcome Description', type: 'text', rows: 3 }),
     defineField({ name: 'welcomeCTA', title: 'Welcome CTA (optional)', type: 'link' }),

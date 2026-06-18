@@ -3,38 +3,43 @@ import { getHomepage, getSettings, buildSanityImageUrl } from '../lib/sanity';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import WelcomeSection from '../components/home/WelcomeSection.astro';
 import GalleryStrip from '../components/home/GalleryStrip.astro';
-import ReservationSection from '../components/home/ReservationSection.astro';
 import TestimonialsSection from '../components/home/TestimonialsSection.astro';
-import SliceZone from '../components/SliceZone.astro';
 
 const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 
-const { welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, welcomeImage, galleryImages, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, testimonialsHeading, testimonial, amenities, body } = homepage;
+const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, welcomeImage, galleryImages, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, testimonialsHeading, testimonial, amenities, body } = homepage;
 
 const heroLeftPreload = heroLeftImage?.url ? buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 }) : null;
 const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 }) : null;
 ---
 
-<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere." backgroundColor="white" textColor="ink-900" navigationVariant="transparent">
+<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere." backgroundColor="white" textColor="ink-900" navigationVariant="transparent" offsetNavigation={true} bottomSpacer={false} bodyClass="transition-colors duration-300">
   <Fragment slot="head">
     {heroLeftPreload && <link rel="preload" as="image" href={heroLeftPreload} fetchpriority="high" />}
     {heroRightPreload && <link rel="preload" as="image" href={heroRightPreload} fetchpriority="high" />}
   </Fragment>
-  <WelcomeSection welcomeHeading={welcomeHeading} welcomeDescription={welcomeDescription} welcomeCTA={welcomeCTA} heroLeftImage={heroLeftImage} heroRightImage={heroRightImage} welcomeImage={welcomeImage} directionsHref={settings.directionsLink?.href} directionsLabel={settings.directionsLink?.label} />
+  <WelcomeSection
+    coverColor={coverColor}
+    welcomeHeading={welcomeHeading}
+    welcomeDescription={welcomeDescription}
+    welcomeCTA={welcomeCTA}
+    heroLeftImage={heroLeftImage}
+    heroRightImage={heroRightImage}
+    welcomeImage={welcomeImage}
+    directionsHref={settings.directionsLink?.href}
+    directionsLabel={settings.directionsLink?.label}
+    reservationHeading={reservationHeading}
+    reservationHeadingIcon={reservationHeadingIcon}
+    reservationDescription={reservationDescription}
+    reservationImage={reservationImage}
+    galleryImages={galleryImages}
+    logo={settings.logo}
+  />
 
-  <GalleryStrip images={galleryImages ?? []} />
-
-  <ReservationSection reservationHeading={reservationHeading} reservationHeadingIcon={reservationHeadingIcon} reservationDescription={reservationDescription} reservationImage={reservationImage} />
-
-  <TestimonialsSection testimonialsHeading={testimonialsHeading} testimonial={testimonial} amenities={amenities ?? []} />
-
-  {
-    body?.length > 0 && (
-      <div class="px-[var(--grid-margin)] pb-16 desktop:pb-24 text-sand-050">
-        <div class="max-w-[1480px] mx-auto">
-          <SliceZone blocks={body} />
-        </div>
-      </div>
-    )
-  }
+  <div id="gallery-strip-wrapper" class="pt-[144px]">
+    <TestimonialsSection testimonialsHeading={testimonialsHeading} testimonial={testimonial} amenities={amenities ?? []} />
+    <div class="pt-12 bg-white pb-[var(--page-margin)]">
+      <GalleryStrip images={galleryImages ?? []} />
+    </div>
+  </div>
 </BaseLayout>
