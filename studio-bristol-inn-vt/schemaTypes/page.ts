@@ -1,22 +1,7 @@
-import { defineType, defineField, defineArrayMember } from 'sanity'
-import { ColorSwatchInput } from './ColorSwatchInput'
+  import { defineType, defineField, defineArrayMember } from 'sanity'
+  import { colorFields } from './colorFields'
 
 const reservedPageSlugs = ['faq'];
-
-const colorFields = [
-  defineField({
-    name: 'textColor',
-    title: 'Text Color',
-    type: 'string',
-    components: { input: ColorSwatchInput },
-  }),
-  defineField({
-    name: 'backgroundColor',
-    title: 'Background Color',
-    type: 'string',
-    components: { input: ColorSwatchInput },
-  }),
-];
 
 const columnItemFields = [
   defineField({
@@ -60,6 +45,42 @@ export const pageType = defineType({
         }
         return true;
       }),
+    }),
+    defineField({
+      name: 'HeaderBlock',
+      title: 'headerBlock',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'pageHeaderBlock',
+          title: 'Page Header',
+          fields: [
+            defineField({ name: 'title', type: 'string', title: 'Title' }),
+            defineField({
+              name: 'introduction',
+              title: 'Introduction',
+              type: 'array',
+              of: [defineArrayMember({ type: 'block' })],
+            }),
+            defineField({
+              name: 'heroImage',
+              type: 'image',
+              title: 'Hero Image',
+              options: { hotspot: true },
+              fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+            }),
+            ...colorFields,
+          ],
+          preview: {
+            select: { title: 'title', media: 'heroImage' },
+            prepare({ title, media }: { title?: string; media?: any }) {
+              return { title: title ?? '(no title)', subtitle: 'Page Header', media };
+            },
+          },
+        }),
+      ],
+      validation: (Rule) => Rule.max(1),
     }),
     defineField({
       name: 'introduction',

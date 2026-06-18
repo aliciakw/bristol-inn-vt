@@ -1,20 +1,6 @@
 import { defineType, defineField, defineArrayMember } from 'sanity'
 import { ColorSwatchInput } from './ColorSwatchInput'
-
-const colorFields = [
-  defineField({
-    name: 'textColor',
-    title: 'Text Color',
-    type: 'string',
-    components: { input: ColorSwatchInput },
-  }),
-  defineField({
-    name: 'backgroundColor',
-    title: 'Background Color',
-    type: 'string',
-    components: { input: ColorSwatchInput },
-  }),
-];
+import { colorFields } from './colorFields'
 
 const columnItemFields = [
   defineField({
