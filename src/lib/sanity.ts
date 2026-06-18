@@ -106,6 +106,19 @@ const RESOLVE_LINK = `{ label, "href": select(linkType == "internal" => "/" + in
 
 const RESOLVE_BUTTON_LINK = `{ label, color, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
 
+const RESOLVE_COLUMN_ITEM = `{ ..., "image": image{ "url": asset->url, "alt": coalesce(alt, "") }, "cta": cta${RESOLVE_LINK} }`;
+
+const RESOLVE_BODY_ITEM = `{
+  ...,
+  _type == "imageBlock" => { ..., "image": image{ "url": asset->url, "alt": coalesce(alt, "") } },
+  _type == "singleImageBlock" => { ..., "image": image{ "url": asset->url, "alt": coalesce(alt, "") } },
+  _type == "pageHeaderBlock" => { ..., "heroImage": heroImage{ "url": asset->url, "alt": coalesce(alt, "") } },
+  _type == "ctaBlock" => { ..., "cta": cta${RESOLVE_LINK} },
+  _type == "singleColumnBlock" => { ..., "columns": columns[]${RESOLVE_COLUMN_ITEM} },
+  _type == "twoColumnBlock" => { ..., "columns": columns[]${RESOLVE_COLUMN_ITEM} },
+  _type == "threeColumnBlock" => { ..., "columns": columns[]${RESOLVE_COLUMN_ITEM} }
+}`;
+
 export async function getHomepage(): Promise<SanityHomepage> {
   return getClient().fetch<SanityHomepage>(
     `*[_type == "homepage" && _id == $id][0]{
@@ -129,13 +142,7 @@ export async function getHomepage(): Promise<SanityHomepage> {
         _type == "image" => { "url": asset->url, "alt": coalesce(alt, "") }
       },
       "amenities": coalesce(amenities, []),
-      "body": body[]{
-        ...,
-        _type == "ctaBlock" => {
-          ...,
-          "cta": cta${RESOLVE_LINK}
-        }
-      }
+      "body": body[]${RESOLVE_BODY_ITEM}
     }`,
     { id: HOMEPAGE_ID },
   );
@@ -152,7 +159,7 @@ export async function getPage(slug: string): Promise<SanityPage> {
         ogDescription,
         "ogImage": ogImage.asset->{ "url": url }
       },
-      body,
+      "body": body[]${RESOLVE_BODY_ITEM},
       "uid": slug.current
     }`,
     { slug },

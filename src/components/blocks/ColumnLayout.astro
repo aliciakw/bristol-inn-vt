@@ -1,0 +1,55 @@
+---
+import ImageComponent from '@components/ui/ImageComponent.astro';
+import ButtonLink from '@components/ui/ButtonLink.astro';
+import SliceZone from '../SliceZone.astro';
+import { buildSanityImageUrl, type SanityBlock, type SanityImage, type SanityResolvedLink } from '../../lib/sanity';
+
+interface ColumnItem {
+  _key?: string;
+  body?: SanityBlock[];
+  image?: SanityImage;
+  cta?: SanityResolvedLink;
+}
+
+interface Props {
+  columns: ColumnItem[];
+  numColumns: 1 | 2 | 3;
+  textColor?: string;
+  backgroundColor?: string;
+}
+
+const { columns = [], numColumns, textColor, backgroundColor } = Astro.props;
+
+const gridClass = numColumns === 3 ? 'grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3' : numColumns === 2 ? 'grid-cols-1 tablet:grid-cols-2' : 'grid-cols-1';
+
+const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
+---
+
+<section class={`grid gap-8 my-8 ${gridClass}`} style={wrapperStyle || undefined}>
+  {
+    columns.map((col) => (
+      <div class="flex flex-col gap-4">
+        {col.image?.url && (
+          <ImageComponent
+            src={buildSanityImageUrl(col.image.url, { width: 600, height: 400 })}
+            srcset={`${buildSanityImageUrl(col.image.url, { width: 300, height: 200 })} 300w, ${buildSanityImageUrl(col.image.url, { width: 600, height: 400 })} 600w`}
+            alt={col.image.alt ?? ''}
+            width={600}
+            height={400}
+            loading="lazy"
+            fadeIn
+            imgClass="w-full object-cover rounded-lg"
+          />
+        )}
+        {col.body && col.body.length > 0 && <SliceZone blocks={col.body} />}
+        {col.cta?.href && col.cta?.label && (
+          <div>
+            <ButtonLink href={col.cta.href} target={col.cta.openInNewTab ? '_blank' : undefined} rel={col.cta.openInNewTab ? 'noopener noreferrer' : undefined}>
+              {col.cta.label}
+            </ButtonLink>
+          </div>
+        )}
+      </div>
+    ))
+  }
+</section>

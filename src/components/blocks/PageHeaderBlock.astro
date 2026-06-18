@@ -1,0 +1,21 @@
+---
+import PageHeader from '../PageHeader.astro';
+import type { SanityBlock, SanityImage } from '../../lib/sanity';
+
+interface Props {
+  block: {
+    title?: string;
+    introduction?: SanityBlock[];
+    heroImage?: SanityImage;
+    textColor?: string;
+    backgroundColor?: string;
+  };
+}
+
+const { block } = Astro.props;
+const wrapperStyle = [block.textColor ? `color: ${block.textColor}` : '', block.backgroundColor ? `background-color: ${block.backgroundColor}` : ''].filter(Boolean).join('; ');
+---
+
+<div style={wrapperStyle || undefined}>
+  <PageHeader title={block.title ?? ''} introduction={block.introduction ?? []} heroImage={block.heroImage} />
+</div>

@@ -1,59 +1,131 @@
 ---
-import { toHTML } from '@portabletext/to-html';
-import ImageComponent from '@components/ui/ImageComponent.astro';
-import { buildSanityImageUrl, type SanityBlock } from '../lib/sanity';
+import TextStyle from '@components/ui/TextStyle.astro';
+import ButtonLink from '@components/ui/ButtonLink.astro';
+import PageHeaderBlock from './blocks/PageHeaderBlock.astro';
+import SingleImageBlock from './blocks/SingleImageBlock.astro';
+import ColumnLayout from './blocks/ColumnLayout.astro';
+import { type SanityBlock } from '../lib/sanity';
+import type { TextStyleVariant } from './ui/types';
 
 interface Props {
   blocks: SanityBlock[];
 }
 
 const { blocks } = Astro.props;
+
+type MarkDef = { _key: string; _type: string; href?: string; url?: string; openInNewTab?: boolean };
+
+function renderBlockChildren(block: SanityBlock): string {
+  const children = (block.children as Array<{ _type: string; text?: string; marks?: string[] }>) ?? [];
+  const markDefs = (block.markDefs as MarkDef[]) ?? [];
+
+  return children
+    .map((span) => {
+      if (span._type !== 'span') return '';
+      let html = (span.text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      for (const mark of span.marks ?? []) {
+        if (mark === 'strong' || mark === 'em' || mark === 'underline' || mark === 'code') continue;
+        const def = markDefs.find((d) => d._key === mark);
+        if (def?._type === 'link') {
+          const href = (def.href ?? def.url ?? '').replace(/^javascript:/i, '').replace(/"/g, '&quot;');
+          const target = def.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : '';
+          html = `<a href="${href}"${target}>${html}</a>`;
+        }
+      }
+      if ((span.marks ?? []).includes('code')) html = `<code>${html}</code>`;
+      if ((span.marks ?? []).includes('underline')) html = `<u>${html}</u>`;
+      if ((span.marks ?? []).includes('em')) html = `<em>${html}</em>`;
+      if ((span.marks ?? []).includes('strong')) html = `<strong>${html}</strong>`;
+
+      return html;
+    })
+    .join('');
+}
+
+const styleVariantMap: Record<string, TextStyleVariant> = {
+  h1: 'h1',
+  h2: 'h2',
+  h3: 'h3',
+  h4: 'h4',
+  h5: 'h5',
+  normal: 'paragraph',
+  blockquote: 'paragraph',
+};
 ---
 
 {
   (blocks ?? []).map((block) => {
     if (block._type === 'block') {
-      return <div class="text-base leading-relaxed max-w-prose" set:html={toHTML([block as SanityBlock])} />;
+      const style = (block.style as string) ?? 'normal';
+      const listItem = block.listItem as string | undefined;
+      const variant = styleVariantMap[style] ?? 'paragraph';
+      const innerHtml = renderBlockChildren(block);
+
+      if (listItem === 'bullet') {
+        return (
+          <ul class="list-disc pl-6 my-2 max-w-prose">
+            <TextStyle variant="paragraph" element="li">
+              <Fragment set:html={innerHtml} />
+            </TextStyle>
+          </ul>
+        );
+      }
+      if (listItem === 'number') {
+        return (
+          <ol class="list-decimal pl-6 my-2 max-w-prose">
+            <TextStyle variant="paragraph" element="li">
+              <Fragment set:html={innerHtml} />
+            </TextStyle>
+          </ol>
+        );
+      }
+
+      return (
+        <TextStyle variant={variant} class="max-w-prose">
+          <Fragment set:html={innerHtml} />
+        </TextStyle>
+      );
     }
 
     if (block._type === 'imageBlock') {
-      const image = block.image as { asset?: { url?: string }; alt?: string } | undefined;
-      const url = image?.asset?.url;
-      if (!url) return null;
+      const image = block.image as { url?: string; alt?: string } | undefined;
+      const layout = (block.layout as string) === 'full' ? 'fullbleed' : 'default';
+      return <SingleImageBlock image={image} layout={layout} caption={block.caption as string | undefined} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+    }
 
-      const isFullWidth = (block.layout as string) === 'full';
-      const caption = block.caption as string | null | undefined;
-      const fullWidth = isFullWidth ? 1200 : 800;
-      const fullHeight = isFullWidth ? 600 : 500;
-
-      return (
-        <figure class={isFullWidth ? 'my-6' : 'max-w-prose mx-auto my-6'}>
-          <ImageComponent
-            src={buildSanityImageUrl(url, { width: fullWidth, height: fullHeight })}
-            srcset={`${buildSanityImageUrl(url, { width: fullWidth / 2, height: fullHeight / 2 })} ${fullWidth / 2}w, ${buildSanityImageUrl(url, { width: fullWidth, height: fullHeight })} ${fullWidth}w`}
-            alt={(image?.alt ?? '') as string}
-            width={fullWidth}
-            height={fullHeight}
-            loading="lazy"
-            fadeIn
-            imgClass={isFullWidth ? 'w-full object-cover' : 'w-full'}
-          />
-          {caption && <figcaption class="text-sm mt-1 text-center">{caption}</figcaption>}
-        </figure>
-      );
+    if (block._type === 'singleImageBlock') {
+      const image = block.image as { url?: string; alt?: string } | undefined;
+      return <SingleImageBlock image={image} layout={(block.layout as 'default' | 'fullbleed') ?? 'default'} caption={block.caption as string | undefined} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
     }
 
     if (block._type === 'ctaBlock') {
       const cta = block.cta as { label?: string; href?: string; openInNewTab?: boolean } | undefined;
       if (!cta?.label || !cta?.href) return null;
-
+      const wrapperStyle = [block.textColor ? `color: ${block.textColor}` : '', block.backgroundColor ? `background-color: ${block.backgroundColor}` : ''].filter(Boolean).join('; ');
       return (
-        <div class="my-8 flex justify-center">
-          <a href={cta.href} target={cta.openInNewTab ? '_blank' : undefined} rel={cta.openInNewTab ? 'noopener noreferrer' : undefined} class="inline-flex items-center px-8 py-3 rounded-full border border-ink-900 bg-lilac-200 font-serif text-ink-900 hover:bg-lilac-200/80 transition-colors">
+        <div class="my-8 flex justify-center" style={wrapperStyle || undefined}>
+          <ButtonLink href={cta.href} bg="lilac-200" target={cta.openInNewTab ? '_blank' : undefined} rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}>
             {cta.label}
-          </a>
+          </ButtonLink>
         </div>
       );
+    }
+
+    if (block._type === 'pageHeaderBlock') {
+      return <PageHeaderBlock block={block as Parameters<typeof PageHeaderBlock>[0]['block']} />;
+    }
+
+    if (block._type === 'singleColumnBlock') {
+      return <ColumnLayout columns={(block.columns as Parameters<typeof ColumnLayout>[0]['columns']) ?? []} numColumns={1} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+    }
+
+    if (block._type === 'twoColumnBlock') {
+      return <ColumnLayout columns={(block.columns as Parameters<typeof ColumnLayout>[0]['columns']) ?? []} numColumns={2} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+    }
+
+    if (block._type === 'threeColumnBlock') {
+      return <ColumnLayout columns={(block.columns as Parameters<typeof ColumnLayout>[0]['columns']) ?? []} numColumns={3} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
     }
 
     return null;
