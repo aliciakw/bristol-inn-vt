@@ -151,7 +151,6 @@ function normalizeRoom(raw: RawListing): HostawayRoom {
 
   const n = raw.bedroomsNumber;
   const floorNumber = raw.floor || guessFloorNumber(raw.description);
-  console.log('----> floorNumber', floorNumber, raw.description, raw.floor);
   return {
     id: raw.id,
     name: raw.name.replace(/\s*\(\d+ Bedrooms?\)\s*$/i, '').trim(),

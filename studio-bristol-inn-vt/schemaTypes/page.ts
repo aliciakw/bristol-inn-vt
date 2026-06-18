@@ -24,6 +24,10 @@ export const pageType = defineType({
   name: 'page',
   title: 'Page',
   type: 'document',
+  groups: [
+    { name: 'config', title: 'Configuration' },
+    { name: 'editorial', title: 'Editorial' },
+  ],
   fields: [
     // ── OG / SEO ─────────────────────────────────────────────────────────────
     defineField({
@@ -31,6 +35,7 @@ export const pageType = defineType({
       title: 'Page Meta',
       type: 'meta',
       description: 'For SEO and social media.',
+      group: 'config',
       options: { collapsible: true, collapsed: true },
     }),
     defineField({ name: 'title', type: 'string', title: 'Title' }),
@@ -38,6 +43,7 @@ export const pageType = defineType({
       name: 'slug',
       type: 'slug',
       title: 'Slug',
+      group: 'config',
       options: { source: 'title', maxLength: 96 },
       validation: (Rule) => Rule.custom((value, context) => {
         if (reservedPageSlugs.includes(value?.current ?? '')) {
@@ -47,53 +53,27 @@ export const pageType = defineType({
       }),
     }),
     defineField({
-      name: 'HeaderBlock',
-      title: 'headerBlock',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'pageHeaderBlock',
-          title: 'Page Header',
-          fields: [
-            defineField({ name: 'title', type: 'string', title: 'Title' }),
-            defineField({
-              name: 'introduction',
-              title: 'Introduction',
-              type: 'array',
-              of: [defineArrayMember({ type: 'block' })],
-            }),
-            defineField({
-              name: 'heroImage',
-              type: 'image',
-              title: 'Hero Image',
-              options: { hotspot: true },
-              fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
-            }),
-            ...colorFields,
-          ],
-          preview: {
-            select: { title: 'title', media: 'heroImage' },
-            prepare({ title, media }: { title?: string; media?: any }) {
-              return { title: title ?? '(no title)', subtitle: 'Page Header', media };
-            },
-          },
+      name: 'pageHeader',
+      title: 'Page Header',
+      type: 'object',
+      options: { collapsible: true },
+      group: 'editorial',
+      fields: [
+        defineField({
+          name: 'introduction',
+          title: 'Introduction',
+          type: 'array',
+          of: [defineArrayMember({ type: 'block' })],
         }),
+        defineField({
+          name: 'heroImage',
+          type: 'image',
+          title: 'Hero Image',
+          options: { hotspot: true },
+          fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+        }),
+        ...colorFields,
       ],
-      validation: (Rule) => Rule.max(1),
-    }),
-    defineField({
-      name: 'introduction',
-      title: 'Introduction',
-      type: 'array',
-      of: [defineArrayMember({ type: 'block' })],
-    }),
-    defineField({
-      name: 'heroImage',
-      type: 'image',
-      title: 'Hero Image',
-      options: { hotspot: true },
-      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
     }),
     defineField({
       name: 'body',

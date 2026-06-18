@@ -91,10 +91,16 @@ export type SanityHomepage = {
   body: SanityBlock[];
 };
 
+export type SanityPageHeader = {
+  introduction?: SanityBlock[];
+  heroImage?: SanityImage;
+  textColor?: string;
+  backgroundColor?: string;
+};
+
 export type SanityPage = {
   title: string;
-  introduction: SanityBlock[];
-  heroImage?: SanityImage;
+  pageHeader?: SanityPageHeader;
   meta?: SanityMeta;
   body: SanityBlock[];
   uid: string;
@@ -152,8 +158,12 @@ export async function getPage(slug: string): Promise<SanityPage> {
   return getClient().fetch<SanityPage>(
     `*[_type == "page" && slug.current == $slug][0]{
       title,
-      introduction,
-      heroImage{ "url": asset->url, "alt": coalesce(alt, "") },
+      "pageHeader": pageHeader{
+        introduction,
+        "heroImage": heroImage{ "url": asset->url, "alt": coalesce(alt, "") },
+        textColor,
+        backgroundColor
+      },
       "meta": meta{
         ogTitle,
         ogDescription,

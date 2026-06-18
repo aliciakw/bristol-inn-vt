@@ -5,7 +5,6 @@ import { getPage } from '../lib/sanity';
 import { getRooms } from '../lib/hostaway';
 import PageHeader from '../components/PageHeader.astro';
 import SliceZone from '../components/SliceZone.astro';
-import TextStyle from '@components/ui/TextStyle.astro';
 
 const [page, rooms] = await Promise.all([getPage('rooms-and-suites'), getRooms()]);
 
@@ -25,14 +24,10 @@ const browserRooms = rooms.map((r) => ({
 ---
 
 <BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta} backgroundColor="white" navigationVariant="transparent" offsetNavigation>
-  <div class="Section bg-sand-200">
-    <PageHeader title={pageTitle} introduction={page?.introduction} heroImage={page?.heroImage} className="pb-12" />
-  </div>
-  <div class="Section">
+  {page?.pageHeader && <PageHeader block={page.pageHeader} className="pb-16" />}
+
+  <div class="Section mt-[var(--grid-gutter)]">
     <div class="Section__inner">
-      <div class="row-span-1 col-span-6">
-        {page?.body?.length > 0 && <SliceZone blocks={page.body} />}
-      </div>
       <div class="row-span-1 col-span-6 desktop:col-span-8">
         <RoomBrowser client:load rooms={browserRooms} />
       </div>
