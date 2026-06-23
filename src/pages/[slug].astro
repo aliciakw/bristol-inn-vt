@@ -2,6 +2,7 @@
 import { getPages, getPage } from '../lib/sanity';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import SliceZone from '../components/SliceZone.astro';
+import PageHeader from '../components/PageHeader.astro';
 
 export async function getStaticPaths() {
   // Slugs handled by dedicated page files — exclude them from this catch-all
@@ -21,9 +22,14 @@ const page = await getPage(slug);
 const pageTitle = page.title || 'Untitled';
 ---
 
-<BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page.meta}>
-  <div class="max-w-3xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">{pageTitle}</h1>
-    <SliceZone blocks={page.body} />
+<BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta} backgroundColor="white" navigationVariant="transparent" offsetNavigation>
+  {page?.pageHeader && <PageHeader block={page.pageHeader} className="pb-16" />}
+
+  <div class="Section mt-12">
+    <div class="Section__inner">
+      <div class="row-span-1 col-span-6 desktop:col-span-8">
+        <SliceZone blocks={page.body} />
+      </div>
+    </div>
   </div>
 </BaseLayout>

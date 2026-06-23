@@ -17,5 +17,5 @@ const wrapperStyle = [block.textColor ? `color: ${block.textColor}` : '', block.
 ---
 
 <div style={wrapperStyle || undefined}>
-  <PageHeader title={block.title ?? ''} introduction={block.introduction ?? []} heroImage={block.heroImage} />
+  <PageHeader introduction={block.introduction ?? []} block={block} />
 </div>

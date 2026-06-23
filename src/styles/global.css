@@ -112,6 +112,7 @@
   --grid-margin: 16px;
   --grid-gutter: 8px;
   --nav-top-bar-height: 48px;
+  --inner-max-width: 1480px;
   font-size: 16px;
 }
 
@@ -137,7 +138,7 @@ html {
 }
 
 .Section__inner {
-  max-width: 1480px;
+  max-width: var(--inner-max-width);
   display: grid;
   grid-template-columns: repeat(var(--grid-columns), 1fr);
   gap: var(--grid-gutter);

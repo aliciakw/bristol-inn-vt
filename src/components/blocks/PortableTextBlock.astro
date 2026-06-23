@@ -1,0 +1,78 @@
+---
+import TextStyle from '@components/ui/TextStyle.astro';
+import type { SanityBlock } from '../../lib/sanity';
+import type { TextStyleVariant } from '../ui/types';
+
+interface Props {
+  block: SanityBlock;
+  contrainProseWidth?: boolean;
+}
+
+const { block, contrainProseWidth = true } = Astro.props;
+
+type MarkDef = { _key: string; _type: string; href?: string; url?: string; openInNewTab?: boolean };
+
+function renderBlockChildren(block: SanityBlock): string {
+  const children = (block.children as Array<{ _type: string; text?: string; marks?: string[] }>) ?? [];
+  const markDefs = (block.markDefs as MarkDef[]) ?? [];
+
+  return children
+    .map((span) => {
+      if (span._type !== 'span') return '';
+      let html = (span.text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      for (const mark of span.marks ?? []) {
+        if (mark === 'strong' || mark === 'em' || mark === 'underline' || mark === 'code') continue;
+        const def = markDefs.find((d) => d._key === mark);
+        if (def?._type === 'link') {
+          const href = (def.href ?? def.url ?? '').replace(/^javascript:/i, '').replace(/"/g, '&quot;');
+          const target = def.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : '';
+          html = `<a href="${href}"${target}>${html}</a>`;
+        }
+      }
+      if ((span.marks ?? []).includes('code')) html = `<code>${html}</code>`;
+      if ((span.marks ?? []).includes('underline')) html = `<u>${html}</u>`;
+      if ((span.marks ?? []).includes('em')) html = `<em>${html}</em>`;
+      if ((span.marks ?? []).includes('strong')) html = `<strong>${html}</strong>`;
+
+      return html;
+    })
+    .join('');
+}
+
+const styleVariantMap: Record<string, TextStyleVariant> = {
+  h1: 'h1',
+  h2: 'h2',
+  h3: 'h3',
+  h4: 'h4',
+  h5: 'h5',
+  normal: 'paragraph',
+  blockquote: 'paragraph',
+};
+
+const style = (block.style as string) ?? 'normal';
+const listItem = block.listItem as string | undefined;
+// eslint-disable-next-line security/detect-object-injection
+const variant = styleVariantMap[style] ?? 'paragraph';
+const innerHtml = renderBlockChildren(block);
+---
+
+{
+  listItem === 'bullet' ? (
+    <ul class="list-disc pl-6 my-2" class:list={[contrainProseWidth && 'max-w-prose']}>
+      <TextStyle variant="paragraph" element="li">
+        <Fragment set:html={innerHtml} />
+      </TextStyle>
+    </ul>
+  ) : listItem === 'number' ? (
+    <ol class="list-decimal pl-6 my-2" class:list={[contrainProseWidth && 'max-w-prose']}>
+      <TextStyle variant="paragraph" element="li">
+        <Fragment set:html={innerHtml} />
+      </TextStyle>
+    </ol>
+  ) : (
+    <TextStyle variant={variant} class:list={[contrainProseWidth && 'max-w-prose']}>
+      <Fragment set:html={innerHtml} />
+    </TextStyle>
+  )
+}

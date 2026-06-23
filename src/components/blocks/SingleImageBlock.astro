@@ -2,27 +2,38 @@
 import ImageComponent from '@components/ui/ImageComponent.astro';
 import TextStyle from '@components/ui/TextStyle.astro';
 import { buildSanityImageUrl } from '../../lib/sanity';
+import { INNER_MAX_WIDTH__DESKTOP, IMAGE_SIZES, ASPECT_RATIOS, type ImageLayout } from '@components/ui/constants';
 
 interface Props {
   image?: { url?: string; alt?: string };
-  layout?: 'default' | 'fullbleed';
+  layout?: ImageLayout;
   caption?: string;
+  rounded?: boolean;
   textColor?: string;
   backgroundColor?: string;
 }
 
-const { image, layout = 'default', caption, textColor, backgroundColor } = Astro.props;
+const { image, layout = 'default', caption, rounded = false, textColor, backgroundColor } = Astro.props;
 const url = image?.url;
-const isFullbleed = layout === 'fullbleed';
-const imgWidth = isFullbleed ? 1400 : 800;
-const imgHeight = isFullbleed ? 700 : 500;
+const imgWidth = layout === 'fullbleed' ? INNER_MAX_WIDTH__DESKTOP : IMAGE_SIZES[2].width;
+// eslint-disable-next-line security/detect-object-injection
+const imgHeight = imgWidth / ASPECT_RATIOS[layout];
 
 const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
+
+const figureLayoutClasses: Record<ImageLayout, string> = {
+  fullbleed: 'aspect-[5/3] overflow-hidden',
+  default: 'aspect-[5/3] overflow-hidden',
+  square: 'aspect-square overflow-hidden',
+};
+// eslint-disable-next-line security/detect-object-injection
+const figureLayoutClass = figureLayoutClasses[layout];
+const imageClass = ['w-full', layout !== 'default' && 'h-full object-cover', rounded && 'rounded-xl'].filter(Boolean).join(' ');
 ---
 
 {
   url && (
-    <figure class:list={[isFullbleed ? 'my-8' : 'max-w-prose mx-auto my-8', backgroundColor && 'p-4']} style={wrapperStyle || undefined}>
+    <figure class:list={[figureLayoutClass, backgroundColor && 'p-4']} style={wrapperStyle || undefined}>
       <ImageComponent
         src={buildSanityImageUrl(url, { width: imgWidth, height: imgHeight })}
         srcset={`${buildSanityImageUrl(url, { width: imgWidth / 2, height: imgHeight / 2 })} ${imgWidth / 2}w, ${buildSanityImageUrl(url, { width: imgWidth, height: imgHeight })} ${imgWidth}w`}
@@ -31,10 +42,10 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
         height={imgHeight}
         loading="lazy"
         fadeIn
-        imgClass={isFullbleed ? 'w-full object-cover' : 'w-full'}
+        imgClass={imageClass}
       />
       {caption && (
-        <figcaption class="mt-2 text-center">
+        <figcaption class="mt-2">
           <TextStyle variant="caption">{caption}</TextStyle>
         </figcaption>
       )}

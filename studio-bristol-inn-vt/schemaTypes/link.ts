@@ -9,7 +9,7 @@ export const linkType = defineType({
       name: 'label',
       title: 'Label',
       type: 'string',
-      validation: (Rule) => Rule.required(),
+      description: 'Text for the link.',
     }),
     defineField({
       name: 'linkType',

@@ -1,8 +1,9 @@
 ---
-import ImageComponent from '@components/ui/ImageComponent.astro';
 import ButtonLink from '@components/ui/ButtonLink.astro';
+import SingleImageBlock from './SingleImageBlock.astro';
 import SliceZone from '../SliceZone.astro';
-import { buildSanityImageUrl, type SanityBlock, type SanityImage, type SanityResolvedLink } from '../../lib/sanity';
+import { type SanityBlock, type SanityImage, type SanityResolvedLink } from '../../lib/sanity';
+import { type ColumnCount, type ImageLayout } from '@components/ui/constants';
 
 interface ColumnItem {
   _key?: string;
@@ -12,44 +13,75 @@ interface ColumnItem {
 }
 
 interface Props {
-  columns: ColumnItem[];
-  numColumns: 1 | 2 | 3;
+  column1?: ColumnItem | null;
+  column2?: ColumnItem | null;
+  column3?: ColumnItem | null;
+  numColumns: ColumnCount;
   textColor?: string;
   backgroundColor?: string;
 }
 
-const { columns = [], numColumns, textColor, backgroundColor } = Astro.props;
+const { column1 = null, column2 = null, column3 = null, numColumns, textColor, backgroundColor } = Astro.props;
+const columns = [column1, column2, column3].slice(0, numColumns);
 
-const gridClass = numColumns === 3 ? 'grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3' : numColumns === 2 ? 'grid-cols-1 tablet:grid-cols-2' : 'grid-cols-1';
+const gridClasses: Record<ColumnCount, string> = {
+  1: 'col-span-6 tablet:col-start-2 tablet:col-span-4  desktop:col-span-6',
+  2: 'col-span-6 tablet:col-span-3',
+  3: 'col-span-6 tablet:col-span-2',
+};
+// eslint-disable-next-line security/detect-object-injection
+const gridColumnClass = gridClasses[numColumns];
 
 const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
 ---
 
-<section class={`grid gap-8 my-8 ${gridClass}`} style={wrapperStyle || undefined}>
-  {
-    columns.map((col) => (
-      <div class="flex flex-col gap-4">
-        {col.image?.url && (
-          <ImageComponent
-            src={buildSanityImageUrl(col.image.url, { width: 600, height: 400 })}
-            srcset={`${buildSanityImageUrl(col.image.url, { width: 300, height: 200 })} 300w, ${buildSanityImageUrl(col.image.url, { width: 600, height: 400 })} 600w`}
-            alt={col.image.alt ?? ''}
-            width={600}
-            height={400}
-            loading="lazy"
-            fadeIn
-            imgClass="w-full object-cover rounded-lg"
-          />
-        )}
-        {col.body && col.body.length > 0 && <SliceZone blocks={col.body} />}
-        {col.cta?.href && col.cta?.label && (
+<section class="Section">
+  <div class={`Section__inner pb-16`} style={wrapperStyle || undefined}>
+    <!-- Column 1 -->
+    <div class={`flex flex-col gap-8 desktop:col-start-2 ${gridColumnClass}`}>
+      {column1?.image?.url && <SingleImageBlock image={column1.image} layout={column1.image.layout as ImageLayout | undefined} caption={column1.image.caption} rounded={column1.image.rounded} />}
+      {column1?.body && column1.body.length > 0 && <SliceZone blocks={column1.body} contrainProseWidth={false} />}
+      {
+        column1?.cta?.href && column1.cta?.label && (
           <div>
-            <ButtonLink href={col.cta.href} target={col.cta.openInNewTab ? '_blank' : undefined} rel={col.cta.openInNewTab ? 'noopener noreferrer' : undefined}>
-              {col.cta.label}
+            <ButtonLink bg="prussian-500" href={column1.cta.href} target={column1.cta.openInNewTab ? '_blank' : undefined} rel={column1.cta.openInNewTab ? 'noopener noreferrer' : undefined}>
+              {column1.cta.label}
             </ButtonLink>
           </div>
-        )}
-      </div>
-    ))
-  }
+        )
+      }
+    </div>
+    <!-- Column 2 -->
+    {
+      numColumns > 1 && (
+        <div class={`flex flex-col gap-8 ${gridColumnClass}`}>
+          {column2?.image?.url && <SingleImageBlock image={column2.image} layout={column2.image.layout as ImageLayout | undefined} caption={column2.image.caption} rounded={column2.image.rounded} />}
+          {column2?.body && column2.body.length > 0 && <SliceZone blocks={column2.body} contrainProseWidth={false} />}
+          {column2?.cta?.href && column2.cta?.label && (
+            <div>
+              <ButtonLink bg="prussian-500" href={column2.cta.href} target={column2.cta.openInNewTab ? '_blank' : undefined} rel={column2.cta.openInNewTab ? 'noopener noreferrer' : undefined}>
+                {column2.cta.label}
+              </ButtonLink>
+            </div>
+          )}
+        </div>
+      )
+    }
+    <!-- Column 3 -->
+    {
+      numColumns > 2 && (
+        <div class={`flex flex-col gap-8 ${gridColumnClass}`}>
+          {column3?.image?.url && <SingleImageBlock image={column3.image} layout={column3.image.layout as ImageLayout | undefined} caption={column3.image.caption} rounded={column3.image.rounded} />}
+          {column3?.body && column3.body.length > 0 && <SliceZone blocks={column3.body} contrainProseWidth={false} />}
+          {column3?.cta?.href && column3.cta?.label && (
+            <div>
+              <ButtonLink bg="prussian-500" href={column3.cta.href} target={column3.cta.openInNewTab ? '_blank' : undefined} rel={column3.cta.openInNewTab ? 'noopener noreferrer' : undefined}>
+                {column3.cta.label}
+              </ButtonLink>
+            </div>
+          )}
+        </div>
+      )
+    }
+  </div>
 </section>

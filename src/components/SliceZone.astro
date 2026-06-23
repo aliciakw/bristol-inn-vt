@@ -1,91 +1,23 @@
 ---
-import TextStyle from '@components/ui/TextStyle.astro';
 import ButtonLink from '@components/ui/ButtonLink.astro';
 import PageHeaderBlock from './blocks/PageHeaderBlock.astro';
+import PortableTextBlock from './blocks/PortableTextBlock.astro';
 import SingleImageBlock from './blocks/SingleImageBlock.astro';
 import ColumnLayout from './blocks/ColumnLayout.astro';
 import { type SanityBlock } from '../lib/sanity';
-import type { TextStyleVariant } from './ui/types';
 
 interface Props {
   blocks: SanityBlock[];
+  contrainProseWidth?: boolean;
 }
 
-const { blocks } = Astro.props;
-
-type MarkDef = { _key: string; _type: string; href?: string; url?: string; openInNewTab?: boolean };
-
-function renderBlockChildren(block: SanityBlock): string {
-  const children = (block.children as Array<{ _type: string; text?: string; marks?: string[] }>) ?? [];
-  const markDefs = (block.markDefs as MarkDef[]) ?? [];
-
-  return children
-    .map((span) => {
-      if (span._type !== 'span') return '';
-      let html = (span.text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-      for (const mark of span.marks ?? []) {
-        if (mark === 'strong' || mark === 'em' || mark === 'underline' || mark === 'code') continue;
-        const def = markDefs.find((d) => d._key === mark);
-        if (def?._type === 'link') {
-          const href = (def.href ?? def.url ?? '').replace(/^javascript:/i, '').replace(/"/g, '&quot;');
-          const target = def.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : '';
-          html = `<a href="${href}"${target}>${html}</a>`;
-        }
-      }
-      if ((span.marks ?? []).includes('code')) html = `<code>${html}</code>`;
-      if ((span.marks ?? []).includes('underline')) html = `<u>${html}</u>`;
-      if ((span.marks ?? []).includes('em')) html = `<em>${html}</em>`;
-      if ((span.marks ?? []).includes('strong')) html = `<strong>${html}</strong>`;
-
-      return html;
-    })
-    .join('');
-}
-
-const styleVariantMap: Record<string, TextStyleVariant> = {
-  h1: 'h1',
-  h2: 'h2',
-  h3: 'h3',
-  h4: 'h4',
-  h5: 'h5',
-  normal: 'paragraph',
-  blockquote: 'paragraph',
-};
+const { blocks, contrainProseWidth } = Astro.props;
 ---
 
 {
   (blocks ?? []).map((block) => {
     if (block._type === 'block') {
-      const style = (block.style as string) ?? 'normal';
-      const listItem = block.listItem as string | undefined;
-      const variant = styleVariantMap[style] ?? 'paragraph';
-      const innerHtml = renderBlockChildren(block);
-
-      if (listItem === 'bullet') {
-        return (
-          <ul class="list-disc pl-6 my-2 max-w-prose">
-            <TextStyle variant="paragraph" element="li">
-              <Fragment set:html={innerHtml} />
-            </TextStyle>
-          </ul>
-        );
-      }
-      if (listItem === 'number') {
-        return (
-          <ol class="list-decimal pl-6 my-2 max-w-prose">
-            <TextStyle variant="paragraph" element="li">
-              <Fragment set:html={innerHtml} />
-            </TextStyle>
-          </ol>
-        );
-      }
-
-      return (
-        <TextStyle variant={variant} class="max-w-prose">
-          <Fragment set:html={innerHtml} />
-        </TextStyle>
-      );
+      return <PortableTextBlock block={block} contrainProseWidth={contrainProseWidth} />;
     }
 
     if (block._type === 'imageBlock') {
@@ -105,7 +37,7 @@ const styleVariantMap: Record<string, TextStyleVariant> = {
       const wrapperStyle = [block.textColor ? `color: ${block.textColor}` : '', block.backgroundColor ? `background-color: ${block.backgroundColor}` : ''].filter(Boolean).join('; ');
       return (
         <div class="my-8 flex justify-center" style={wrapperStyle || undefined}>
-          <ButtonLink href={cta.href} bg="lilac-200" target={cta.openInNewTab ? '_blank' : undefined} rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}>
+          <ButtonLink href={cta.href} size="large" bg="prussian-500" textColor="white" target={cta.openInNewTab ? '_blank' : undefined} rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}>
             {cta.label}
           </ButtonLink>
         </div>
@@ -117,15 +49,24 @@ const styleVariantMap: Record<string, TextStyleVariant> = {
     }
 
     if (block._type === 'singleColumnBlock') {
-      return <ColumnLayout columns={(block.columns as Parameters<typeof ColumnLayout>[0]['columns']) ?? []} numColumns={1} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      return <ColumnLayout column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']} numColumns={1} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
     }
 
     if (block._type === 'twoColumnBlock') {
-      return <ColumnLayout columns={(block.columns as Parameters<typeof ColumnLayout>[0]['columns']) ?? []} numColumns={2} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      return <ColumnLayout column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']} column2={block.column2 as Parameters<typeof ColumnLayout>[0]['column2']} numColumns={2} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
     }
 
     if (block._type === 'threeColumnBlock') {
-      return <ColumnLayout columns={(block.columns as Parameters<typeof ColumnLayout>[0]['columns']) ?? []} numColumns={3} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      return (
+        <ColumnLayout
+          column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']}
+          column2={block.column2 as Parameters<typeof ColumnLayout>[0]['column2']}
+          column3={block.column3 as Parameters<typeof ColumnLayout>[0]['column3']}
+          numColumns={3}
+          textColor={block.textColor as string | undefined}
+          backgroundColor={block.backgroundColor as string | undefined}
+        />
+      );
     }
 
     return null;
