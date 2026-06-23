@@ -26,9 +26,11 @@ interface Props {
 }
 
 const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage } = Astro.props;
+const HERO_SLIDE_ANIMATION = false;
+const BADGE_ENTRANCE_ANIMATION = true;
 ---
 
-<div id="welcome-hero" class:list={['fixed w-full z-[-1]', coverColor ? 'fade-in-1000--delay-1000' : 'fade-in-1000']}>
+<div id="welcome-hero" class:list={['fixed w-full z-[-1]', HERO_SLIDE_ANIMATION ? 'hero-slide-animation' : 'hero-no-slide-animation', HERO_SLIDE_ANIMATION ? (coverColor ? 'fade-in-1000--delay-1000' : 'fade-in-1000') : '']}>
   {
     heroLeftImage?.url && (
       <div class="WelcomeSection___HeroImageContainer">
@@ -80,7 +82,7 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImag
           </clipPath>
         </defs>
       </svg>
-      <div id="bristol-badge" class="w-[42vw] h-[44vw] tablet:w-[32vw] tablet:h-[35vw] desktop:w-[20vw] desktop:h-[24vw] max-w-[280px] max-h-[280px]">
+      <div id={BADGE_ENTRANCE_ANIMATION ? 'bristol-badge' : undefined} class="w-[42vw] tablet:w-[32vw] desktop:w-[20vw] max-w-[280px] aspect-[240/255]">
         <div class="badge-face w-full h-full mt-4 fade-in-500 bg-white p-3 desktop:p-5">
           <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
         </div>
@@ -226,18 +228,35 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImag
     height: calc(100vh - 2 * var(--page-margin));
   }
 
-  .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--left) {
+  .hero-slide-animation .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--left) {
     left: 0;
     border-top-right-radius: 0.75rem;
     border-bottom-right-radius: 0.75rem;
     animation: heroSlideInLeft 0.5s ease-out 0.75s both;
   }
 
-  .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--right) {
+  .hero-slide-animation .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--right) {
     right: 0;
     border-top-left-radius: 0.75rem;
     border-bottom-left-radius: 0.75rem;
     animation: heroSlideInRight 0.5s ease-out 0.75s both;
+  }
+
+  .hero-no-slide-animation .WelcomeSection___HeroImageContainer {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .hero-no-slide-animation .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--left) {
+    left: 0;
+    border-top-right-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+  }
+
+  .hero-no-slide-animation .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--right) {
+    right: 0;
+    border-top-left-radius: 0.75rem;
+    border-bottom-left-radius: 0.75rem;
   }
 </style>
 
@@ -292,7 +311,7 @@ const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImag
   }
 
   #bristol-badge {
-    /* animation: badgeEntrance 0.4s ease-in-out 0.35s both; */
+    animation: badgeEntrance 0.4s ease-in-out 0.35s both;
   }
 </style>
 

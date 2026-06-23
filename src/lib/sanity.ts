@@ -115,9 +115,11 @@ const RESOLVE_LINK = `{ label, "href": select(linkType == "internal" => "/" + in
 
 const RESOLVE_BUTTON_LINK = `{ label, color, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
 
+const RESOLVE_FIGURE = `{ "url": image.asset->url, "alt": coalesce(alt, ""), caption, layout, "rounded": coalesce(rounded, false) }`;
+
 const RESOLVE_COLUMN_ITEM = `{
   ...,
-  "image": image{ "url": image.asset->url, "alt": coalesce(alt, ""), caption, layout, "rounded": coalesce(rounded, false) },
+  "image": image${RESOLVE_FIGURE},
   "cta": cta${RESOLVE_LINK}
 }`;
 
@@ -126,7 +128,7 @@ const RESOLVE_BODY_ITEM = `{
   _type == "imageBlock" => { ..., "image": image{ "url": asset->url, "alt": coalesce(alt, "") } },
   _type == "singleImageBlock" => { ..., "image": image{ "url": asset->url, "alt": coalesce(alt, "") } },
   _type == "pageHeaderBlock" => { ..., "heroImage": heroImage{ "url": asset->url, "alt": coalesce(alt, "") } },
-  _type == "ctaBlock" => { ..., "cta": cta${RESOLVE_LINK} },
+  _type == "ctaBlock" => { ..., "image": image${RESOLVE_FIGURE}, "cta": cta${RESOLVE_LINK} },
   _type == "singleColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM} },
   _type == "twoColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM} },
   _type == "threeColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM}, "column3": column3${RESOLVE_COLUMN_ITEM} }

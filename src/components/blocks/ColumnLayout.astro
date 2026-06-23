@@ -43,8 +43,8 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
       {column1?.body && column1.body.length > 0 && <SliceZone blocks={column1.body} contrainProseWidth={false} />}
       {
         column1?.cta?.href && column1.cta?.label && (
-          <div>
-            <ButtonLink bg="prussian-500" href={column1.cta.href} target={column1.cta.openInNewTab ? '_blank' : undefined} rel={column1.cta.openInNewTab ? 'noopener noreferrer' : undefined}>
+          <div class="flex justify-center">
+            <ButtonLink bg="prussian-500" textColor="white" href={column1.cta.href} target={column1.cta.openInNewTab ? '_blank' : undefined} rel={column1.cta.openInNewTab ? 'noopener noreferrer' : undefined}>
               {column1.cta.label}
             </ButtonLink>
           </div>

@@ -11,6 +11,12 @@ interface Props {
   contrainProseWidth?: boolean;
 }
 
+type CtaFigure = Parameters<typeof SingleImageBlock>[0]['image'] & {
+  caption?: string;
+  layout?: 'default' | 'square' | 'fullbleed';
+  rounded?: boolean;
+};
+
 const { blocks, contrainProseWidth } = Astro.props;
 ---
 
@@ -33,10 +39,12 @@ const { blocks, contrainProseWidth } = Astro.props;
 
     if (block._type === 'ctaBlock') {
       const cta = block.cta as { label?: string; href?: string; openInNewTab?: boolean } | undefined;
+      const image = block.image as CtaFigure | undefined;
       if (!cta?.label || !cta?.href) return null;
       const wrapperStyle = [block.textColor ? `color: ${block.textColor}` : '', block.backgroundColor ? `background-color: ${block.backgroundColor}` : ''].filter(Boolean).join('; ');
       return (
-        <div class="my-8 flex justify-center" style={wrapperStyle || undefined}>
+        <div class="my-8 flex flex-col items-center gap-4" style={wrapperStyle || undefined}>
+          {image?.url && <SingleImageBlock image={image} layout={image.layout} caption={image.caption} rounded={image.rounded} />}
           <ButtonLink href={cta.href} size="large" bg="prussian-500" textColor="white" target={cta.openInNewTab ? '_blank' : undefined} rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}>
             {cta.label}
           </ButtonLink>

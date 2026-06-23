@@ -44,13 +44,13 @@ export const buttonSizeClasses = {
 
 export const buttonTextColorClasses = {
   'ink-900': 'text-ink-900 border-ink-900',
-  white: 'text-white border-white',
+  white: 'text-white border-ink-900',
 } satisfies Record<NonNullable<ButtonProps['textColor']>, string>;
 
 export const buttonBgClasses = {
-  'prussian-700': 'bg-prussian-700 hover:bg-prussian-700/80',
-  'prussian-500': 'bg-prussian-500 hover:bg-prussian-500/80',
-  'prussian-200': 'bg-prussian-200 hover:bg-prussian-500',
+  'prussian-700': 'bg-prussian-700 hover:bg-prussian-700/90',
+  'prussian-500': 'bg-prussian-500 hover:bg-prussian-500/90',
+  'prussian-200': 'bg-prussian-200 hover:bg-prussian-200/50',
   'lilac-200': 'bg-lilac-200',
   'sand-200': 'bg-sand-200 hover:bg-sand-100',
   'khaki-200': 'bg-khaki-200',

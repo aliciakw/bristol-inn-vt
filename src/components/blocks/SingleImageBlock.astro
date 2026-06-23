@@ -33,7 +33,7 @@ const imageClass = ['w-full', layout !== 'default' && 'h-full object-cover', rou
 
 {
   url && (
-    <figure class:list={[figureLayoutClass, backgroundColor && 'p-4']} style={wrapperStyle || undefined}>
+    <figure class:list={[figureLayoutClass, caption ? 'mb-4' : 'mb-16']} style={wrapperStyle || undefined}>
       <ImageComponent
         src={buildSanityImageUrl(url, { width: imgWidth, height: imgHeight })}
         srcset={`${buildSanityImageUrl(url, { width: imgWidth / 2, height: imgHeight / 2 })} ${imgWidth / 2}w, ${buildSanityImageUrl(url, { width: imgWidth, height: imgHeight })} ${imgWidth}w`}

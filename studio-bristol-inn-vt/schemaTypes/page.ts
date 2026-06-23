@@ -28,6 +28,7 @@ type CtaBlockPreviewSelection = {
   label?: string
   page?: string
   url?: string
+  media?: any
 }
 
 type PageHeaderBlockPreviewSelection = ImagePreviewFields & {
@@ -214,15 +215,20 @@ export const pageType = defineType({
           type: 'object',
           name: 'ctaBlock',
           title: 'CTA Button',
-          fields: [defineField({name: 'cta', type: 'link', title: 'Button'}), ...colorFields],
+          fields: [
+            defineField({name: 'image', type: 'figure', title: 'Image'}),
+            defineField({name: 'cta', type: 'link', title: 'Button'}),
+            ...colorFields,
+          ],
           preview: {
             select: {
               label: 'cta.label',
               page: 'cta.internalLink.title',
               url: 'cta.url',
+              media: 'image.image',
             },
             prepare(selection: CtaBlockPreviewSelection) {
-              return prepareCtaBlockPreview(selection)
+              return {...prepareCtaBlockPreview(selection), media: selection.media}
             },
           },
         }),
