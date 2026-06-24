@@ -26,11 +26,11 @@ interface Props {
 }
 
 const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage } = Astro.props;
-const HERO_SLIDE_ANIMATION = true;
-const BADGE_ENTRANCE_ANIMATION = true;
+const HERO_SLIDE_ANIMATION = false;
+const BADGE_ENTRANCE_ANIMATION = false;
 ---
 
-<div id="welcome-hero" class:list={['fixed w-full bg-white pointer-events-none', HERO_SLIDE_ANIMATION ? 'hero-slide-animation' : 'hero-no-slide-animation', HERO_SLIDE_ANIMATION ? (coverColor ? 'fade-in-1000--delay-1000' : 'fade-in-1000') : '']}>
+<div id="welcome-hero" class:list={['fixed w-full bg-white pointer-events-none', HERO_SLIDE_ANIMATION ? 'hero-slide-animation' : 'hero-slide-animation--skipped', HERO_SLIDE_ANIMATION ? (coverColor ? 'fade-in-1000--delay-1000' : 'fade-in-1000') : '']}>
   {
     heroLeftImage?.url && (
       <div class="WelcomeSection___HeroImageContainer">
@@ -81,10 +81,8 @@ const BADGE_ENTRANCE_ANIMATION = true;
           </clipPath>
         </defs>
       </svg>
-      <div id="bristol-badge" class:list={[BADGE_ENTRANCE_ANIMATION ? 'badge-entrance-animation' : 'fade-in-200']}>
-        <!-- <div class="badge-face w-full h-full mt-4 fade-in-500 bg-white p-3 desktop:p-5"> -->
+      <div id="bristol-badge" class:list={[BADGE_ENTRANCE_ANIMATION ? 'badge-entrance-animation' : 'badge-entrance-animation--skipped']}>
         <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="w-full h-full object-contain" />
-        <!-- </div> -->
       </div>
     </div>
   </div>
@@ -207,11 +205,6 @@ const BADGE_ENTRANCE_ANIMATION = true;
     max-width: 280px;
     will-change: transform;
   }
-
-  /* .badge-face {
-    clip-path: url(#badge-oval);
-  } */
-
   #welcome-section-content {
     transition: box-shadow 0.4s ease;
   }
@@ -264,18 +257,20 @@ const BADGE_ENTRANCE_ANIMATION = true;
     animation: heroSlideInRight 0.5s ease-out 0.05s both;
   }
 
-  .hero-no-slide-animation .WelcomeSection___HeroImageContainer {
-    opacity: 1;
-    transform: translateX(0);
+  .hero-slide-animation--skipped .WelcomeSection___HeroImageContainer {
+    /* opacity: 0.5; */
+    /* transform: translateX(0); */
+    animation: fadeInAnimation 0.2s ease-in 0.05s both;
+    /* animation: fadeInAnimation 0.05s ease-out 0.75s both; */
   }
 
-  .hero-no-slide-animation .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--left) {
+  .hero-slide-animation--skipped .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--left) {
     left: 0;
     border-top-right-radius: 0.75rem;
     border-bottom-right-radius: 0.75rem;
   }
 
-  .hero-no-slide-animation .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--right) {
+  .hero-slide-animation--skipped .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--right) {
     right: 0;
     border-top-left-radius: 0.75rem;
     border-bottom-left-radius: 0.75rem;
@@ -285,24 +280,26 @@ const BADGE_ENTRANCE_ANIMATION = true;
 <style is:global>
   :root {
     --welcome-hero-top: calc(var(--nav-top-bar-height) + 2 * var(--page-margin));
-    --welcome-hero-w: calc(50vw - 2 * var(--page-margin));
+    /* --welcome-hero-w: calc(50vw - 2 * var(--page-margin)); */
+    --welcome-hero-w: calc((100vw - 6 * var(--page-margin)) / 2);
     --welcome-hero-h: calc(var(--welcome-hero-w) * 2);
     --welcome-badge-w: min(42vw, 280px);
     --welcome-badge-h: calc(var(--welcome-badge-w) * 255 / 240);
     --welcome-badge-sticky-top: max(var(--nav-top-bar-height), calc(var(--welcome-hero-top) + (var(--welcome-hero-h) / 2) - (var(--welcome-badge-h) / 2)));
-    --welcome-hero-wrapper-h: calc(var(--welcome-hero-h) + 2 * var(--page-margin) + var(--nav-top-bar-height) + 64px);
+    --welcome-hero-wrapper-h: calc(var(--welcome-hero-h) + 2 * var(--page-margin) + var(--nav-top-bar-height) + 32px);
   }
 
   @media (min-width: 640px) {
     :root {
-      --welcome-hero-h: calc(var(--welcome-hero-w) * 2);
+      /* --welcome-hero-h: calc(var(--welcome-hero-w) * 2); */
       --welcome-badge-w: min(32vw, 280px);
     }
   }
 
   @media (min-width: 1024px) {
     :root {
-      --welcome-hero-h: calc(var(--welcome-hero-w) * 3 / 4);
+      /* --welcome-hero-h: calc(var(--welcome-hero-w) * 3 / 4); */
+      --welcome-hero-h: calc(100vh - var(--nav-top-bar-height-2x) - 2 * var(--page-margin) - 32px);
       --welcome-badge-w: min(20vw, 280px);
     }
   }
@@ -354,6 +351,18 @@ const BADGE_ENTRANCE_ANIMATION = true;
 
   .badge-entrance-animation {
     animation: badgeEntrance 0.4s ease-in-out 0.35s both;
+  }
+  .badge-entrance-animation--skipped {
+    animation: fadeInAnimation 0.2s ease-in 0.15s both;
+  }
+
+  @keyframes fadeInAnimation {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 </style>
 
@@ -408,10 +417,10 @@ const BADGE_ENTRANCE_ANIMATION = true;
     const start = window.innerHeight * 0.5;
     const end = navHeight * 2;
     const range = Math.max(1, start - end);
-    const progress = Math.min(1, Math.max(0, (start - contentTop) / range));
+    const progress = Math.min(1, Math.max(0, (start - contentTop + navHeight) / range));
     const startTop = Number.parseFloat(getComputedStyle(backdrop).top) || 0;
     const shouldReleaseHero = progress >= 1;
-    const shouldRelease = contentRect.bottom <= window.innerHeight - navHeight;
+    const shouldReleaseBackdrop = contentRect.bottom <= window.innerHeight - navHeight;
 
     if (shouldReleaseHero && hero) {
       if (!wasHeroReleased) {
@@ -422,7 +431,7 @@ const BADGE_ENTRANCE_ANIMATION = true;
       hero?.classList.remove('is-released');
     }
 
-    if (shouldRelease) {
+    if (shouldReleaseBackdrop) {
       if (!wasReleased) {
         const sectionTop = backdrop.parentElement?.getBoundingClientRect().top ?? 0;
         backdrop.style.setProperty('--welcome-backdrop-release-top', `${(-sectionTop).toFixed(2)}px`);
