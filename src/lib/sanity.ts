@@ -247,7 +247,7 @@ export type SanitySettings = {
   leftCta?: SanityButtonLink;
   rightCta?: SanityButtonLink;
   sidebarLinks: SanityLink[];
-  contactHeading?: string;
+  contactIntroduction: SanityBlock[];
   contactAddress: string[];
   contactPhone?: string;
   contactEmail?: string;
@@ -278,7 +278,7 @@ export async function getSettings(): Promise<SanitySettings> {
         ),
         "openInNewTab": coalesce(openInNewTab, false)
       },
-      contactHeading,
+      "contactIntroduction": coalesce(contactIntroduction, []),
       "contactAddress": coalesce(contactAddress, []),
       contactPhone,
       contactEmail,

@@ -10,7 +10,7 @@ interface Props {
 }
 
 const { block, className } = Astro.props;
-const { introduction, heroImage, textColor, backgroundColor } = block;
+const { introduction, heroImage, textColor, backgroundColor = 'var(--color-prussian-100)' } = block;
 ---
 
 <div class="Section" style={`background-color: ${backgroundColor}; color: ${textColor};`}>

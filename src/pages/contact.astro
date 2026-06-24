@@ -1,10 +1,11 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import TextStyle from '@components/ui/TextStyle.astro';
+import SliceZone from '@components/SliceZone.astro';
 import { getSettings } from '../lib/sanity';
 
 const settings = await getSettings();
-const { contactHeading = 'Contact Us', contactAddress = [], contactPhone, contactEmail, directionsLink, googleMapEmbedUrl } = settings ?? {};
+const { contactIntroduction = [], contactAddress = [], contactPhone, contactEmail, directionsLink, googleMapEmbedUrl } = settings ?? {};
 
 const FALLBACK_MAP_LINK = 'https://maps.app.goo.gl/s5C7jPANMmBNFiXM8';
 const hasContactInfo = contactAddress.length > 0 || contactPhone || contactEmail || directionsLink?.href;
@@ -13,11 +14,14 @@ const mapUrl = googleMapEmbedUrl ?? `https://www.google.com/maps?output=embed&q=
 
 <BaseLayout title="Contact - Bristol Inn" description="Get in touch with Bristol Inn" bottomSpacer={false} offsetNavigation={true}>
   <section class="flex flex-col tablet:flex-row px-[var(--grid-margin)] tablet:px-0">
-    <div class="tablet:bg-prussian-200 flex flex-col flex-1 p-[var(--grid-margin)] pt-[var(--nav-top-bar-height-2x)] tablet:pr-[var(--grid-gutter)]">
-      <header class="flex flex-col gap-3 text-ink-900">
-        <TextStyle variant="h1" element="h1">{contactHeading}</TextStyle>
-        <TextStyle variant="paragraph" element="p"> We would be happy to help with reservations, arrival details, or questions about your stay. </TextStyle>
-      </header>
+    <div class="tablet:bg-prussian-100 flex flex-col flex-1 gap-8 p-[var(--grid-margin)] pt-[var(--nav-top-bar-height-2x)] tablet:pr-[var(--grid-gutter)]">
+      {
+        contactIntroduction.length > 0 && (
+          <div class="flex flex-col gap-3 text-ink-900">
+            <SliceZone blocks={contactIntroduction} contrainProseWidth={false} />
+          </div>
+        )
+      }
 
       {
         hasContactInfo ? (
@@ -80,7 +84,7 @@ const mapUrl = googleMapEmbedUrl ?? `https://www.google.com/maps?output=embed&q=
       }
     </div>
 
-    <div class="flex flex-col flex-1 px-[var(--grid-margin)] mb-[var(--nav-top-bar-height)] tablet:pt-[var(--nav-top-bar-height-2x)] tablet:pl-[var(--grid-gutter)]">
+    <div class="flex flex-col flex-1 px-[var(--grid-margin)] mb-[var(--nav-top-bar-height-2x)] tablet:pt-[var(--nav-top-bar-height-2x)] tablet:pl-[var(--grid-gutter)]">
       <iframe src={mapUrl} title="Map to Bristol Inn" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" class="w-full aspect-square rounded-xl border-0 shadow--card--lg" allowfullscreen=""></iframe>
     </div>
   </section>

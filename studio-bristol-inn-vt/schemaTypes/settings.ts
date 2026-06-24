@@ -97,10 +97,28 @@ export const settingsType = defineType({
 
     // ── Contact ──────────────────────────────────────────────────────────────
     defineField({
-      name: 'contactHeading',
-      title: 'Contact Heading',
-      type: 'string',
+      name: 'contactIntroduction',
+      title: 'Introduction',
+      type: 'array',
       group: 'contact',
+      of: [
+        defineArrayMember({
+          type: 'block',
+          styles: [
+            {title: 'Heading', value: 'h1'},
+            {title: 'Subheading', value: 'h2'},
+            {title: 'Paragraph', value: 'normal'},
+          ],
+          lists: [],
+          marks: {
+            decorators: [
+              {title: 'Strong', value: 'strong'},
+              {title: 'Italic', value: 'em'},
+            ],
+            annotations: [],
+          },
+        }),
+      ],
     }),
     defineField({
       name: 'contactAddress',

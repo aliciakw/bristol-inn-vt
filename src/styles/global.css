@@ -32,6 +32,7 @@
   /* Colors */
   --color-prussian-100: #d6dadb;
   --color-prussian-200: #c5cccf;
+  --color-prussian-300: #b1bbc0;
   --color-prussian-500: #1f5168;
   --color-prussian-700: #20404f;
   --color-sand-050: #efebe9;
@@ -149,20 +150,18 @@ html {
 }
 
 .shadow--card {
-  background-color: color-mix(in srgb, var(--color-prussian-200) 50%, transparent);
-  box-shadow: 4px 4px 0px 1px color-mix(in srgb, var(--color-prussian-500) 50%, transparent);
+  box-shadow: 4px 4px 0px 1px var(--color-prussian-300);
 }
 
 .shadow--card--lg {
-  background-color: color-mix(in srgb, var(--color-prussian-200) 50%, transparent);
-  box-shadow: 6px 6px 0px 1px color-mix(in srgb, var(--color-prussian-500) 50%, transparent);
+  box-shadow: 6px 6px 0px var(--color-prussian-300);
 
   @media (min-width: 640px) {
-    box-shadow: 12px 12px 0px 1px color-mix(in srgb, var(--color-prussian-500) 50%, transparent);
+    box-shadow: 12px 12px 0px 1px var(--color-prussian-300);
   }
 
   @media (min-width: 1024px) {
-    box-shadow: 24px 20px 0px 1px color-mix(in srgb, var(--color-prussian-500) 50%, transparent);
+    box-shadow: 24px 20px 0px 1px var(--color-prussian-300);
   }
 }
 
