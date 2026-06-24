@@ -73,7 +73,7 @@ const BADGE_ENTRANCE_ANIMATION = false;
 <section id="welcome-section">
   <div class="relative z-10">
     <!-- Badge region -->
-    <div class="flex items-center justify-center h-[75vh] Xmb-[var(--nav-top-bar-height)] z-20">
+    <div class="flex items-center justify-center h-[var(--welcome-hero-wrapper-h)] Xmb-[var(--nav-top-bar-height)] z-20">
       <svg aria-hidden="true" focusable="false" class="absolute w-0 h-0 overflow-hidden">
         <defs>
           <clipPath id="badge-oval" clipPathUnits="objectBoundingBox">
@@ -115,7 +115,7 @@ const BADGE_ENTRANCE_ANIMATION = false;
       <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-gutter)]">
         {
           reservationImage && (
-            <div class="mx-[var(--grid-margin)] aspect-[5/3] w-[33vw] mx-auto my-8 overflow-hidden rounded-xl">
+            <div class="mx-[var(--grid-margin)] aspect-[1/2] desktop:aspect-[5/3] w-[33vw] mx-auto my-8 overflow-hidden rounded-xl">
               <img
                 src={buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })}
                 srcset={`${buildSanityImageUrl(reservationImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })} 900w`}
@@ -179,7 +179,7 @@ const BADGE_ENTRANCE_ANIMATION = false;
   }
 
   #welcome-badge-region {
-    height: var(--welcome-hero-h);
+    height: var(--welcome-hero-wrapper-h);
   }
 
   #welcome-hero {
@@ -189,7 +189,8 @@ const BADGE_ENTRANCE_ANIMATION = false;
 
   #bristol-badge {
     position: sticky;
-    top: calc(50vh - var(--page-margin) - min(22vw, 140px));
+    top: calc(0.5 * var(--welcome-hero-h));
+    /* top: calc(50vh - var(--page-margin) - min(22vw, 140px)); */
     will-change: transform;
   }
 
@@ -223,10 +224,10 @@ const BADGE_ENTRANCE_ANIMATION = false;
     position: absolute;
     overflow: hidden;
     /* top: var(--page-margin); */
-    top: calc(var(--nav-top-bar-height));
+    top: calc(var(--nav-top-bar-height) + 2 * var(--page-margin));
     opacity: 0; /* held by animation-fill-mode: both until animation starts */
-    width: calc(50% - 16px);
-    height: calc(100vh - 2 * var(--nav-top-bar-height) - 2 * var(--page-margin));
+    width: var(--welcome-hero-w);
+    height: var(--welcome-hero-h);
   }
 
   .hero-slide-animation .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--left) {
@@ -263,7 +264,10 @@ const BADGE_ENTRANCE_ANIMATION = false;
 
 <style is:global>
   :root {
-    --welcome-hero-h: calc(100vh - 2 * var(--page-margin));
+    --welcome-hero-w: calc(50vw - 2 * var(--page-margin));
+    --welcome-hero-h: calc(var(--welcome-hero-w) * 3 / 4);
+    /* --welcome-hero-wrapper-h: calc(100vh - var(--nav-top-bar-height) - 2 * var(--page-margin)); */
+    --welcome-hero-wrapper-h: calc(var(--welcome-hero-h) + 2 * var(--page-margin) + var(--nav-top-bar-height) + 64px);
   }
 
   .cta-arrow {
