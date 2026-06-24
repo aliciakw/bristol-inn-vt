@@ -27,10 +27,10 @@ interface Props {
 
 const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage } = Astro.props;
 const HERO_SLIDE_ANIMATION = false;
-const BADGE_ENTRANCE_ANIMATION = true;
+const BADGE_ENTRANCE_ANIMATION = false;
 ---
 
-<div id="welcome-hero" class:list={['fixed w-full z-[-1]', HERO_SLIDE_ANIMATION ? 'hero-slide-animation' : 'hero-no-slide-animation', HERO_SLIDE_ANIMATION ? (coverColor ? 'fade-in-1000--delay-1000' : 'fade-in-1000') : '']}>
+<div id="welcome-hero" class:list={['fixed w-full z-[-1] bg-white', HERO_SLIDE_ANIMATION ? 'hero-slide-animation' : 'hero-no-slide-animation', HERO_SLIDE_ANIMATION ? (coverColor ? 'fade-in-1000--delay-1000' : 'fade-in-1000') : '']}>
   {
     heroLeftImage?.url && (
       <div class="WelcomeSection___HeroImageContainer">
@@ -70,11 +70,10 @@ const BADGE_ENTRANCE_ANIMATION = true;
     )
   }
 </div>
-
 <section id="welcome-section">
   <div class="relative z-10">
     <!-- Badge region -->
-    <div class="flex items-center justify-center h-[75vh] mb-[var(--nav-top-bar-height)] z-20">
+    <div class="flex items-center justify-center h-[75vh] Xmb-[var(--nav-top-bar-height)] z-20">
       <svg aria-hidden="true" focusable="false" class="absolute w-0 h-0 overflow-hidden">
         <defs>
           <clipPath id="badge-oval" clipPathUnits="objectBoundingBox">
@@ -90,71 +89,72 @@ const BADGE_ENTRANCE_ANIMATION = true;
     </div>
   </div>
 
-  <div id="welcome-section-content" class="flex flex-col bg-white rounded-xl max-w-4xl mx-auto pt-10 px-12 pb-12 z-8">
-    <!-- Welcome section -->
-    <div class="flex mx-auto">
-      {
-        (welcomeHeading || welcomeDescription || welcomeCTA) && (
-          <TextStyle variant="h1" element="p">
-            {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
-            {welcomeDescription && <span class="text-iron">{welcomeDescription} </span>}
-            {welcomeCTA && (
-              <span class="cta-arrow-group inline-flex items-center align-middle gap-1">
-                <ArrowRight size={28} className="cta-arrow text-ink-900" aria-hidden="true" />
-                <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
-                  {welcomeCTA.label}
-                </ButtonLink>
-              </span>
-            )}
-          </TextStyle>
-        )
-      }
-    </div>
-
-    <!-- Reservation section -->
-    <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-gutter)]">
-      {
-        reservationImage && (
-          <div class="mx-[var(--grid-margin)] aspect-[5/3] w-[33vw] mx-auto my-8 overflow-hidden rounded-xl">
-            <img
-              src={buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })}
-              srcset={`${buildSanityImageUrl(reservationImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })} 900w`}
-              sizes="(max-width: 1280px) 40vw, 560px"
-              alt={reservationImage.alt}
-              width={900}
-              height={700}
-              loading="eager"
-              class="w-full h-full object-cover"
-            />
-          </div>
-        )
-      }
-
-      <TextStyle variant="h2" class="text-center">{reservationHeading}</TextStyle>
-      {
-        reservationDescription && (
-          <TextStyle variant="paragraph" element="p" class="max-w-2xl mt-2 mb-[var(--grid-gutter)]">
-            {reservationDescription}
-          </TextStyle>
-        )
-      }
-
-      <div class="w-2xl">
-        <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
-      </div>
-
-      <div class="flex items-center justify-center mt-[var(--grid-gutter)]">
+  <div class="w-full bg-prussian-200 py-16">
+    <div id="welcome-section-content" class="flex flex-col bg-white rounded-xl max-w-4xl mx-auto pt-10 px-12 pb-12 z-8">
+      <!-- Welcome section -->
+      <div class="flex mx-auto">
         {
-          reservationHeadingIcon && (
-            <div id="reservation-heading-icon" class="w-20 h-20 flex items-center justify-center">
-              <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
-            </div>
+          (welcomeHeading || welcomeDescription || welcomeCTA) && (
+            <TextStyle variant="h1" element="p">
+              {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
+              {welcomeDescription && <span class="text-iron">{welcomeDescription} </span>}
+              {welcomeCTA && (
+                <span class="cta-arrow-group inline-flex items-center align-middle gap-1">
+                  <ArrowRight size={28} className="cta-arrow text-ink-900" aria-hidden="true" />
+                  <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
+                    {welcomeCTA.label}
+                  </ButtonLink>
+                </span>
+              )}
+            </TextStyle>
           )
         }
       </div>
+
+      <!-- Reservation section -->
+      <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-gutter)]">
+        {
+          reservationImage && (
+            <div class="mx-[var(--grid-margin)] aspect-[5/3] w-[33vw] mx-auto my-8 overflow-hidden rounded-xl">
+              <img
+                src={buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })}
+                srcset={`${buildSanityImageUrl(reservationImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })} 900w`}
+                sizes="(max-width: 1280px) 40vw, 560px"
+                alt={reservationImage.alt}
+                width={900}
+                height={700}
+                loading="eager"
+                class="w-full h-full object-cover"
+              />
+            </div>
+          )
+        }
+
+        <TextStyle variant="h2" class="text-center">{reservationHeading}</TextStyle>
+        {
+          reservationDescription && (
+            <TextStyle variant="paragraph" element="p" class="max-w-2xl mt-2 mb-[var(--grid-gutter)]">
+              {reservationDescription}
+            </TextStyle>
+          )
+        }
+
+        <div class="w-2xl">
+          <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
+        </div>
+
+        <div class="flex items-center justify-center mt-[var(--grid-gutter)]">
+          {
+            reservationHeadingIcon && (
+              <div id="reservation-heading-icon" class="w-20 h-20 flex items-center justify-center">
+                <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
+              </div>
+            )
+          }
+        </div>
+      </div>
     </div>
   </div>
-  <!-- </div> -->
 </section>
 
 <style>
@@ -222,10 +222,11 @@ const BADGE_ENTRANCE_ANIMATION = true;
   .WelcomeSection___HeroImageContainer {
     position: absolute;
     overflow: hidden;
-    top: var(--page-margin);
+    /* top: var(--page-margin); */
+    top: calc(var(--nav-top-bar-height));
     opacity: 0; /* held by animation-fill-mode: both until animation starts */
-    width: calc(50% - 0.5 * var(--page-margin));
-    height: calc(100vh - 2 * var(--page-margin));
+    width: calc(50% - 16px);
+    height: calc(100vh - 2 * var(--nav-top-bar-height) - 2 * var(--page-margin));
   }
 
   .hero-slide-animation .WelcomeSection___HeroImageContainer:has(#WelcomeSection___HeroImage--left) {

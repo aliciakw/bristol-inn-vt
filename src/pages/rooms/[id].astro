@@ -21,13 +21,13 @@ const metaDescription = room.description.slice(0, 160);
 const [heroImage, ...images] = room.photos;
 ---
 
-<BaseLayout title={`${room.name} — Bristol Inn`} description={metaDescription} navigationVariant="transparent">
+<BaseLayout title={`${room.name} — Bristol Inn`} description={metaDescription} navigationVariant="transparent" bottomSpacer={false} mainClassName="pb-3">
   <section class="Section">
     <a id="back-to-rooms" href="/rooms-and-suites" class="text-sm text-iron hover:text-ink-900 transition-colors w-fit">← Back to Rooms</a>
-    <div class="Section__inner pb-[var(--nav-top-bar-height)]">
-      <div class="row-span-1 col-span-6 tablet:col-span-2 desktop:col-span-3 flex flex-col gap-4 tablet:sticky tablet:top-[var(--nav-top-bar-height)] tablet:self-start tablet:max-h-[calc(100vh-var(--nav-top-bar-height))] tablet:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <img src={room.photos[0].url} alt={room.photos[0].caption || `${room.name}`} width={1200} height={800} loading="eager" fetchpriority="high" decoding="sync" class="w-full object-cover rounded-xl aspect-[5/3] mt-4 tablet:hidden" />
-        <div class="tablet:mt-18 mb-4">
+    <div class="Section__inner">
+      <div class="row-span-1 col-span-6 tablet:col-span-2 desktop:col-span-3 flex flex-col gap-8 tablet:sticky tablet:top-[var(--nav-top-bar-height)] tablet:self-start tablet:max-h-[calc(100vh-var(--nav-top-bar-height))] tablet:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-2">
+        <img src={room.photos[0].url} alt={room.photos[0].caption || `${room.name}`} width={1200} height={900} loading="eager" fetchpriority="high" decoding="sync" class="w-full object-cover rounded-xl aspect-[4/3] mt-12 tablet:hidden" />
+        <div class="tablet:mt-18 mb-8">
           <RoomDetailHeader client:load roomId={room.id} name={room.name} bedroomsLabel={room.bedroomsLabel} personCapacity={room.personCapacity} floorNumber={room.floorNumber} basePrice={room.price} />
         </div>
         <TextStyle variant="paragraph" class="font-bold tablet:mt-4">Description</TextStyle>
@@ -37,7 +37,7 @@ const [heroImage, ...images] = room.photos;
           {room.amenityNames.map((a) => <AmenityBadge label={a} />)}
         </div>
       </div>
-      <div class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-5 desktop:mt-[-86px]">
+      <div class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-5 desktop:mt-[-86px] desktop:mr-[-64px] rounded-xl overflow-hidden">
         <TextStyle variant="paragraph" class="font-bold my-4 tablet:hidden">Gallery</TextStyle>
         <RoomGallery photos={room.photos} roomName={room.name} layout="heroFirst" />
       </div>

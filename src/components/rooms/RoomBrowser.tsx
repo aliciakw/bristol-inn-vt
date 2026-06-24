@@ -122,8 +122,8 @@ export function RoomBrowser({ rooms }: Props) {
   const hasResults = state.status === 'results' || state.status === 'error';
 
   return (
-    <div className="flex flex-col gap-12">
-      <div className="top-[var(--nav-top-bar-height)] z-10 desktop:max-w-[66.66%]">
+    <div className="flex flex-col gap-12 mb-8">
+      <div className="top-[var(--nav-top-bar-height)] z-10 desktop:max-w-[66.66%] mb-12">
         <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} />
 
         {state.status === 'error' && (

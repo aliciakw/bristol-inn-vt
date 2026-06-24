@@ -24,11 +24,11 @@ const browserRooms = rooms.map((r) => ({
 ---
 
 <BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta} backgroundColor="white" navigationVariant="transparent" offsetNavigation>
-  {page?.pageHeader && <PageHeader block={page.pageHeader} className="pb-16" />}
+  {page?.pageHeader && <PageHeader block={page.pageHeader} className="pb-20" />}
 
-  <div class="Section mt-[var(--grid-gutter)]">
+  <div class="Section mt-[-40px]">
     <div class="Section__inner">
-      <div class="row-span-1 col-span-6 desktop:col-span-8">
+      <div class="row-span-1 col-span-6 desktop:col-span-8 mb-12">
         <RoomBrowser client:load rooms={browserRooms} />
       </div>
     </div>

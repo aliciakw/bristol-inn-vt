@@ -247,6 +247,11 @@ export type SanitySettings = {
   leftCta?: SanityButtonLink;
   rightCta?: SanityButtonLink;
   sidebarLinks: SanityLink[];
+  contactHeading?: string;
+  contactAddress: string[];
+  contactPhone?: string;
+  contactEmail?: string;
+  googleMapEmbedUrl?: string;
   footerSections: SanityFooterSection[];
   awardImages: SanityAwardImage[];
   directionsLink: SanityLink | null;
@@ -273,6 +278,11 @@ export async function getSettings(): Promise<SanitySettings> {
         ),
         "openInNewTab": coalesce(openInNewTab, false)
       },
+      contactHeading,
+      "contactAddress": coalesce(contactAddress, []),
+      contactPhone,
+      contactEmail,
+      googleMapEmbedUrl,
       "footerSections": footerSections[]{
         title,
         content

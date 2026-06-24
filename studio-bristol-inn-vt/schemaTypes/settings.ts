@@ -50,6 +50,7 @@ export const settingsType = defineType({
   },
   groups: [
     { name: 'navigation', title: 'Navigation' },
+    { name: 'contact', title: 'Contact' },
     { name: 'footer', title: 'Footer' },
     { name: 'seo', title: 'SEO / OG' },
   ],
@@ -92,6 +93,41 @@ export const settingsType = defineType({
       type: 'array',
       group: 'navigation',
       of: [defineArrayMember({ type: 'link' })],
+    }),
+
+    // ── Contact ──────────────────────────────────────────────────────────────
+    defineField({
+      name: 'contactHeading',
+      title: 'Contact Heading',
+      type: 'string',
+      group: 'contact',
+    }),
+    defineField({
+      name: 'contactAddress',
+      title: 'Address',
+      type: 'array',
+      group: 'contact',
+      of: [defineArrayMember({ type: 'string' })],
+    }),
+    defineField({
+      name: 'contactPhone',
+      title: 'Phone',
+      type: 'string',
+      group: 'contact',
+    }),
+    defineField({
+      name: 'contactEmail',
+      title: 'Email',
+      type: 'email',
+      group: 'contact',
+    }),
+    defineField({
+      name: 'googleMapEmbedUrl',
+      title: 'Google Map Embed URL',
+      description: 'Use the src URL from a Google Maps embed iframe.',
+      type: 'url',
+      group: 'contact',
+      validation: (Rule) => Rule.uri({ scheme: ['https'] }),
     }),
 
     // ── Footer ───────────────────────────────────────────────────────────────
