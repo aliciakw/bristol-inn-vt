@@ -53,6 +53,9 @@ export type SanityResolvedLink = {
 export type SanityImage = {
   url: string;
   alt: string;
+  caption?: string;
+  layout?: 'default' | 'square' | 'fullbleed';
+  rounded?: boolean;
 };
 
 export type SanityTestimonialItem = {
@@ -91,10 +94,16 @@ export type SanityHomepage = {
   body: SanityBlock[];
 };
 
+export type SanityPageHeader = {
+  introduction?: SanityBlock[];
+  heroImage?: SanityImage;
+  textColor?: string;
+  backgroundColor?: string;
+};
+
 export type SanityPage = {
   title: string;
-  introduction: SanityBlock[];
-  heroImage?: SanityImage;
+  pageHeader?: SanityPageHeader;
   meta?: SanityMeta;
   body: SanityBlock[];
   uid: string;
@@ -105,6 +114,25 @@ const HOMEPAGE_ID = '6e561f5f-23ec-49fa-863f-141c005904c3';
 const RESOLVE_LINK = `{ label, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
 
 const RESOLVE_BUTTON_LINK = `{ label, color, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
+
+const RESOLVE_FIGURE = `{ "url": image.asset->url, "alt": coalesce(alt, ""), caption, layout, "rounded": coalesce(rounded, false) }`;
+
+const RESOLVE_COLUMN_ITEM = `{
+  ...,
+  "image": image${RESOLVE_FIGURE},
+  "cta": cta${RESOLVE_LINK}
+}`;
+
+const RESOLVE_BODY_ITEM = `{
+  ...,
+  _type == "imageBlock" => { ..., "image": image{ "url": asset->url, "alt": coalesce(alt, "") } },
+  _type == "singleImageBlock" => { ..., "image": image{ "url": asset->url, "alt": coalesce(alt, "") } },
+  _type == "pageHeaderBlock" => { ..., "heroImage": heroImage{ "url": asset->url, "alt": coalesce(alt, "") } },
+  _type == "ctaBlock" => { ..., "image": image${RESOLVE_FIGURE}, "cta": cta${RESOLVE_LINK} },
+  _type == "singleColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM} },
+  _type == "twoColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM} },
+  _type == "threeColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM}, "column3": column3${RESOLVE_COLUMN_ITEM} }
+}`;
 
 export async function getHomepage(): Promise<SanityHomepage> {
   return getClient().fetch<SanityHomepage>(
@@ -129,13 +157,7 @@ export async function getHomepage(): Promise<SanityHomepage> {
         _type == "image" => { "url": asset->url, "alt": coalesce(alt, "") }
       },
       "amenities": coalesce(amenities, []),
-      "body": body[]{
-        ...,
-        _type == "ctaBlock" => {
-          ...,
-          "cta": cta${RESOLVE_LINK}
-        }
-      }
+      "body": body[]${RESOLVE_BODY_ITEM}
     }`,
     { id: HOMEPAGE_ID },
   );
@@ -145,14 +167,18 @@ export async function getPage(slug: string): Promise<SanityPage> {
   return getClient().fetch<SanityPage>(
     `*[_type == "page" && slug.current == $slug][0]{
       title,
-      introduction,
-      heroImage{ "url": asset->url, "alt": coalesce(alt, "") },
+      "pageHeader": pageHeader{
+        introduction,
+        "heroImage": heroImage{ "url": asset->url, "alt": coalesce(alt, "") },
+        textColor,
+        backgroundColor
+      },
       "meta": meta{
         ogTitle,
         ogDescription,
         "ogImage": ogImage.asset->{ "url": url }
       },
-      body,
+      "body": body[]${RESOLVE_BODY_ITEM},
       "uid": slug.current
     }`,
     { slug },
@@ -221,6 +247,11 @@ export type SanitySettings = {
   leftCta?: SanityButtonLink;
   rightCta?: SanityButtonLink;
   sidebarLinks: SanityLink[];
+  contactIntroduction: SanityBlock[];
+  contactAddress: string[];
+  contactPhone?: string;
+  contactEmail?: string;
+  googleMapEmbedUrl?: string;
   footerSections: SanityFooterSection[];
   awardImages: SanityAwardImage[];
   directionsLink: SanityLink | null;
@@ -247,6 +278,11 @@ export async function getSettings(): Promise<SanitySettings> {
         ),
         "openInNewTab": coalesce(openInNewTab, false)
       },
+      "contactIntroduction": coalesce(contactIntroduction, []),
+      "contactAddress": coalesce(contactAddress, []),
+      contactPhone,
+      contactEmail,
+      googleMapEmbedUrl,
       "footerSections": footerSections[]{
         title,
         content

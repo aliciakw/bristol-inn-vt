@@ -9,6 +9,7 @@
 
 import ImageComponent from '@components/ui/ImageComponent.astro';
 import { buildSanityImageUrl } from '@lib/sanity';
+import GalleryStrip from '@components/home/GalleryStrip.astro';
 
 interface Props {
   /** Up to 6 photos; already sliced by the Hostaway lib (D-04) */
@@ -42,8 +43,11 @@ const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
           imgClass="w-full h-full object-cover"
         />
       )}
+      <div class="mt-3 hidden desktop:block">
+        <GalleryStrip images={gridImages} roomName={roomName} speed="medium" />
+      </div>
       {gridImages.length > 0 && (
-        <div class="grid grid-cols-2 desktop:grid-cols-3 gap-3 mt-3">
+        <div class="grid grid-cols-2 desktop:grid-cols-3 gap-3 mt-3 desktop:hidden">
           {gridImages.map((p, i) => (
             <ImageComponent
               src={buildSanityImageUrl(p.url, { width: 1200, height: 800 })}

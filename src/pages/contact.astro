@@ -1,20 +1,91 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
+import TextStyle from '@components/ui/TextStyle.astro';
+import SliceZone from '@components/SliceZone.astro';
+import { getSettings } from '../lib/sanity';
+
+const settings = await getSettings();
+const { contactIntroduction = [], contactAddress = [], contactPhone, contactEmail, directionsLink, googleMapEmbedUrl } = settings ?? {};
+
+const FALLBACK_MAP_LINK = 'https://maps.app.goo.gl/s5C7jPANMmBNFiXM8';
+const hasContactInfo = contactAddress.length > 0 || contactPhone || contactEmail || directionsLink?.href;
+const mapUrl = googleMapEmbedUrl ?? `https://www.google.com/maps?output=embed&q=${encodeURIComponent(FALLBACK_MAP_LINK)}`;
 ---
 
-<BaseLayout title="Contact - Bristol Inn" description="Get in touch with us">
-  <div class="max-w-7xl mx-auto px-4 py-8">
-    <h2 class="text-3xl font-bold mb-4">Contact Us</h2>
-    <p class="text-gray-600 mb-6">
-      Contact form will appear here once backend is configured (Phase 4).
-    </p>
+<BaseLayout title="Contact - Bristol Inn" description="Get in touch with Bristol Inn" bottomSpacer={false} offsetNavigation={true}>
+  <section class="flex flex-col tablet:flex-row px-[var(--grid-margin)] tablet:px-0">
+    <div class="tablet:bg-prussian-100 flex flex-col flex-1 gap-8 p-[var(--grid-margin)] pt-[var(--nav-top-bar-height-2x)] tablet:pr-[var(--grid-gutter)]">
+      {
+        contactIntroduction.length > 0 && (
+          <div class="flex flex-col gap-3 text-ink-900">
+            <SliceZone blocks={contactIntroduction} contrainProseWidth={false} />
+          </div>
+        )
+      }
 
-    <div class="bg-gray-50 p-8 rounded max-w-md">
-      <p class="text-gray-600">
-        Email: contact@bristolinn.com<br />
-        Phone: (555) 123-4567<br />
-        Address: Bristol, VT
-      </p>
+      {
+        hasContactInfo ? (
+          <address class="not-italic flex flex-col gap-6">
+            {contactAddress.length > 0 && (
+              <div class="flex flex-col gap-2">
+                <TextStyle variant="label" element="h2" uppercase class="text-iron tracking-[0.08em]">
+                  Address
+                </TextStyle>
+                <TextStyle variant="paragraph" element="p">
+                  {contactAddress.map((line) => (
+                    <>
+                      {line}
+                      <br />
+                    </>
+                  ))}
+                </TextStyle>
+              </div>
+            )}
+
+            {contactPhone && (
+              <div class="flex flex-col gap-2">
+                <TextStyle variant="label" element="h2" uppercase class="text-iron tracking-[0.08em]">
+                  Phone
+                </TextStyle>
+                <TextStyle variant="paragraph" element="p">
+                  <a href={`tel:${contactPhone.replace(/[^+\d]/g, '')}`} class="hover:underline">
+                    {contactPhone}
+                  </a>
+                </TextStyle>
+              </div>
+            )}
+
+            {contactEmail && (
+              <div class="flex flex-col gap-2">
+                <TextStyle variant="label" element="h2" uppercase class="text-iron tracking-[0.08em]">
+                  Email
+                </TextStyle>
+                <TextStyle variant="paragraph" element="p">
+                  <a href={`mailto:${contactEmail}`} class="hover:underline">
+                    {contactEmail}
+                  </a>
+                </TextStyle>
+              </div>
+            )}
+
+            {directionsLink?.href && (
+              <TextStyle variant="paragraph" element="p">
+                <a href={directionsLink.href} target={directionsLink.openInNewTab ? '_blank' : undefined} rel={directionsLink.openInNewTab ? 'noopener noreferrer' : undefined} class="hover:underline">
+                  {directionsLink.label ?? 'Get directions'}
+                </a>
+              </TextStyle>
+            )}
+          </address>
+        ) : (
+          <TextStyle variant="paragraph" element="p" class="text-iron">
+            Contact information is coming soon.
+          </TextStyle>
+        )
+      }
     </div>
-  </div>
+
+    <div class="flex flex-col flex-1 px-[var(--grid-margin)] mb-[var(--nav-top-bar-height-2x)] tablet:pt-[var(--nav-top-bar-height-2x)] tablet:pl-[var(--grid-gutter)]">
+      <iframe src={mapUrl} title="Map to Bristol Inn" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" class="w-full aspect-square rounded-xl border-0 shadow--card--lg" allowfullscreen=""></iframe>
+    </div>
+  </section>
 </BaseLayout>

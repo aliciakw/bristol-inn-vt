@@ -3,18 +3,19 @@ import { buildSanityImageUrl, type SanityImage } from '../../lib/sanity';
 
 interface Props {
   images: SanityImage[];
+  speed?: 'slow' | 'medium';
 }
 
-const { images } = Astro.props;
+const { images, speed = 'slow' } = Astro.props;
 const visible = images.filter((img) => img.url);
 ---
 
 {
   visible.length > 0 && (
-    <div class=" w-full relative overflow-hidden">
-      <div class="flex w-max gallery-scroll">
+    <div class=" w-full relative rounded-lg overflow-hidden">
+      <div class={`flex w-max gallery-scroll gallery-scroll--${speed}`}>
         {[...visible, ...visible].map((img) => (
-          <div class="flex-none w-[20vw] rounded-lg aspect-square overflow-x-hidden mr-[var(--page-margin)]">
+          <div class="flex-none w-[75vw] tablet:w-[20vw] rounded-lg aspect-square overflow-x-hidden mr-[var(--page-margin)]">
             <img src={buildSanityImageUrl(img.url, { width: 400, height: 400 })} alt={img.alt} width={192} height={192} loading="lazy" decoding="async" class="w-full h-full object-cover" />
           </div>
         ))}
@@ -33,8 +34,11 @@ const visible = images.filter((img) => img.url);
     }
   }
 
-  .gallery-scroll {
+  .gallery-scroll--slow {
     animation: gallery-scroll 200s linear infinite;
+  }
+  .gallery-scroll--medium {
+    animation: gallery-scroll 75s linear infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {

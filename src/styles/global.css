@@ -31,7 +31,8 @@
 
   /* Colors */
   --color-prussian-100: #d6dadb;
-  --color-prussian-200: #b1bdc2;
+  --color-prussian-200: #c5cccf;
+  --color-prussian-300: #b1bbc0;
   --color-prussian-500: #1f5168;
   --color-prussian-700: #20404f;
   --color-sand-050: #efebe9;
@@ -110,17 +111,21 @@
   --page-margin: 8px;
   --grid-columns: 6;
   --grid-margin: 16px;
-  --grid-gutter: 8px;
+  --grid-gutter: 16px;
   --nav-top-bar-height: 48px;
+  --nav-top-bar-height-2x: calc(var(--nav-top-bar-height) * 2);
+  --inner-max-width: 1480px;
   font-size: 16px;
 }
 
 @media (min-width: 1024px) {
   :root {
     --grid-columns: 8;
-    --grid-margin: 104px;
-    --grid-gutter: 16px;
+    /* --grid-margin: 104px; */
+    --grid-margin: 72px;
+    --grid-gutter: 32px;
     --nav-top-bar-height: 72px;
+    --nav-top-bar-height-2x: calc(var(--nav-top-bar-height) * 2);
   }
 }
 
@@ -137,13 +142,27 @@ html {
 }
 
 .Section__inner {
-  max-width: 1480px;
+  max-width: var(--inner-max-width);
   display: grid;
   grid-template-columns: repeat(var(--grid-columns), 1fr);
   gap: var(--grid-gutter);
   margin: 0 auto;
+}
 
-  /* padding: 0 var(--grid-margin); */
+.shadow--card {
+  box-shadow: 4px 4px 0px 1px var(--color-prussian-300);
+}
+
+.shadow--card--lg {
+  box-shadow: 6px 6px 0px var(--color-prussian-300);
+
+  @media (min-width: 640px) {
+    box-shadow: 12px 12px 0px 1px var(--color-prussian-300);
+  }
+
+  @media (min-width: 1024px) {
+    box-shadow: 24px 20px 0px 1px var(--color-prussian-300);
+  }
 }
 
 /* Animated Hamburger menu icon */

@@ -1,0 +1,54 @@
+---
+import ImageComponent from '@components/ui/ImageComponent.astro';
+import TextStyle from '@components/ui/TextStyle.astro';
+import { buildSanityImageUrl } from '../../lib/sanity';
+import { INNER_MAX_WIDTH__DESKTOP, IMAGE_SIZES, ASPECT_RATIOS, type ImageLayout } from '@components/ui/constants';
+
+interface Props {
+  image?: { url?: string; alt?: string };
+  layout?: ImageLayout;
+  caption?: string;
+  rounded?: boolean;
+  textColor?: string;
+  backgroundColor?: string;
+}
+
+const { image, layout = 'default', caption, rounded = false, textColor, backgroundColor } = Astro.props;
+const url = image?.url;
+const imgWidth = layout === 'fullbleed' ? INNER_MAX_WIDTH__DESKTOP : IMAGE_SIZES[2].width;
+// eslint-disable-next-line security/detect-object-injection
+const imgHeight = imgWidth / ASPECT_RATIOS[layout];
+
+const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
+
+const figureLayoutClasses: Record<ImageLayout, string> = {
+  fullbleed: 'aspect-[5/3] overflow-hidden',
+  default: 'aspect-[5/3] overflow-hidden',
+  square: 'aspect-square overflow-hidden',
+};
+// eslint-disable-next-line security/detect-object-injection
+const figureLayoutClass = figureLayoutClasses[layout];
+const imageClass = ['w-full', layout !== 'default' && 'h-full object-cover', rounded && 'rounded-xl'].filter(Boolean).join(' ');
+---
+
+{
+  url && (
+    <figure class:list={[figureLayoutClass, caption ? 'mb-4' : 'mb-16', layout]} style={wrapperStyle || undefined}>
+      <ImageComponent
+        src={buildSanityImageUrl(url, { width: imgWidth, height: imgHeight })}
+        srcset={`${buildSanityImageUrl(url, { width: imgWidth / 2, height: imgHeight / 2 })} ${imgWidth / 2}w, ${buildSanityImageUrl(url, { width: imgWidth, height: imgHeight })} ${imgWidth}w`}
+        alt={(image?.alt ?? '') as string}
+        width={imgWidth}
+        height={imgHeight}
+        loading="lazy"
+        fadeIn
+        imgClass={imageClass}
+      />
+      {caption && (
+        <figcaption class="mt-2">
+          <TextStyle variant="caption">{caption}</TextStyle>
+        </figcaption>
+      )}
+    </figure>
+  )
+}

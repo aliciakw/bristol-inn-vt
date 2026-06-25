@@ -1,58 +1,79 @@
 ---
-import { toHTML } from '@portabletext/to-html';
-import ImageComponent from '@components/ui/ImageComponent.astro';
-import { buildSanityImageUrl, type SanityBlock } from '../lib/sanity';
+import ButtonLink from '@components/ui/ButtonLink.astro';
+import PageHeaderBlock from './blocks/PageHeaderBlock.astro';
+import PortableTextBlock from './blocks/PortableTextBlock.astro';
+import SingleImageBlock from './blocks/SingleImageBlock.astro';
+import ColumnLayout from './blocks/ColumnLayout.astro';
+import { type SanityBlock } from '../lib/sanity';
 
 interface Props {
   blocks: SanityBlock[];
+  contrainProseWidth?: boolean;
 }
 
-const { blocks } = Astro.props;
+type CtaFigure = Parameters<typeof SingleImageBlock>[0]['image'] & {
+  caption?: string;
+  layout?: 'default' | 'square' | 'fullbleed';
+  rounded?: boolean;
+};
+
+const { blocks, contrainProseWidth } = Astro.props;
 ---
 
 {
   (blocks ?? []).map((block) => {
     if (block._type === 'block') {
-      return <div class="text-base leading-relaxed max-w-prose" set:html={toHTML([block as SanityBlock])} />;
+      return <PortableTextBlock block={block} contrainProseWidth={contrainProseWidth} />;
     }
 
     if (block._type === 'imageBlock') {
-      const image = block.image as { asset?: { url?: string }; alt?: string } | undefined;
-      const url = image?.asset?.url;
-      if (!url) return null;
+      const image = block.image as { url?: string; alt?: string } | undefined;
+      const layout = (block.layout as string) === 'full' ? 'fullbleed' : 'default';
+      return <SingleImageBlock image={image} layout={layout} caption={block.caption as string | undefined} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+    }
 
-      const isFullWidth = (block.layout as string) === 'full';
-      const caption = block.caption as string | null | undefined;
-      const fullWidth = isFullWidth ? 1200 : 800;
-      const fullHeight = isFullWidth ? 600 : 500;
-
-      return (
-        <figure class={isFullWidth ? 'my-6' : 'max-w-prose mx-auto my-6'}>
-          <ImageComponent
-            src={buildSanityImageUrl(url, { width: fullWidth, height: fullHeight })}
-            srcset={`${buildSanityImageUrl(url, { width: fullWidth / 2, height: fullHeight / 2 })} ${fullWidth / 2}w, ${buildSanityImageUrl(url, { width: fullWidth, height: fullHeight })} ${fullWidth}w`}
-            alt={(image?.alt ?? '') as string}
-            width={fullWidth}
-            height={fullHeight}
-            loading="lazy"
-            fadeIn
-            imgClass={isFullWidth ? 'w-full object-cover' : 'w-full'}
-          />
-          {caption && <figcaption class="text-sm mt-1 text-center">{caption}</figcaption>}
-        </figure>
-      );
+    if (block._type === 'singleImageBlock') {
+      const image = block.image as { url?: string; alt?: string } | undefined;
+      return <SingleImageBlock image={image} layout={(block.layout as 'default' | 'fullbleed') ?? 'default'} caption={block.caption as string | undefined} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
     }
 
     if (block._type === 'ctaBlock') {
       const cta = block.cta as { label?: string; href?: string; openInNewTab?: boolean } | undefined;
+      const image = block.image as CtaFigure | undefined;
       if (!cta?.label || !cta?.href) return null;
-
+      const wrapperStyle = [block.textColor ? `color: ${block.textColor}` : '', block.backgroundColor ? `background-color: ${block.backgroundColor}` : ''].filter(Boolean).join('; ');
       return (
-        <div class="my-8 flex justify-center">
-          <a href={cta.href} target={cta.openInNewTab ? '_blank' : undefined} rel={cta.openInNewTab ? 'noopener noreferrer' : undefined} class="inline-flex items-center px-8 py-3 rounded-full border border-ink-900 bg-lilac-200 font-serif text-ink-900 hover:bg-lilac-200/80 transition-colors">
+        <div class="my-8 flex flex-col items-center gap-4" style={wrapperStyle || undefined}>
+          {image?.url && <SingleImageBlock image={image} layout={image.layout} caption={image.caption} rounded={image.rounded} />}
+          <ButtonLink href={cta.href} size="large" bg="prussian-500" textColor="white" target={cta.openInNewTab ? '_blank' : undefined} rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}>
             {cta.label}
-          </a>
+          </ButtonLink>
         </div>
+      );
+    }
+
+    if (block._type === 'pageHeaderBlock') {
+      return <PageHeaderBlock block={block as Parameters<typeof PageHeaderBlock>[0]['block']} />;
+    }
+
+    if (block._type === 'singleColumnBlock') {
+      return <ColumnLayout column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']} numColumns={1} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+    }
+
+    if (block._type === 'twoColumnBlock') {
+      return <ColumnLayout column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']} column2={block.column2 as Parameters<typeof ColumnLayout>[0]['column2']} numColumns={2} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+    }
+
+    if (block._type === 'threeColumnBlock') {
+      return (
+        <ColumnLayout
+          column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']}
+          column2={block.column2 as Parameters<typeof ColumnLayout>[0]['column2']}
+          column3={block.column3 as Parameters<typeof ColumnLayout>[0]['column3']}
+          numColumns={3}
+          textColor={block.textColor as string | undefined}
+          backgroundColor={block.backgroundColor as string | undefined}
+        />
       );
     }
 

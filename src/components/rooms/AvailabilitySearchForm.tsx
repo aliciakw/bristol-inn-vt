@@ -128,7 +128,7 @@ export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoadin
   }
 
   return (
-    <form onSubmit={handleSubmit} aria-label="Check room availability" className="flex flex-col gap-3 bg-sand-050 border-1 border-ink-900 rounded-lg px-4 pt-2 pb-3">
+    <form onSubmit={handleSubmit} aria-label="Check room availability" className="flex flex-col gap-3 bg-sand-050 shadow--card border-1 border-ink-900 rounded-lg px-4 pt-2 pb-3">
       <div className="flex flex-wrap desktop:flex-nowrap items-start gap-x-4 gap-y-3 ">
         <FormField
           id="avail-guests"
