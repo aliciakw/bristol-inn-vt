@@ -14,15 +14,13 @@ interface Props {
 
 const { heading, items = [], textColor, backgroundColor } = Astro.props;
 const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
-const cardBgs = ['khaki-100', 'prussian-200', 'lilac-200'] as const;
-type CardBg = (typeof cardBgs)[number];
 ---
 
 <section class="Section py-12 overflow-hidden" style={wrapperStyle || undefined}>
   <div class="Section__inner">
     {
       heading && (
-        <div class="col-span-6 desktop:col-start-2 desktop:col-span-6 mb-2">
+        <div class="col-span-6 tablet:col-span-8 desktop:col-span-10 desktop:col-start-2 desktop:col-span-6 mb-2">
           <TextStyle variant="h2" class="text-center">
             {heading}
           </TextStyle>
@@ -31,29 +29,196 @@ type CardBg = (typeof cardBgs)[number];
     }
     {
       items.length > 0 && (
-        <div class="col-span-6 desktop:col-span-8 flex flex-col tablet:flex-row tablet:overflow-x-auto tablet:items-start gap-4 tablet:gap-5 pb-4">
-          {items.map((item, index) => {
-            if (item._type === 'testimonial' || item._type === 'testimonialItem') {
-              const bg = cardBgs[index % cardBgs.length] as CardBg;
-              return (
-                <div class:list={['w-full tablet:w-[313px] tablet:shrink-0', index % 2 === 0 ? 'tablet:mt-16' : '']}>
-                  <TestimonialCard quote={item.quote} author={item.author} role={item.role} bg={bg} />
-                </div>
-              );
-            }
+        <div class="col-span-6 tablet:col-span-8 desktop:col-span-12 py-12" data-testimonials-carousel>
+          <div class="overflow-visible tablet:overflow-hidden" data-testimonials-viewport>
+            <div class="flex touch-pan-y -ml-4 tablet:-ml-5 pb-5">
+              {items.map((item, index) => {
+                if (item._type === 'testimonial' || item._type === 'testimonialItem') {
+                  return (
+                    <div class:list={['min-w-0 flex-[0_0_100%] pl-4 tablet:flex-[0_0_50%] tablet:pl-5 desktop:flex-[0_0_33.333%] transition-opacity duration-500 ease-out', index === 0 ? 'opacity-100' : 'opacity-65']} data-testimonial-slide>
+                      <div class="h-full min-h-[280px] tablet:min-h-[320px]">
+                        <TestimonialCard quote={item.quote} author={item.author} role={item.role} />
+                      </div>
+                    </div>
+                  );
+                }
 
-            if (item._type === 'figure' && item.url) {
-              return (
-                <div class:list={['w-full tablet:w-[313px] tablet:shrink-0 overflow-hidden rounded-xl aspect-[4/5]', index % 2 === 0 ? 'tablet:mt-16' : '']}>
-                  <img src={buildSanityImageUrl(item.url, { width: 626, height: 782 })} alt={item.alt} width={626} height={782} loading="lazy" decoding="async" class="w-full h-full object-cover" />
-                </div>
-              );
-            }
+                if (item._type === 'figure' && item.url) {
+                  return (
+                    <div class:list={['min-w-0 flex-[0_0_100%] pl-4 tablet:flex-[0_0_50%] tablet:pl-5 desktop:flex-[0_0_33.333%] transition-opacity duration-500 ease-out', index === 0 ? 'opacity-100' : 'opacity-65']} data-testimonial-slide>
+                      <div class="h-full min-h-[280px] tablet:min-h-[320px] overflow-hidden rounded-[16px] shadow--card">
+                        <img src={buildSanityImageUrl(item.url, { width: 626, height: 782 })} alt={item.alt} width={626} height={782} loading="lazy" decoding="async" class="h-full w-full object-cover" />
+                      </div>
+                    </div>
+                  );
+                }
 
-            return null;
-          })}
+                return null;
+              })}
+            </div>
+          </div>
+
+          {items.length > 1 && (
+            <div class="mt-4 flex items-center justify-center gap-2">
+              <div class="flex items-center gap-2" aria-label="Choose testimonial">
+                {items.map((_, index) => (
+                  <button
+                    type="button"
+                    aria-label={`Show testimonial ${index + 1}`}
+                    aria-current={index === 0 ? 'true' : 'false'}
+                    class:list={['size-2 rounded-full transition-all focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink-900', index === 0 ? 'w-7 bg-ink-900' : 'bg-ink-900/50 hover:bg-ink-900/80']}
+                    data-testimonials-dot
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                aria-label="Pause testimonial animation"
+                class="min-w-16  bg-transparent px-3 py-1.5 text-caption font-medium text-ink-900/80 transition-colors hover:border-ink-900/45 hover:text-ink-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink-900"
+                data-testimonials-toggle
+              >
+                <span data-testimonials-toggle-label>Pause</span>
+              </button>
+            </div>
+          )}
         </div>
       )
     }
   </div>
 </section>
+
+<script>
+  import EmblaCarousel from 'embla-carousel';
+  import type { EmblaCarouselType } from 'embla-carousel';
+
+  const updateToggle = (button: HTMLButtonElement | null, label: HTMLElement | null, isPaused: boolean) => {
+    if (!button || !label) return;
+
+    button.setAttribute('aria-label', isPaused ? 'Resume testimonial animation' : 'Pause testimonial animation');
+    label.textContent = isPaused ? 'Play' : 'Pause';
+  };
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-testimonials-carousel]').forEach((carousel) => {
+    if (carousel.dataset.testimonialsInitialized === 'true') return;
+    carousel.dataset.testimonialsInitialized = 'true';
+
+    const viewport = carousel.querySelector<HTMLElement>('[data-testimonials-viewport]');
+    const slides = Array.from(carousel.querySelectorAll<HTMLElement>('[data-testimonial-slide]'));
+    const previousButton = carousel.querySelector<HTMLButtonElement>('[data-testimonials-prev]');
+    const nextButton = carousel.querySelector<HTMLButtonElement>('[data-testimonials-next]');
+    const toggleButton = carousel.querySelector<HTMLButtonElement>('[data-testimonials-toggle]');
+    const toggleLabel = carousel.querySelector<HTMLElement>('[data-testimonials-toggle-label]');
+    const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-testimonials-dot]'));
+
+    if (!viewport || slides.length < 2) return;
+
+    const embla = EmblaCarousel(viewport, {
+      align: 'start',
+      containScroll: 'trimSnaps',
+      loop: false,
+      skipSnaps: false,
+    });
+
+    let autoplayTimer: number | undefined;
+    let isManuallyPaused = prefersReducedMotion;
+
+    const stopAutoplay = () => {
+      if (autoplayTimer) {
+        window.clearInterval(autoplayTimer);
+        autoplayTimer = undefined;
+      }
+    };
+
+    const startAutoplay = () => {
+      if (isManuallyPaused || autoplayTimer) return;
+
+      autoplayTimer = window.setInterval(() => {
+        if (document.visibilityState === 'hidden') return;
+        scrollNext();
+      }, 5200);
+    };
+
+    const pauseForUser = () => {
+      isManuallyPaused = true;
+      stopAutoplay();
+      updateToggle(toggleButton, toggleLabel, isManuallyPaused);
+    };
+
+    const scrollPrevious = () => {
+      if (embla.canScrollPrev()) {
+        embla.scrollPrev();
+      } else {
+        embla.scrollTo(embla.scrollSnapList().length - 1);
+      }
+    };
+
+    const scrollNext = () => {
+      if (embla.canScrollNext()) {
+        embla.scrollNext();
+      } else {
+        embla.scrollTo(0);
+      }
+    };
+
+    const updateSelectedState = (api: EmblaCarouselType) => {
+      const selectedIndex = api.selectedScrollSnap();
+
+      slides.forEach((slide, index) => {
+        const isSelected = index === selectedIndex;
+        slide.classList.toggle('opacity-100', isSelected);
+        slide.classList.toggle('opacity-65', !isSelected);
+      });
+
+      dots.forEach((dot, index) => {
+        const isSelected = index === selectedIndex;
+        dot.setAttribute('aria-current', String(isSelected));
+        dot.classList.toggle('w-7', isSelected);
+        dot.classList.toggle('bg-ink-900', isSelected);
+        dot.classList.toggle('bg-ink-900/50 pointer', !isSelected);
+        dot.classList.toggle('hover:bg-ink-900', !isSelected);
+      });
+    };
+
+    previousButton?.addEventListener('click', () => {
+      pauseForUser();
+      scrollPrevious();
+    });
+
+    nextButton?.addEventListener('click', () => {
+      pauseForUser();
+      scrollNext();
+    });
+
+    toggleButton?.addEventListener('click', () => {
+      isManuallyPaused = !isManuallyPaused;
+      updateToggle(toggleButton, toggleLabel, isManuallyPaused);
+
+      if (isManuallyPaused) {
+        stopAutoplay();
+      } else {
+        startAutoplay();
+      }
+    });
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        pauseForUser();
+        embla.scrollTo(index);
+      });
+    });
+
+    carousel.addEventListener('pointerenter', stopAutoplay);
+    carousel.addEventListener('pointerleave', startAutoplay);
+    carousel.addEventListener('focusin', stopAutoplay);
+    carousel.addEventListener('focusout', startAutoplay);
+    embla.on('select', updateSelectedState);
+    embla.on('pointerDown', pauseForUser);
+
+    updateSelectedState(embla);
+    updateToggle(toggleButton, toggleLabel, isManuallyPaused);
+    startAutoplay();
+  });
+</script>

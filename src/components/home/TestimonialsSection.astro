@@ -15,31 +15,76 @@ const { testimonialsHeading = 'People say nice things about us', testimonial } =
 const settings = await getSettings();
 const awardImages = settings?.awardImages ?? [];
 
-const cardBgs = ['khaki-100', 'prussian-200', 'lilac-200'] as const;
-type CardBg = (typeof cardBgs)[number];
-
 const testimonialItems = testimonial?.filter((t) => t._type === 'testimonialItem') ?? [];
 ---
 
-<section class="px-[var(--grid-margin)] desktop:px-0 pt-12 pb-24 overflow-hidden bg-white desktop:flex-col desktop:justify-center">
+<section class="pt-12 pb-24 overflow-hidden bg-white desktop:flex-col desktop:justify-center">
   <div class="Section__inner">
-    <div class="col-span-6 tablet:col-span-8 desktop:col-span-12 mb-8">
+    <div class="col-span-6 tablet:col-span-8 desktop:col-span-12 mb-8 px-[var(--grid-margin)] desktop:px-0">
       <TextStyle variant="h2" class="text-center">{testimonialsHeading}</TextStyle>
     </div>
   </div>
 
   {
     testimonialItems.length > 0 && (
-      <div class:list={['flex flex-col tablet:flex-row tablet:overflow-x-auto tablet:items-start gap-4 tablet:gap-5 pb-4 px-[var(--grid-margin)]', testimonialItems.length <= 5 && 'tablet:justify-center']}>
-        {testimonialItems.map((item, index) => {
-          if (item._type !== 'testimonialItem') return null;
-          const bg = cardBgs[index % cardBgs.length] as CardBg;
-          return (
-            <div class:list={['w-full tablet:w-[313px] tablet:shrink-0', index % 2 === 0 ? 'tablet:mt-16' : '']}>
-              <TestimonialCard quote={item.quote} author={item.author} role={item.role} bg={bg} />
+      <div class="relative mx-auto max-w-[var(--inner-max-width)] px-[var(--grid-margin)]" data-testimonials-carousel>
+        <div class="overflow-visible tablet:overflow-hidden" data-testimonials-viewport>
+          <div class="flex touch-pan-y -ml-4 tablet:-ml-5 pb-5">
+            {testimonialItems.map((item, index) => {
+              if (item._type !== 'testimonialItem') return null;
+
+              return (
+                <div class:list={['min-w-0 flex-[0_0_100%] pl-4 tablet:flex-[0_0_50%] tablet:pl-5 desktop:flex-[0_0_33.333%] transition-opacity duration-500 ease-out', index === 0 ? 'opacity-100' : 'opacity-65']} data-testimonial-slide>
+                  <div class="h-full min-h-[280px] tablet:min-h-[320px]">
+                    <TestimonialCard quote={item.quote} author={item.author} role={item.role} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {testimonialItems.length > 1 && (
+          <div class="mt-4 flex items-center justify-center gap-2">
+            <button
+              type="button"
+              aria-label="Previous testimonial"
+              class="size-9 rounded-full border border-ink-900/20 bg-transparent text-ink-900/80 transition-colors hover:border-ink-900/45 hover:text-ink-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink-900"
+              data-testimonials-prev
+            >
+              <span aria-hidden="true" class="text-paragraph leading-none">
+                &#8249;
+              </span>
+            </button>
+
+            <div class="flex items-center gap-2" aria-label="Choose testimonial">
+              {testimonialItems.map((_, index) => (
+                <button
+                  type="button"
+                  aria-label={`Show testimonial ${index + 1}`}
+                  aria-current={index === 0 ? 'true' : 'false'}
+                  class:list={['size-2.5 rounded-full transition-all focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-prussian-500', index === 0 ? 'w-7 bg-prussian-500' : 'bg-prussian-200 hover:bg-prussian-300']}
+                  data-testimonials-dot
+                />
+              ))}
             </div>
-          );
-        })}
+
+            <button
+              type="button"
+              aria-label="Pause testimonial animation"
+              class="min-w-16 rounded-full border border-ink-900/20 bg-transparent px-3 py-1.5 text-caption font-medium text-ink-900/80 transition-colors hover:border-ink-900/45 hover:text-ink-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink-900"
+              data-testimonials-toggle
+            >
+              <span data-testimonials-toggle-label>Pause</span>
+            </button>
+
+            <button type="button" aria-label="Next testimonial" class="size-9 rounded-full border border-ink-900/20 bg-transparent text-ink-900/80 transition-colors hover:border-ink-900/45 hover:text-ink-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink-900" data-testimonials-next>
+              <span aria-hidden="true" class="text-paragraph leading-none">
+                &#8250;
+              </span>
+            </button>
+          </div>
+        )}
       </div>
     )
   }
@@ -63,3 +108,138 @@ const testimonialItems = testimonial?.filter((t) => t._type === 'testimonialItem
     )
   }
 </section>
+
+<script>
+  import EmblaCarousel from 'embla-carousel';
+  import type { EmblaCarouselType } from 'embla-carousel';
+
+  const updateToggle = (button: HTMLButtonElement | null, label: HTMLElement | null, isPaused: boolean) => {
+    if (!button || !label) return;
+
+    button.setAttribute('aria-label', isPaused ? 'Resume testimonial animation' : 'Pause testimonial animation');
+    label.textContent = isPaused ? 'Play' : 'Pause';
+  };
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-testimonials-carousel]').forEach((carousel) => {
+    if (carousel.dataset.testimonialsInitialized === 'true') return;
+    carousel.dataset.testimonialsInitialized = 'true';
+
+    const viewport = carousel.querySelector<HTMLElement>('[data-testimonials-viewport]');
+    const slides = Array.from(carousel.querySelectorAll<HTMLElement>('[data-testimonial-slide]'));
+    const previousButton = carousel.querySelector<HTMLButtonElement>('[data-testimonials-prev]');
+    const nextButton = carousel.querySelector<HTMLButtonElement>('[data-testimonials-next]');
+    const toggleButton = carousel.querySelector<HTMLButtonElement>('[data-testimonials-toggle]');
+    const toggleLabel = carousel.querySelector<HTMLElement>('[data-testimonials-toggle-label]');
+    const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-testimonials-dot]'));
+
+    if (!viewport || slides.length < 2) return;
+
+    const embla = EmblaCarousel(viewport, {
+      align: 'start',
+      containScroll: 'trimSnaps',
+      loop: false,
+      skipSnaps: false,
+    });
+
+    let autoplayTimer: number | undefined;
+    let isManuallyPaused = prefersReducedMotion;
+
+    const stopAutoplay = () => {
+      if (autoplayTimer) {
+        window.clearInterval(autoplayTimer);
+        autoplayTimer = undefined;
+      }
+    };
+
+    const startAutoplay = () => {
+      if (isManuallyPaused || autoplayTimer) return;
+
+      autoplayTimer = window.setInterval(() => {
+        if (document.visibilityState === 'hidden') return;
+        scrollNext();
+      }, 5200);
+    };
+
+    const pauseForUser = () => {
+      isManuallyPaused = true;
+      stopAutoplay();
+      updateToggle(toggleButton, toggleLabel, isManuallyPaused);
+    };
+
+    const scrollPrevious = () => {
+      if (embla.canScrollPrev()) {
+        embla.scrollPrev();
+      } else {
+        embla.scrollTo(embla.scrollSnapList().length - 1);
+      }
+    };
+
+    const scrollNext = () => {
+      if (embla.canScrollNext()) {
+        embla.scrollNext();
+      } else {
+        embla.scrollTo(0);
+      }
+    };
+
+    const updateSelectedState = (api: EmblaCarouselType) => {
+      const selectedIndex = api.selectedScrollSnap();
+
+      slides.forEach((slide, index) => {
+        const isSelected = index === selectedIndex;
+        slide.classList.toggle('opacity-100', isSelected);
+        slide.classList.toggle('opacity-65', !isSelected);
+      });
+
+      dots.forEach((dot, index) => {
+        const isSelected = index === selectedIndex;
+        dot.setAttribute('aria-current', String(isSelected));
+        dot.classList.toggle('w-7', isSelected);
+        dot.classList.toggle('bg-prussian-500', isSelected);
+        dot.classList.toggle('bg-prussian-200', !isSelected);
+        dot.classList.toggle('hover:bg-prussian-300', !isSelected);
+      });
+    };
+
+    previousButton?.addEventListener('click', () => {
+      pauseForUser();
+      scrollPrevious();
+    });
+
+    nextButton?.addEventListener('click', () => {
+      pauseForUser();
+      scrollNext();
+    });
+
+    toggleButton?.addEventListener('click', () => {
+      isManuallyPaused = !isManuallyPaused;
+      updateToggle(toggleButton, toggleLabel, isManuallyPaused);
+
+      if (isManuallyPaused) {
+        stopAutoplay();
+      } else {
+        startAutoplay();
+      }
+    });
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        pauseForUser();
+        embla.scrollTo(index);
+      });
+    });
+
+    carousel.addEventListener('pointerenter', stopAutoplay);
+    carousel.addEventListener('pointerleave', startAutoplay);
+    carousel.addEventListener('focusin', stopAutoplay);
+    carousel.addEventListener('focusout', startAutoplay);
+    embla.on('select', updateSelectedState);
+    embla.on('pointerDown', pauseForUser);
+
+    updateSelectedState(embla);
+    updateToggle(toggleButton, toggleLabel, isManuallyPaused);
+    startAutoplay();
+  });
+</script>
