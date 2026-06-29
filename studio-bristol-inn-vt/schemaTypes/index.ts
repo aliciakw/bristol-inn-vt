@@ -1,5 +1,6 @@
 import {buttonLinkType} from './buttonLink'
 import {singleColumnBlockType, threeColumnBlockType, twoColumnBlockType} from './columnBlock'
+import {contactPageType} from './contactPage'
 import {figureType} from './figure'
 import {faqItemType, faqType} from './faq'
 import {homepageType} from './homepage'
@@ -11,6 +12,7 @@ import {settingsType} from './settings'
 export const schemaTypes = [
   buttonLinkType,
   singleColumnBlockType,
+  contactPageType,
   figureType,
   faqItemType,
   faqType,

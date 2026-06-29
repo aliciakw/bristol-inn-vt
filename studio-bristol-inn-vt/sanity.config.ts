@@ -5,8 +5,10 @@ import {colorInput} from '@sanity/color-input'
 import {schemaTypes} from './schemaTypes'
 
 const HOMEPAGE_ID = '6e561f5f-23ec-49fa-863f-141c005904c3'
+const CONTACT_PAGE_ID = 'contact-page-singleton'
 const SETTINGS_ID = 'settings-singleton'
 const FAQ_ID = 'faq-singleton'
+const PAGE_SINGLETON_TYPES = ['homepage', 'contactPage']
 
 export default defineConfig({
   name: 'default',
@@ -22,15 +24,14 @@ export default defineConfig({
           .title('Content')
           .items([
             S.listItem()
-              .title('Homepage')
-              .id(HOMEPAGE_ID)
+              .title('Pages')
+              .id('pages')
               .child(
-                S.document()
-                  .schemaType('homepage')
-                  .documentId(HOMEPAGE_ID)
-              ),            
-            S.divider(),
-            S.documentTypeListItem('page').title('Pages'),
+                S.documentList()
+                  .title('Pages')
+                  .filter('_type in $pageTypes')
+                  .params({pageTypes: ['homepage', 'contactPage', 'page']})
+              ),
             S.divider(),
             S.listItem()
               .title('FAQ')
@@ -57,5 +58,17 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
+  },
+
+  document: {
+    actions: (prev, {schemaType}) => {
+      if (!PAGE_SINGLETON_TYPES.includes(schemaType)) {
+        return prev
+      }
+
+      return prev.filter(({action}) => action !== 'delete' && action !== 'duplicate')
+    },
+    newDocumentOptions: (prev) =>
+      prev.filter(({templateId}) => !PAGE_SINGLETON_TYPES.includes(templateId)),
   },
 })

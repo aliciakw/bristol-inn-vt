@@ -110,6 +110,7 @@ export type SanityPage = {
 };
 
 const HOMEPAGE_ID = '6e561f5f-23ec-49fa-863f-141c005904c3';
+const CONTACT_PAGE_ID = 'contact-page-singleton';
 
 const RESOLVE_LINK = `{ label, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
 
@@ -223,6 +224,35 @@ export type SanityLink = {
   openInNewTab: boolean;
 };
 
+export type SanityContactPage = {
+  meta?: SanityMeta;
+  introduction: SanityBlock[];
+  address: string[];
+  phone?: string;
+  email?: string;
+  directionsLink: SanityLink | null;
+  googleMapEmbedUrl?: string;
+};
+
+export async function getContactPage(): Promise<SanityContactPage> {
+  return getClient().fetch<SanityContactPage>(
+    `*[_type == "contactPage" && _id == $contactPageId][0]{
+      "meta": meta{
+        ogTitle,
+        ogDescription,
+        "ogImage": ogImage.asset->{ "url": url }
+      },
+      "introduction": coalesce(introduction, []),
+      "address": coalesce(address, []),
+      phone,
+      email,
+      "directionsLink": directionsLink${RESOLVE_LINK},
+      googleMapEmbedUrl
+    }`,
+    { contactPageId: CONTACT_PAGE_ID },
+  );
+}
+
 export type SanityFooterSection = {
   title: string;
   content: SanityBlock[];
@@ -247,11 +277,6 @@ export type SanitySettings = {
   leftCta?: SanityButtonLink;
   rightCta?: SanityButtonLink;
   sidebarLinks: SanityLink[];
-  contactIntroduction: SanityBlock[];
-  contactAddress: string[];
-  contactPhone?: string;
-  contactEmail?: string;
-  googleMapEmbedUrl?: string;
   footerSections: SanityFooterSection[];
   awardImages: SanityAwardImage[];
   directionsLink: SanityLink | null;
@@ -278,11 +303,6 @@ export async function getSettings(): Promise<SanitySettings> {
         ),
         "openInNewTab": coalesce(openInNewTab, false)
       },
-      "contactIntroduction": coalesce(contactIntroduction, []),
-      "contactAddress": coalesce(contactAddress, []),
-      contactPhone,
-      contactEmail,
-      googleMapEmbedUrl,
       "footerSections": footerSections[]{
         title,
         content

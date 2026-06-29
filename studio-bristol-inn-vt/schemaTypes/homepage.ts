@@ -23,6 +23,11 @@ export const homepageType = defineType({
   name: 'homepage',
   title: 'Homepage',
   type: 'document',
+  preview: {
+    prepare() {
+      return { title: 'Homepage' }
+    },
+  },
   fields: [
     // Welcome section
     defineField({ name: 'welcomeHeading', title: 'Welcome Heading', type: 'string' }),
