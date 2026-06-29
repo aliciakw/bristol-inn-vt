@@ -58,13 +58,19 @@ function RoomGrid({ title, rooms, isLoading, availability, lastSearch }: RoomGri
 }
 
 function RoomSections({ rooms, availability, lastSearch }: { rooms: RoomBrowserRoom[]; availability: AvailabilityResult[]; lastSearch: SearchParams | null }) {
-  const available = rooms.filter((r) => availability.find((a) => a.listingId === r.id)?.available);
-  const unavailable = rooms.filter((r) => !availability.find((a) => a.listingId === r.id)?.available);
+  const filteredRooms = rooms.filter((room) => {
+    if (lastSearch?.pets && !room.dogsAllowed) return false;
+    if (lastSearch?.groundFloor && room.floorNumber !== 1) return false;
+    return true;
+  });
+  const available = filteredRooms.filter((r) => availability.find((a) => a.listingId === r.id)?.available);
+  const unavailable = filteredRooms.filter((r) => !availability.find((a) => a.listingId === r.id)?.available);
+  const showUnavailable = true; // !lastSearch?.pets && !lastSearch?.groundFloor;
 
   return (
     <div className="flex flex-col gap-12">
       <RoomGrid title={`Available (${available.length})`} rooms={available} availability={availability} lastSearch={lastSearch} />
-      {unavailable.length > 0 && <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} lastSearch={lastSearch} desktopCols={3} />}
+      {showUnavailable && unavailable.length > 0 && <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} lastSearch={lastSearch} desktopCols={3} />}
     </div>
   );
 }
@@ -98,6 +104,8 @@ export function RoomBrowser({ rooms }: Props) {
         checkOut: params.checkOut,
         guests: String(params.guests),
       });
+      if (params.groundFloor) qs.set('groundFloor', '1');
+      if (params.pets) qs.set('pets', '1');
       const res = await fetch(`/api/rooms/availability?${qs.toString()}`);
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
