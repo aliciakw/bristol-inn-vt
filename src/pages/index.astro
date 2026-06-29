@@ -7,7 +7,7 @@ import TestimonialsSection from '../components/home/TestimonialsSection.astro';
 
 const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 
-const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, welcomeImage, galleryImages, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage, testimonialsHeading, testimonial, amenities, body } = homepage;
+const { coverColor, welcomeBackgroundColor, welcomeHeading, welcomeItems, heroLeftImage, heroRightImage, galleryImages, reservationHeading, reservationHeadingIcon, reservationDescription, testimonialsHeading, testimonial, amenities } = homepage;
 
 const heroLeftPreload = heroLeftImage?.url ? buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 }) : null;
 const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 }) : null;
@@ -20,18 +20,16 @@ const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImag
   </Fragment>
   <WelcomeSection
     coverColor={coverColor}
+    welcomeBackgroundColor={welcomeBackgroundColor}
     welcomeHeading={welcomeHeading}
-    welcomeDescription={welcomeDescription}
-    welcomeCTA={welcomeCTA}
+    welcomeItems={welcomeItems}
     heroLeftImage={heroLeftImage}
     heroRightImage={heroRightImage}
-    welcomeImage={welcomeImage}
     directionsHref={settings.directionsLink?.href}
     directionsLabel={settings.directionsLink?.label}
     reservationHeading={reservationHeading}
     reservationHeadingIcon={reservationHeadingIcon}
     reservationDescription={reservationDescription}
-    reservationImage={reservationImage}
     galleryImages={galleryImages}
     logo={settings.logo}
   />

@@ -5,14 +5,21 @@ import TextStyle from '@components/ui/TextStyle.astro';
 import { buildSanityImageUrl, type SanityImage, type SanityResolvedLink } from '../../lib/sanity';
 import bristolBadge from '../../assets/bristol-inn-badge--ellipse.png';
 import ButtonLink from '@components/ui/ButtonLink.astro';
+import ImageComponent from '@components/ui/ImageComponent.astro';
 import { AvailabilitySearchForm } from '@components/rooms/AvailabilitySearchForm';
+
+type WelcomeItem = {
+  _key?: string;
+  text?: string;
+  cta?: SanityResolvedLink;
+  image?: SanityImage;
+};
 
 interface Props {
   coverColor?: string;
+  welcomeBackgroundColor?: string;
   welcomeHeading?: string;
-  welcomeDescription?: string;
-  welcomeCTA?: SanityResolvedLink;
-  welcomeImage?: SanityImage;
+  welcomeItems?: WelcomeItem[];
   heroLeftImage?: SanityImage;
   heroRightImage?: SanityImage;
   galleryImages?: SanityImage[];
@@ -21,11 +28,10 @@ interface Props {
   reservationHeading?: string;
   reservationHeadingIcon?: SanityImage;
   reservationDescription?: string;
-  reservationImage?: SanityImage;
   logo?: string;
 }
 
-const { coverColor, welcomeHeading, welcomeDescription, welcomeCTA, heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription, reservationImage } = Astro.props;
+const { coverColor, welcomeBackgroundColor, welcomeHeading, welcomeItems = [], heroLeftImage, heroRightImage, reservationHeading, reservationHeadingIcon, reservationDescription } = Astro.props;
 const HERO_SLIDE_ANIMATION = false;
 const BADGE_ENTRANCE_ANIMATION = false;
 ---
@@ -87,70 +93,79 @@ const BADGE_ENTRANCE_ANIMATION = false;
     </div>
   </div>
 
-  <div id="welcome-prussian-backdrop" aria-hidden="true"></div>
+  <div id="welcome-backdrop" aria-hidden="true" style={welcomeBackgroundColor ? `background: ${welcomeBackgroundColor};` : 'var(--color-stone-200)'}></div>
 
   <div class="relative z-20 w-full py-16 px-[var(--grid-margin)] desktop:mx-0">
-    <div id="welcome-section-content" class="flex flex-col bg-white rounded-xl max-w-4xl mx-auto pt-10 px-12 pb-12">
-      <!-- Welcome section -->
-      <div class="flex mx-auto">
-        {
-          (welcomeHeading || welcomeDescription || welcomeCTA) && (
-            <TextStyle variant="h1" element="p">
-              {welcomeHeading && <span class="text-ink-900">{welcomeHeading} </span>}
-              {welcomeDescription && <span class="text-iron">{welcomeDescription} </span>}
-              {welcomeCTA && (
-                <span class="cta-arrow-group inline-flex items-center align-middle gap-1">
-                  <ArrowRight size={28} className="cta-arrow text-ink-900" aria-hidden="true" />
-                  <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeCTA.href} target={welcomeCTA.openInNewTab ? '_blank' : undefined} rel={welcomeCTA.openInNewTab ? 'noopener noreferrer' : undefined}>
-                    {welcomeCTA.label}
-                  </ButtonLink>
-                </span>
-              )}
-            </TextStyle>
-          )
-        }
-      </div>
-
-      <!-- Reservation section -->
-      <div class="flex flex-col items-center mb-8 desktop:mx-[64px] mt-[var(--grid-gutter)]">
-        {
-          reservationImage && (
-            <div class="mx-[var(--grid-margin)]  desktop:aspect-[4/3] w-full desktop:w-[33vw] mx-auto my-8 overflow-hidden rounded-xl">
-              <img
-                src={buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })}
-                srcset={`${buildSanityImageUrl(reservationImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(reservationImage.url, { width: 900, height: 700 })} 900w`}
-                sizes="(max-width: 1280px) 40vw, 560px"
-                alt={reservationImage.alt}
-                width={900}
-                height={700}
-                loading="eager"
-                class="w-full h-full object-cover"
-              />
-            </div>
-          )
-        }
-
-        <TextStyle variant="h2" class="text-center">{reservationHeading}</TextStyle>
-        {
-          reservationDescription && (
-            <TextStyle variant="paragraph" element="p" class="max-w-2xl mt-2 mb-[var(--grid-gutter)]">
-              {reservationDescription}
-            </TextStyle>
-          )
-        }
-
-        <div class="w-full">
-          <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
-        </div>
-
-        <div class="flex items-center justify-center mt-[var(--grid-gutter)]">
+    <div class="Section__inner">
+      <div id="welcome-section-content" class="col-span-6 tablet:col-span-4 tablet:col-start-2 desktop:col-span-5 desktop:col-start-3 flex flex-col bg-white rounded-xl pt-10 px-[var(--grid-gutter)] pb-12">
+        <div class="flex flex-col gap-8 items-center max-w-xl mx-auto">
           {
-            reservationHeadingIcon && (
-              <div id="reservation-heading-icon" class="w-20 h-20 flex items-center justify-center">
-                <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
-              </div>
+            welcomeHeading && (
+              <TextStyle variant="h1" element="h2" class="">
+                <span class="text-ink-900">{welcomeHeading}</span>
+              </TextStyle>
             )
           }
+          {
+            welcomeItems.length > 0 && (
+              <TextStyle variant="h3" element="p" class="leading-[80px]">
+                {welcomeItems.map((welcomeItem) => (
+                  <span>
+                    {welcomeItem.image?.url && (
+                      <ImageComponent
+                        element="span"
+                        src={buildSanityImageUrl(welcomeItem.image.url, { width: 900, height: 700 })}
+                        srcset={`${buildSanityImageUrl(welcomeItem.image.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(welcomeItem.image.url, { width: 900, height: 700 })} 900w`}
+                        sizes="150px"
+                        alt={welcomeItem.image.alt}
+                        width={900}
+                        height={700}
+                        loading="lazy"
+                        class="inline-block w-[134px] tablet:w-[150px] aspect-[4/3] mr-4 overflow-hidden rounded-xl align-middle"
+                        imgClass="w-full h-full object-cover"
+                        fadeIn
+                      />
+                    )}
+                    {welcomeItem.text && <span>{welcomeItem.text} </span>}
+                    {welcomeItem.cta && (
+                      <span class="cta-arrow-group inline-flex items-center align-middle gap-1 mr-6">
+                        <ArrowRight size={28} className="cta-arrow text-ink-900" aria-hidden="true" />
+                        <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeItem.cta.href} target={welcomeItem.cta.openInNewTab ? '_blank' : undefined} rel={welcomeItem.cta.openInNewTab ? 'noopener noreferrer' : undefined}>
+                          {welcomeItem.cta.label}
+                        </ButtonLink>
+                      </span>
+                    )}{' '}
+                  </span>
+                ))}
+              </TextStyle>
+            )
+          }
+          <div class="w-full mt-[var(--grid-gutter)] flex flex-col gap-4">
+            {
+              reservationHeading && (
+                <TextStyle variant="h2" class="text-left">
+                  {reservationHeading}
+                </TextStyle>
+              )
+            }
+            {
+              reservationDescription && (
+                <TextStyle variant="paragraph" element="p">
+                  {reservationDescription}
+                </TextStyle>
+              )
+            }
+            <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
+            <div class="flex items-center justify-center mt-[var(--grid-gutter)]">
+              {
+                reservationHeadingIcon && (
+                  <div id="reservation-heading-icon" class="w-18 h-18 flex items-center justify-center">
+                    <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
+                  </div>
+                )
+              }
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -215,7 +230,7 @@ const BADGE_ENTRANCE_ANIMATION = false;
       0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
-  #welcome-prussian-backdrop {
+  #welcome-backdrop {
     position: fixed;
     top: var(--welcome-hero-wrapper-h);
     left: 0;
@@ -228,7 +243,7 @@ const BADGE_ENTRANCE_ANIMATION = false;
     will-change: transform;
   }
 
-  #welcome-prussian-backdrop.is-released {
+  #welcome-backdrop.is-released {
     position: absolute;
     top: var(--welcome-backdrop-release-top, 0px);
     transform: none;
@@ -374,7 +389,7 @@ const BADGE_ENTRANCE_ANIMATION = false;
   const heroLeftImage = document.getElementById('WelcomeSection___HeroImage--left');
   const heroRightImage = document.getElementById('WelcomeSection___HeroImage--right');
   const content = document.getElementById('welcome-section-content');
-  const backdrop = document.getElementById('welcome-prussian-backdrop');
+  const backdrop = document.getElementById('welcome-backdrop');
 
   const skipIntro = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.scrollY > 32;
 

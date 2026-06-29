@@ -58,6 +58,14 @@ export type SanityImage = {
   rounded?: boolean;
 };
 
+export type SanityWelcomeItem = {
+  _key: string;
+  text?: string;
+  cta?: SanityResolvedLink;
+  image?: SanityImage;
+  showRoomSearchForm?: boolean;
+};
+
 export type SanityTestimonialItem = {
   _type: 'testimonialItem';
   _key: string;
@@ -77,17 +85,15 @@ export type SanityTestimonialArrayItem = SanityTestimonialItem | SanityTestimoni
 
 export type SanityHomepage = {
   coverColor?: string;
+  welcomeBackgroundColor?: string;
   welcomeHeading?: string;
-  welcomeDescription?: string;
-  welcomeCTA?: SanityResolvedLink;
+  welcomeItems?: SanityWelcomeItem[];
   heroLeftImage?: SanityImage;
   heroRightImage?: SanityImage;
-  welcomeImage?: SanityImage;
   galleryImages: SanityImage[];
   reservationHeading?: string;
   reservationHeadingIcon?: SanityImage;
   reservationDescription?: string;
-  reservationImage?: SanityImage;
   testimonialsHeading?: string;
   testimonial?: SanityTestimonialArrayItem[];
   amenities: string[];
@@ -139,17 +145,21 @@ export async function getHomepage(): Promise<SanityHomepage> {
   return getClient().fetch<SanityHomepage>(
     `*[_type == "homepage" && _id == $id][0]{
       coverColor,
+      welcomeBackgroundColor,
       welcomeHeading,
-      welcomeDescription,
-      "welcomeCTA": welcomeCTA${RESOLVE_LINK},
+      "welcomeItems": welcomeItems[]{
+        _key,
+        text,
+        "cta": cta${RESOLVE_LINK},
+        "image": image{ "url": asset->url, "alt": coalesce(alt, "") },
+        "showRoomSearchForm": coalesce(showRoomSearchForm, false)
+      },
       "heroLeftImage": heroLeftImage{ "url": asset->url, "alt": coalesce(alt, "") },
       "heroRightImage": heroRightImage{ "url": asset->url, "alt": coalesce(alt, "") },
-      "welcomeImage": welcomeImage{ "url": asset->url, "alt": coalesce(alt, "") },
       "galleryImages": galleryImages[]{ "url": asset->url, "alt": coalesce(alt, "") },
       reservationHeading,
       "reservationHeadingIcon": reservationHeadingIcon{ "url": asset->url, "alt": coalesce(alt, "") },
       reservationDescription,
-      "reservationImage": reservationImage{ "url": asset->url, "alt": coalesce(alt, "") },
       testimonialsHeading,
       "testimonial": testimonial[]{
         _type,

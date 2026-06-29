@@ -1,6 +1,5 @@
 import { defineType, defineField, defineArrayMember } from 'sanity'
-import { ColorSwatchInput } from './ColorSwatchInput'
-import { colorFields } from './colorFields'
+import { colorFields, defineBackgroundColorField } from './colorFields'
 
 const columnItemFields = [
   defineField({
@@ -29,10 +28,6 @@ export const homepageType = defineType({
     },
   },
   fields: [
-    // Welcome section
-    defineField({ name: 'welcomeHeading', title: 'Welcome Heading', type: 'string' }),
-    defineField({ name: 'welcomeDescription', title: 'Welcome Description', type: 'text', rows: 3 }),
-    defineField({ name: 'welcomeCTA', title: 'Welcome CTA (optional)', type: 'link' }),
     defineField({
       name: 'heroLeftImage',
       title: 'Hero Collage — Left Image',
@@ -49,14 +44,26 @@ export const homepageType = defineType({
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
     }),
-    defineField({
-      name: 'welcomeImage',
-      title: 'Welcome Image',
-      type: 'image',
-      options: { hotspot: true },
-      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+    // Welcome section
+    defineBackgroundColorField('welcomeBackgroundColor', 'Welcome Section Background Color'),
+    defineField({ name: 'welcomeHeading', title: 'Welcome Heading', type: 'string' }),
+    defineField({ 
+      name: 'welcomeItems',
+      title: 'Welcome Items',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'welcomeItem',
+          fields: [
+            defineField({ name: 'text', type: 'text', title: 'Text' }),
+            defineField({name: 'cta', type: 'link', title: 'Button'}),
+            defineField({name: 'image', type: 'image', title: 'Image'}),
+            defineField({ name: 'showRoomSearchForm', type: 'boolean', title: "Show Room Search Form"})
+          ]
+        })
+      ]
     }),
-
     // Gallery strip
     defineField({
       name: 'galleryImages',
@@ -275,13 +282,6 @@ export const homepageType = defineType({
           ],
         }),
       ],
-    }),
-    defineField({
-      name: 'coverColor',
-      title: 'Cover Color',
-      description: 'Background color of the intro cover that slides away on page load.',
-      type: 'string',
-      components: {input: ColorSwatchInput},
     }),
   ],
 })

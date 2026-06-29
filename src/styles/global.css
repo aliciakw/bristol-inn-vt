@@ -120,7 +120,7 @@
 
 @media (min-width: 1024px) {
   :root {
-    --grid-columns: 8;
+    --grid-columns: 9;
     /* --grid-margin: 104px; */
     --grid-margin: 72px;
     --grid-gutter: 32px;
