@@ -16,6 +16,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,astro,js,mjs,cjs,json,md,css}\"",
     "astro": "astro",
     "generate-types": "wrangler types",
+    "deploy:studio": "npm --prefix studio-bristol-inn-vt ci && npm --prefix studio-bristol-inn-vt run deploy",
     "prepare": "husky"
   },
   "dependencies": {

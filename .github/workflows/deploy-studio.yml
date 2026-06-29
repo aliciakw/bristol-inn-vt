@@ -1,0 +1,30 @@
+name: Deploy Sanity Studio
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'studio-bristol-inn-vt/**'
+      - '.github/workflows/deploy-studio.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: studio-bristol-inn-vt/package-lock.json
+
+      - name: Install studio dependencies
+        working-directory: studio-bristol-inn-vt
+        run: npm ci
+
+      - name: Deploy studio
+        working-directory: studio-bristol-inn-vt
+        run: npm run deploy
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
