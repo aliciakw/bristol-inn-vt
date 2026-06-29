@@ -67,8 +67,9 @@ export type SanityWelcomeItem = {
 };
 
 export type SanityTestimonialItem = {
-  _type: 'testimonialItem';
+  _type: 'testimonialItem' | 'testimonial';
   _key: string;
+  _id?: string;
   quote: string;
   author: string;
   role: string;
@@ -138,7 +139,17 @@ const RESOLVE_BODY_ITEM = `{
   _type == "ctaBlock" => { ..., "image": image${RESOLVE_FIGURE}, "cta": cta${RESOLVE_LINK} },
   _type == "singleColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM} },
   _type == "twoColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM} },
-  _type == "threeColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM}, "column3": column3${RESOLVE_COLUMN_ITEM} }
+  _type == "threeColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM}, "column3": column3${RESOLVE_COLUMN_ITEM} },
+  _type == "roomSearchFormBlock" => { ..., "icon": icon${RESOLVE_FIGURE} },
+  _type == "galleryStripBlock" => { ..., "images": images[]${RESOLVE_FIGURE} },
+  _type == "testimonialGalleryBlock" => {
+    ...,
+    "items": items[]{
+      _key,
+      _type == "reference" => @->{ _type, _id, quote, author, role },
+      _type == "figure" => { _type, _key, "url": image.asset->url, "alt": coalesce(alt, ""), caption, layout, "rounded": coalesce(rounded, false) }
+    }
+  }
 }`;
 
 export async function getHomepage(): Promise<SanityHomepage> {

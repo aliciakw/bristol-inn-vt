@@ -118,9 +118,20 @@
   font-size: 16px;
 }
 
+@media (min-width: 640px) {
+  :root {
+    --grid-columns: 8;
+    /* --grid-margin: 104px; */
+    --grid-margin: 72px;
+    --grid-gutter: 32px;
+    --nav-top-bar-height: 72px;
+    --nav-top-bar-height-2x: calc(var(--nav-top-bar-height) * 2);
+  }
+}
+
 @media (min-width: 1024px) {
   :root {
-    --grid-columns: 9;
+    --grid-columns: 12;
     /* --grid-margin: 104px; */
     --grid-margin: 72px;
     --grid-gutter: 32px;

@@ -47,7 +47,7 @@ const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
         <GalleryStrip images={gridImages} roomName={roomName} speed="medium" />
       </div>
       {gridImages.length > 0 && (
-        <div class="grid grid-cols-2 desktop:grid-cols-3 gap-3 mt-3 desktop:hidden">
+        <div class="grid grid-cols-2 desktop:grid-cols-4 gap-3 mt-3 desktop:hidden">
           {gridImages.map((p, i) => (
             <ImageComponent
               src={buildSanityImageUrl(p.url, { width: 1200, height: 800 })}

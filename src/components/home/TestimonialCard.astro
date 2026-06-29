@@ -3,7 +3,7 @@ import TextStyle from '@components/ui/TextStyle.astro';
 
 interface Props {
   quote: string;
-  author: string;
+  author?: string;
   role?: string;
   bg?: 'khaki-100' | 'prussian-200' | 'lilac-200';
 }
@@ -16,7 +16,6 @@ const bgClassNames = {
   'lilac-200': 'bg-lilac-200',
 };
 
-// eslint-disable-next-line security/detect-object-injection
 // const bgClass = bgClassNames[bg];
 const bgClass = 'bg-khaki-100';
 ---
@@ -27,12 +26,12 @@ const bgClass = 'bg-khaki-100';
   </TextStyle>
   <div class="text-right">
     <TextStyle variant="h3" element="p" class="text-ink-900 leading-snug">
-      &#8212; {author}
+      &#8212; {author || 'Anonymous'}
     </TextStyle>
     {
       role && (
         <TextStyle variant="caption" element="p" class="text-ink-900 mt-0.5">
-          {role}
+          {role || 'Verified guest'}
         </TextStyle>
       )
     }

@@ -1,0 +1,41 @@
+---
+import { AvailabilitySearchForm } from '@components/rooms/AvailabilitySearchForm';
+import { buildSanityImageUrl, type SanityBlock, type SanityImage } from '@lib/sanity';
+import PortableTextBlock from './PortableTextBlock.astro';
+
+interface Props {
+  introduction?: SanityBlock[];
+  icon?: SanityImage;
+  textColor?: string;
+  backgroundColor?: string;
+}
+
+const { introduction = [], icon, textColor, backgroundColor } = Astro.props;
+const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
+---
+
+<section class="Section py-12" style={wrapperStyle || undefined}>
+  <div class="Section__inner py-12">
+    <div class="col-span-6 desktop:col-start-4 desktop:col-span-6 flex flex-col items-center gap-6">
+      {
+        introduction.length > 0 && (
+          <div class="flex flex-col items-center gap-3 text-center">
+            {introduction.map((block) => (
+              <PortableTextBlock block={block} />
+            ))}
+          </div>
+        )
+      }
+      <div class="w-full">
+        <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
+      </div>
+      {
+        icon?.url && (
+          <div class="w-20 h-20 flex items-center justify-center">
+            <img src={buildSanityImageUrl(icon.url, { width: 160, height: 160 })} alt={icon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

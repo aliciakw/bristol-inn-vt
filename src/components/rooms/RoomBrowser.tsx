@@ -46,7 +46,7 @@ function RoomGrid({ title, rooms, isLoading, availability, lastSearch }: RoomGri
         </TextStyle>
       )}
       {}
-      <div className={['grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-[var(--grid-gutter)]'].join(' ')}>
+      <div className={['grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-4 Xgap-[var(--grid-gutter)]'].join(' ')}>
         {rooms.map((room) => {
           const roomAvailability = availability?.find((a) => a.listingId === room.id);
           const { bookingUrl, detailUrl } = getRoomUrls(room.id, lastSearch, roomAvailability?.pricePerNight);
@@ -131,7 +131,7 @@ export function RoomBrowser({ rooms }: Props) {
 
   return (
     <div className="flex flex-col gap-12 mb-8">
-      <div className="top-[var(--nav-top-bar-height)] z-10 desktop:max-w-[66.66%] mb-12">
+      <div className="top-[var(--nav-top-bar-height)] z-10  mb-12">
         <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} />
 
         {state.status === 'error' && (

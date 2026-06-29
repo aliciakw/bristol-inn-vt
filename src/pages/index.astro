@@ -4,10 +4,11 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import WelcomeSection from '../components/home/WelcomeSection.astro';
 import GalleryStrip from '../components/home/GalleryStrip.astro';
 import TestimonialsSection from '../components/home/TestimonialsSection.astro';
+import SliceZone from '../components/SliceZone.astro';
 
 const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 
-const { coverColor, welcomeBackgroundColor, welcomeHeading, welcomeItems, heroLeftImage, heroRightImage, galleryImages, reservationHeading, reservationHeadingIcon, reservationDescription, testimonialsHeading, testimonial, amenities } = homepage;
+const { coverColor, welcomeBackgroundColor, welcomeHeading, welcomeItems, heroLeftImage, heroRightImage, galleryImages, reservationHeading, reservationHeadingIcon, reservationDescription, testimonialsHeading, testimonial, amenities, body } = homepage;
 
 const heroLeftPreload = heroLeftImage?.url ? buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 }) : null;
 const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 }) : null;
@@ -34,10 +35,11 @@ const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImag
     logo={settings.logo}
   />
 
-  <div id="gallery-strip-wrapper" class="pt-[144px]">
+  <!-- <div id="gallery-strip-wrapper" class="pt-[144px]">
     <div class="bg-white pt-[var(--page-margin)] pb-16">
       <GalleryStrip images={galleryImages ?? []} />
     </div>
     <TestimonialsSection testimonialsHeading={testimonialsHeading} testimonial={testimonial} amenities={amenities ?? []} />
-  </div>
+  </div> -->
+  {body?.length > 0 && <SliceZone blocks={body} />}
 </BaseLayout>

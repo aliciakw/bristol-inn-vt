@@ -4,6 +4,9 @@ import PageHeaderBlock from './blocks/PageHeaderBlock.astro';
 import PortableTextBlock from './blocks/PortableTextBlock.astro';
 import SingleImageBlock from './blocks/SingleImageBlock.astro';
 import ColumnLayout from './blocks/ColumnLayout.astro';
+import GalleryStrip from './home/GalleryStrip.astro';
+import RoomSearchFormBlock from './blocks/RoomSearchFormBlock.astro';
+import TestimonialGalleryBlock from './blocks/TestimonialGalleryBlock.astro';
 import { type SanityBlock } from '../lib/sanity';
 
 interface Props {
@@ -75,6 +78,22 @@ const { blocks, contrainProseWidth } = Astro.props;
           backgroundColor={block.backgroundColor as string | undefined}
         />
       );
+    }
+
+    if (block._type === 'roomSearchFormBlock') {
+      return <RoomSearchFormBlock introduction={block.introduction as SanityBlock[] | undefined} icon={block.icon as Parameters<typeof RoomSearchFormBlock>[0]['icon']} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+    }
+
+    if (block._type === 'galleryStripBlock') {
+      return (
+        <section class="py-12" style={block.backgroundColor ? `background-color: ${block.backgroundColor}` : undefined}>
+          <GalleryStrip images={(block.images as Parameters<typeof GalleryStrip>[0]['images']) ?? []} />
+        </section>
+      );
+    }
+
+    if (block._type === 'testimonialGalleryBlock') {
+      return <TestimonialGalleryBlock heading={block.heading as string | undefined} items={block.items as Parameters<typeof TestimonialGalleryBlock>[0]['items']} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
     }
 
     return null;

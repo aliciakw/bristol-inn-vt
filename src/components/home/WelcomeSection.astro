@@ -97,10 +97,10 @@ const BADGE_ENTRANCE_ANIMATION = false;
 
   <div class="relative z-20 w-full py-16 px-[var(--grid-margin)] desktop:mx-0">
     <div class="Section__inner">
-      <div id="welcome-section-content" class="col-span-6 tablet:col-span-4 tablet:col-start-2 desktop:col-span-5 desktop:col-start-3 flex flex-col bg-white rounded-xl pt-10 px-[var(--grid-gutter)] pb-12">
+      <div id="welcome-section-content" class="col-span-6 tablet:col-span-6 tablet:col-start-2 desktop:col-span-6 desktop:col-start-4 flex flex-col bg-white rounded-xl pt-10 px-[var(--grid-gutter)] pb-12">
         <div class="flex flex-col gap-8 items-center max-w-xl mx-auto">
           {
-            welcomeHeading && (
+            welcomeHeading && welcomeItems.length < 1 && (
               <TextStyle variant="h1" element="h2" class="">
                 <span class="text-ink-900">{welcomeHeading}</span>
               </TextStyle>
@@ -108,9 +108,14 @@ const BADGE_ENTRANCE_ANIMATION = false;
           }
           {
             welcomeItems.length > 0 && (
-              <TextStyle variant="h3" element="p" class="leading-[80px]">
-                {welcomeItems.map((welcomeItem) => (
+              <TextStyle variant="h3" element="div" class="leading-[80px]">
+                {welcomeItems.map((welcomeItem, index) => (
                   <span>
+                    {index === 0 && welcomeHeading && (
+                      <TextStyle variant="h1" element="h2" class="inline">
+                        <span class="text-ink-900">{welcomeHeading}</span>
+                      </TextStyle>
+                    )}
                     {welcomeItem.image?.url && (
                       <ImageComponent
                         element="span"
@@ -127,20 +132,20 @@ const BADGE_ENTRANCE_ANIMATION = false;
                       />
                     )}
                     {welcomeItem.text && <span>{welcomeItem.text} </span>}
-                    {welcomeItem.cta && (
+                    {welcomeItem.cta?.href && (
                       <span class="cta-arrow-group inline-flex items-center align-middle gap-1 mr-6">
                         <ArrowRight size={28} className="cta-arrow text-ink-900" aria-hidden="true" />
                         <ButtonLink size="default" bg="sand-200" class="inline-flex align-middle" href={welcomeItem.cta.href} target={welcomeItem.cta.openInNewTab ? '_blank' : undefined} rel={welcomeItem.cta.openInNewTab ? 'noopener noreferrer' : undefined}>
                           {welcomeItem.cta.label}
                         </ButtonLink>
                       </span>
-                    )}{' '}
+                    )}
                   </span>
                 ))}
               </TextStyle>
             )
           }
-          <div class="w-full mt-[var(--grid-gutter)] flex flex-col gap-4">
+          <!-- <div class="w-full mt-[var(--grid-gutter)] flex flex-col gap-4">
             {
               reservationHeading && (
                 <TextStyle variant="h2" class="text-left">
@@ -165,7 +170,7 @@ const BADGE_ENTRANCE_ANIMATION = false;
                 )
               }
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

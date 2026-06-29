@@ -1,0 +1,59 @@
+---
+import TextStyle from '@components/ui/TextStyle.astro';
+import { buildSanityImageUrl, type SanityImage, type SanityTestimonialArrayItem } from '@lib/sanity';
+import TestimonialCard from '@components/home/TestimonialCard.astro';
+
+type TestimonialGalleryItem = SanityTestimonialArrayItem | (SanityImage & { _type: 'figure'; _key?: string });
+
+interface Props {
+  heading?: string;
+  items?: TestimonialGalleryItem[];
+  textColor?: string;
+  backgroundColor?: string;
+}
+
+const { heading, items = [], textColor, backgroundColor } = Astro.props;
+const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
+const cardBgs = ['khaki-100', 'prussian-200', 'lilac-200'] as const;
+type CardBg = (typeof cardBgs)[number];
+---
+
+<section class="Section py-12 overflow-hidden" style={wrapperStyle || undefined}>
+  <div class="Section__inner">
+    {
+      heading && (
+        <div class="col-span-6 desktop:col-start-2 desktop:col-span-6 mb-2">
+          <TextStyle variant="h2" class="text-center">
+            {heading}
+          </TextStyle>
+        </div>
+      )
+    }
+    {
+      items.length > 0 && (
+        <div class="col-span-6 desktop:col-span-8 flex flex-col tablet:flex-row tablet:overflow-x-auto tablet:items-start gap-4 tablet:gap-5 pb-4">
+          {items.map((item, index) => {
+            if (item._type === 'testimonial' || item._type === 'testimonialItem') {
+              const bg = cardBgs[index % cardBgs.length] as CardBg;
+              return (
+                <div class:list={['w-full tablet:w-[313px] tablet:shrink-0', index % 2 === 0 ? 'tablet:mt-16' : '']}>
+                  <TestimonialCard quote={item.quote} author={item.author} role={item.role} bg={bg} />
+                </div>
+              );
+            }
+
+            if (item._type === 'figure' && item.url) {
+              return (
+                <div class:list={['w-full tablet:w-[313px] tablet:shrink-0 overflow-hidden rounded-xl aspect-[4/5]', index % 2 === 0 ? 'tablet:mt-16' : '']}>
+                  <img src={buildSanityImageUrl(item.url, { width: 626, height: 782 })} alt={item.alt} width={626} height={782} loading="lazy" decoding="async" class="w-full h-full object-cover" />
+                </div>
+              );
+            }
+
+            return null;
+          })}
+        </div>
+      )
+    }
+  </div>
+</section>

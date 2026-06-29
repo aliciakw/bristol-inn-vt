@@ -15,8 +15,8 @@ const { introduction, heroImage, textColor, backgroundColor = 'var(--color-pruss
 
 <div class="Section" style={`background-color: ${backgroundColor}; color: ${textColor};`}>
   <div class="Section__inner" class:list={[className]}>
-    <div class="row-span-1 col-span-3 desktop:col-span-4 pt-44 gap-6">
-      <div class="hidden tablet:flex flex-col gap-4 pr-[var(--grid-gutter)]">
+    <div class="row-span-1 col-span-3 desktop:col-span-6 pt-44 gap-6">
+      <div class="hidden tablet:flex flex-col gap-4">
         {introduction && introduction.length > 0 && <SliceZone blocks={introduction} contrainProseWidth={false} />}
       </div>
     </div>
@@ -31,7 +31,7 @@ const { introduction, heroImage, textColor, backgroundColor = 'var(--color-pruss
           height={700}
           loading="eager"
           fadeIn
-          class="row-span-1 col-span-3 desktop:col-span-4 overflow-hidden aspect-[5/3.5] rounded-bl-[16px] rounded-br-[16px]"
+          class="row-span-1 col-span-3 desktop:col-span-6 overflow-hidden aspect-[5/3.5] rounded-bl-[16px] rounded-br-[16px]"
           imgClass="w-full h-full object-cover"
         />
       )
