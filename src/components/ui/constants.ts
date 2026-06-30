@@ -2,11 +2,12 @@ import type { HTMLAttributes, AnchorHTMLAttributes } from 'react';
 
 // --inner-max-width: 1480px;
 export const INNER_MAX_WIDTH__DESKTOP = 1480;
-export type ImageLayout = 'fullbleed' | 'default' | 'square';
+export type ImageLayout = 'fullbleed' | 'default' | 'square' | 'narrow';
 export const ASPECT_RATIOS: Record<ImageLayout, number> = {
   fullbleed: 5 / 3,
   default: 5 / 3,
   square: 1,
+  narrow: 5 / 3,
 };
 
 export type ColumnCount = 1 | 2 | 3;
@@ -33,7 +34,8 @@ export type ButtonLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'cla
   href: string;
 } & PressableBaseProps;
 
-export const buttonDefaultClasses = 'inline-flex items-center justify-center rounded-full border font-serif font-medium whitespace-nowrap transition-all duration-250 hover:shadow-md pointer';
+export const buttonDefaultClasses =
+  'inline-flex items-center justify-center rounded-full border font-serif font-medium whitespace-nowrap transition-all duration-250 hover:shadow-md pointer';
 
 export const buttonSizeClasses = {
   large: 'h-12 px-6 text-[24px] leading-none tracking-[-0.02em]',
@@ -56,7 +58,12 @@ export const buttonBgClasses = {
   'khaki-200': 'bg-khaki-200',
 } satisfies Record<NonNullable<ButtonProps['bg']>, string>;
 
-export function makeButtonClasses(size: NonNullable<ButtonProps['size']>, textColor: NonNullable<ButtonProps['textColor']>, bg: NonNullable<ButtonProps['bg']>, otherClasses?: string) {
+export function makeButtonClasses(
+  size: NonNullable<ButtonProps['size']>,
+  textColor: NonNullable<ButtonProps['textColor']>,
+  bg: NonNullable<ButtonProps['bg']>,
+  otherClasses?: string,
+) {
   // eslint-disable-next-line security/detect-object-injection
   return [buttonDefaultClasses, buttonSizeClasses[size], buttonTextColorClasses[textColor], buttonBgClasses[bg], otherClasses].filter(Boolean).join(' ');
 }

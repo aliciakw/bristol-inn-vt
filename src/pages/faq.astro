@@ -11,12 +11,12 @@ const pageTitle = faq?.title ?? 'Frequently Asked Questions';
 <BaseLayout title={`${pageTitle} — Bristol Inn`}>
   <section class="px-[var(--grid-margin)]">
     <div class="Section__inner">
-      <header class="col-span-6 desktop:col-span-8 pt-0 pb-8 desktop:py-8 flex flex-col gap-2">
+      <header class="col-span-6 tablet:col-span-8 desktop:col-span-12 pt-0 pb-8 desktop:py-8 flex flex-col gap-2">
         <TextStyle variant="h1" element="h1" class="text-center">{pageTitle}</TextStyle>
         <TextStyle variant="paragraph" element="p" class="text-center font-italic">{faq?.description}</TextStyle>
       </header>
 
-      <div class="col-span-6 desktop:col-span-6 desktop:col-start-2 border-t border-khaki-300 mb-16 desktop:mb-24 mx-[var(--grid-margin)]">
+      <div class="col-span-6 tablet:col-span-8 desktop:col-span-8 desktop:col-start-3 border-t border-khaki-300 mb-16 desktop:mb-24 mx-[var(--grid-margin)]">
         {
           faq?.items?.length ? (
             faq.items.map((item) => <FaqAccordion faqId={item.faqId} question={item.question} answer={item.answer} />)

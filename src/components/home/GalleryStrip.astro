@@ -8,42 +8,101 @@ interface Props {
 
 const { images, speed = 'slow' } = Astro.props;
 const visible = images.filter((img) => img.url);
+const autoplayDelay = speed === 'medium' ? 2167 : 3500;
 ---
 
 {
   visible.length > 0 && (
-    <div class=" w-full relative rounded-lg overflow-hidden">
-      <div class={`flex w-max gallery-scroll gallery-scroll--${speed}`}>
-        {[...visible, ...visible].map((img) => (
-          <div class="flex-none w-[75vw] tablet:w-[20vw] rounded-lg aspect-square overflow-x-hidden mr-[var(--page-margin)]">
-            <img src={buildSanityImageUrl(img.url, { width: 400, height: 400 })} alt={img.alt} width={192} height={192} loading="lazy" decoding="async" class="w-full h-full object-cover" />
-          </div>
-        ))}
+    <div class="w-full relative rounded-lg overflow-hidden" data-gallery-strip data-gallery-strip-delay={autoplayDelay}>
+      <div class="overflow-hidden" data-gallery-strip-viewport>
+        <div class="flex touch-pan-y -ml-[var(--page-margin)]">
+          {visible.map((img) => (
+            <div class="min-w-0 flex-[0_0_75vw] tablet:flex-[0_0_20vw] pl-[var(--page-margin)]">
+              <div class="rounded-lg aspect-square overflow-hidden">
+                <img src={buildSanityImageUrl(img.url, { width: 400, height: 400 })} alt={img.alt} width={400} height={400} loading="lazy" decoding="async" class="w-full h-full object-cover" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
 }
 
-<style>
-  @keyframes gallery-scroll {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
+<script>
+  import EmblaCarousel from 'embla-carousel';
 
-  .gallery-scroll--slow {
-    animation: gallery-scroll 200s linear infinite;
-  }
-  .gallery-scroll--medium {
-    animation: gallery-scroll 75s linear infinite;
-  }
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  @media (prefers-reduced-motion: reduce) {
-    .gallery-scroll {
-      animation: none;
-    }
-  }
-</style>
+  document.querySelectorAll<HTMLElement>('[data-gallery-strip]').forEach((carousel) => {
+    if (carousel.dataset.galleryStripInitialized === 'true') return;
+    carousel.dataset.galleryStripInitialized = 'true';
+
+    const viewport = carousel.querySelector<HTMLElement>('[data-gallery-strip-viewport]');
+    const delay = Number(carousel.dataset.galleryStripDelay) || 3500;
+
+    if (!viewport) return;
+
+    const embla = EmblaCarousel(viewport, {
+      align: 'start',
+      containScroll: false,
+      loop: true,
+      skipSnaps: false,
+    });
+
+    if (embla.scrollSnapList().length < 2) return;
+
+    let autoplayTimer: number | undefined;
+    let isHovering = false;
+    let isFocused = false;
+    let isDragging = false;
+
+    const stopAutoplay = () => {
+      if (autoplayTimer) {
+        window.clearInterval(autoplayTimer);
+        autoplayTimer = undefined;
+      }
+    };
+
+    const startAutoplay = () => {
+      if (prefersReducedMotion || isHovering || isFocused || isDragging || autoplayTimer) return;
+
+      autoplayTimer = window.setInterval(() => {
+        if (document.visibilityState === 'hidden') return;
+        embla.scrollNext();
+      }, delay);
+    };
+
+    carousel.addEventListener('pointerenter', () => {
+      isHovering = true;
+      stopAutoplay();
+    });
+
+    carousel.addEventListener('pointerleave', () => {
+      isHovering = false;
+      startAutoplay();
+    });
+
+    carousel.addEventListener('focusin', () => {
+      isFocused = true;
+      stopAutoplay();
+    });
+
+    carousel.addEventListener('focusout', () => {
+      isFocused = false;
+      startAutoplay();
+    });
+
+    embla.on('pointerDown', () => {
+      isDragging = true;
+      stopAutoplay();
+    });
+
+    embla.on('settle', () => {
+      isDragging = false;
+      startAutoplay();
+    });
+
+    startAutoplay();
+  });
+</script>

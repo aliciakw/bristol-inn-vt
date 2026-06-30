@@ -4,51 +4,113 @@ import PageHeaderBlock from './blocks/PageHeaderBlock.astro';
 import PortableTextBlock from './blocks/PortableTextBlock.astro';
 import SingleImageBlock from './blocks/SingleImageBlock.astro';
 import ColumnLayout from './blocks/ColumnLayout.astro';
-import { type SanityBlock } from '../lib/sanity';
+import GalleryStrip from './home/GalleryStrip.astro';
+import RoomSearchFormBlock from './blocks/RoomSearchFormBlock.astro';
+import TestimonialGalleryBlock from './blocks/TestimonialGalleryBlock.astro';
+import { type SanityBlock, type SanityImage } from '../lib/sanity';
 
 interface Props {
   blocks: SanityBlock[];
   contrainProseWidth?: boolean;
+  wrapStandaloneBlocks?: boolean;
 }
 
 type CtaFigure = Parameters<typeof SingleImageBlock>[0]['image'] & {
   caption?: string;
-  layout?: 'default' | 'square' | 'fullbleed';
+  layout?: 'default' | 'square' | 'fullbleed' | 'narrow';
   rounded?: boolean;
 };
 
-const { blocks, contrainProseWidth } = Astro.props;
+const { blocks, contrainProseWidth, wrapStandaloneBlocks = false } = Astro.props;
+const portableTextGapClass = 'flex flex-col gap-4';
 ---
 
 {
-  (blocks ?? []).map((block) => {
+  (blocks ?? []).map((block, index, allBlocks) => {
     if (block._type === 'block') {
-      return <PortableTextBlock block={block} contrainProseWidth={contrainProseWidth} />;
+      if (allBlocks[index - 1]?._type === 'block') return null;
+
+      let nextNonTextIndex = index;
+      while (allBlocks[nextNonTextIndex]?._type === 'block') {
+        nextNonTextIndex += 1;
+      }
+      const textBlocks = allBlocks.slice(index, nextNonTextIndex);
+      const content = (
+        <div class={portableTextGapClass}>
+          {textBlocks.map((textBlock) => (
+            <PortableTextBlock block={textBlock} contrainProseWidth={contrainProseWidth} />
+          ))}
+        </div>
+      );
+      return wrapStandaloneBlocks ? (
+        <section class="Section">
+          <div class="Section__inner">
+            <div class="PageBuilder__Content">{content}</div>
+          </div>
+        </section>
+      ) : (
+        content
+      );
     }
 
     if (block._type === 'imageBlock') {
-      const image = block.image as { url?: string; alt?: string } | undefined;
-      const layout = (block.layout as string) === 'full' ? 'fullbleed' : 'default';
-      return <SingleImageBlock image={image} layout={layout} caption={block.caption as string | undefined} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      const image = block.image as SanityImage | undefined;
+      const content = <SingleImageBlock image={image} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      return wrapStandaloneBlocks ? (
+        <section class="Section">
+          <div class="Section__inner">
+            <div class="PageBuilder__Content">{content}</div>
+          </div>
+        </section>
+      ) : (
+        content
+      );
     }
 
     if (block._type === 'singleImageBlock') {
-      const image = block.image as { url?: string; alt?: string } | undefined;
-      return <SingleImageBlock image={image} layout={(block.layout as 'default' | 'fullbleed') ?? 'default'} caption={block.caption as string | undefined} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      const image = block.image as SanityImage | undefined;
+      const content = <SingleImageBlock image={image} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      return wrapStandaloneBlocks ? (
+        <section class="Section">
+          <div class="Section__inner">
+            <div class="PageBuilder__Content">{content}</div>
+          </div>
+        </section>
+      ) : (
+        content
+      );
     }
 
     if (block._type === 'ctaBlock') {
       const cta = block.cta as { label?: string; href?: string; openInNewTab?: boolean } | undefined;
       const image = block.image as CtaFigure | undefined;
       if (!cta?.label || !cta?.href) return null;
-      const wrapperStyle = [block.textColor ? `color: ${block.textColor}` : '', block.backgroundColor ? `background-color: ${block.backgroundColor}` : ''].filter(Boolean).join('; ');
-      return (
+      const wrapperStyle = [block.textColor ? `color: ${block.textColor}` : '', block.backgroundColor ? `background-color: ${block.backgroundColor}` : '']
+        .filter(Boolean)
+        .join('; ');
+      const content = (
         <div class="my-8 flex flex-col items-center gap-4" style={wrapperStyle || undefined}>
           {image?.url && <SingleImageBlock image={image} layout={image.layout} caption={image.caption} rounded={image.rounded} />}
-          <ButtonLink href={cta.href} size="large" bg="prussian-500" textColor="white" target={cta.openInNewTab ? '_blank' : undefined} rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}>
+          <ButtonLink
+            href={cta.href}
+            size="large"
+            bg="prussian-500"
+            textColor="white"
+            target={cta.openInNewTab ? '_blank' : undefined}
+            rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}
+          >
             {cta.label}
           </ButtonLink>
         </div>
+      );
+      return wrapStandaloneBlocks ? (
+        <section class="Section">
+          <div class="Section__inner">
+            <div class="PageBuilder__Content">{content}</div>
+          </div>
+        </section>
+      ) : (
+        content
       );
     }
 
@@ -57,11 +119,26 @@ const { blocks, contrainProseWidth } = Astro.props;
     }
 
     if (block._type === 'singleColumnBlock') {
-      return <ColumnLayout column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']} numColumns={1} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      return (
+        <ColumnLayout
+          column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']}
+          numColumns={1}
+          textColor={block.textColor as string | undefined}
+          backgroundColor={block.backgroundColor as string | undefined}
+        />
+      );
     }
 
     if (block._type === 'twoColumnBlock') {
-      return <ColumnLayout column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']} column2={block.column2 as Parameters<typeof ColumnLayout>[0]['column2']} numColumns={2} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      return (
+        <ColumnLayout
+          column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']}
+          column2={block.column2 as Parameters<typeof ColumnLayout>[0]['column2']}
+          numColumns={2}
+          textColor={block.textColor as string | undefined}
+          backgroundColor={block.backgroundColor as string | undefined}
+        />
+      );
     }
 
     if (block._type === 'threeColumnBlock') {
@@ -77,6 +154,54 @@ const { blocks, contrainProseWidth } = Astro.props;
       );
     }
 
+    if (block._type === 'roomSearchFormBlock') {
+      return (
+        <RoomSearchFormBlock
+          introduction={block.introduction as SanityBlock[] | undefined}
+          icon={block.icon as Parameters<typeof RoomSearchFormBlock>[0]['icon']}
+          textColor={block.textColor as string | undefined}
+          backgroundColor={block.backgroundColor as string | undefined}
+        />
+      );
+    }
+
+    if (block._type === 'galleryStripBlock') {
+      return (
+        <section class="py-12" style={block.backgroundColor ? `background-color: ${block.backgroundColor}` : undefined}>
+          <GalleryStrip images={(block.images as Parameters<typeof GalleryStrip>[0]['images']) ?? []} />
+        </section>
+      );
+    }
+
+    if (block._type === 'testimonialGalleryBlock') {
+      return (
+        <TestimonialGalleryBlock
+          heading={block.heading as string | undefined}
+          items={block.items as Parameters<typeof TestimonialGalleryBlock>[0]['items']}
+          textColor={block.textColor as string | undefined}
+          backgroundColor={block.backgroundColor as string | undefined}
+        />
+      );
+    }
+
     return null;
   })
 }
+
+<style>
+  .PageBuilder__Content {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 960px) {
+    .PageBuilder__Content {
+      grid-column: 2 / span 6;
+    }
+  }
+
+  @media (min-width: 1240px) {
+    .PageBuilder__Content {
+      grid-column: 4 / span 6;
+    }
+  }
+</style>

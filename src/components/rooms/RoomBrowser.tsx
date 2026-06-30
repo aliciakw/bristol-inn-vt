@@ -46,11 +46,21 @@ function RoomGrid({ title, rooms, isLoading, availability, lastSearch }: RoomGri
         </TextStyle>
       )}
       {}
-      <div className={['grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-[var(--grid-gutter)]'].join(' ')}>
+      <div className={['grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-2 gap-[var(--grid-gutter)]'].join(' ')}>
         {rooms.map((room) => {
           const roomAvailability = availability?.find((a) => a.listingId === room.id);
           const { bookingUrl, detailUrl } = getRoomUrls(room.id, lastSearch, roomAvailability?.pricePerNight);
-          return <RoomCardReact key={room.id} room={room} availability={roomAvailability} isLoading={isLoading ?? false} bookingUrl={bookingUrl} detailUrl={detailUrl} lastSearch={lastSearch} />;
+          return (
+            <RoomCardReact
+              key={room.id}
+              room={room}
+              availability={roomAvailability}
+              isLoading={isLoading ?? false}
+              bookingUrl={bookingUrl}
+              detailUrl={detailUrl}
+              lastSearch={lastSearch}
+            />
+          );
         })}
       </div>
     </section>
@@ -58,13 +68,21 @@ function RoomGrid({ title, rooms, isLoading, availability, lastSearch }: RoomGri
 }
 
 function RoomSections({ rooms, availability, lastSearch }: { rooms: RoomBrowserRoom[]; availability: AvailabilityResult[]; lastSearch: SearchParams | null }) {
-  const available = rooms.filter((r) => availability.find((a) => a.listingId === r.id)?.available);
-  const unavailable = rooms.filter((r) => !availability.find((a) => a.listingId === r.id)?.available);
+  const filteredRooms = rooms.filter((room) => {
+    if (lastSearch?.pets && !room.dogsAllowed) return false;
+    if (lastSearch?.groundFloor && room.floorNumber !== 1) return false;
+    return true;
+  });
+  const available = filteredRooms.filter((r) => availability.find((a) => a.listingId === r.id)?.available);
+  const unavailable = filteredRooms.filter((r) => !availability.find((a) => a.listingId === r.id)?.available);
+  const showUnavailable = true; // !lastSearch?.pets && !lastSearch?.groundFloor;
 
   return (
     <div className="flex flex-col gap-12">
       <RoomGrid title={`Available (${available.length})`} rooms={available} availability={availability} lastSearch={lastSearch} />
-      {unavailable.length > 0 && <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} lastSearch={lastSearch} desktopCols={3} />}
+      {showUnavailable && unavailable.length > 0 && (
+        <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} lastSearch={lastSearch} desktopCols={3} />
+      )}
     </div>
   );
 }
@@ -98,6 +116,8 @@ export function RoomBrowser({ rooms }: Props) {
         checkOut: params.checkOut,
         guests: String(params.guests),
       });
+      if (params.groundFloor) qs.set('groundFloor', '1');
+      if (params.pets) qs.set('pets', '1');
       const res = await fetch(`/api/rooms/availability?${qs.toString()}`);
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
@@ -122,24 +142,26 @@ export function RoomBrowser({ rooms }: Props) {
   const hasResults = state.status === 'results' || state.status === 'error';
 
   return (
-    <div className="flex flex-col gap-12 mb-8">
-      <div className="top-[var(--nav-top-bar-height)] z-10 desktop:max-w-[66.66%] mb-12">
-        <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} />
-
+    <div className="Grid">
+      <div className="Grid__Row--full z-10 mb-24">
+        <div className="w-[66%]">
+          <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} />
+        </div>
         {state.status === 'error' && (
           <p role="alert" className="text-red-600 text-sm mb-6">
             {state.message}
           </p>
         )}
       </div>
-
-      {rooms.length === 0 ? (
-        <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
-      ) : state.status === 'results' ? (
-        <RoomSections rooms={rooms} availability={state.availability} lastSearch={lastSearch} />
-      ) : (
-        <RoomGrid title={`Everything (${rooms.length})`} rooms={rooms} isLoading={isLoading} lastSearch={lastSearch} />
-      )}
+      <div className="Grid__Row--full">
+        {rooms.length === 0 ? (
+          <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
+        ) : state.status === 'results' ? (
+          <RoomSections rooms={rooms} availability={state.availability} lastSearch={lastSearch} />
+        ) : (
+          <RoomGrid title={`Everything (${rooms.length})`} rooms={rooms} isLoading={isLoading} lastSearch={lastSearch} />
+        )}
+      </div>
     </div>
   );
 }

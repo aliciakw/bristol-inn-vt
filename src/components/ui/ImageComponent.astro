@@ -2,6 +2,7 @@
 interface Props {
   src: string;
   alt: string;
+  element?: 'div' | 'span';
   srcset?: string;
   sizes?: string;
   width?: number;
@@ -15,9 +16,10 @@ interface Props {
   fadeIn?: boolean;
 }
 
-const { src, alt, srcset, sizes, width, height, loading = 'lazy', fetchpriority, decoding = loading === 'eager' ? 'sync' : 'async', class: className, preloadClasses = '', imgClass, fadeIn = false, ...rest } = Astro.props;
+const { src, alt, element = 'div', srcset, sizes, width, height, loading = 'lazy', fetchpriority, decoding = loading === 'eager' ? 'sync' : 'async', class: className, preloadClasses = '', imgClass, fadeIn = false, ...rest } = Astro.props;
+const Wrapper = element;
 ---
 
-<div class:list={[preloadClasses, className]}>
+<Wrapper class:list={[preloadClasses, className]}>
   <img src={src} srcset={srcset} sizes={sizes} alt={alt} width={width} height={height} loading={loading} fetchpriority={fetchpriority} decoding={decoding} class:list={[imgClass, { 'fade-in-500': fadeIn }]} {...rest} />
-</div>
+</Wrapper>

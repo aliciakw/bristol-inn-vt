@@ -2,23 +2,23 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import TextStyle from '@components/ui/TextStyle.astro';
 import SliceZone from '@components/SliceZone.astro';
-import { getSettings } from '../lib/sanity';
+import { getContactPage } from '../lib/sanity';
 
-const settings = await getSettings();
-const { contactIntroduction = [], contactAddress = [], contactPhone, contactEmail, directionsLink, googleMapEmbedUrl } = settings ?? {};
+const contactPage = await getContactPage();
+const { meta, introduction = [], address = [], phone, email, directionsLink, googleMapEmbedUrl } = contactPage;
 
 const FALLBACK_MAP_LINK = 'https://maps.app.goo.gl/s5C7jPANMmBNFiXM8';
-const hasContactInfo = contactAddress.length > 0 || contactPhone || contactEmail || directionsLink?.href;
+const hasContactInfo = address.length > 0 || phone || email || directionsLink?.href;
 const mapUrl = googleMapEmbedUrl ?? `https://www.google.com/maps?output=embed&q=${encodeURIComponent(FALLBACK_MAP_LINK)}`;
 ---
 
-<BaseLayout title="Contact - Bristol Inn" description="Get in touch with Bristol Inn" bottomSpacer={false} offsetNavigation={true}>
+<BaseLayout title="Contact - Bristol Inn" description="Get in touch with Bristol Inn" meta={meta} mainClass="Spacer--navigation-offset">
   <section class="flex flex-col tablet:flex-row px-[var(--grid-margin)] tablet:px-0">
     <div class="tablet:bg-prussian-100 flex flex-col flex-1 gap-8 p-[var(--grid-margin)] pt-[var(--nav-top-bar-height-2x)] tablet:pr-[var(--grid-gutter)]">
       {
-        contactIntroduction.length > 0 && (
+        introduction.length > 0 && (
           <div class="flex flex-col gap-3 text-ink-900">
-            <SliceZone blocks={contactIntroduction} contrainProseWidth={false} />
+            <SliceZone blocks={introduction} contrainProseWidth={false} />
           </div>
         )
       }
@@ -26,13 +26,13 @@ const mapUrl = googleMapEmbedUrl ?? `https://www.google.com/maps?output=embed&q=
       {
         hasContactInfo ? (
           <address class="not-italic flex flex-col gap-6">
-            {contactAddress.length > 0 && (
+            {address.length > 0 && (
               <div class="flex flex-col gap-2">
                 <TextStyle variant="label" element="h2" uppercase class="text-iron tracking-[0.08em]">
                   Address
                 </TextStyle>
                 <TextStyle variant="paragraph" element="p">
-                  {contactAddress.map((line) => (
+                  {address.map((line) => (
                     <>
                       {line}
                       <br />
@@ -42,27 +42,27 @@ const mapUrl = googleMapEmbedUrl ?? `https://www.google.com/maps?output=embed&q=
               </div>
             )}
 
-            {contactPhone && (
+            {phone && (
               <div class="flex flex-col gap-2">
                 <TextStyle variant="label" element="h2" uppercase class="text-iron tracking-[0.08em]">
                   Phone
                 </TextStyle>
                 <TextStyle variant="paragraph" element="p">
-                  <a href={`tel:${contactPhone.replace(/[^+\d]/g, '')}`} class="hover:underline">
-                    {contactPhone}
+                  <a href={`tel:${phone.replace(/[^+\d]/g, '')}`} class="hover:underline">
+                    {phone}
                   </a>
                 </TextStyle>
               </div>
             )}
 
-            {contactEmail && (
+            {email && (
               <div class="flex flex-col gap-2">
                 <TextStyle variant="label" element="h2" uppercase class="text-iron tracking-[0.08em]">
                   Email
                 </TextStyle>
                 <TextStyle variant="paragraph" element="p">
-                  <a href={`mailto:${contactEmail}`} class="hover:underline">
-                    {contactEmail}
+                  <a href={`mailto:${email}`} class="hover:underline">
+                    {email}
                   </a>
                 </TextStyle>
               </div>
@@ -70,7 +70,12 @@ const mapUrl = googleMapEmbedUrl ?? `https://www.google.com/maps?output=embed&q=
 
             {directionsLink?.href && (
               <TextStyle variant="paragraph" element="p">
-                <a href={directionsLink.href} target={directionsLink.openInNewTab ? '_blank' : undefined} rel={directionsLink.openInNewTab ? 'noopener noreferrer' : undefined} class="hover:underline">
+                <a
+                  href={directionsLink.href}
+                  target={directionsLink.openInNewTab ? '_blank' : undefined}
+                  rel={directionsLink.openInNewTab ? 'noopener noreferrer' : undefined}
+                  class="hover:underline"
+                >
                   {directionsLink.label ?? 'Get directions'}
                 </a>
               </TextStyle>
@@ -85,7 +90,14 @@ const mapUrl = googleMapEmbedUrl ?? `https://www.google.com/maps?output=embed&q=
     </div>
 
     <div class="flex flex-col flex-1 px-[var(--grid-margin)] mb-[var(--nav-top-bar-height-2x)] tablet:pt-[var(--nav-top-bar-height-2x)] tablet:pl-[var(--grid-gutter)]">
-      <iframe src={mapUrl} title="Map to Bristol Inn" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" class="w-full aspect-square rounded-xl border-0 shadow--card--lg" allowfullscreen=""></iframe>
+      <iframe
+        src={mapUrl}
+        title="Map to Bristol Inn"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+        class="w-full aspect-square rounded-xl border-1 shadow--card--lg"
+        allowfullscreen=""
+        style={{ backgroundColor: 'var(--color-prussian-100)', borderColor: 'var(--color-ink-900)' }}></iframe>
     </div>
   </section>
 </BaseLayout>

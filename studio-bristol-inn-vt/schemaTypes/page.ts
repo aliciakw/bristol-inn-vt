@@ -175,34 +175,18 @@ export const pageType = defineType({
           fields: [
             defineField({
               name: 'image',
-              type: 'image',
+              type: 'figure',
               title: 'Image',
-              options: {hotspot: true},
-              fields: [defineField({name: 'alt', type: 'string', title: 'Alt text'})],
             }),
-            defineField({
-              name: 'layout',
-              type: 'string',
-              title: 'Layout',
-              initialValue: 'default',
-              options: {
-                list: [
-                  {title: 'Default', value: 'default'},
-                  {title: 'Full Bleed', value: 'fullbleed'},
-                ],
-                layout: 'radio',
-              },
-            }),
-            defineField({name: 'caption', type: 'string', title: 'Caption'}),
             ...colorFields,
           ],
           preview: {
             select: {
-              media: 'image',
-              caption: 'caption',
-              layout: 'layout',
-              imageTitle: 'image.asset.title',
-              imageFilename: 'image.asset.originalFilename',
+              media: 'image.image',
+              caption: 'image.caption',
+              layout: 'image.layout',
+              imageTitle: 'image.image.asset.title',
+              imageFilename: 'image.image.asset.originalFilename',
               imageAlt: 'image.alt',
             },
             prepare(selection: ImageBlockPreviewSelection) {
@@ -272,6 +256,9 @@ export const pageType = defineType({
         defineArrayMember({type: 'singleColumnBlock'}),
         defineArrayMember({type: 'twoColumnBlock'}),
         defineArrayMember({type: 'threeColumnBlock'}),
+        defineArrayMember({type: 'roomSearchFormBlock'}),
+        defineArrayMember({type: 'galleryStripBlock'}),
+        defineArrayMember({type: 'testimonialGalleryBlock'}),
       ],
     }),
   ],

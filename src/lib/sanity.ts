@@ -54,13 +54,22 @@ export type SanityImage = {
   url: string;
   alt: string;
   caption?: string;
-  layout?: 'default' | 'square' | 'fullbleed';
+  layout?: 'default' | 'square' | 'fullbleed' | 'narrow';
   rounded?: boolean;
 };
 
-export type SanityTestimonialItem = {
-  _type: 'testimonialItem';
+export type SanityWelcomeItem = {
   _key: string;
+  text?: string;
+  cta?: SanityResolvedLink;
+  image?: SanityImage;
+  showRoomSearchForm?: boolean;
+};
+
+export type SanityTestimonialItem = {
+  _type: 'testimonialItem' | 'testimonial';
+  _key: string;
+  _id?: string;
   quote: string;
   author: string;
   role: string;
@@ -77,17 +86,15 @@ export type SanityTestimonialArrayItem = SanityTestimonialItem | SanityTestimoni
 
 export type SanityHomepage = {
   coverColor?: string;
+  welcomeBackgroundColor?: string;
   welcomeHeading?: string;
-  welcomeDescription?: string;
-  welcomeCTA?: SanityResolvedLink;
+  welcomeItems?: SanityWelcomeItem[];
   heroLeftImage?: SanityImage;
   heroRightImage?: SanityImage;
-  welcomeImage?: SanityImage;
   galleryImages: SanityImage[];
   reservationHeading?: string;
   reservationHeadingIcon?: SanityImage;
   reservationDescription?: string;
-  reservationImage?: SanityImage;
   testimonialsHeading?: string;
   testimonial?: SanityTestimonialArrayItem[];
   amenities: string[];
@@ -110,12 +117,18 @@ export type SanityPage = {
 };
 
 const HOMEPAGE_ID = '6e561f5f-23ec-49fa-863f-141c005904c3';
+const CONTACT_PAGE_ID = 'contact-page-singleton';
 
 const RESOLVE_LINK = `{ label, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
 
 const RESOLVE_BUTTON_LINK = `{ label, color, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
 
-const RESOLVE_FIGURE = `{ "url": image.asset->url, "alt": coalesce(alt, ""), caption, layout, "rounded": coalesce(rounded, false) }`;
+const RESOLVE_FIGURE = `{ "url": image.asset->url, "alt": coalesce(alt, ""), caption, layout, "rounded": coalesce(rounded, true) }`;
+
+const RESOLVE_IMAGE_OR_FIGURE = `select(
+  defined(image.image.asset) => image${RESOLVE_FIGURE},
+  defined(image.asset) => { "url": image.asset->url, "alt": coalesce(image.alt, alt, ""), caption, layout, "rounded": coalesce(rounded, true) }
+)`;
 
 const RESOLVE_COLUMN_ITEM = `{
   ...,
@@ -125,30 +138,44 @@ const RESOLVE_COLUMN_ITEM = `{
 
 const RESOLVE_BODY_ITEM = `{
   ...,
-  _type == "imageBlock" => { ..., "image": image{ "url": asset->url, "alt": coalesce(alt, "") } },
-  _type == "singleImageBlock" => { ..., "image": image{ "url": asset->url, "alt": coalesce(alt, "") } },
+  _type == "imageBlock" => { ..., "image": ${RESOLVE_IMAGE_OR_FIGURE} },
+  _type == "singleImageBlock" => { ..., "image": ${RESOLVE_IMAGE_OR_FIGURE} },
   _type == "pageHeaderBlock" => { ..., "heroImage": heroImage{ "url": asset->url, "alt": coalesce(alt, "") } },
   _type == "ctaBlock" => { ..., "image": image${RESOLVE_FIGURE}, "cta": cta${RESOLVE_LINK} },
   _type == "singleColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM} },
   _type == "twoColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM} },
-  _type == "threeColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM}, "column3": column3${RESOLVE_COLUMN_ITEM} }
+  _type == "threeColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM}, "column3": column3${RESOLVE_COLUMN_ITEM} },
+  _type == "roomSearchFormBlock" => { ..., "icon": icon${RESOLVE_FIGURE} },
+  _type == "galleryStripBlock" => { ..., "images": images[]${RESOLVE_FIGURE} },
+  _type == "testimonialGalleryBlock" => {
+    ...,
+    "items": items[]{
+      _key,
+      _type == "reference" => @->{ _type, _id, quote, author, role },
+      _type == "figure" => { _type, _key, "url": image.asset->url, "alt": coalesce(alt, ""), caption, layout, "rounded": coalesce(rounded, false) }
+    }
+  }
 }`;
 
 export async function getHomepage(): Promise<SanityHomepage> {
   return getClient().fetch<SanityHomepage>(
     `*[_type == "homepage" && _id == $id][0]{
       coverColor,
+      welcomeBackgroundColor,
       welcomeHeading,
-      welcomeDescription,
-      "welcomeCTA": welcomeCTA${RESOLVE_LINK},
+      "welcomeItems": welcomeItems[]{
+        _key,
+        text,
+        "cta": cta${RESOLVE_LINK},
+        "image": image{ "url": asset->url, "alt": coalesce(alt, "") },
+        "showRoomSearchForm": coalesce(showRoomSearchForm, false)
+      },
       "heroLeftImage": heroLeftImage{ "url": asset->url, "alt": coalesce(alt, "") },
       "heroRightImage": heroRightImage{ "url": asset->url, "alt": coalesce(alt, "") },
-      "welcomeImage": welcomeImage{ "url": asset->url, "alt": coalesce(alt, "") },
       "galleryImages": galleryImages[]{ "url": asset->url, "alt": coalesce(alt, "") },
       reservationHeading,
       "reservationHeadingIcon": reservationHeadingIcon{ "url": asset->url, "alt": coalesce(alt, "") },
       reservationDescription,
-      "reservationImage": reservationImage{ "url": asset->url, "alt": coalesce(alt, "") },
       testimonialsHeading,
       "testimonial": testimonial[]{
         _type,
@@ -223,6 +250,35 @@ export type SanityLink = {
   openInNewTab: boolean;
 };
 
+export type SanityContactPage = {
+  meta?: SanityMeta;
+  introduction: SanityBlock[];
+  address: string[];
+  phone?: string;
+  email?: string;
+  directionsLink: SanityLink | null;
+  googleMapEmbedUrl?: string;
+};
+
+export async function getContactPage(): Promise<SanityContactPage> {
+  return getClient().fetch<SanityContactPage>(
+    `*[_type == "contactPage" && _id == $contactPageId][0]{
+      "meta": meta{
+        ogTitle,
+        ogDescription,
+        "ogImage": ogImage.asset->{ "url": url }
+      },
+      "introduction": coalesce(introduction, []),
+      "address": coalesce(address, []),
+      phone,
+      email,
+      "directionsLink": directionsLink${RESOLVE_LINK},
+      googleMapEmbedUrl
+    }`,
+    { contactPageId: CONTACT_PAGE_ID },
+  );
+}
+
 export type SanityFooterSection = {
   title: string;
   content: SanityBlock[];
@@ -247,11 +303,6 @@ export type SanitySettings = {
   leftCta?: SanityButtonLink;
   rightCta?: SanityButtonLink;
   sidebarLinks: SanityLink[];
-  contactIntroduction: SanityBlock[];
-  contactAddress: string[];
-  contactPhone?: string;
-  contactEmail?: string;
-  googleMapEmbedUrl?: string;
   footerSections: SanityFooterSection[];
   awardImages: SanityAwardImage[];
   directionsLink: SanityLink | null;
@@ -278,11 +329,6 @@ export async function getSettings(): Promise<SanitySettings> {
         ),
         "openInNewTab": coalesce(openInNewTab, false)
       },
-      "contactIntroduction": coalesce(contactIntroduction, []),
-      "contactAddress": coalesce(contactAddress, []),
-      contactPhone,
-      contactEmail,
-      googleMapEmbedUrl,
       "footerSections": footerSections[]{
         title,
         content

@@ -1,9 +1,10 @@
 ---
 import TextStyle from '@components/ui/TextStyle.astro';
+import { Quote } from 'lucide-react';
 
 interface Props {
   quote: string;
-  author: string;
+  author?: string;
   role?: string;
   bg?: 'khaki-100' | 'prussian-200' | 'lilac-200';
 }
@@ -16,23 +17,22 @@ const bgClassNames = {
   'lilac-200': 'bg-lilac-200',
 };
 
-// eslint-disable-next-line security/detect-object-injection
-// const bgClass = bgClassNames[bg];
 const bgClass = 'bg-khaki-100';
+const quoteVariant = quote.length > 180 ? 'h5' : quote.length > 105 ? 'h4' : 'h3';
 ---
 
-<div class:list={['rounded-[16px] p-4 desktop:p-6 flex flex-col gap-3 h-full', bgClass]}>
-  <TextStyle variant="paragraph" element="p" class="flex-1 leading-snug text-ink-900 tracking-tight">
-    &#8220;{quote}&#8221;
+<div class:list={['rounded-[16px] p-4 desktop:p-6 flex flex-col gap-3 h-full max-w-[60vw]', bgClass]}>
+  <TextStyle variant={quoteVariant} element="p" class="flex-1 text-ink-900">
+    &#8220;{quote.trim()}&#8221;
   </TextStyle>
   <div class="text-right">
-    <TextStyle variant="h3" element="p" class="text-ink-900 leading-snug">
-      &#8212; {author}
+    <TextStyle variant="h5" element="p" class="text-ink-900">
+      &#8212; {author || 'Anonymous'}
     </TextStyle>
     {
       role && (
         <TextStyle variant="caption" element="p" class="text-ink-900 mt-0.5">
-          {role}
+          {role || 'Verified guest'}
         </TextStyle>
       )
     }

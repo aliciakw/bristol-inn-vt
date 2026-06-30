@@ -19,7 +19,7 @@ function renderBlockChildren(block: SanityBlock): string {
   return children
     .map((span) => {
       if (span._type !== 'span') return '';
-      let html = (span.text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      let html = (span.text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\r?\n/g, '<br>');
 
       for (const mark of span.marks ?? []) {
         if (mark === 'strong' || mark === 'em' || mark === 'underline' || mark === 'code') continue;
@@ -48,6 +48,7 @@ const styleVariantMap: Record<string, TextStyleVariant> = {
   h5: 'h5',
   normal: 'paragraph',
   blockquote: 'paragraph',
+  caption: 'caption',
 };
 
 const style = (block.style as string) ?? 'normal';

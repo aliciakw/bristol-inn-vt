@@ -21,14 +21,38 @@ const metaDescription = room.description.slice(0, 160);
 const [heroImage, ...images] = room.photos;
 ---
 
-<BaseLayout title={`${room.name} — Bristol Inn`} description={metaDescription} navigationVariant="transparent" bottomSpacer={false} mainClassName="pb-3">
-  <section class="Section">
-    <a id="back-to-rooms" href="/rooms-and-suites" class="text-sm text-iron hover:text-ink-900 transition-colors w-fit">← Back to Rooms</a>
-    <div class="Section__inner">
-      <div class="row-span-1 col-span-6 tablet:col-span-2 desktop:col-span-3 flex flex-col gap-8 tablet:sticky tablet:top-[var(--nav-top-bar-height)] tablet:self-start tablet:max-h-[calc(100vh-var(--nav-top-bar-height))] tablet:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-2">
-        <img src={room.photos[0].url} alt={room.photos[0].caption || `${room.name}`} width={1200} height={900} loading="eager" fetchpriority="high" decoding="sync" class="w-full object-cover rounded-xl aspect-[4/3] mt-12 tablet:hidden" />
+<BaseLayout title={`${room.name} — Bristol Inn`} description={metaDescription} navigationVariant="transparent" mainClass="Spacer--page-bottom">
+  <section class="Section Spacer--navigation-offset relative">
+    <a
+      id="back-to-rooms"
+      href="/rooms-and-suites"
+      class="absolute left-[var(--grid-margin)] top-[var(--nav-top-bar-height)] z-20 text-sm text-iron hover:text-ink-900 transition-colors w-fit"
+    >
+      ← Back to Rooms
+    </a>
+    <div class="Grid items-start min-h-[100vh] align-start">
+      <div
+        class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-5 tablet:pr-[var(--grid-margin)] flex flex-col gap-8 tablet:sticky tablet:top-[var(--nav-top-bar-height-2x)] tablet:self-start tablet:max-h-[calc(100vh-var(--nav-top-bar-height))] tablet:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-2"
+      >
+        <img
+          src={room.photos[0].url}
+          alt={room.photos[0].caption || `${room.name}`}
+          width={1200}
+          height={900}
+          loading="eager"
+          fetchpriority="high"
+          decoding="sync"
+          class="w-full object-cover rounded-xl top aspect-[4/3] mt-12 tablet:hidden"
+        />
         <div class="tablet:mt-18 mb-8">
-          <RoomDetailHeader client:load roomId={room.id} name={room.name} bedroomsLabel={room.bedroomsLabel} personCapacity={room.personCapacity} floorNumber={room.floorNumber} basePrice={room.price} />
+          <RoomDetailHeader
+            roomId={room.id}
+            name={room.name}
+            bedroomsLabel={room.bedroomsLabel}
+            personCapacity={room.personCapacity}
+            floorNumber={room.floorNumber}
+            basePrice={room.price}
+          />
         </div>
         <TextStyle variant="paragraph" class="font-bold tablet:mt-4">Description</TextStyle>
         <TextStyle variant="caption" class="leading-relaxed text-gray-700">{room.description}</TextStyle>
@@ -37,16 +61,21 @@ const [heroImage, ...images] = room.photos;
           {room.amenityNames.map((a) => <AmenityBadge label={a} />)}
         </div>
       </div>
-      <div class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-5 desktop:mt-[-86px] desktop:mr-[-64px] rounded-xl overflow-hidden">
+      <!-- Right column -->
+      <div class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-7 Xrounded-xl overflow-hidden">
         <TextStyle variant="paragraph" class="font-bold my-4 tablet:hidden">Gallery</TextStyle>
         <RoomGallery photos={room.photos} roomName={room.name} layout="heroFirst" />
       </div>
     </div>
   </section>
-  <div class="fixed z-10 top-0 bottom-0 bg-white width-[400px]"></div>
 </BaseLayout>
 
 <script>
+  function formatRoomDate(iso: string): string {
+    const [year, month, day] = iso.split('-').map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
   const sp = new URLSearchParams(window.location.search);
   const start = sp.get('start');
   const end = sp.get('end');
@@ -55,5 +84,27 @@ const [heroImage, ...images] = room.photos;
     const back = new URLSearchParams({ checkIn: start, checkOut: end, guests });
     if (sp.get('pets') === '1') back.set('pets', '1');
     document.getElementById('back-to-rooms')?.setAttribute('href', `/rooms-and-suites?${back.toString()}`);
+
+    const header = document.querySelector<HTMLElement>('[data-room-detail-header]');
+    const roomId = header?.dataset.roomId;
+    const parsedGuests = Number.parseInt(guests, 10);
+    if (header && roomId && parsedGuests > 0) {
+      const rawPrice = Number.parseFloat(sp.get('pricePerNight') ?? '');
+      const basePrice = Number.parseFloat(header.dataset.basePrice ?? '');
+      const pricePerNight = Number.isFinite(rawPrice) ? rawPrice : basePrice;
+      const checkout = new URLSearchParams({ start, end, numberOfGuests: String(parsedGuests) });
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      header.querySelector<HTMLElement>('[data-booking-price]')!.textContent = `$${Math.round(pricePerNight)} / night`;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      header.querySelector<HTMLElement>('[data-booking-date]')!.textContent = ` · ${formatRoomDate(start)} – ${formatRoomDate(end)}`;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      header.querySelector<HTMLElement>('[data-booking-guests]')!.textContent = ` · ${parsedGuests} ${parsedGuests === 1 ? 'guest' : 'guests'}`;
+      header.querySelector<HTMLElement>('[data-booking-details]')?.classList.remove('hidden');
+      header.querySelector<HTMLElement>('[data-default-booking-link]')?.classList.add('hidden');
+      const bookingLink = header.querySelector<HTMLElement>('[data-search-booking-link]');
+      bookingLink?.classList.remove('hidden');
+      bookingLink?.querySelector('a')?.setAttribute('href', `https://bristolsuites.holidayfuture.com/checkout/${roomId}?${checkout.toString()}`);
+    }
   }
 </script>

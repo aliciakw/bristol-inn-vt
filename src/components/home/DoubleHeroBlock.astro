@@ -1,0 +1,195 @@
+---
+import { Image } from 'astro:assets';
+import { buildSanityImageUrl, type SanityImage } from '../../lib/sanity';
+import bristolBadge from '../../assets/bristol-inn-badge--ellipse.png';
+
+interface Props {
+  leftImage?: SanityImage;
+  rightImage?: SanityImage;
+  showLogoBadge?: boolean;
+}
+
+const { leftImage, rightImage, showLogoBadge = false } = Astro.props;
+const ANIMATION_MODE: false | 'fade' | 'slide' = 'fade';
+---
+
+<section
+  id="double-hero-block"
+  class="DoubleHero__Wrapper"
+  class:list={[
+    'relative w-full flex items-center justify-center bg-white pointer-events-none',
+    ANIMATION_MODE === 'fade' && 'DoubleHero__Wrapper--fade',
+    ANIMATION_MODE === 'slide' && 'DoubleHero__Wrapper--slide',
+  ]}
+>
+  {
+    showLogoBadge && (
+      <div id="bristol-badge" class="absolute left-1/2 top-1/2 z-10 w-[min(42vw,240px)] -translate-x-1/2 -translate-y-1/2">
+        <span class="DoubleHero__BadgePulse block">
+          <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="h-auto w-full object-contain" />
+        </span>
+      </div>
+    )
+  }
+  {
+    leftImage?.url && (
+      <div class="DoubleHero___ImageContainer rounded-[16px] absolute left-0">
+        <img
+          id="DoubleHero___Image--left"
+          src={buildSanityImageUrl(leftImage.url, { width: 1000, height: 1000 })}
+          srcset={`${buildSanityImageUrl(leftImage.url, { width: 450, height: 450 })} 450w, ${buildSanityImageUrl(leftImage.url, { width: 900, height: 900 })} 900w`}
+          sizes="(max-width: 1280px) 50vw, 740px"
+          alt={leftImage.alt}
+          width={1200}
+          height={800}
+          loading="eager"
+          fetchpriority="high"
+          decoding="sync"
+          class="w-full h-full object-cover"
+        />
+      </div>
+    )
+  }
+  {
+    rightImage?.url && (
+      <div class="DoubleHero___ImageContainer rounded-[16px] absolute right-0">
+        <img
+          id="DoubleHero___Image--right"
+          src={buildSanityImageUrl(rightImage.url, { width: 900, height: 550 })}
+          srcset={`${buildSanityImageUrl(rightImage.url, { width: 450, height: 450 })} 450w, ${buildSanityImageUrl(rightImage.url, { width: 900, height: 900 })} 900w`}
+          sizes="(max-width: 1280px) 50vw, 740px"
+          alt={rightImage.alt}
+          width={1200}
+          height={800}
+          loading="eager"
+          fetchpriority="high"
+          decoding="sync"
+          class="w-full h-full object-cover"
+        />
+      </div>
+    )
+  }
+</section>
+
+<style>
+  :root {
+    --double-hero-wrapper-h: 80vh;
+    --double-hero-image-h: calc(var(--double-hero-wrapper-h) - 72px);
+    --double-hero-image-w: calc(50vw - var(--grid-gutter));
+    --double-hero-image-w-expanded: calc(100vw - (2 * var(--grid-margin)));
+  }
+
+  @media (min-width: 960px) {
+    :root {
+    }
+  }
+
+  @media (min-width: 1224px) {
+    :root {
+    }
+  }
+  .DoubleHero__Wrapper {
+    height: var(--double-hero-wrapper-h);
+  }
+  .DoubleHero___ImageContainer {
+    position: absolute;
+    overflow: hidden;
+    width: var(--double-hero-image-w);
+    height: var(--double-hero-image-h);
+  }
+  .DoubleHero___ImageContainer:has(#DoubleHero___Image--left) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .DoubleHero___ImageContainer:has(#DoubleHero___Image--right) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .DoubleHero__Wrapper--fade .DoubleHero___ImageContainer {
+    animation: doubleHeroFadeIn 420ms ease-out 360ms both;
+  }
+
+  .DoubleHero__Wrapper--fade .DoubleHero__BadgePulse {
+    animation: badgePulse 720ms ease-out 220ms both;
+    transform-origin: center;
+  }
+
+  .DoubleHero__Wrapper--slide .DoubleHero___ImageContainer:has(#DoubleHero___Image--left) {
+    animation: doubleHeroSlideLeft 720ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+  }
+
+  .DoubleHero__Wrapper--slide .DoubleHero___ImageContainer:has(#DoubleHero___Image--right) {
+    animation: doubleHeroSlideRight 720ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --double-hero-image-w-expanded: calc(((100vw - (2 * var(--grid-margin)) - (7 * var(--grid-gutter))) / 8 * 8) + (7 * var(--grid-gutter)));
+    }
+  }
+
+  @keyframes doubleHeroFadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes badgePulse {
+    0% {
+      transform: scale(0.92);
+    }
+
+    68% {
+      transform: scale(1.06);
+      animation-timing-function: linear;
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes doubleHeroSlideLeft {
+    0% {
+      left: 50%;
+      width: var(--double-hero-image-w-expanded);
+      border-radius: 16px;
+      transform: translateX(-50%);
+    }
+
+    100% {
+      left: 0;
+      width: var(--double-hero-image-w);
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-top-right-radius: 16px;
+      border-bottom-right-radius: 16px;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes doubleHeroSlideRight {
+    0% {
+      transform: translateX(100vw);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .DoubleHero__Wrapper--fade .DoubleHero___ImageContainer,
+    .DoubleHero__Wrapper--fade .DoubleHero__BadgePulse,
+    .DoubleHero__Wrapper--slide .DoubleHero___ImageContainer:has(#DoubleHero___Image--left),
+    .DoubleHero__Wrapper--slide .DoubleHero___ImageContainer:has(#DoubleHero___Image--right) {
+      animation: none;
+    }
+  }
+</style>

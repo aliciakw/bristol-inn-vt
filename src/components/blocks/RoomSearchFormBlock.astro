@@ -1,0 +1,57 @@
+---
+import { AvailabilitySearchForm } from '@components/rooms/AvailabilitySearchForm';
+import { buildSanityImageUrl, type SanityBlock, type SanityImage } from '@lib/sanity';
+import PortableTextBlock from './PortableTextBlock.astro';
+
+interface Props {
+  introduction?: SanityBlock[];
+  icon?: SanityImage;
+  textColor?: string;
+  backgroundColor?: string;
+}
+
+const { introduction = [], icon, textColor, backgroundColor } = Astro.props;
+const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
+---
+
+<section class="Section" style={wrapperStyle || undefined}>
+  <div class="Grid pt-4 pb-16">
+    <div class="Grid__Row--inset-2 flex flex-col items-center gap-8">
+      {
+        introduction.length > 0 && (
+          <div class="flex flex-col items-center gap-3 text-center">
+            {introduction.map((block) => (
+              <PortableTextBlock block={block} />
+            ))}
+          </div>
+        )
+      }
+      <div class="RoomSearchFormBlock__Form w-full min-h-[164px]">
+        <AvailabilitySearchForm client:visible navigateTo="/rooms-and-suites" />
+      </div>
+      {
+        icon?.url && (
+          <div class="w-18 h-18 flex items-center justify-center">
+            <img
+              src={buildSanityImageUrl(icon.url, { width: 160, height: 160 })}
+              alt={icon.alt}
+              width={80}
+              height={80}
+              loading="lazy"
+              decoding="async"
+              class="w-full h-full object-contain"
+            />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .RoomSearchFormBlock__Form :global(astro-island),
+  .RoomSearchFormBlock__Form :global(form) {
+    display: block;
+    width: 100%;
+  }
+</style>

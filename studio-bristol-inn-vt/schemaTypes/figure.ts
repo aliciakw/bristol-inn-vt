@@ -53,7 +53,7 @@ export const figureType = defineType({
       name: 'rounded',
       title: 'Rounded corners',
       type: 'boolean',
-      initialValue: false,
+      initialValue: true,
     }),
     defineField({
       name: 'layout',
@@ -65,6 +65,7 @@ export const figureType = defineType({
           {title: 'Default', value: 'default'},
           {title: 'Square', value: 'square'},
           {title: 'Full Bleed', value: 'fullbleed'},
+          {title: 'Narrow', value: 'narrow'}
         ],
         layout: 'radio',
       },
