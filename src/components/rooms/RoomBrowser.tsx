@@ -130,8 +130,8 @@ export function RoomBrowser({ rooms }: Props) {
   const hasResults = state.status === 'results' || state.status === 'error';
 
   return (
-    <div className="flex flex-col gap-12 mb-8">
-      <div className="top-[var(--nav-top-bar-height)] z-10  mb-12">
+    <div className="Grid">
+      <div className="Grid__Row--inset-1 z-10 mb-16 ">
         <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} />
 
         {state.status === 'error' && (
@@ -140,14 +140,15 @@ export function RoomBrowser({ rooms }: Props) {
           </p>
         )}
       </div>
-
-      {rooms.length === 0 ? (
-        <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
-      ) : state.status === 'results' ? (
-        <RoomSections rooms={rooms} availability={state.availability} lastSearch={lastSearch} />
-      ) : (
-        <RoomGrid title={`Everything (${rooms.length})`} rooms={rooms} isLoading={isLoading} lastSearch={lastSearch} />
-      )}
+      <div className="Grid__Row--inset-1">
+        {rooms.length === 0 ? (
+          <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
+        ) : state.status === 'results' ? (
+          <RoomSections rooms={rooms} availability={state.availability} lastSearch={lastSearch} />
+        ) : (
+          <RoomGrid title={`Everything (${rooms.length})`} rooms={rooms} isLoading={isLoading} lastSearch={lastSearch} />
+        )}
+      </div>
     </div>
   );
 }

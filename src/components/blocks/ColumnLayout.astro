@@ -36,10 +36,9 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
 ---
 
 <section class="Section">
-  <div class={`Section__inner pb-16`} style={wrapperStyle || undefined}>
+  <div class={`Grid pb-16`} style={wrapperStyle || undefined}>
     <!-- Column 1 -->
-    <div class={`flex flex-col gap-8 desktop:col-start-2 ${gridColumnClass}`}>
-      {column1?.image?.url && <SingleImageBlock image={column1.image} layout={column1.image.layout as ImageLayout | undefined} caption={column1.image.caption} rounded={column1.image.rounded} />}
+    <div class={`Grid__Row--inset-2 ${gridColumnClass}`}>
       {column1?.body && column1.body.length > 0 && <SliceZone blocks={column1.body} contrainProseWidth={false} />}
       {
         column1?.cta?.href && column1.cta?.label && (
@@ -50,6 +49,7 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
           </div>
         )
       }
+      {column1?.image?.url && <SingleImageBlock image={column1.image} layout={column1.image.layout as ImageLayout | undefined} caption={column1.image.caption} rounded={column1.image.rounded} />}
     </div>
     <!-- Column 2 -->
     {

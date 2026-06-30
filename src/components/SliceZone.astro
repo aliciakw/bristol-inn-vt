@@ -12,6 +12,7 @@ import { type SanityBlock } from '../lib/sanity';
 interface Props {
   blocks: SanityBlock[];
   contrainProseWidth?: boolean;
+  wrapStandaloneBlocks?: boolean;
 }
 
 type CtaFigure = Parameters<typeof SingleImageBlock>[0]['image'] & {
@@ -20,24 +21,51 @@ type CtaFigure = Parameters<typeof SingleImageBlock>[0]['image'] & {
   rounded?: boolean;
 };
 
-const { blocks, contrainProseWidth } = Astro.props;
+const { blocks, contrainProseWidth, wrapStandaloneBlocks = false } = Astro.props;
 ---
 
 {
   (blocks ?? []).map((block) => {
     if (block._type === 'block') {
-      return <PortableTextBlock block={block} contrainProseWidth={contrainProseWidth} />;
+      const content = <PortableTextBlock block={block} contrainProseWidth={contrainProseWidth} />;
+      return wrapStandaloneBlocks ? (
+        <section class="Section">
+          <div class="Section__inner">
+            <div class="Grid__Row--inset-2">{content}</div>
+          </div>
+        </section>
+      ) : (
+        content
+      );
     }
 
     if (block._type === 'imageBlock') {
       const image = block.image as { url?: string; alt?: string } | undefined;
       const layout = (block.layout as string) === 'full' ? 'fullbleed' : 'default';
-      return <SingleImageBlock image={image} layout={layout} caption={block.caption as string | undefined} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      const content = <SingleImageBlock image={image} layout={layout} caption={block.caption as string | undefined} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      return wrapStandaloneBlocks ? (
+        <section class="Section">
+          <div class="Section__inner">
+            <div class="Grid__Row--inset-2">{content}</div>
+          </div>
+        </section>
+      ) : (
+        content
+      );
     }
 
     if (block._type === 'singleImageBlock') {
       const image = block.image as { url?: string; alt?: string } | undefined;
-      return <SingleImageBlock image={image} layout={(block.layout as 'default' | 'fullbleed') ?? 'default'} caption={block.caption as string | undefined} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      const content = <SingleImageBlock image={image} layout={(block.layout as 'default' | 'fullbleed') ?? 'default'} caption={block.caption as string | undefined} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      return wrapStandaloneBlocks ? (
+        <section class="Section">
+          <div class="Section__inner">
+            <div class="Grid__Row--inset-2">{content}</div>
+          </div>
+        </section>
+      ) : (
+        content
+      );
     }
 
     if (block._type === 'ctaBlock') {
@@ -45,13 +73,22 @@ const { blocks, contrainProseWidth } = Astro.props;
       const image = block.image as CtaFigure | undefined;
       if (!cta?.label || !cta?.href) return null;
       const wrapperStyle = [block.textColor ? `color: ${block.textColor}` : '', block.backgroundColor ? `background-color: ${block.backgroundColor}` : ''].filter(Boolean).join('; ');
-      return (
+      const content = (
         <div class="my-8 flex flex-col items-center gap-4" style={wrapperStyle || undefined}>
           {image?.url && <SingleImageBlock image={image} layout={image.layout} caption={image.caption} rounded={image.rounded} />}
           <ButtonLink href={cta.href} size="large" bg="prussian-500" textColor="white" target={cta.openInNewTab ? '_blank' : undefined} rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}>
             {cta.label}
           </ButtonLink>
         </div>
+      );
+      return wrapStandaloneBlocks ? (
+        <section class="Section">
+          <div class="Section__inner">
+            <div class="Grid__Row--inset-2">{content}</div>
+          </div>
+        </section>
+      ) : (
+        content
       );
     }
 

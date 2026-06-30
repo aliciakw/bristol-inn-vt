@@ -14,7 +14,7 @@ const { introduction, heroImage, textColor, backgroundColor = 'var(--color-pruss
 ---
 
 <div class="Section" style={`background-color: ${backgroundColor}; color: ${textColor};`}>
-  <div class="Section__inner" class:list={[className]}>
+  <div class="Grid" class:list={[className]}>
     <div class="row-span-1 col-span-3 desktop:col-span-6 pt-44 gap-6">
       <div class="hidden tablet:flex flex-col gap-4 max-w-xl">
         {introduction && introduction.length > 0 && <SliceZone blocks={introduction} contrainProseWidth={false} />}

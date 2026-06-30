@@ -22,14 +22,14 @@ const page = await getPage(slug);
 const pageTitle = page.title || 'Untitled';
 ---
 
-<BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta} backgroundColor="white" navigationVariant="transparent" offsetNavigation>
+<BaseLayout
+  title={`${pageTitle} — Bristol Inn`}
+  meta={page?.meta}
+  backgroundColor="white"
+  navigationVariant="transparent"
+  mainClass={page.pageHeader ? 'Spacer--navigation-offset' : ''}
+>
   {page?.pageHeader && <PageHeader block={page.pageHeader} className="pb-16" />}
 
-  <div class="Section mt-12">
-    <div class="Section__inner">
-      <div class="row-span-1 col-span-6 desktop:col-span-8">
-        <SliceZone blocks={page.body} />
-      </div>
-    </div>
-  </div>
+  <SliceZone blocks={page.body ?? []} wrapStandaloneBlocks />
 </BaseLayout>

@@ -47,11 +47,11 @@ export function RoomCardReact({ room, availability, isLoading, detailUrl }: Prop
       <article className={['rounded-xl border-1 border-ink-900 overflow-hidden shadow--card', dimmed ? 'opacity-50' : '', 'transition-opacity duration-150'].join(' ')}>
         <div className="rounded-sm">
           <div className="flex flex-col justify-center bg-sand-100 group-hover:bg-sand-050/50 border-b-1 border-ink-900 px-3 pt-2 pb-2 gap-1 rounded-t-lg relative group-hover:shadow-lg group-hover:text-prussian-500 transition-colors duration-700 ease-out">
-            <TextStyle variant="h4" element="h5" className="text-prussian-700 overflow-hidden text-ellipsis font-medium leading-none line-clamp-1 mt-1 transition-colors duration-700 ease-out">
+            <TextStyle variant="h4" element="h5" className="text-ink-900 overflow-hidden text-ellipsis font-medium leading-none line-clamp-1 mt-1 transition-colors duration-700 ease-out">
               {name}
             </TextStyle>
             <div className="flex flex-row">
-              <TextStyle variant="caption" element="p" className="max-w-[calc(100%)] text-nowrap overflow-hidden leading-none text-ellipsis text-iron">
+              <TextStyle variant="paragraph" element="p" className="max-w-[calc(100%)] text-nowrap overflow-hidden leading-none text-ellipsis text-iron">
                 {infoText}
               </TextStyle>
             </div>
