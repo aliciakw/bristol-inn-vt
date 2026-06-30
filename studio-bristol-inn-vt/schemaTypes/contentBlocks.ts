@@ -17,7 +17,10 @@ type RoomSearchFormPreviewSelection = {
 
 type GalleryStripPreviewSelection = {
   images?: unknown[]
-  media?: any
+}
+
+type FigureValue = {
+  image?: any
 }
 
 type TestimonialGalleryPreviewSelection = {
@@ -41,6 +44,15 @@ const truncatePreviewText = (text: string) => {
   }
 
   return `${text.slice(0, 77).trim()}...`
+}
+
+const isFigureWithImage = (item: unknown): item is FigureValue => {
+  return Boolean(
+    item &&
+      typeof item === 'object' &&
+      'image' in item &&
+      (item as FigureValue).image?.asset,
+  )
 }
 
 const introductionPortableTextField = defineField({
@@ -106,15 +118,15 @@ export const galleryStripBlockType = defineType({
   preview: {
     select: {
       images: 'images',
-      media: 'images.0.image',
     },
-    prepare({images, media}: GalleryStripPreviewSelection) {
-      const count = images?.length ?? 0
+    prepare({images}: GalleryStripPreviewSelection) {
+      const figuresWithImages = images?.filter(isFigureWithImage) ?? []
+      const count = figuresWithImages.length
 
       return {
         title: count === 1 ? '1 image' : `${count} images`,
         subtitle: 'Gallery Strip',
-        media,
+        media: figuresWithImages[0]?.image,
       }
     },
   },
