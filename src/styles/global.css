@@ -48,6 +48,7 @@
   --color-forest-400: #465546;
   --color-iron: #5e5e5e;
   --color-red-600: #d94f4f;
+  --color-mustard-200: #bada55;
 
   /* Typography */
   --font-serif: 'David Libre', Georgia, serif;
@@ -286,4 +287,15 @@ html {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Standard syntax */
+::selection {
+  background-color: var(--color-prussian-100); /* The highlight background */
+}
+
+/* Gecko browsers (Firefox) */
+::-moz-selection {
+  background-color: #ff0099;
+  color: #ffffff;
 }
