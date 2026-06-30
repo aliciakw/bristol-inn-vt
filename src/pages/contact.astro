@@ -12,7 +12,7 @@ const hasContactInfo = address.length > 0 || phone || email || directionsLink?.h
 const mapUrl = googleMapEmbedUrl ?? `https://www.google.com/maps?output=embed&q=${encodeURIComponent(FALLBACK_MAP_LINK)}`;
 ---
 
-<BaseLayout title="Contact - Bristol Inn" description="Get in touch with Bristol Inn" meta={meta} bottomSpacer={false} offsetNavigation={true}>
+<BaseLayout title="Contact - Bristol Inn" description="Get in touch with Bristol Inn" meta={meta} mainClass="Spacer--navigation-offset">
   <section class="flex flex-col tablet:flex-row px-[var(--grid-margin)] tablet:px-0">
     <div class="tablet:bg-prussian-100 flex flex-col flex-1 gap-8 p-[var(--grid-margin)] pt-[var(--nav-top-bar-height-2x)] tablet:pr-[var(--grid-gutter)]">
       {
@@ -70,7 +70,12 @@ const mapUrl = googleMapEmbedUrl ?? `https://www.google.com/maps?output=embed&q=
 
             {directionsLink?.href && (
               <TextStyle variant="paragraph" element="p">
-                <a href={directionsLink.href} target={directionsLink.openInNewTab ? '_blank' : undefined} rel={directionsLink.openInNewTab ? 'noopener noreferrer' : undefined} class="hover:underline">
+                <a
+                  href={directionsLink.href}
+                  target={directionsLink.openInNewTab ? '_blank' : undefined}
+                  rel={directionsLink.openInNewTab ? 'noopener noreferrer' : undefined}
+                  class="hover:underline"
+                >
                   {directionsLink.label ?? 'Get directions'}
                 </a>
               </TextStyle>
@@ -85,7 +90,14 @@ const mapUrl = googleMapEmbedUrl ?? `https://www.google.com/maps?output=embed&q=
     </div>
 
     <div class="flex flex-col flex-1 px-[var(--grid-margin)] mb-[var(--nav-top-bar-height-2x)] tablet:pt-[var(--nav-top-bar-height-2x)] tablet:pl-[var(--grid-gutter)]">
-      <iframe src={mapUrl} title="Map to Bristol Inn" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" class="w-full aspect-square rounded-xl border-1 shadow--card--lg" allowfullscreen="" style={{ backgroundColor: 'var(--color-prussian-100)', borderColor: 'var(--color-ink-900)' }}></iframe>
+      <iframe
+        src={mapUrl}
+        title="Map to Bristol Inn"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+        class="w-full aspect-square rounded-xl border-1 shadow--card--lg"
+        allowfullscreen=""
+        style={{ backgroundColor: 'var(--color-prussian-100)', borderColor: 'var(--color-ink-900)' }}></iframe>
     </div>
   </section>
 </BaseLayout>

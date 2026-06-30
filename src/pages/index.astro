@@ -1,39 +1,49 @@
 ---
+import { getImage } from 'astro:assets';
 import { getHomepage, getSettings, buildSanityImageUrl } from '../lib/sanity';
 import BaseLayout from '@layouts/BaseLayout.astro';
+import DoubleHeroBlock from '@components/home/DoubleHeroBlock.astro';
 import WelcomeSection from '../components/home/WelcomeSection.astro';
-import GalleryStrip from '../components/home/GalleryStrip.astro';
-import TestimonialsSection from '../components/home/TestimonialsSection.astro';
 import SliceZone from '../components/SliceZone.astro';
+import bristolBadge from '../assets/bristol-inn-badge--ellipse.png';
 
 const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 
-const { coverColor, welcomeBackgroundColor, welcomeHeading, welcomeItems, heroLeftImage, heroRightImage, galleryImages, reservationHeading, reservationHeadingIcon, reservationDescription, testimonialsHeading, testimonial, amenities, body } = homepage;
+const {
+  coverColor,
+  welcomeBackgroundColor,
+  welcomeHeading,
+  welcomeItems,
+  heroLeftImage,
+  heroRightImage,
+  galleryImages,
+  reservationHeading,
+  reservationHeadingIcon,
+  reservationDescription,
+  body,
+} = homepage;
 
 const heroLeftPreload = heroLeftImage?.url ? buildSanityImageUrl(heroLeftImage.url, { width: 900, height: 550 }) : null;
 const heroRightPreload = heroRightImage?.url ? buildSanityImageUrl(heroRightImage.url, { width: 900, height: 550 }) : null;
+const badgePreload = await getImage({ src: bristolBadge, width: 240, height: 255 });
 ---
 
-<BaseLayout title="Bristol Inn — Vermont" description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere." backgroundColor="white" textColor="ink-900" navigationVariant="transparent" offsetNavigation={true} bottomSpacer={false} bodyClass="transition-colors duration-300">
+<BaseLayout
+  title="Bristol Inn — Vermont"
+  description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere."
+  backgroundColor="white"
+  textColor="ink-900"
+  navigationVariant="transparent"
+  mainClass="Spacer__navigation-offset"
+  bodyClass="transition-colors duration-300"
+>
   <Fragment slot="head">
     {heroLeftPreload && <link rel="preload" as="image" href={heroLeftPreload} fetchpriority="high" />}
     {heroRightPreload && <link rel="preload" as="image" href={heroRightPreload} fetchpriority="high" />}
+    <link rel="preload" as="image" href={badgePreload.src} fetchpriority="high" />
   </Fragment>
-  <WelcomeSection
-    coverColor={coverColor}
-    welcomeBackgroundColor={welcomeBackgroundColor}
-    welcomeHeading={welcomeHeading}
-    welcomeItems={welcomeItems}
-    heroLeftImage={heroLeftImage}
-    heroRightImage={heroRightImage}
-    directionsHref={settings.directionsLink?.href}
-    directionsLabel={settings.directionsLink?.label}
-    reservationHeading={reservationHeading}
-    reservationHeadingIcon={reservationHeadingIcon}
-    reservationDescription={reservationDescription}
-    galleryImages={galleryImages}
-    logo={settings.logo}
-  />
+  <DoubleHeroBlock leftImage={heroLeftImage} rightImage={heroRightImage} showLogoBadge={true} />
+  <WelcomeSection welcomeBackgroundColor={welcomeBackgroundColor} welcomeHeading={welcomeHeading} welcomeItems={welcomeItems} />
 
   <!-- <div id="gallery-strip-wrapper" class="pt-[144px]">
     <div class="bg-white pt-[var(--page-margin)] pb-16">
