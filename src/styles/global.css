@@ -150,7 +150,7 @@ html {
   background-color: var(--color-prussian-500);
 }
 
-.debug { 
+.debug {
   border: 1px solid fuchsia;
 }
 
@@ -190,7 +190,7 @@ html {
 }
 
 .Grid__Row--half {
-  grid-column: 1 / span calc(var(--grid-columns)/2)
+  grid-column: 1 / span calc(var(--grid-columns) / 2);
 }
 
 .Grid__Row--full {
@@ -223,7 +223,7 @@ html {
 }
 
 .shadow--card {
-  box-shadow: 4px 4px 0px 1px var(--color-sand-200);
+  box-shadow: 6px 6px 0px 1px var(--color-ink-300);
 }
 
 .shadow--card--lg {

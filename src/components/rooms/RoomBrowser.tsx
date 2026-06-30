@@ -144,7 +144,7 @@ export function RoomBrowser({ rooms }: Props) {
   return (
     <div className="Grid">
       <div className="Grid__Row--full z-10 mb-24">
-        <div className="w-[66%] Xdesktop:ml-[8%]">
+        <div className="w-[66%]">
           <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} />
         </div>
         {state.status === 'error' && (
@@ -153,7 +153,7 @@ export function RoomBrowser({ rooms }: Props) {
           </p>
         )}
       </div>
-      <div className="Grid__Row--inset-1">
+      <div className="Grid__Row--full">
         {rooms.length === 0 ? (
           <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
         ) : state.status === 'results' ? (
