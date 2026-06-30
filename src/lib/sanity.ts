@@ -54,7 +54,7 @@ export type SanityImage = {
   url: string;
   alt: string;
   caption?: string;
-  layout?: 'default' | 'square' | 'fullbleed';
+  layout?: 'default' | 'square' | 'fullbleed' | 'narrow';
   rounded?: boolean;
 };
 
@@ -123,7 +123,12 @@ const RESOLVE_LINK = `{ label, "href": select(linkType == "internal" => "/" + in
 
 const RESOLVE_BUTTON_LINK = `{ label, color, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
 
-const RESOLVE_FIGURE = `{ "url": image.asset->url, "alt": coalesce(alt, ""), caption, layout, "rounded": coalesce(rounded, false) }`;
+const RESOLVE_FIGURE = `{ "url": image.asset->url, "alt": coalesce(alt, ""), caption, layout, "rounded": coalesce(rounded, true) }`;
+
+const RESOLVE_IMAGE_OR_FIGURE = `select(
+  defined(image.image.asset) => image${RESOLVE_FIGURE},
+  defined(image.asset) => { "url": image.asset->url, "alt": coalesce(image.alt, alt, ""), caption, layout, "rounded": coalesce(rounded, true) }
+)`;
 
 const RESOLVE_COLUMN_ITEM = `{
   ...,
@@ -133,8 +138,8 @@ const RESOLVE_COLUMN_ITEM = `{
 
 const RESOLVE_BODY_ITEM = `{
   ...,
-  _type == "imageBlock" => { ..., "image": image{ "url": asset->url, "alt": coalesce(alt, "") } },
-  _type == "singleImageBlock" => { ..., "image": image{ "url": asset->url, "alt": coalesce(alt, "") } },
+  _type == "imageBlock" => { ..., "image": ${RESOLVE_IMAGE_OR_FIGURE} },
+  _type == "singleImageBlock" => { ..., "image": ${RESOLVE_IMAGE_OR_FIGURE} },
   _type == "pageHeaderBlock" => { ..., "heroImage": heroImage{ "url": asset->url, "alt": coalesce(alt, "") } },
   _type == "ctaBlock" => { ..., "image": image${RESOLVE_FIGURE}, "cta": cta${RESOLVE_LINK} },
   _type == "singleColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM} },

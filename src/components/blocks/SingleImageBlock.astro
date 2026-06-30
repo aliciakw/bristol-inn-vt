@@ -5,7 +5,7 @@ import { buildSanityImageUrl } from '../../lib/sanity';
 import { INNER_MAX_WIDTH__DESKTOP, IMAGE_SIZES, ASPECT_RATIOS, type ImageLayout } from '@components/ui/constants';
 
 interface Props {
-  image?: { url?: string; alt?: string };
+  image?: { url?: string; alt?: string; caption?: string; layout?: ImageLayout; rounded?: boolean };
   layout?: ImageLayout;
   caption?: string;
   rounded?: boolean;
@@ -13,9 +13,12 @@ interface Props {
   backgroundColor?: string;
 }
 
-const { image, layout = 'default', caption, rounded = false, textColor, backgroundColor } = Astro.props;
+const { image, layout: layoutProp = 'default', caption: captionProp, rounded: roundedProp, textColor, backgroundColor } = Astro.props;
+const layout = image?.layout ?? layoutProp;
+const caption = image?.caption ?? captionProp;
+const rounded = image?.rounded ?? roundedProp ?? true;
 const url = image?.url;
-const imgWidth = layout === 'fullbleed' ? INNER_MAX_WIDTH__DESKTOP : IMAGE_SIZES[2].width;
+const imgWidth = layout === 'fullbleed' ? INNER_MAX_WIDTH__DESKTOP : layout === 'narrow' ? IMAGE_SIZES[3].width : IMAGE_SIZES[2].width;
 // eslint-disable-next-line security/detect-object-injection
 const imgHeight = imgWidth / ASPECT_RATIOS[layout];
 
@@ -25,6 +28,7 @@ const figureLayoutClasses: Record<ImageLayout, string> = {
   fullbleed: 'aspect-[5/3] overflow-hidden',
   default: 'aspect-[5/3] overflow-hidden',
   square: 'aspect-square overflow-hidden',
+  narrow: 'max-w-[min(100%,520px)] mx-auto aspect-[5/3] overflow-hidden',
 };
 // eslint-disable-next-line security/detect-object-injection
 const figureLayoutClass = figureLayoutClasses[layout];

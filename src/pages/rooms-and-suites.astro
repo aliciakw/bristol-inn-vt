@@ -22,10 +22,16 @@ const browserRooms = rooms.map((r) => ({
 }));
 ---
 
-<BaseLayout title={`${pageTitle} — Bristol Inn`} meta={page?.meta} backgroundColor="white" navigationVariant="transparent" mainClass="Spacer--navigation-offset Spacer--page-bottom">
-  {page?.pageHeader && <PageHeader block={page.pageHeader} className="pb-20" />}
+<BaseLayout
+  title={`${pageTitle} — Bristol Inn`}
+  meta={page?.meta}
+  backgroundColor="white"
+  navigationVariant="transparent"
+  mainClass="Spacer--navigation-offset Spacer--page-bottom"
+>
+  {page?.pageHeader && <PageHeader block={page.pageHeader} className="pb-18" />}
 
-  <section class="Section mt-4">
+  <section class="Section mt-[-72px] mb-16">
     <RoomBrowser client:load rooms={browserRooms} />
   </section>
 </BaseLayout>

@@ -46,11 +46,21 @@ function RoomGrid({ title, rooms, isLoading, availability, lastSearch }: RoomGri
         </TextStyle>
       )}
       {}
-      <div className={['grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-4 Xgap-[var(--grid-gutter)]'].join(' ')}>
+      <div className={['grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-2 gap-[var(--grid-gutter)]'].join(' ')}>
         {rooms.map((room) => {
           const roomAvailability = availability?.find((a) => a.listingId === room.id);
           const { bookingUrl, detailUrl } = getRoomUrls(room.id, lastSearch, roomAvailability?.pricePerNight);
-          return <RoomCardReact key={room.id} room={room} availability={roomAvailability} isLoading={isLoading ?? false} bookingUrl={bookingUrl} detailUrl={detailUrl} lastSearch={lastSearch} />;
+          return (
+            <RoomCardReact
+              key={room.id}
+              room={room}
+              availability={roomAvailability}
+              isLoading={isLoading ?? false}
+              bookingUrl={bookingUrl}
+              detailUrl={detailUrl}
+              lastSearch={lastSearch}
+            />
+          );
         })}
       </div>
     </section>
@@ -70,7 +80,9 @@ function RoomSections({ rooms, availability, lastSearch }: { rooms: RoomBrowserR
   return (
     <div className="flex flex-col gap-12">
       <RoomGrid title={`Available (${available.length})`} rooms={available} availability={availability} lastSearch={lastSearch} />
-      {showUnavailable && unavailable.length > 0 && <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} lastSearch={lastSearch} desktopCols={3} />}
+      {showUnavailable && unavailable.length > 0 && (
+        <RoomGrid title={`Others (${unavailable.length})`} rooms={unavailable} availability={availability} lastSearch={lastSearch} desktopCols={3} />
+      )}
     </div>
   );
 }
@@ -131,9 +143,10 @@ export function RoomBrowser({ rooms }: Props) {
 
   return (
     <div className="Grid">
-      <div className="Grid__Row--inset-1 z-10 mb-16 ">
-        <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} />
-
+      <div className="Grid__Row--full z-10 mb-24">
+        <div className="w-[66%] Xdesktop:ml-[8%]">
+          <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} />
+        </div>
         {state.status === 'error' && (
           <p role="alert" className="text-red-600 text-sm mb-6">
             {state.message}

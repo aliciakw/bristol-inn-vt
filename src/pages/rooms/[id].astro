@@ -30,7 +30,7 @@ const [heroImage, ...images] = room.photos;
     >
       ← Back to Rooms
     </a>
-    <div class="Grid items-start min-h-[100vh] align-start" >
+    <div class="Grid items-start min-h-[100vh] align-start">
       <div
         class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-5 tablet:pr-[var(--grid-margin)] flex flex-col gap-8 tablet:sticky tablet:top-[var(--nav-top-bar-height-2x)] tablet:self-start tablet:max-h-[calc(100vh-var(--nav-top-bar-height))] tablet:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-2"
       >
@@ -94,8 +94,11 @@ const [heroImage, ...images] = room.photos;
       const pricePerNight = Number.isFinite(rawPrice) ? rawPrice : basePrice;
       const checkout = new URLSearchParams({ start, end, numberOfGuests: String(parsedGuests) });
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       header.querySelector<HTMLElement>('[data-booking-price]')!.textContent = `$${Math.round(pricePerNight)} / night`;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       header.querySelector<HTMLElement>('[data-booking-date]')!.textContent = ` · ${formatRoomDate(start)} – ${formatRoomDate(end)}`;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       header.querySelector<HTMLElement>('[data-booking-guests]')!.textContent = ` · ${parsedGuests} ${parsedGuests === 1 ? 'guest' : 'guests'}`;
       header.querySelector<HTMLElement>('[data-booking-details]')?.classList.remove('hidden');
       header.querySelector<HTMLElement>('[data-default-booking-link]')?.classList.add('hidden');

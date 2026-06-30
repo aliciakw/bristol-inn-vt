@@ -62,23 +62,13 @@ export const homepageType = defineType({
           fields: [
             defineField({
               name: 'image',
-              type: 'image',
+              type: 'figure',
               title: 'Image',
-              options: { hotspot: true },
-              fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
             }),
-            defineField({
-              name: 'layout',
-              type: 'string',
-              title: 'Layout',
-              initialValue: 'default',
-              options: { list: [{ title: 'Default', value: 'default' }, { title: 'Full Bleed', value: 'fullbleed' }], layout: 'radio' },
-            }),
-            defineField({ name: 'caption', type: 'string', title: 'Caption' }),
             ...colorFields,
           ],
           preview: {
-            select: { media: 'image', caption: 'caption', layout: 'layout' },
+            select: { media: 'image.image', caption: 'image.caption', layout: 'image.layout' },
             prepare({ media, caption, layout }: { media?: any; caption?: string; layout?: string }) {
               return { title: caption ?? '(no caption)', subtitle: layout ?? 'default', media };
             },
