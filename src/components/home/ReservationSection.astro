@@ -16,15 +16,23 @@ interface Props {
 const { reservationHeading = 'Reserve your Stay, Today:', reservationHeadingIcon, reservationDescription, logo, seeAllHref } = Astro.props;
 ---
 
-<section class="px-[var(--grid-margin)] desktop:px-0 py-12 bg-sand-100 rounded-b-[16px]">
-  <div class="Section__inner">
+<section class="Section">
+  <div class="Grid">
     <!-- Heading block -->
-    <div class="col-span-6 desktop:col-start-2 desktop:col-span-6 flex flex-col items-center gap-4 mb-8">
+    <div class="Grid__Row items-center gap-4 mb-8">
       {logo && <img src={logo} alt="" aria-hidden="true" class="w-24 h-24 object-contain" />}
       {
         reservationHeadingIcon && (
           <div class="w-20 h-20 flex items-center justify-center">
-            <img src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })} alt={reservationHeadingIcon.alt} width={80} height={80} loading="lazy" decoding="async" class="w-full h-full object-contain" />
+            <img
+              src={buildSanityImageUrl(reservationHeadingIcon.url, { width: 160, height: 160 })}
+              alt={reservationHeadingIcon.alt}
+              width={80}
+              height={80}
+              loading="lazy"
+              decoding="async"
+              class="w-full h-full object-contain"
+            />
           </div>
         )
       }

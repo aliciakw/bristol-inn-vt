@@ -146,7 +146,17 @@ export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoadin
           error={errors.guests}
           className="flex-1 w-24 shrink-0"
         />
-        <FormField id="avail-check-in" label="Check-in" type="date" value={checkIn} min={today} onChange={handleCheckInChange} disabled={isLoading} error={errors.checkIn} className="flex-1 min-w-36" />
+        <FormField
+          id="avail-check-in"
+          label="Check-in"
+          type="date"
+          value={checkIn}
+          min={today}
+          onChange={handleCheckInChange}
+          disabled={isLoading}
+          error={errors.checkIn}
+          className="flex-1 min-w-36"
+        />
         <FormField
           id="avail-check-out"
           label="Check-out"
@@ -163,7 +173,7 @@ export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoadin
           className="flex-1 min-w-36"
         />
       </div>
-      <div className="flex flex-row gap-6">
+      <div className="flex flex-row gap-6 pt-4">
         <div className="flex flex-col desktop:flex-row desktop:items-center gap-4 pr-4">
           <TextStyle variant="label" element="span" className="font-medium whitespace-nowrap desktop:hidden">
             Special Needs:

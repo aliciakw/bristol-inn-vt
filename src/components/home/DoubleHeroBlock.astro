@@ -10,8 +10,7 @@ interface Props {
 }
 
 const { leftImage, rightImage, showLogoBadge = false } = Astro.props;
-const HERO_SLIDE_ANIMATION = false;
-const BADGE_ENTRANCE_ANIMATION = false;
+const ANIMATION_MODE: false | 'fade' | 'slide' = 'fade';
 ---
 
 <section
@@ -19,17 +18,16 @@ const BADGE_ENTRANCE_ANIMATION = false;
   class="DoubleHero__Wrapper"
   class:list={[
     'relative w-full flex items-center justify-center bg-white pointer-events-none',
-    HERO_SLIDE_ANIMATION ? 'hero-slide-animation fade-in-100' : 'hero-slide-animation--skipped',
+    ANIMATION_MODE === 'fade' && 'DoubleHero__Wrapper--fade',
+    ANIMATION_MODE === 'slide' && 'DoubleHero__Wrapper--slide',
   ]}
 >
   {
     showLogoBadge && (
-      <div
-        id="bristol-badge"
-        class="absolute left-1/2 top-1/2 z-10 w-[min(42vw,240px)] -translate-x-1/2 -translate-y-1/2"
-        class:list={[BADGE_ENTRANCE_ANIMATION ? 'badge-entrance-animation' : 'badge-entrance-animation--skipped']}
-      >
-        <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="h-auto w-full object-contain" />
+      <div id="bristol-badge" class="absolute left-1/2 top-1/2 z-10 w-[min(42vw,240px)] -translate-x-1/2 -translate-y-1/2">
+        <span class="DoubleHero__BadgePulse block">
+          <Image src={bristolBadge} alt="Bristol Inn Vermont — Settle In. Stay Awhile." width={240} height={255} class="h-auto w-full object-contain" />
+        </span>
       </div>
     )
   }
@@ -78,6 +76,7 @@ const BADGE_ENTRANCE_ANIMATION = false;
     --double-hero-wrapper-h: 80vh;
     --double-hero-image-h: calc(var(--double-hero-wrapper-h) - 72px);
     --double-hero-image-w: calc(50vw - var(--grid-gutter));
+    --double-hero-image-w-expanded: calc(100vw - (2 * var(--grid-margin)));
   }
 
   @media (min-width: 960px) {
@@ -95,21 +94,102 @@ const BADGE_ENTRANCE_ANIMATION = false;
   .DoubleHero___ImageContainer {
     position: absolute;
     overflow: hidden;
-    /* opacity: 0; /* held by animation-fill-mode: both until animation starts */
     width: var(--double-hero-image-w);
     height: var(--double-hero-image-h);
   }
   .DoubleHero___ImageContainer:has(#DoubleHero___Image--left) {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    animation: heroSlideInLeft 0.5s ease-out 0.05s both;
   }
 
   .DoubleHero___ImageContainer:has(#DoubleHero___Image--right) {
-    animation: heroSlideInRight 0.5s ease-out 0.05s both;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
-</style>
 
-<script></script>
+  .DoubleHero__Wrapper--fade .DoubleHero___ImageContainer {
+    animation: doubleHeroFadeIn 420ms ease-out 360ms both;
+  }
+
+  .DoubleHero__Wrapper--fade .DoubleHero__BadgePulse {
+    animation: badgePulse 720ms ease-out 220ms both;
+    transform-origin: center;
+  }
+
+  .DoubleHero__Wrapper--slide .DoubleHero___ImageContainer:has(#DoubleHero___Image--left) {
+    animation: doubleHeroSlideLeft 720ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+  }
+
+  .DoubleHero__Wrapper--slide .DoubleHero___ImageContainer:has(#DoubleHero___Image--right) {
+    animation: doubleHeroSlideRight 720ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --double-hero-image-w-expanded: calc(((100vw - (2 * var(--grid-margin)) - (7 * var(--grid-gutter))) / 8 * 8) + (7 * var(--grid-gutter)));
+    }
+  }
+
+  @keyframes doubleHeroFadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes badgePulse {
+    0% {
+      transform: scale(0.92);
+    }
+
+    68% {
+      transform: scale(1.06);
+      animation-timing-function: linear;
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes doubleHeroSlideLeft {
+    0% {
+      left: 50%;
+      width: var(--double-hero-image-w-expanded);
+      border-radius: 16px;
+      transform: translateX(-50%);
+    }
+
+    100% {
+      left: 0;
+      width: var(--double-hero-image-w);
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-top-right-radius: 16px;
+      border-bottom-right-radius: 16px;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes doubleHeroSlideRight {
+    0% {
+      transform: translateX(100vw);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .DoubleHero__Wrapper--fade .DoubleHero___ImageContainer,
+    .DoubleHero__Wrapper--fade .DoubleHero__BadgePulse,
+    .DoubleHero__Wrapper--slide .DoubleHero___ImageContainer:has(#DoubleHero___Image--left),
+    .DoubleHero__Wrapper--slide .DoubleHero___ImageContainer:has(#DoubleHero___Image--right) {
+      animation: none;
+    }
+  }
+</style>
