@@ -116,6 +116,13 @@ export type SanityPage = {
   uid: string;
 };
 
+export type SanityRoom = {
+  hostawayId: number;
+  name: string;
+  floor: 1 | 2 | 3;
+  specialInstructions?: SanityBlock[];
+};
+
 const HOMEPAGE_ID = '6e561f5f-23ec-49fa-863f-141c005904c3';
 const CONTACT_PAGE_ID = 'contact-page-singleton';
 
@@ -214,6 +221,19 @@ export async function getPage(slug: string): Promise<SanityPage> {
 
 export async function getPages(): Promise<Pick<SanityPage, 'uid'>[]> {
   return getClient().fetch<Pick<SanityPage, 'uid'>[]>(`*[_type == "page"]{ "uid": slug.current }`);
+}
+
+export async function getSanityRooms(): Promise<SanityRoom[]> {
+  const rooms = await getClient().fetch<SanityRoom[]>(
+    `*[_type == "room" && defined(hostawayId)]{
+      hostawayId,
+      name,
+      floor,
+      specialInstructions
+    }`,
+  );
+
+  return rooms ?? [];
 }
 
 export type SanityFaqItem = {

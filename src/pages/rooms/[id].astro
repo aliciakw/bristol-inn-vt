@@ -1,10 +1,10 @@
 ---
-import { getRooms } from '../../lib/hostaway';
-import type { HostawayRoom } from '../../lib/hostaway';
+import { getRooms, type Room } from '../../lib/rooms';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import RoomGallery from '../../components/RoomGallery.astro';
 import AmenityBadge from '../../components/AmenityBadge.astro';
 import { RoomDetailHeader } from '../../components/rooms/RoomDetailHeader';
+import PortableTextBlock from '../../components/blocks/PortableTextBlock.astro';
 import TextStyle from '@components/ui/TextStyle.astro';
 
 export async function getStaticPaths() {
@@ -15,7 +15,7 @@ export async function getStaticPaths() {
   }));
 }
 
-type Props = { room: HostawayRoom };
+type Props = { room: Room };
 const { room } = Astro.props;
 const metaDescription = room.description.slice(0, 160);
 const [heroImage, ...images] = room.photos;
@@ -56,6 +56,20 @@ const [heroImage, ...images] = room.photos;
         </div>
         <TextStyle variant="paragraph" class="font-bold tablet:mt-4">Description</TextStyle>
         <TextStyle variant="caption" class="leading-relaxed text-gray-700">{room.description}</TextStyle>
+        {
+          room.specialInstructions?.length ? (
+            <div class="flex flex-col gap-4">
+              <TextStyle variant="paragraph" class="font-bold">
+                Special Instructions
+              </TextStyle>
+              <div class="flex flex-col gap-3 text-gray-700">
+                {room.specialInstructions.map((block) => (
+                  <PortableTextBlock block={block} contrainProseWidth={false} />
+                ))}
+              </div>
+            </div>
+          ) : null
+        }
         <TextStyle variant="paragraph" class="font-bold">Amenities</TextStyle>
         <div class="flex flex-wrap gap-2 desktop:pb-[var(--nav-top-bar-height)]">
           {room.amenityNames.map((a) => <AmenityBadge label={a} />)}

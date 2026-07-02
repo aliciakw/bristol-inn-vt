@@ -1,5 +1,6 @@
 import type { APIContext } from 'astro';
-import { getRooms, checkAvailability } from '../../../lib/hostaway';
+import { checkAvailability } from '../../../lib/hostaway';
+import { getRooms } from '../../../lib/rooms';
 
 export const prerender = false;
 
