@@ -23,8 +23,11 @@ type DeployResponse = {
   error?: string
 }
 
-const deployEndpoint = import.meta.env.SANITY_STUDIO_DEPLOY_API_URL as string | undefined
-const deployToken = import.meta.env.SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN as string | undefined
+
+// TODO: It would be nice if these were not hard coded, but since they are included in the 
+// JS bundle, they are not secret. 
+const deployEndpoint = "https://bristol-inn-vt.alicia-willett.workers.dev/api/deploy";  //import.meta.env.SANITY_STUDIO_DEPLOY_API_URL as string | undefined
+const deployToken = "pocock_rocks_2025"; // import.meta.env.SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN as string | undefined
 
 function formatDate(value?: string): string {
   if (!value) {
