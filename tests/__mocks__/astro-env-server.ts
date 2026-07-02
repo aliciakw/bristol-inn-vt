@@ -13,3 +13,8 @@
 
 export const HOSTAWAY_ACCESS_TOKEN = 'test-hostaway-token';
 export const SANITY_API_TOKEN = 'test-sanity-token';
+export const CLOUDFLARE_ACCOUNT_ID = 'test-cloudflare-account';
+export const CLOUDFLARE_PAGES_PROJECT_NAME = 'test-pages-project';
+export const CLOUDFLARE_API_TOKEN = 'test-cloudflare-token';
+export const DEPLOY_ALLOWED_ORIGINS = 'https://studio.example.com,http://localhost:3333';
+export const DEPLOY_TRIGGER_TOKEN = 'test-deploy-trigger-token';

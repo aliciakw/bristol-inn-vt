@@ -124,11 +124,30 @@ Missing required variables will cause the build to fail with a clear error messa
    - **Build output directory:** `dist`
 4. Add environment variables in Cloudflare project settings:
    - `HOSTAWAY_API_KEY`
-   - `PRISMIC_TOKEN`
+   - `SANITY_API_TOKEN`
    - `PUBLIC_SENTRY_DSN`
    - `PUBLIC_GA4_ID`
+   - `CLOUDFLARE_ACCOUNT_ID`
+   - `CLOUDFLARE_PAGES_PROJECT_NAME`
+   - `CLOUDFLARE_API_TOKEN`
+   - `DEPLOY_ALLOWED_ORIGINS`
+   - `DEPLOY_TRIGGER_TOKEN`
 5. Cloudflare will automatically build and deploy on push
 6. PR preview deployments auto-generate unique URLs
+
+### Sanity Studio deploy button
+
+The Studio has a **Deploy** tool that calls the Astro API route at `/api/deploy`.
+Configure the Studio deployment with:
+
+```
+SANITY_STUDIO_DEPLOY_API_URL=https://your-site.example.com/api/deploy
+SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN=shared_deploy_trigger_token
+```
+
+`SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN` is bundled into the Studio's browser
+JavaScript, so it is only a light guard for POST requests. Keep
+`CLOUDFLARE_API_TOKEN` server-only in Cloudflare Pages.
 
 #### Some quirks about Cloudflare Pages
 
