@@ -3,6 +3,7 @@ import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {colorInput} from '@sanity/color-input'
 import {schemaTypes} from './schemaTypes'
+import {DeployTool} from './deploy/DeployTool'
 
 const HOMEPAGE_ID = '6e561f5f-23ec-49fa-863f-141c005904c3'
 const CONTACT_PAGE_ID = 'contact-page-singleton'
@@ -30,30 +31,31 @@ export default defineConfig({
                 S.documentList()
                   .title('Pages')
                   .filter('_type in $pageTypes')
-                  .params({pageTypes: ['homepage', 'contactPage', 'page']})
+                  .params({pageTypes: ['homepage', 'contactPage', 'page']}),
               ),
             S.divider(),
             S.listItem()
               .title('FAQ')
               .id(FAQ_ID)
-              .child(
-                S.document()
-                  .schemaType('faq')
-                  .documentId(FAQ_ID)
-              ),
+              .child(S.document().schemaType('faq').documentId(FAQ_ID)),
             S.divider(),
             S.listItem()
               .title('Settings')
               .id(SETTINGS_ID)
-              .child(
-                S.document()
-                  .schemaType('settings')
-                  .documentId(SETTINGS_ID)
-              ),
+              .child(S.document().schemaType('settings').documentId(SETTINGS_ID)),
           ]),
     }),
     visionTool(),
     colorInput(),
+  ],
+
+  tools: (prev) => [
+    ...prev,
+    {
+      name: 'deploy',
+      title: 'Deploy',
+      component: DeployTool,
+    },
   ],
 
   schema: {

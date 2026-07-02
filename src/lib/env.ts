@@ -10,6 +10,11 @@
  *   HOSTAWAY_ACCESS_TOKEN — Hostaway API Bearer token (pre-generated, exp 2028-05-15)
  *   SANITY_API_TOKEN      — Sanity CMS read token
  *   SENTRY_AUTH_TOKEN     — Sentry source-map upload token (optional)
+ *   CLOUDFLARE_ACCOUNT_ID         — Cloudflare account id for Pages API calls
+ *   CLOUDFLARE_PAGES_PROJECT_NAME — Cloudflare Pages project name
+ *   CLOUDFLARE_API_TOKEN          — Cloudflare API token with Pages edit/read access
+ *   DEPLOY_ALLOWED_ORIGINS        — Comma-separated Studio origins allowed to call /api/deploy
+ *   DEPLOY_TRIGGER_TOKEN          — Optional bearer token for POST /api/deploy
  *
  * Public vars (safe to expose in client JS):
  *   PUBLIC_SENTRY_DSN — Sentry DSN for browser error reporting (optional)
