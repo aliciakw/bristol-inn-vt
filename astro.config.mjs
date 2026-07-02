@@ -36,6 +36,36 @@ export default defineConfig({
         access: 'secret',
         optional: true,
       }),
+      CLOUDFLARE_ACCOUNT_ID: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+        default: '',
+      }),
+      CLOUDFLARE_PAGES_PROJECT_NAME: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+        default: '',
+      }),
+      CLOUDFLARE_API_TOKEN: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+        default: '',
+      }),
+      DEPLOY_ALLOWED_ORIGINS: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+        default: '',
+      }),
+      DEPLOY_TRIGGER_TOKEN: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+        default: '',
+      }),
     },
   },
   vite: {
