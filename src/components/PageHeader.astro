@@ -15,8 +15,8 @@ const { introduction, heroImage, textColor, backgroundColor = 'var(--color-pruss
 
 <div class="Section" style={`background-color: ${backgroundColor}; color: ${textColor};`}>
   <div class="Grid" class:list={[className]}>
-    <div class="row-span-1 col-span-3 tablet:col-span-4 desktop:col-span-6 tablet:pr-[var(--grid-gutter)] pt-44 gap-6">
-      <div class="hidden tablet:flex flex-col gap-4 max-w-xl">
+    <div class="row-span-1 col-span-1 tablet:col-span-4 desktop:col-span-6 tablet:pr-[var(--grid-gutter)] tablet:pt-44 gap-6">
+      <div class="hidden tablet:flex flex-col max-w-xl">
         {introduction && introduction.length > 0 && <SliceZone blocks={introduction} contrainProseWidth={false} />}
       </div>
     </div>
@@ -25,19 +25,19 @@ const { introduction, heroImage, textColor, backgroundColor = 'var(--color-pruss
         <ImageComponent
           src={buildSanityImageUrl(heroImage.url, { width: 900, height: 700 })}
           srcset={`${buildSanityImageUrl(heroImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(heroImage.url, { width: 900, height: 700 })} 900w`}
-          sizes="(max-width: 1280px) 40vw, 560px"
+          sizes="(max-width: 912px) 100vw, 50vw"
           alt={heroImage.alt}
           width={900}
           height={700}
           loading="eager"
           fadeIn
-          class="row-span-1 col-span-3 tablet:col-span-4 desktop:col-span-6 overflow-hidden aspect-[5/3.5] rounded-bl-[16px] rounded-br-[16px]"
+          class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-6 overflow-hidden aspect-[5/3] tablet:aspect-[5/3.5] mt-16 tablet:mt-0 rounded-[16px] tablet:rounded-t-none max-w-xl ml:auto tablet:max-w-none"
           imgClass="w-full h-full object-cover"
         />
       )
     }
-    <div class="row-span-1 col-span-6 tablet:hidden flex flex-col gap">
-      {introduction && introduction?.length > 0 && <SliceZone blocks={introduction} />}
+    <div class="row-span-1 col-span-6 tablet:hidden flex flex-col gap-4 mt-4 mb-4">
+      {introduction && introduction?.length > 0 && <SliceZone blocks={introduction} contrainProseWidth={false} />}
     </div>
     <slot />
   </div>

@@ -2,7 +2,7 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import { RoomBrowser } from '../components/rooms/RoomBrowser';
 import { getPage } from '../lib/sanity';
-import { getRooms } from '../lib/hostaway';
+import { getRooms } from '../lib/rooms';
 import PageHeader from '../components/PageHeader.astro';
 
 const [page, rooms] = await Promise.all([getPage('rooms-and-suites'), getRooms()]);

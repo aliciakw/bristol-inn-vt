@@ -20,13 +20,11 @@ vi.mock('@sanity/client', () => ({
 }));
 
 // Import after mocking so the module picks up the mock
-const { getHomepage, getPage, getPages, getClient } = await import('../../src/lib/sanity');
+const { getHomepage, getPage, getPages, getSanityRooms, getClient } = await import('../../src/lib/sanity');
 
 // Capture createClient args from the singleton initialisation (first call).
 getClient();
-const initialCreateClientArgs = mockCreateClient.mock.calls[0] as
-  | [Record<string, unknown>]
-  | undefined;
+const initialCreateClientArgs = mockCreateClient.mock.calls[0] as [Record<string, unknown>] | undefined;
 
 // ---------------------------------------------------------------------------
 // Setup
@@ -173,5 +171,31 @@ describe('getPages()', () => {
     mockFetch.mockRejectedValue(new Error('Sanity network error'));
 
     await expect(getPages()).rejects.toThrow('Sanity network error');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getSanityRooms()
+// ---------------------------------------------------------------------------
+
+describe('getSanityRooms()', () => {
+  it('calls fetch with a query targeting the room type', async () => {
+    mockFetch.mockResolvedValue([]);
+
+    await getSanityRooms();
+
+    expect(mockFetch).toHaveBeenCalledOnce();
+    const query: string = mockFetch.mock.calls[0][0];
+    expect(query).toContain('"room"');
+    expect(query).toContain('hostawayId');
+    expect(query).toContain('specialInstructions');
+  });
+
+  it('returns an empty array when Sanity returns null', async () => {
+    mockFetch.mockResolvedValue(null);
+
+    const result = await getSanityRooms();
+
+    expect(result).toEqual([]);
   });
 });

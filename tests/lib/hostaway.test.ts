@@ -31,7 +31,7 @@ function makeRawListing(
       url: string;
       sortOrder: number;
     }>;
-    listingAmenities: Array<{ id: number; amenityId: number }>;
+    listingAmenities: Array<{ id: number; amenityId: number; amenityName: string }>;
   }> = {},
 ) {
   return {
@@ -53,9 +53,8 @@ function makeRawListing(
       },
     ],
     listingAmenities: overrides.listingAmenities ?? [
-      { id: 100, amenityId: 3 }, // WiFi — known
-      { id: 101, amenityId: 2 }, // Internet — known
-      { id: 102, amenityId: 9999 }, // unknown — must be filtered out
+      { id: 100, amenityId: 3, amenityName: 'WiFi' },
+      { id: 101, amenityId: 2, amenityName: 'Internet' },
     ],
   };
 }
@@ -109,10 +108,9 @@ describe('getRooms()', () => {
 
     const rooms = await getRooms();
 
-    // amenityId 3 → 'WiFi', amenityId 2 → 'Internet', amenityId 9999 → filtered out
     expect(rooms[0]?.amenityNames).toContain('WiFi');
     expect(rooms[0]?.amenityNames).toContain('Internet');
-    expect(rooms[0]?.amenityNames).toHaveLength(2); // 9999 filtered
+    expect(rooms[0]?.amenityNames).toHaveLength(2);
   });
 
   it('maps listingImages to photos with url, caption, sortOrder', async () => {

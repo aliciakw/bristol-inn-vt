@@ -195,23 +195,28 @@ export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoadin
           />
           <FormCheckbox
             name="groundFloor"
-            label="Wheelchair Accessible"
+            label="Ground Floor Only"
             checked={groundFloor}
             onChange={(e) => {
               userChangedRef.current = true;
               setGroundFloor(e.target.checked);
             }}
             disabled={isLoading}
+            clarification={
+              <a href="/faq#accessibility" className="underline hover:opacity-70">
+                Accessibility Info
+              </a>
+            }
           />
         </div>
-        <div className="flex flex-1 justify-stretch gap-2 shrink-0 pb-0.5 max-w-[200px]">
+        <div className="flex flex-col md:flex-row md:items-start flex-1 justify-stretch gap-2 shrink-0 pb-0.5 max-w-[200px]">
           {!automatic && (
-            <Button size="default" type="submit" disabled={isLoading} bg="prussian-500" textColor="white" className="flex-1 hover:bg-prussian-700">
+            <Button size="default" type="submit" disabled={isLoading} bg="prussian-500" textColor="white" className="flex-1 hover:bg-prussian-700 flex-none">
               {isLoading ? 'Searching…' : 'Search'}
             </Button>
           )}
           {showResetButton && hasResults && (
-            <Button bg="khaki-200" onClick={handleClear} disabled={isLoading}>
+            <Button bg="khaki-200" onClick={handleClear} disabled={isLoading} className="flex-none">
               Reset
             </Button>
           )}

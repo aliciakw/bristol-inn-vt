@@ -43,6 +43,15 @@ export default defineConfig({
               ),
             S.divider(),
             S.listItem()
+              .title('Rooms')
+              .id('rooms')
+              .child(
+                S.documentList()
+                  .title('Rooms')
+                  .filter('_type == "room"')
+              ),
+            S.divider(),
+            S.listItem()
               .title('Settings')
               .id(SETTINGS_ID)
               .child(

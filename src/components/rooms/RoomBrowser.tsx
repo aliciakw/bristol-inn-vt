@@ -28,6 +28,17 @@ function getRoomUrls(roomId: number, lastSearch: SearchParams | null, pricePerNi
   };
 }
 
+function compareRoomsByFloor(a: RoomBrowserRoom, b: RoomBrowserRoom): number {
+  const floorA = a.floorNumber ?? Number.MAX_SAFE_INTEGER;
+  const floorB = b.floorNumber ?? Number.MAX_SAFE_INTEGER;
+
+  if (floorA !== floorB) {
+    return floorA - floorB;
+  }
+
+  return a.name.localeCompare(b.name);
+}
+
 interface RoomGridProps {
   title?: string;
   rooms: RoomBrowserRoom[];
@@ -90,6 +101,7 @@ function RoomSections({ rooms, availability, lastSearch }: { rooms: RoomBrowserR
 export function RoomBrowser({ rooms }: Props) {
   const [state, setState] = useState<SearchState>({ status: 'idle' });
   const [lastSearch, setLastSearch] = useState<SearchParams | null>(null);
+  const sortedRooms = rooms.slice().sort(compareRoomsByFloor);
 
   useEffect(() => {
     const sp = new URLSearchParams(window.location.search);
@@ -144,7 +156,7 @@ export function RoomBrowser({ rooms }: Props) {
   return (
     <div className="Grid">
       <div className="Grid__Row--full z-10 mb-24">
-        <div className="w-[66%]">
+        <div className="desktop:w-[66%]">
           <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} />
         </div>
         {state.status === 'error' && (
@@ -154,12 +166,12 @@ export function RoomBrowser({ rooms }: Props) {
         )}
       </div>
       <div className="Grid__Row--full">
-        {rooms.length === 0 ? (
+        {sortedRooms.length === 0 ? (
           <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
         ) : state.status === 'results' ? (
-          <RoomSections rooms={rooms} availability={state.availability} lastSearch={lastSearch} />
+          <RoomSections rooms={sortedRooms} availability={state.availability} lastSearch={lastSearch} />
         ) : (
-          <RoomGrid title={`Everything (${rooms.length})`} rooms={rooms} isLoading={isLoading} lastSearch={lastSearch} />
+          <RoomGrid title={`Everything (${sortedRooms.length})`} rooms={sortedRooms} isLoading={isLoading} lastSearch={lastSearch} />
         )}
       </div>
     </div>

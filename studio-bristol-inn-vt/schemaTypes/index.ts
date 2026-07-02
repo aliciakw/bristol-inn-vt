@@ -12,6 +12,7 @@ import {homepageType} from './homepage'
 import {linkType} from './link'
 import {metaType} from './meta'
 import {pageType} from './page'
+import {roomType} from './room'
 import {settingsType} from './settings'
 import {testimonialType} from './testimonial'
 
@@ -27,6 +28,7 @@ export const schemaTypes = [
   linkType,
   metaType,
   pageType,
+  roomType,
   roomSearchFormBlockType,
   settingsType,
   testimonialGalleryBlockType,
