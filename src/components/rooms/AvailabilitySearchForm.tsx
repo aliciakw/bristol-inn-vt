@@ -195,13 +195,18 @@ export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoadin
           />
           <FormCheckbox
             name="groundFloor"
-            label="Wheelchair Accessible"
+            label="Ground Floor Only"
             checked={groundFloor}
             onChange={(e) => {
               userChangedRef.current = true;
               setGroundFloor(e.target.checked);
             }}
             disabled={isLoading}
+            clarification={
+              <a href="/faq#accessibility" className="underline hover:opacity-70">
+                Accessibility Info
+              </a>
+            }
           />
         </div>
         <div className="flex flex-1 justify-stretch gap-2 shrink-0 pb-0.5 max-w-[200px]">
