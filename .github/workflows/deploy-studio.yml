@@ -11,11 +11,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version-file: '.nvmrc'
+          node-version: "24"
           cache: 'npm'
           cache-dependency-path: studio-bristol-inn-vt/package-lock.json
 
@@ -28,3 +28,5 @@ jobs:
         run: npm run deploy
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_STUDIO_DEPLOY_API_URL: ${{ secrets.SANITY_STUDIO_DEPLOY_API_URL }}
+          SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN: ${{ secrets.SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN }}
