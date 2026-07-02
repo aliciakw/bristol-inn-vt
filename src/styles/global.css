@@ -26,7 +26,7 @@
 
 @theme {
   --breakpoint-*: initial;
-  --breakpoint-tablet: 960px;
+  --breakpoint-tablet: 912px;
   --breakpoint-desktop: 1240px;
 
   /* Colors */
@@ -119,7 +119,7 @@
   font-size: 16px;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 912px) {
   :root {
     --grid-columns: 8;
     /* --grid-margin: 104px; */
