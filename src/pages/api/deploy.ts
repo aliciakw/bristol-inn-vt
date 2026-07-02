@@ -39,7 +39,7 @@ function jsonResponse(body: DeployResponse | { error: string }, status: number, 
 
 function getConfig() {
   if (!CLOUDFLARE_ACCOUNT_ID || !CLOUDFLARE_PAGES_PROJECT_NAME || !CLOUDFLARE_API_TOKEN) {
-    throw new Error('Cloudflare deploy API is not configured.');
+    throw new Error('Cloudflare deploy API is not configured!');
   }
 
   return {
