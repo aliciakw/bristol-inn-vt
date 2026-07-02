@@ -1,5 +1,5 @@
 import type { APIContext } from 'astro';
-import { findActiveDeployment, getFailureMessage, listPagesDeployments, retryPagesDeployment, type DeploymentSummary } from '../../lib/cloudflare/pages-deployments';
+import { createProductionDeployment, findActiveDeployment, getFailureMessage, listPagesDeployments, type DeploymentSummary } from '../../lib/cloudflare/pages-deployments';
 import { CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN, CLOUDFLARE_PAGES_PROJECT_NAME, DEPLOY_ALLOWED_ORIGINS, DEPLOY_TRIGGER_TOKEN } from 'astro:env/server';
 
 export const prerender = false;
@@ -67,14 +67,14 @@ async function getDeployStatus(includeFailureMessage: boolean): Promise<DeployRe
 
   if (activeDeployment) {
     return {
-      message: `A Cloudflare Pages deployment is already ${activeDeployment.status}.`,
+      message: `A production Cloudflare Pages deployment is already ${activeDeployment.status}.`,
       activeDeployment,
       latestDeployment,
     };
   }
 
   return {
-    message: latestDeployment ? `Latest Cloudflare Pages deployment is ${latestDeployment.status}.` : 'No Cloudflare Pages deployments were found.',
+    message: latestDeployment ? `Latest production Cloudflare Pages deployment is ${latestDeployment.status}.` : 'No production Cloudflare Pages deployments were found.',
     latestDeployment,
   };
 }
@@ -110,15 +110,11 @@ export async function POST({ request }: APIContext): Promise<Response> {
       return jsonResponse(status, 200, origin);
     }
 
-    if (!status.latestDeployment) {
-      return jsonResponse({ error: 'No previous deployment is available to retry.' }, 409, origin);
-    }
-
-    const triggeredDeployment = await retryPagesDeployment(getConfig(), status.latestDeployment.id);
+    const triggeredDeployment = await createProductionDeployment(getConfig());
 
     return jsonResponse(
       {
-        message: `Triggered Cloudflare Pages deployment ${triggeredDeployment.id}.`,
+        message: `Triggered production Cloudflare Pages deployment ${triggeredDeployment.id}.`,
         latestDeployment: status.latestDeployment,
         triggeredDeployment,
       },

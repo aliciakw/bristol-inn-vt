@@ -4,6 +4,7 @@ export type DeploymentSummary = {
   id: string;
   state: DeploymentState;
   status: string;
+  environment?: 'preview' | 'production';
   url?: string;
   createdAt?: string;
   modifiedAt?: string;
@@ -15,6 +16,7 @@ export type DeploymentSummary = {
 
 type CloudflarePagesDeployment = {
   id: string;
+  environment?: 'preview' | 'production';
   url?: string;
   created_on?: string;
   modified_on?: string;
@@ -84,6 +86,7 @@ function summarizeDeployment(deployment: CloudflarePagesDeployment): DeploymentS
     id: deployment.id,
     state: normalizeState(status),
     status,
+    environment: deployment.environment,
     url: deployment.url,
     createdAt: deployment.created_on,
     modifiedAt: deployment.modified_on,
@@ -101,13 +104,16 @@ function cloudflarePagesUrl(config: CloudflarePagesConfig, path = ''): string {
 }
 
 async function cloudflareRequest<T>(config: CloudflarePagesConfig, path: string, init: RequestInit = {}): Promise<T> {
+  const headers = new Headers(init.headers);
+  headers.set('Authorization', `Bearer ${config.apiToken}`);
+
+  if (init.body && !(init.body instanceof FormData) && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+
   const response = await fetch(cloudflarePagesUrl(config, path), {
     ...init,
-    headers: {
-      Authorization: `Bearer ${config.apiToken}`,
-      'Content-Type': 'application/json',
-      ...init.headers,
-    },
+    headers,
   });
 
   const body = (await response.json().catch(() => null)) as CloudflareResponse<T> | null;
@@ -120,7 +126,11 @@ async function cloudflareRequest<T>(config: CloudflarePagesConfig, path: string,
 }
 
 export async function listPagesDeployments(config: CloudflarePagesConfig): Promise<DeploymentSummary[]> {
-  const deployments = await cloudflareRequest<CloudflarePagesDeployment[]>(config, '/deployments?per_page=5');
+  const params = new URLSearchParams({
+    env: 'production',
+    per_page: '5',
+  });
+  const deployments = await cloudflareRequest<CloudflarePagesDeployment[]>(config, `/deployments?${params}`);
 
   return deployments.map(summarizeDeployment);
 }
@@ -129,8 +139,14 @@ export function findActiveDeployment(deployments: DeploymentSummary[]): Deployme
   return deployments.find((deployment) => deployment.state === 'active');
 }
 
-export async function retryPagesDeployment(config: CloudflarePagesConfig, deploymentId: string): Promise<DeploymentSummary> {
-  const deployment = await cloudflareRequest<CloudflarePagesDeployment>(config, `/deployments/${encodeURIComponent(deploymentId)}/retry`, { method: 'POST' });
+export async function createProductionDeployment(config: CloudflarePagesConfig): Promise<DeploymentSummary> {
+  const formData = new FormData();
+  formData.set('commit_dirty', 'false');
+
+  const deployment = await cloudflareRequest<CloudflarePagesDeployment>(config, '/deployments', {
+    body: formData,
+    method: 'POST',
+  });
 
   return summarizeDeployment(deployment);
 }
