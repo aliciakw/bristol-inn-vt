@@ -57,7 +57,11 @@ function toApiError(response: Response, body: CloudflareResponse<unknown> | null
 }
 
 function normalizeState(status: string | undefined): DeploymentState {
-  const normalized = status?.toLowerCase() ?? 'unknown';
+  const normalized = status?.toLowerCase();
+
+  if (!normalized || normalized === 'unknown') {
+    return 'unknown';
+  }
 
   if (normalized === 'success') {
     return 'success';

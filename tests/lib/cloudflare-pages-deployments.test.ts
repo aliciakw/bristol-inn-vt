@@ -55,6 +55,25 @@ describe('listPagesDeployments()', () => {
 
     expect(findActiveDeployment(deployments)?.id).toBe('production-active');
   });
+
+  it('does not treat missing latest_stage as an active deployment', async () => {
+    fetchMock.mockResolvedValue(
+      Response.json({
+        success: true,
+        result: [
+          {
+            id: 'production-without-stage',
+            environment: 'production',
+          },
+        ],
+      }),
+    );
+
+    const deployments = await listPagesDeployments(config);
+
+    expect(deployments[0]?.state).toBe('unknown');
+    expect(findActiveDeployment(deployments)).toBeUndefined();
+  });
 });
 
 describe('createProductionDeployment()', () => {

@@ -11,6 +11,8 @@ type DeployResponse = {
   triggeredDeployment?: DeploymentSummary;
 };
 
+let inFlightProductionDeployment: Promise<DeploymentSummary> | undefined;
+
 const allowedOrigins = DEPLOY_ALLOWED_ORIGINS.split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
@@ -53,6 +55,16 @@ function assertCanTrigger(request: Request): boolean {
   }
 
   return request.headers.get('Authorization') === `Bearer ${DEPLOY_TRIGGER_TOKEN}`;
+}
+
+async function createProductionDeploymentOnce(): Promise<DeploymentSummary> {
+  if (!inFlightProductionDeployment) {
+    inFlightProductionDeployment = createProductionDeployment(getConfig()).finally(() => {
+      inFlightProductionDeployment = undefined;
+    });
+  }
+
+  return inFlightProductionDeployment;
 }
 
 async function getDeployStatus(includeFailureMessage: boolean): Promise<DeployResponse> {
@@ -110,12 +122,12 @@ export async function POST({ request }: APIContext): Promise<Response> {
       return jsonResponse(status, 200, origin);
     }
 
-    const triggeredDeployment = await createProductionDeployment(getConfig());
+    const triggeredDeployment = await createProductionDeploymentOnce();
 
     return jsonResponse(
       {
         message: `Triggered production Cloudflare Pages deployment ${triggeredDeployment.id}.`,
-        latestDeployment: status.latestDeployment,
+        latestDeployment: triggeredDeployment,
         triggeredDeployment,
       },
       202,
