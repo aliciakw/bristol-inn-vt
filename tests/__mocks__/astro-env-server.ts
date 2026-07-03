@@ -18,5 +18,5 @@ export const GITHUB_DEPLOY_OWNER = 'test-owner';
 export const GITHUB_DEPLOY_REPO = 'test-repo';
 export const GITHUB_DEPLOY_WORKFLOW_ID = 'deploy-site.yml';
 export const GITHUB_DEPLOY_REF = 'main';
-export const DEPLOY_ALLOWED_ORIGINS = 'https://studio.example.com,http://localhost:3333';
+export const DEPLOY_ALLOWED_ORIGINS = 'https://studio.example.com/default/structure,http://localhost:3333/';
 export const DEPLOY_TRIGGER_TOKEN = 'test-deploy-trigger-token';

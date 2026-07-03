@@ -24,19 +24,37 @@ let lastWorkflowDispatch: { deployment: WorkflowRunSummary; expiresAt: number } 
 
 const DISPATCH_COOLDOWN_MS = 30_000;
 
-const allowedOrigins = DEPLOY_ALLOWED_ORIGINS.split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+function normalizeOrigin(origin: string): string | undefined {
+  const trimmedOrigin = origin.trim();
+
+  if (!trimmedOrigin) {
+    return undefined;
+  }
+
+  try {
+    return new URL(trimmedOrigin).origin;
+  } catch {
+    return trimmedOrigin.replace(/\/+$/, '');
+  }
+}
+
+const allowedOrigins = new Set(
+  DEPLOY_ALLOWED_ORIGINS.split(',')
+    .map(normalizeOrigin)
+    .filter((origin): origin is string => Boolean(origin)),
+);
 
 function corsHeaders(origin: string | null): HeadersInit {
-  if (!origin || !allowedOrigins.includes(origin)) {
+  const normalizedOrigin = origin ? normalizeOrigin(origin) : undefined;
+
+  if (!normalizedOrigin || !allowedOrigins.has(normalizedOrigin)) {
     return {};
   }
 
   return {
     'Access-Control-Allow-Headers': 'Authorization, Content-Type',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Origin': normalizedOrigin,
     Vary: 'Origin',
   };
 }
