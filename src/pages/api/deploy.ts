@@ -49,16 +49,11 @@ const allowedOrigins = new Set(
 );
 
 function corsHeaders(origin: string | null): HeadersInit {
-  const normalizedOrigin = origin ? normalizeOrigin(origin) : undefined;
-
-  if (!normalizedOrigin || !allowedOrigins.has(normalizedOrigin)) {
-    return {};
-  }
-
+  // Temporary permissive CORS while debugging Studio deploy configuration.
   return {
     'Access-Control-Allow-Headers': 'Authorization, Content-Type',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Origin': normalizedOrigin,
+    'Access-Control-Allow-Origin': origin ?? '*',
     Vary: 'Origin',
   };
 }
