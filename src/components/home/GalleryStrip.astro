@@ -14,7 +14,7 @@ const delayPerImage: Record<NonNullable<Props['speed']>, number> = {
   fast: 200,
 };
 // eslint-disable-next-line security/detect-object-injection
-const autoplayDelay = delayPerImage[speed] * images.length;
+const autoplayDelay = delayPerImage[speed];
 ---
 
 {
