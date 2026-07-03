@@ -189,6 +189,47 @@ PUBLIC_SENTRY_DSN
 PUBLIC_GA4_ID
 ```
 
+##### Creating `CLOUDFLARE_API_TOKEN`
+
+`CLOUDFLARE_API_TOKEN` is used only by GitHub Actions when `wrangler deploy`
+publishes the Cloudflare Worker. Create it as a **User API Token** from your
+Cloudflare profile, not as an account-only token.
+
+1. Open Cloudflare → My Profile → API Tokens:
+   <https://dash.cloudflare.com/profile/api-tokens>
+2. Select **Create Token**.
+3. Select **Create Custom Token**.
+4. Add these permissions:
+
+```
+User:
+- Memberships: Read
+- User Details: Read
+
+Account:
+- Account Settings: Read
+- Workers Scripts: Edit
+- Workers KV Storage: Edit
+```
+
+5. Scope the token to the production account:
+
+```
+Account Resources:
+- Include -> Alicia.willett@gmail.com's Account
+```
+
+6. Continue to summary, create the token, and copy it once.
+7. Save it in GitHub → repository Settings → Secrets and variables → Actions →
+   Secrets as:
+
+```
+CLOUDFLARE_API_TOKEN
+```
+
+Do not save this token as a Cloudflare Worker runtime variable. The deployed
+Worker does not need it; only the GitHub Actions deploy job does.
+
 #### Cloudflare Pages variables
 
 These belong on the **Astro site / Cloudflare Pages project**, not in the Sanity
