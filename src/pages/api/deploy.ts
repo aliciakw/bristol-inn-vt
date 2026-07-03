@@ -23,6 +23,10 @@ let inFlightWorkflowDispatch: Promise<WorkflowRunSummary> | undefined;
 let lastWorkflowDispatch: { deployment: WorkflowRunSummary; expiresAt: number } | undefined;
 
 const DISPATCH_COOLDOWN_MS = 30_000;
+// Temporary override while debugging GitHub Actions token permissions.
+const DEPLOY_WORKFLOW_OWNER = 'aliciakw';
+const DEPLOY_WORKFLOW_REPO = 'bristol-inn-vt';
+const DEPLOY_WORKFLOW_ID = 'deploy-site.yml';
 
 function normalizeOrigin(origin: string): string | undefined {
   const trimmedOrigin = origin.trim();
@@ -99,14 +103,17 @@ function logDeployRouteError(method: 'GET' | 'POST', id: string, error: unknown)
 }
 
 function getConfig() {
-  if (!GITHUB_DEPLOY_TOKEN || !GITHUB_DEPLOY_OWNER || !GITHUB_DEPLOY_REPO || !GITHUB_DEPLOY_WORKFLOW_ID || !GITHUB_DEPLOY_REF) {
+  if (!GITHUB_DEPLOY_TOKEN || !GITHUB_DEPLOY_REF) {
     throw new Error('GitHub deploy workflow API is not configured.');
   }
 
   return {
-    owner: GITHUB_DEPLOY_OWNER,
-    repo: GITHUB_DEPLOY_REPO,
-    workflowId: GITHUB_DEPLOY_WORKFLOW_ID,
+    // owner: GITHUB_DEPLOY_OWNER,
+    // repo: GITHUB_DEPLOY_REPO,
+    // workflowId: GITHUB_DEPLOY_WORKFLOW_ID,
+    owner: DEPLOY_WORKFLOW_OWNER,
+    repo: DEPLOY_WORKFLOW_REPO,
+    workflowId: DEPLOY_WORKFLOW_ID,
     ref: GITHUB_DEPLOY_REF,
     token: GITHUB_DEPLOY_TOKEN,
   };
