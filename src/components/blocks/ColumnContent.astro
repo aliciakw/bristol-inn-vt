@@ -1,0 +1,45 @@
+---
+import ButtonLink from '@components/ui/ButtonLink.astro';
+import SingleImageBlock from './SingleImageBlock.astro';
+import SliceZone from '../SliceZone.astro';
+import { type SanityBlock, type SanityImage, type SanityResolvedLink } from '../../lib/sanity';
+import { type ImageLayout } from '@components/ui/constants';
+
+interface ColumnItem {
+  _key?: string;
+  body?: SanityBlock[];
+  image?: SanityImage;
+  cta?: SanityResolvedLink;
+  imagePosition?: 'first' | 'last';
+}
+
+interface Props {
+  column?: ColumnItem | null;
+}
+
+const { column = null } = Astro.props;
+const image = column?.image;
+const hasImage = Boolean(image?.url);
+const hasBody = Boolean(column?.body?.length);
+const hasCta = Boolean(column?.cta?.href && column.cta?.label);
+const imageFirst = column?.imagePosition !== 'last';
+---
+
+{hasImage && imageFirst && <SingleImageBlock image={image} layout={image.layout as ImageLayout | undefined} caption={image.caption} rounded={image.rounded} />}
+{hasBody && <SliceZone blocks={column.body} contrainProseWidth={false} />}
+{
+  hasCta && (
+    <div class="flex justify-center">
+      <ButtonLink
+        bg="prussian-500"
+        textColor="white"
+        href={column.cta.href}
+        target={column.cta.openInNewTab ? '_blank' : undefined}
+        rel={column.cta.openInNewTab ? 'noopener noreferrer' : undefined}
+      >
+        {column.cta.label}
+      </ButtonLink>
+    </div>
+  )
+}
+{hasImage && !imageFirst && <SingleImageBlock image={image} layout={image.layout as ImageLayout | undefined} caption={image.caption} rounded={image.rounded} />}
