@@ -1,16 +1,15 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { APIContext } from 'astro';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const createProductionDeployment = vi.fn();
-const findActiveDeployment = vi.fn();
-const getFailureMessage = vi.fn();
-const listPagesDeployments = vi.fn();
+const dispatchDeployWorkflow = vi.fn();
+const findActiveWorkflowRun = vi.fn();
+const listDeployWorkflowRuns = vi.fn();
 
-vi.mock('../../../src/lib/cloudflare/pages-deployments', () => ({
-  createProductionDeployment,
-  findActiveDeployment,
-  getFailureMessage,
-  listPagesDeployments,
+vi.mock('../../../src/lib/github/workflow-dispatch', () => ({
+  GitHubActionsApiError: class GitHubActionsApiError extends Error {},
+  dispatchDeployWorkflow,
+  findActiveWorkflowRun,
+  listDeployWorkflowRuns,
 }));
 
 function authorizedRequest(): Request {
@@ -33,11 +32,10 @@ async function importDeployRoute() {
 beforeEach(() => {
   vi.resetModules();
   vi.clearAllMocks();
-  findActiveDeployment.mockReturnValue(undefined);
-  getFailureMessage.mockResolvedValue(undefined);
-  listPagesDeployments.mockResolvedValue([
+  findActiveWorkflowRun.mockReturnValue(undefined);
+  listDeployWorkflowRuns.mockResolvedValue([
     {
-      id: 'old-production-deployment',
+      id: 'old-workflow-run',
       state: 'success',
       status: 'success',
     },
@@ -45,13 +43,13 @@ beforeEach(() => {
 });
 
 describe('POST /api/deploy', () => {
-  it('returns the newly created deployment as the latest deployment', async () => {
+  it('returns the dispatched workflow as the latest deployment', async () => {
     const triggeredDeployment = {
-      id: 'new-production-deployment',
+      id: 'deploy-site.yml:123',
       state: 'active',
-      status: 'active',
+      status: 'queued',
     };
-    createProductionDeployment.mockResolvedValue(triggeredDeployment);
+    dispatchDeployWorkflow.mockResolvedValue(triggeredDeployment);
     const { POST } = await importDeployRoute();
 
     const response = await POST(contextWithRequest(authorizedRequest()));
@@ -62,11 +60,28 @@ describe('POST /api/deploy', () => {
     expect(body.latestDeployment).toEqual(triggeredDeployment);
   });
 
-  it('shares one create request across overlapping POST requests', async () => {
-    let resolveDeployment: (deployment: unknown) => void = () => {};
-    createProductionDeployment.mockReturnValue(
+  it('does not dispatch a workflow when one is already active', async () => {
+    const activeWorkflowRun = {
+      id: 'active-workflow-run',
+      state: 'active',
+      status: 'in_progress',
+    };
+    findActiveWorkflowRun.mockReturnValue(activeWorkflowRun);
+    const { POST } = await importDeployRoute();
+
+    const response = await POST(contextWithRequest(authorizedRequest()));
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(dispatchDeployWorkflow).not.toHaveBeenCalled();
+    expect(body.activeDeployment).toEqual(activeWorkflowRun);
+  });
+
+  it('shares one workflow dispatch across overlapping POST requests', async () => {
+    let resolveWorkflowRun: (deployment: unknown) => void = () => {};
+    dispatchDeployWorkflow.mockReturnValue(
       new Promise((resolve) => {
-        resolveDeployment = resolve;
+        resolveWorkflowRun = resolve;
       }),
     );
     const { POST } = await importDeployRoute();
@@ -74,22 +89,41 @@ describe('POST /api/deploy', () => {
     const firstResponse = POST(contextWithRequest(authorizedRequest()));
     const secondResponse = POST(contextWithRequest(authorizedRequest()));
 
-    resolveDeployment({
-      id: 'shared-production-deployment',
+    resolveWorkflowRun({
+      id: 'shared-workflow-dispatch',
       state: 'active',
-      status: 'active',
+      status: 'queued',
     });
 
     const [first, second] = await Promise.all([firstResponse, secondResponse]);
 
-    expect(createProductionDeployment).toHaveBeenCalledOnce();
+    expect(dispatchDeployWorkflow).toHaveBeenCalledOnce();
     expect(first.status).toBe(202);
     expect(second.status).toBe(202);
     await expect(first.json()).resolves.toMatchObject({
-      triggeredDeployment: { id: 'shared-production-deployment' },
+      triggeredDeployment: { id: 'shared-workflow-dispatch' },
     });
     await expect(second.json()).resolves.toMatchObject({
-      triggeredDeployment: { id: 'shared-production-deployment' },
+      triggeredDeployment: { id: 'shared-workflow-dispatch' },
+    });
+  });
+
+  it('reuses a recent workflow dispatch while GitHub is still listing the new run', async () => {
+    dispatchDeployWorkflow.mockResolvedValue({
+      id: 'recent-workflow-dispatch',
+      state: 'active',
+      status: 'queued',
+    });
+    const { POST } = await importDeployRoute();
+
+    const firstResponse = await POST(contextWithRequest(authorizedRequest()));
+    const secondResponse = await POST(contextWithRequest(authorizedRequest()));
+
+    expect(dispatchDeployWorkflow).toHaveBeenCalledOnce();
+    expect(firstResponse.status).toBe(202);
+    expect(secondResponse.status).toBe(202);
+    await expect(secondResponse.json()).resolves.toMatchObject({
+      triggeredDeployment: { id: 'recent-workflow-dispatch' },
     });
   });
 });

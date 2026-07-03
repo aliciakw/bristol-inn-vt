@@ -9,7 +9,7 @@ A proof-of-concept hospitality website built with Astro, TypeScript (strict mode
 - **Styling:** Tailwind CSS (mobile-first, 3 breakpoints)
 - **CMS:** Sanity
 - **Booking:** Hostaway API (Phase 2)
-- **Hosting:** Cloudflare Pages
+- **Hosting:** Cloudflare Workers
 - **Error Tracking:** Sentry (Phase 6)
 - **Analytics:** GA4 (Phase 6)
 
@@ -112,16 +112,82 @@ Prefix with **`PUBLIC_`** only if the variable needs to be accessible from clien
 
 Missing required variables will cause the build to fail with a clear error message.
 
-### Deployment to Cloudflare Pages
+### Deployment to Cloudflare Workers
 
 1. Push code to GitHub
-2. Connect GitHub repository to Cloudflare Pages
-3. Configure build settings:
-   - **Build command:** `npm run build`
-   - **Build output directory:** `dist`
-4. Add the Astro site variables in Cloudflare Pages → Settings → Variables and Secrets.
-5. Cloudflare will automatically build and deploy on push
-6. PR preview deployments auto-generate unique URLs
+2. The `.github/workflows/deploy-site.yml` workflow builds the Astro site and deploys it with Wrangler.
+3. Configure GitHub Actions secrets/variables for the workflow.
+4. Configure Cloudflare Worker variables/secrets for runtime values used by `/api/deploy`.
+5. Pushes to `main` deploy automatically; the Sanity Studio **Deploy** button dispatches the same workflow manually.
+
+#### Cloudflare Worker variables
+
+These belong on the deployed **Cloudflare Worker** because `/api/deploy` runs
+there. They do not belong in the Sanity Studio settings.
+
+Required for runtime data fetching:
+
+```
+HOSTAWAY_ACCESS_TOKEN=...
+SANITY_API_TOKEN=...
+```
+
+Required for the Sanity Studio **Deploy** button, because `/api/deploy` runs on
+the Worker and dispatches a GitHub Actions workflow:
+
+```
+GITHUB_DEPLOY_TOKEN=...
+GITHUB_DEPLOY_OWNER=aliciakw
+GITHUB_DEPLOY_REPO=bristol-inn-vt
+GITHUB_DEPLOY_WORKFLOW_ID=deploy-site.yml
+GITHUB_DEPLOY_REF=main
+DEPLOY_ALLOWED_ORIGINS=http://localhost:3333,https://bristol-inn-vt.sanity.studio,https://www.sanity.io
+DEPLOY_TRIGGER_TOKEN=...
+```
+
+Optional:
+
+```
+PUBLIC_SENTRY_DSN=...
+PUBLIC_GA4_ID=...
+SENTRY_AUTH_TOKEN=...
+```
+
+Use **Secret** for `HOSTAWAY_ACCESS_TOKEN`, `SANITY_API_TOKEN`,
+`GITHUB_DEPLOY_TOKEN`, `DEPLOY_TRIGGER_TOKEN`, and `SENTRY_AUTH_TOKEN`.
+Plain text is fine for `GITHUB_DEPLOY_OWNER`, `GITHUB_DEPLOY_REPO`,
+`GITHUB_DEPLOY_WORKFLOW_ID`, `GITHUB_DEPLOY_REF`,
+`DEPLOY_ALLOWED_ORIGINS`, `PUBLIC_SENTRY_DSN`, and `PUBLIC_GA4_ID`.
+
+`GITHUB_DEPLOY_TOKEN` can be a fine-grained GitHub token scoped to this
+repository with **Actions: Read and write** access. The route uses it to list
+deploy workflow runs and call `workflow_dispatch`.
+
+`DEPLOY_ALLOWED_ORIGINS` is a comma-separated list of exact browser origins
+allowed to call `/api/deploy`. Origins include only scheme, host, and optional
+port. Do not include paths or trailing slashes.
+
+#### GitHub Actions deploy workflow variables
+
+Configure these in GitHub → repository Settings → Secrets and variables → Actions.
+The `deploy-site.yml` workflow uses them while building and publishing the site.
+
+Secrets:
+
+```
+HOSTAWAY_ACCESS_TOKEN
+SANITY_API_TOKEN
+CLOUDFLARE_ACCOUNT_ID
+CLOUDFLARE_API_TOKEN
+SENTRY_AUTH_TOKEN
+```
+
+Variables:
+
+```
+PUBLIC_SENTRY_DSN
+PUBLIC_GA4_ID
+```
 
 #### Cloudflare Pages variables
 
@@ -196,14 +262,33 @@ npm run build
 rg "bristol-inn-vt.alicia-willett.workers.dev|SANITY_STUDIO_DEPLOY_API_URL is not configured" dist
 ```
 
-#### Some quirks about Cloudflare Pages
+Sanity Studio variables are build-time values. After changing them, redeploy the
+Studio and hard-refresh the browser. Seeing
+`SANITY_STUDIO_DEPLOY_API_URL is not configured` in the deployed Studio usually
+means the variable was not present when the Studio bundle was built.
 
-To host on Cloudflare, we must make use of Cloudflare Pages for static hosting, and Cloudflare Workers for server tasks, such as builds, and serverless api endpoints. These are technically separate environments and as such have different environment variables. We will need to ensure that both are correctly configured.
+`SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN` is bundled into browser JavaScript, so it
+is only a light guard for POST requests. Keep `GITHUB_DEPLOY_TOKEN`
+server-only in the Cloudflare Worker.
+
+To verify the Studio bundle picked up the URL locally:
+
+```bash
+cd studio-bristol-inn-vt
+npm run build
+rg "bristol-inn-vt.alicia-willett.workers.dev|SANITY_STUDIO_DEPLOY_API_URL is not configured" dist
+```
+
+#### Some quirks about Cloudflare Workers
+
+The live site is deployed as a Cloudflare Worker with static assets. GitHub
+Actions builds and deploys the Worker with Wrangler, while the deployed Worker
+holds runtime variables and secrets used by server routes such as `/api/deploy`.
 
 The distinction is:
 
-- Workers → Variables and Secrets = runtime only (what you've set)
-- Pages → Settings → Environment Variables = build time + runtime (what you need)
+- GitHub Actions secrets/variables = build and deploy-time values
+- Cloudflare Worker variables/secrets = runtime values
 
 ## Phase 1 Status
 

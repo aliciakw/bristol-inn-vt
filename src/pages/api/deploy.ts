@@ -1,24 +1,28 @@
 import type { APIContext } from 'astro';
+import { GitHubActionsApiError, dispatchDeployWorkflow, findActiveWorkflowRun, listDeployWorkflowRuns, type WorkflowRunSummary } from '../../lib/github/workflow-dispatch';
 import {
-  CloudflarePagesApiError,
-  createProductionDeployment,
-  findActiveDeployment,
-  getFailureMessage,
-  listPagesDeployments,
-  type DeploymentSummary,
-} from '../../lib/cloudflare/pages-deployments';
-import { CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN, CLOUDFLARE_PAGES_PROJECT_NAME, DEPLOY_ALLOWED_ORIGINS, DEPLOY_TRIGGER_TOKEN } from 'astro:env/server';
+  DEPLOY_ALLOWED_ORIGINS,
+  DEPLOY_TRIGGER_TOKEN,
+  GITHUB_DEPLOY_OWNER,
+  GITHUB_DEPLOY_REF,
+  GITHUB_DEPLOY_REPO,
+  GITHUB_DEPLOY_TOKEN,
+  GITHUB_DEPLOY_WORKFLOW_ID,
+} from 'astro:env/server';
 
 export const prerender = false;
 
 type DeployResponse = {
   message: string;
-  activeDeployment?: DeploymentSummary;
-  latestDeployment?: DeploymentSummary;
-  triggeredDeployment?: DeploymentSummary;
+  activeDeployment?: WorkflowRunSummary;
+  latestDeployment?: WorkflowRunSummary;
+  triggeredDeployment?: WorkflowRunSummary;
 };
 
-let inFlightProductionDeployment: Promise<DeploymentSummary> | undefined;
+let inFlightWorkflowDispatch: Promise<WorkflowRunSummary> | undefined;
+let lastWorkflowDispatch: { deployment: WorkflowRunSummary; expiresAt: number } | undefined;
+
+const DISPATCH_COOLDOWN_MS = 30_000;
 
 const allowedOrigins = DEPLOY_ALLOWED_ORIGINS.split(',')
   .map((origin) => origin.trim())
@@ -49,11 +53,10 @@ function requestId(request: Request): string {
 }
 
 function logDeployRouteError(method: 'GET' | 'POST', id: string, error: unknown): void {
-  if (error instanceof CloudflarePagesApiError) {
+  if (error instanceof GitHubActionsApiError) {
     console.error(
       JSON.stringify({
         errorMessage: error.message,
-        errors: error.errors,
         method,
         path: error.path,
         requestId: id,
@@ -78,14 +81,16 @@ function logDeployRouteError(method: 'GET' | 'POST', id: string, error: unknown)
 }
 
 function getConfig() {
-  if (!CLOUDFLARE_ACCOUNT_ID || !CLOUDFLARE_PAGES_PROJECT_NAME || !CLOUDFLARE_API_TOKEN) {
-    throw new Error('Cloudflare deploy API is not configured!');
+  if (!GITHUB_DEPLOY_TOKEN || !GITHUB_DEPLOY_OWNER || !GITHUB_DEPLOY_REPO || !GITHUB_DEPLOY_WORKFLOW_ID || !GITHUB_DEPLOY_REF) {
+    throw new Error('GitHub deploy workflow API is not configured.');
   }
 
   return {
-    accountId: CLOUDFLARE_ACCOUNT_ID,
-    projectName: CLOUDFLARE_PAGES_PROJECT_NAME,
-    apiToken: CLOUDFLARE_API_TOKEN,
+    owner: GITHUB_DEPLOY_OWNER,
+    repo: GITHUB_DEPLOY_REPO,
+    workflowId: GITHUB_DEPLOY_WORKFLOW_ID,
+    ref: GITHUB_DEPLOY_REF,
+    token: GITHUB_DEPLOY_TOKEN,
   };
 }
 
@@ -97,36 +102,43 @@ function assertCanTrigger(request: Request): boolean {
   return request.headers.get('Authorization') === `Bearer ${DEPLOY_TRIGGER_TOKEN}`;
 }
 
-async function createProductionDeploymentOnce(): Promise<DeploymentSummary> {
-  if (!inFlightProductionDeployment) {
-    inFlightProductionDeployment = createProductionDeployment(getConfig()).finally(() => {
-      inFlightProductionDeployment = undefined;
-    });
+async function dispatchDeployWorkflowOnce(): Promise<WorkflowRunSummary> {
+  if (lastWorkflowDispatch && lastWorkflowDispatch.expiresAt > Date.now()) {
+    return lastWorkflowDispatch.deployment;
   }
 
-  return inFlightProductionDeployment;
+  if (!inFlightWorkflowDispatch) {
+    inFlightWorkflowDispatch = dispatchDeployWorkflow(getConfig())
+      .then((deployment) => {
+        lastWorkflowDispatch = {
+          deployment,
+          expiresAt: Date.now() + DISPATCH_COOLDOWN_MS,
+        };
+        return deployment;
+      })
+      .finally(() => {
+        inFlightWorkflowDispatch = undefined;
+      });
+  }
+
+  return inFlightWorkflowDispatch;
 }
 
-async function getDeployStatus(includeFailureMessage: boolean): Promise<DeployResponse> {
-  const config = getConfig();
-  const deployments = await listPagesDeployments(config);
-  const activeDeployment = findActiveDeployment(deployments);
-  const latestDeployment = deployments[0];
-
-  if (includeFailureMessage && latestDeployment?.state === 'failure') {
-    latestDeployment.failureMessage = await getFailureMessage(config, latestDeployment.id).catch(() => undefined);
-  }
+async function getDeployStatus(): Promise<DeployResponse> {
+  const runs = await listDeployWorkflowRuns(getConfig());
+  const activeDeployment = findActiveWorkflowRun(runs);
+  const latestDeployment = runs[0];
 
   if (activeDeployment) {
     return {
-      message: `A production Cloudflare Pages deployment is already ${activeDeployment.status}.`,
+      message: `A deploy workflow is already ${activeDeployment.status}.`,
       activeDeployment,
       latestDeployment,
     };
   }
 
   return {
-    message: latestDeployment ? `Latest production Cloudflare Pages deployment is ${latestDeployment.status}.` : 'No production Cloudflare Pages deployments were found.',
+    message: latestDeployment ? `Latest deploy workflow run is ${latestDeployment.status}.` : 'No deploy workflow runs were found.',
     latestDeployment,
   };
 }
@@ -143,7 +155,7 @@ export async function GET({ request }: APIContext): Promise<Response> {
   const id = requestId(request);
 
   try {
-    return jsonResponse(await getDeployStatus(true), 200, origin);
+    return jsonResponse(await getDeployStatus(), 200, origin);
   } catch (error) {
     logDeployRouteError('GET', id, error);
     return jsonResponse(
@@ -165,17 +177,17 @@ export async function POST({ request }: APIContext): Promise<Response> {
   }
 
   try {
-    const status = await getDeployStatus(false);
+    const status = await getDeployStatus();
 
     if (status.activeDeployment) {
       return jsonResponse(status, 200, origin);
     }
 
-    const triggeredDeployment = await createProductionDeploymentOnce();
+    const triggeredDeployment = await dispatchDeployWorkflowOnce();
 
     return jsonResponse(
       {
-        message: `Triggered production Cloudflare Pages deployment ${triggeredDeployment.id}.`,
+        message: `Triggered deploy workflow ${triggeredDeployment.id}. Give GitHub a few seconds to list the new run before triggering again.`,
         latestDeployment: triggeredDeployment,
         triggeredDeployment,
       },

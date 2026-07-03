@@ -13,8 +13,10 @@
 
 export const HOSTAWAY_ACCESS_TOKEN = 'test-hostaway-token';
 export const SANITY_API_TOKEN = 'test-sanity-token';
-export const CLOUDFLARE_ACCOUNT_ID = 'test-cloudflare-account';
-export const CLOUDFLARE_PAGES_PROJECT_NAME = 'test-pages-project';
-export const CLOUDFLARE_API_TOKEN = 'test-cloudflare-token';
+export const GITHUB_DEPLOY_TOKEN = 'test-github-token';
+export const GITHUB_DEPLOY_OWNER = 'test-owner';
+export const GITHUB_DEPLOY_REPO = 'test-repo';
+export const GITHUB_DEPLOY_WORKFLOW_ID = 'deploy-site.yml';
+export const GITHUB_DEPLOY_REF = 'main';
 export const DEPLOY_ALLOWED_ORIGINS = 'https://studio.example.com,http://localhost:3333';
 export const DEPLOY_TRIGGER_TOKEN = 'test-deploy-trigger-token';
