@@ -20,6 +20,7 @@
  *   DEPLOY_TRIGGER_TOKEN          — Optional bearer token for POST /api/deploy
  *
  * Public vars (safe to expose in client JS):
+ *   PUBLIC_SITE_URL   — Canonical production origin for sitemap, robots.txt, and canonical URLs
  *   PUBLIC_SENTRY_DSN — Sentry DSN for browser error reporting (optional)
  *   PUBLIC_GA4_ID     — Google Analytics 4 measurement ID (optional)
  *

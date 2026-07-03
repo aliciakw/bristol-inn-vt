@@ -6,10 +6,51 @@ import sentry from '@sentry/astro';
 
 import react from '@astrojs/react';
 
+import sitemap from '@astrojs/sitemap';
+
+const site = process.env.PUBLIC_SITE_URL ?? 'https://www.bristolinnvt.com';
+/**
+ * @param {string} path
+ */
+const canonicalUrl = (path) => new URL(path, site).href;
+
+const legacyRedirects = {
+  '/sitemap.xml': canonicalUrl('/sitemap-index.xml'),
+  '/sitemap_index.xml': canonicalUrl('/sitemap-index.xml'),
+  '/page-sitemap.xml': canonicalUrl('/sitemap-index.xml'),
+  '/contact-us': canonicalUrl('/contact/'),
+  '/directions-and-location': canonicalUrl('/contact/'),
+  '/guest-parking': canonicalUrl('/faq#parking'),
+  '/reservation-and-cancellation-policy': canonicalUrl('/faq#cancellations'),
+  '/pet-policy': canonicalUrl('/faq#pet-policy'),
+  '/bristol-suites-room-rates': canonicalUrl('/rooms-and-suites/'),
+  '/bristol-suites-special-offers': canonicalUrl('/rooms-and-suites/'),
+  '/about-tom-and-carol-wells-proprietors': canonicalUrl('/about/'),
+  '/the-haymarket-square-suite': canonicalUrl('/rooms/403814/'),
+  '/main-street-suite': canonicalUrl('/rooms/403815/'),
+  '/the-pocock-suite': canonicalUrl('/rooms/403827/'),
+  '/south-mountain-mini-suite': canonicalUrl('/rooms/403828/'),
+  '/the-deerleap-suite': canonicalUrl('/rooms/403829/'),
+  '/the-bartlett-falls-suite': canonicalUrl('/rooms/403866/'),
+  '/the-rockydale-room': canonicalUrl('/rooms/403873/'),
+  '/elementor-835': canonicalUrl('/'),
+  '/laundry-room': canonicalUrl('/faq/'),
+  '/links-to-area-attractions': canonicalUrl('/about/'),
+  '/what-bristol-has-to-offer': canonicalUrl('/about/'),
+};
+
 // https://astro.build/config
 export default defineConfig({
+  site,
+  redirects: legacyRedirects,
   env: {
     schema: {
+      PUBLIC_SITE_URL: envField.string({
+        context: 'client',
+        access: 'public',
+        optional: true,
+        default: site,
+      }),
       PUBLIC_SENTRY_DSN: envField.string({
         context: 'client',
         access: 'public',
@@ -112,5 +153,8 @@ export default defineConfig({
       enabled: { client: true, server: false },
     }),
     react(),
+    sitemap({
+      filter: (page) => !page.endsWith('/rooms/'),
+    }),
   ],
 });

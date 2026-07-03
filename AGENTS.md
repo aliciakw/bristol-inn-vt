@@ -26,7 +26,8 @@ Styling
 Integrations
 
 - Hostaway is used for booking and room browsing
-- Prismic is the CMS
+- Sanity is the CMS
+- Cloudflare Workers is used to render static site
 
 Special instructions
 
