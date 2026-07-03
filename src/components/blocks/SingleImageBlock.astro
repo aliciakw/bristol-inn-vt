@@ -24,30 +24,42 @@ const imgHeight = imgWidth / ASPECT_RATIOS[layout];
 
 const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
 
-const figureLayoutClasses: Record<ImageLayout, string> = {
-  fullbleed: 'aspect-[5/3] overflow-hidden',
-  default: 'aspect-[5/3] overflow-hidden',
-  square: 'aspect-square overflow-hidden',
-  narrow: 'max-w-[min(100%,520px)] mx-auto aspect-[5/3] overflow-hidden',
+const figureLayoutClasses: Partial<Record<ImageLayout, string>> = {
+  narrow: 'max-w-[min(100%,520px)] mx-auto',
+};
+const frameLayoutClasses: Record<ImageLayout, string> = {
+  fullbleed: 'aspect-[5/3]',
+  default: 'aspect-[5/3]',
+  square: 'aspect-square',
+  narrow: 'aspect-[5/3]',
 };
 // eslint-disable-next-line security/detect-object-injection
 const figureLayoutClass = figureLayoutClasses[layout];
-const imageClass = ['w-full', layout !== 'default' && 'h-full object-cover', rounded && 'rounded-xl'].filter(Boolean).join(' ');
+// eslint-disable-next-line security/detect-object-injection
+const frameLayoutClass = frameLayoutClasses[layout];
+const figureClass = [figureLayoutClass, layout].filter(Boolean).join(' ');
+const frameClass = [frameLayoutClass, 'overflow-hidden', rounded && 'rounded-xl'].filter(Boolean).join(' ');
+const imageClass = 'h-full w-full object-cover';
+const imageSizes = layout === 'fullbleed' ? '100vw' : '(min-width: 1240px) 60vw, 100vw';
 ---
 
 {
   url && (
-    <figure class:list={[figureLayoutClass, layout]} style={wrapperStyle || undefined}>
-      <ImageComponent
-        src={buildSanityImageUrl(url, { width: imgWidth, height: imgHeight })}
-        srcset={`${buildSanityImageUrl(url, { width: imgWidth / 2, height: imgHeight / 2 })} ${imgWidth / 2}w, ${buildSanityImageUrl(url, { width: imgWidth, height: imgHeight })} ${imgWidth}w`}
-        alt={(image?.alt ?? '') as string}
-        width={imgWidth}
-        height={imgHeight}
-        loading="lazy"
-        fadeIn
-        imgClass={imageClass}
-      />
+    <figure class={figureClass} style={wrapperStyle || undefined}>
+      <div class={frameClass}>
+        <ImageComponent
+          src={buildSanityImageUrl(url, { width: imgWidth, height: imgHeight })}
+          srcset={`${buildSanityImageUrl(url, { width: imgWidth / 2, height: imgHeight / 2 })} ${imgWidth / 2}w, ${buildSanityImageUrl(url, { width: imgWidth, height: imgHeight })} ${imgWidth}w`}
+          sizes={imageSizes}
+          alt={(image?.alt ?? '') as string}
+          width={imgWidth}
+          height={imgHeight}
+          loading="lazy"
+          fadeIn
+          class={imageClass}
+          imgClass={imageClass}
+        />
+      </div>
       {caption && (
         <figcaption class="mt-2">
           <TextStyle variant="caption">{caption}</TextStyle>

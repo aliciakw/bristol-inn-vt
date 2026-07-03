@@ -23,6 +23,8 @@ type CtaFigure = Parameters<typeof SingleImageBlock>[0]['image'] & {
 
 const { blocks, contrainProseWidth, wrapStandaloneBlocks = false } = Astro.props;
 const portableTextGapClass = 'flex flex-col gap-4';
+const getImageBlockContentClass = (image?: { layout?: string }) =>
+  image?.layout === 'fullbleed' ? 'PageBuilder__Content PageBuilder__Content--fullbleed' : 'PageBuilder__Content';
 ---
 
 {
@@ -45,7 +47,7 @@ const portableTextGapClass = 'flex flex-col gap-4';
       return wrapStandaloneBlocks ? (
         <section class="Section">
           <div class="Section__inner">
-            <div class="PageBuilder__Content">{content}</div>
+            <div class={getImageBlockContentClass(image)}>{content}</div>
           </div>
         </section>
       ) : (
@@ -59,7 +61,7 @@ const portableTextGapClass = 'flex flex-col gap-4';
       return wrapStandaloneBlocks ? (
         <section class="Section">
           <div class="Section__inner">
-            <div class="PageBuilder__Content">{content}</div>
+            <div class={getImageBlockContentClass(image)}>{content}</div>
           </div>
         </section>
       ) : (
@@ -193,15 +195,27 @@ const portableTextGapClass = 'flex flex-col gap-4';
     grid-column: 1 / -1;
   }
 
+  .PageBuilder__Content--fullbleed {
+    grid-column: 1 / -1;
+  }
+
   @media (min-width: 960px) {
     .PageBuilder__Content {
       grid-column: 2 / span 6;
+    }
+
+    .PageBuilder__Content--fullbleed {
+      grid-column: 1 / -1;
     }
   }
 
   @media (min-width: 1240px) {
     .PageBuilder__Content {
       grid-column: 4 / span 6;
+    }
+
+    .PageBuilder__Content--fullbleed {
+      grid-column: 1 / -1;
     }
   }
 </style>
