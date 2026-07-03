@@ -6,10 +6,21 @@ import sentry from '@sentry/astro';
 
 import react from '@astrojs/react';
 
+import sitemap from '@astrojs/sitemap';
+
+const site = process.env.PUBLIC_SITE_URL ?? 'https://www.bristolinnvt.com';
+
 // https://astro.build/config
 export default defineConfig({
+  site,
   env: {
     schema: {
+      PUBLIC_SITE_URL: envField.string({
+        context: 'client',
+        access: 'public',
+        optional: true,
+        default: site,
+      }),
       PUBLIC_SENTRY_DSN: envField.string({
         context: 'client',
         access: 'public',
@@ -106,5 +117,8 @@ export default defineConfig({
       enabled: { client: true, server: false },
     }),
     react(),
+    sitemap({
+      filter: (page) => !page.endsWith('/rooms/'),
+    }),
   ],
 });

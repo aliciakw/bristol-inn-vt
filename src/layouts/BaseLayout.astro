@@ -11,6 +11,7 @@ import fontBold from '../assets/fonts/DavidLibre-Bold.ttf';
 interface Props {
   bodyClass?: string;
   backgroundColor?: 'sand-050' | 'white' | 'sand-100' | 'forest-400';
+  canonicalUrl?: string;
   description?: string; // plain-string fallback for non-CMS pages
   mainClass?: string;
   meta?: SanityMeta; // Sanity-backed meta for CMS pages
@@ -19,7 +20,17 @@ interface Props {
   title: string;
 }
 
-const { title, description, meta: pageMeta, backgroundColor = 'white', textColor = 'ink-900', mainClass = '', navigationVariant = 'transparent', bodyClass = '' } = Astro.props;
+const {
+  title,
+  description,
+  meta: pageMeta,
+  backgroundColor = 'white',
+  textColor = 'ink-900',
+  mainClass = '',
+  navigationVariant = 'transparent',
+  bodyClass = '',
+  canonicalUrl: canonicalOverride,
+} = Astro.props;
 
 const settings = await getSettings();
 const siteMeta = settings?.meta;
@@ -27,6 +38,8 @@ const siteMeta = settings?.meta;
 const resolvedTitle = pageMeta?.ogTitle ?? title;
 const resolvedDescription = pageMeta?.ogDescription ?? description ?? siteMeta?.ogDescription;
 const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
+const siteUrl = Astro.site ?? new URL('https://www.bristolsuites.com');
+const canonicalUrl = new URL(canonicalOverride ?? Astro.url.pathname, siteUrl).href;
 ---
 
 <!doctype html>
@@ -39,11 +52,13 @@ const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
     <link rel="preload" as="font" type="font/ttf" href={fontBold} crossorigin />
 
     <title>{resolvedTitle}</title>
+    <link rel="canonical" href={canonicalUrl} />
     {resolvedDescription && <meta name="description" content={resolvedDescription} />}
 
     <!-- Open Graph -->
     <meta property="og:title" content={resolvedTitle} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
     {resolvedDescription && <meta property="og:description" content={resolvedDescription} />}
     {resolvedOgImage && <meta property="og:image" content={resolvedOgImage} />}
 
