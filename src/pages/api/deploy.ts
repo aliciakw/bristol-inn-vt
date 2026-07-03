@@ -1,13 +1,13 @@
 import type { APIContext } from 'astro';
 import { GitHubActionsApiError, dispatchDeployWorkflow, findActiveWorkflowRun, listDeployWorkflowRuns, type WorkflowRunSummary } from '../../lib/github/workflow-dispatch';
 import {
-  DEPLOY_ALLOWED_ORIGINS,
+  // DEPLOY_ALLOWED_ORIGINS,
   DEPLOY_TRIGGER_TOKEN,
-  GITHUB_DEPLOY_OWNER,
-  GITHUB_DEPLOY_REF,
-  GITHUB_DEPLOY_REPO,
+  // GITHUB_DEPLOY_OWNER,
+  // GITHUB_DEPLOY_REF,
+  // GITHUB_DEPLOY_REPO,
   GITHUB_DEPLOY_TOKEN,
-  GITHUB_DEPLOY_WORKFLOW_ID,
+  // GITHUB_DEPLOY_WORKFLOW_ID,
 } from 'astro:env/server';
 
 export const prerender = false;
@@ -27,26 +27,27 @@ const DISPATCH_COOLDOWN_MS = 30_000;
 const DEPLOY_WORKFLOW_OWNER = 'aliciakw';
 const DEPLOY_WORKFLOW_REPO = 'bristol-inn-vt';
 const DEPLOY_WORKFLOW_ID = 'deploy-site.yml';
+const DEPLOY_REF = 'main';
 
-function normalizeOrigin(origin: string): string | undefined {
-  const trimmedOrigin = origin.trim();
+// function normalizeOrigin(origin: string): string | undefined {
+//   const trimmedOrigin = origin.trim();
 
-  if (!trimmedOrigin) {
-    return undefined;
-  }
+//   if (!trimmedOrigin) {
+//     return undefined;
+//   }
 
-  try {
-    return new URL(trimmedOrigin).origin;
-  } catch {
-    return trimmedOrigin.replace(/\/+$/, '');
-  }
-}
+//   try {
+//     return new URL(trimmedOrigin).origin;
+//   } catch {
+//     return trimmedOrigin.replace(/\/+$/, '');
+//   }
+// }
 
-const allowedOrigins = new Set(
-  DEPLOY_ALLOWED_ORIGINS.split(',')
-    .map(normalizeOrigin)
-    .filter((origin): origin is string => Boolean(origin)),
-);
+// const allowedOrigins = new Set(
+//   DEPLOY_ALLOWED_ORIGINS.split(',')
+//     .map(normalizeOrigin)
+//     .filter((origin): origin is string => Boolean(origin)),
+// );
 
 function corsHeaders(origin: string | null): HeadersInit {
   // Temporary permissive CORS while debugging Studio deploy configuration.
@@ -77,6 +78,7 @@ function logDeployRouteError(method: 'GET' | 'POST', id: string, error: unknown)
         method,
         path: error.path,
         requestId: id,
+        responseBody: error.responseBody?.slice(0, 1_000),
         route: '/api/deploy',
         source: 'deploy-route',
         status: error.status,
@@ -98,7 +100,7 @@ function logDeployRouteError(method: 'GET' | 'POST', id: string, error: unknown)
 }
 
 function getConfig() {
-  if (!GITHUB_DEPLOY_TOKEN || !GITHUB_DEPLOY_REF) {
+  if (!GITHUB_DEPLOY_TOKEN) {
     throw new Error('GitHub deploy workflow API is not configured.');
   }
 
@@ -109,7 +111,7 @@ function getConfig() {
     owner: DEPLOY_WORKFLOW_OWNER,
     repo: DEPLOY_WORKFLOW_REPO,
     workflowId: DEPLOY_WORKFLOW_ID,
-    ref: GITHUB_DEPLOY_REF,
+    ref: DEPLOY_REF,
     token: GITHUB_DEPLOY_TOKEN,
   };
 }

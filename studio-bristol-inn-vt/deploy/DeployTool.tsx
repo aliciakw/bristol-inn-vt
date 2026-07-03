@@ -129,8 +129,10 @@ export function DeployTool() {
             method === 'POST' && deployToken
               ? {
                   Authorization: `Bearer ${deployToken}`,
+                  'Content-Type': 'application/json',
                 }
               : undefined,
+          body: method === 'POST' ? '{}' : undefined,
         })
         const body = (await result.json()) as DeployResponse
 

@@ -43,6 +43,7 @@ export class GitHubActionsApiError extends Error {
     message: string,
     readonly status: number,
     readonly path: string,
+    readonly responseBody?: string,
   ) {
     super(message);
     this.name = 'GitHubActionsApiError';
@@ -60,14 +61,23 @@ async function githubRequest<T>(config: GitHubWorkflowConfig, path: string, init
       Accept: 'application/vnd.github+json',
       Authorization: `Bearer ${config.token}`,
       'Content-Type': 'application/json',
+      'User-Agent': 'bristol-inn-vt-deploy-tool',
       'X-GitHub-Api-Version': '2022-11-28',
       ...init.headers,
     },
   });
 
   if (!response.ok) {
-    const body = (await response.json().catch(() => null)) as { message?: string } | null;
-    throw new GitHubActionsApiError(body?.message || `GitHub Actions API request failed with status ${response.status}`, response.status, path);
+    const responseBody = await response.text().catch(() => '');
+    let message: string | undefined;
+
+    try {
+      message = (JSON.parse(responseBody) as { message?: string }).message;
+    } catch {
+      message = undefined;
+    }
+
+    throw new GitHubActionsApiError(message || `GitHub Actions API request failed with status ${response.status}`, response.status, path, responseBody);
   }
 
   if (response.status === 204) {

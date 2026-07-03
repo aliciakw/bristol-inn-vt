@@ -37,6 +37,7 @@ describe('listDeployWorkflowRuns()', () => {
     expect(new URL(url).searchParams.get('branch')).toBe('main');
     expect(new URL(url).searchParams.get('per_page')).toBe('10');
     expect(new Headers(init.headers).get('Authorization')).toBe('Bearer github-token');
+    expect(new Headers(init.headers).get('User-Agent')).toBe('bristol-inn-vt-deploy-tool');
   });
 
   it('maps active and completed workflow runs for Studio display', async () => {
