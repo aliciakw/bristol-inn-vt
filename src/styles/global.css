@@ -178,7 +178,7 @@ html {
   grid-template-columns: repeat(var(--grid-columns), 1fr);
   max-width: var(--inner-max-width);
   margin: 0 auto;
-  gap: var(--grid-columns);
+  gap: var(--grid-gutter);
 }
 
 .Section__inner {

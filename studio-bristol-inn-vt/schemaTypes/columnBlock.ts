@@ -17,6 +17,7 @@ type ColumnItem = {
     caption?: string
     layout?: string
   }
+  imagePosition?: 'first' | 'last'
 }
 
 type ColumnBlockPreviewSelection = {
@@ -78,6 +79,21 @@ const prepareColumnBlockPreview = (
 }
 
 const columnItemFields = [
+  defineField({
+    name: 'imagePosition',
+    title: 'Image position',
+    type: 'string',
+    description: 'Choose whether this column image appears before or after the text and CTA.',
+    initialValue: 'first',
+    options: {
+      list: [
+        {title: 'Image first', value: 'first'},
+        {title: 'Image last', value: 'last'},
+      ],
+      layout: 'radio',
+      direction: 'horizontal',
+    },
+  }),
   defineField({
     name: 'body',
     title: 'Body',
