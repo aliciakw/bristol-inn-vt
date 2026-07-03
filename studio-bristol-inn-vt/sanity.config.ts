@@ -2,6 +2,8 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {colorInput} from '@sanity/color-input'
+import {media} from 'sanity-plugin-media'
+
 import {schemaTypes} from './schemaTypes'
 import {DeployTool} from './deploy/DeployTool'
 import {MobilePagePreviewPane, PagePreviewPane} from './components/PagePreviewPane'
@@ -81,6 +83,7 @@ export default defineConfig({
           ]),
     }),
     visionTool(),
+    media(),
     colorInput(),
   ],
 
