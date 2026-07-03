@@ -6,11 +6,12 @@ type PreviewDocument = {
 };
 
 type PreviewUrlOptions = {
+  refreshKey?: string;
   secret?: string;
   siteUrl?: string;
 };
 
-const DEFAULT_SITE_URL = 'http://127.0.0.1:4321';
+const DEFAULT_SITE_URL = 'https://bristol-inn-vt.sanity.studio/';
 
 function trimTrailingSlash(value: string): string {
   return value.replace(/\/+$/, '');
@@ -41,5 +42,10 @@ export function buildPreviewUrl(document: PreviewDocument, options: PreviewUrlOp
 
   const url = new URL(path, trimTrailingSlash(options.siteUrl ?? DEFAULT_SITE_URL));
   url.searchParams.set('secret', options.secret);
+
+  if (options.refreshKey) {
+    url.searchParams.set('studioPreview', options.refreshKey);
+  }
+
   return url.toString();
 }

@@ -4,6 +4,8 @@ import {buildPreviewUrl} from '../lib/previewUrl'
 type PreviewPaneProps = {
   document?: {
     displayed?: {
+      _rev?: string
+      _updatedAt?: string
       _type?: string
       slug?: {
         current?: string
@@ -49,7 +51,10 @@ type ScaledPreviewPaneProps = PreviewPaneProps & {
 function ScaledPreviewPane(props: ScaledPreviewPaneProps) {
   const shellRef = useRef<HTMLDivElement | null>(null)
   const [paneSize, setPaneSize] = useState<PaneSize>({height: 0, width: 0})
+  const displayedDocument = props.document?.displayed ?? {}
+  const refreshKey = displayedDocument._rev ?? displayedDocument._updatedAt
   const previewUrl = buildPreviewUrl(props.document?.displayed ?? {}, {
+    refreshKey,
     siteUrl,
     secret: previewSecret,
   })

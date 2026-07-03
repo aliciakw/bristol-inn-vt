@@ -26,7 +26,17 @@ describe('buildPreviewUrl()', () => {
     );
   });
 
+  it('adds an optional refresh key for remounting iframe previews after saves', () => {
+    expect(buildPreviewUrl({ _type: 'page', slug: { current: 'about' } }, { refreshKey: 'draft-revision', siteUrl: 'https://www.example.com/', secret: 'shared-secret' })).toBe(
+      'https://www.example.com/preview/about?secret=shared-secret&studioPreview=draft-revision',
+    );
+  });
+
   it('returns null without a secret', () => {
     expect(buildPreviewUrl({ _type: 'homepage' }, { siteUrl: 'https://www.example.com' })).toBeNull();
+  });
+
+  it('falls back to the deployed Studio URL without a site URL override', () => {
+    expect(buildPreviewUrl({ _type: 'homepage' }, { secret: 'shared-secret' })).toBe('https://bristol-inn-vt.sanity.studio/preview?secret=shared-secret');
   });
 });
