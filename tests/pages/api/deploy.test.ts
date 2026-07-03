@@ -127,3 +127,33 @@ describe('POST /api/deploy', () => {
     });
   });
 });
+
+describe('CORS /api/deploy', () => {
+  it('allows origins when configured values include a trailing slash or path', async () => {
+    const { OPTIONS } = await importDeployRoute();
+
+    const localResponse = OPTIONS(
+      contextWithRequest(
+        new Request('https://www.example.com/api/deploy', {
+          headers: {
+            Origin: 'http://localhost:3333',
+          },
+          method: 'OPTIONS',
+        }),
+      ),
+    );
+    const studioResponse = OPTIONS(
+      contextWithRequest(
+        new Request('https://www.example.com/api/deploy', {
+          headers: {
+            Origin: 'https://studio.example.com',
+          },
+          method: 'OPTIONS',
+        }),
+      ),
+    );
+
+    expect(localResponse.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:3333');
+    expect(studioResponse.headers.get('Access-Control-Allow-Origin')).toBe('https://studio.example.com');
+  });
+});
