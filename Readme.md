@@ -130,6 +130,7 @@ Required for runtime data fetching:
 ```
 HOSTAWAY_ACCESS_TOKEN=...
 SANITY_API_TOKEN=...
+PREVIEW_SECRET=...
 ```
 
 Required for the Sanity Studio **Deploy** button, because `/api/deploy` runs on
@@ -154,7 +155,7 @@ SENTRY_AUTH_TOKEN=...
 ```
 
 Use **Secret** for `HOSTAWAY_ACCESS_TOKEN`, `SANITY_API_TOKEN`,
-`GITHUB_DEPLOY_TOKEN`, `DEPLOY_TRIGGER_TOKEN`, and `SENTRY_AUTH_TOKEN`.
+`PREVIEW_SECRET`, `GITHUB_DEPLOY_TOKEN`, `DEPLOY_TRIGGER_TOKEN`, and `SENTRY_AUTH_TOKEN`.
 Plain text is fine for `GITHUB_DEPLOY_OWNER`, `GITHUB_DEPLOY_REPO`,
 `GITHUB_DEPLOY_WORKFLOW_ID`, `GITHUB_DEPLOY_REF`,
 `DEPLOY_ALLOWED_ORIGINS`, `PUBLIC_SENTRY_DSN`, and `PUBLIC_GA4_ID`.
@@ -177,6 +178,7 @@ Secrets:
 ```
 HOSTAWAY_ACCESS_TOKEN
 SANITY_API_TOKEN
+PREVIEW_SECRET
 CLOUDFLARE_ACCOUNT_ID
 CLOUDFLARE_API_TOKEN
 SENTRY_AUTH_TOKEN
@@ -240,6 +242,7 @@ Required for normal site builds and runtime data fetching:
 ```
 HOSTAWAY_ACCESS_TOKEN=...
 SANITY_API_TOKEN=...
+PREVIEW_SECRET=...
 ```
 
 Required for the Sanity Studio **Deploy** button, because `/api/deploy` runs on
@@ -262,7 +265,7 @@ SENTRY_AUTH_TOKEN=...
 ```
 
 Use **Secret** for `HOSTAWAY_ACCESS_TOKEN`, `SANITY_API_TOKEN`,
-`CLOUDFLARE_API_TOKEN`, `DEPLOY_TRIGGER_TOKEN`, and `SENTRY_AUTH_TOKEN`.
+`PREVIEW_SECRET`, `CLOUDFLARE_API_TOKEN`, `DEPLOY_TRIGGER_TOKEN`, and `SENTRY_AUTH_TOKEN`.
 Plain text is fine for `CLOUDFLARE_ACCOUNT_ID`,
 `CLOUDFLARE_PAGES_PROJECT_NAME`, `DEPLOY_ALLOWED_ORIGINS`,
 `PUBLIC_SENTRY_DSN`, and `PUBLIC_GA4_ID`.
@@ -280,10 +283,12 @@ Configure these variables in `studio-bristol-inn-vt/.env` before running
 ```
 SANITY_STUDIO_DEPLOY_API_URL=https://bristol-inn-vt.alicia-willett.workers.dev/api/deploy
 SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN=same_value_as_DEPLOY_TRIGGER_TOKEN
+SANITY_STUDIO_SITE_URL=https://bristol-inn-vt.alicia-willett.workers.dev
+SANITY_STUDIO_PREVIEW_SECRET=same_value_as_PREVIEW_SECRET
 ```
 
 If the Studio is deployed by CI, local `.env` files are not used. Add the same
-two `SANITY_STUDIO_*` variables to the CI environment before `sanity deploy`
+four `SANITY_STUDIO_*` variables to the CI environment before `sanity deploy`
 runs.
 
 Sanity Studio variables are build-time values. After changing them, redeploy the
@@ -294,6 +299,10 @@ means the variable was not present when the Studio bundle was built.
 `SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN` is bundled into browser JavaScript, so it
 is only a light guard for POST requests. Keep `CLOUDFLARE_API_TOKEN`
 server-only in Cloudflare Pages.
+
+`SANITY_STUDIO_PREVIEW_SECRET` is also bundled into browser JavaScript for
+logged-in Studio authors. It should match the server-only `PREVIEW_SECRET`, but
+do not reuse a high-value credential.
 
 To verify the Studio bundle picked up the URL locally:
 

@@ -13,6 +13,7 @@
 
 export const HOSTAWAY_ACCESS_TOKEN = 'test-hostaway-token';
 export const SANITY_API_TOKEN = 'test-sanity-token';
+export const PREVIEW_SECRET = 'test-preview-secret';
 export const GITHUB_DEPLOY_TOKEN = 'test-github-token';
 export const GITHUB_DEPLOY_OWNER = 'test-owner';
 export const GITHUB_DEPLOY_REPO = 'test-repo';

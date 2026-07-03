@@ -1,0 +1,16 @@
+---
+import type { SanityPage } from '../../lib/sanity';
+import SliceZone from '@components/SliceZone.astro';
+import PageHeader from '@components/PageHeader.astro';
+
+interface Props {
+  page: SanityPage;
+  pageHeaderClass?: string;
+}
+
+const { page, pageHeaderClass = 'pb-16' } = Astro.props;
+---
+
+{page?.pageHeader && <PageHeader block={page.pageHeader} className={pageHeaderClass} />}
+
+<SliceZone blocks={page.body ?? []} wrapStandaloneBlocks />

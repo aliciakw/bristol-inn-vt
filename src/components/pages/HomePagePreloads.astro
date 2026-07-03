@@ -1,0 +1,18 @@
+---
+import { getImage } from 'astro:assets';
+import { buildSanityImageUrl, type SanityHomepage } from '../../lib/sanity';
+import bristolBadge from '../../assets/bristol-inn-badge--ellipse.png';
+
+interface Props {
+  homepage: SanityHomepage;
+}
+
+const { homepage } = Astro.props;
+const heroLeftPreload = homepage.heroLeftImage?.url ? buildSanityImageUrl(homepage.heroLeftImage.url, { width: 900, height: 550 }) : null;
+const heroRightPreload = homepage.heroRightImage?.url ? buildSanityImageUrl(homepage.heroRightImage.url, { width: 900, height: 550 }) : null;
+const badgePreload = await getImage({ src: bristolBadge, width: 240, height: 255 });
+---
+
+{heroLeftPreload && <link rel="preload" as="image" href={heroLeftPreload} fetchpriority="high" />}
+{heroRightPreload && <link rel="preload" as="image" href={heroRightPreload} fetchpriority="high" />}
+<link rel="preload" as="image" href={badgePreload.src} fetchpriority="high" />

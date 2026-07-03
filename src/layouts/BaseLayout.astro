@@ -1,8 +1,9 @@
 ---
 import NavigationTopBar, { type NavigationVariant, type NavigationTextColor } from '@components/NavigationTopBar.astro';
 import Footer from '@components/Footer.astro';
+import PreviewBanner from '@components/PreviewBanner.astro';
 import { getSettings } from '../lib/sanity';
-import type { SanityMeta } from '../lib/sanity';
+import type { SanityMeta, SanityPreviewLabel } from '../lib/sanity';
 import '@styles/global.css';
 import fontRegular from '../assets/fonts/DavidLibre-Regular.ttf';
 import fontMedium from '../assets/fonts/DavidLibre-Medium.ttf';
@@ -15,11 +16,22 @@ interface Props {
   mainClass?: string;
   meta?: SanityMeta; // Sanity-backed meta for CMS pages
   navigationVariant?: NavigationVariant;
+  previewLabel?: SanityPreviewLabel;
   textColor?: NavigationTextColor;
   title: string;
 }
 
-const { title, description, meta: pageMeta, backgroundColor = 'white', textColor = 'ink-900', mainClass = '', navigationVariant = 'transparent', bodyClass = '' } = Astro.props;
+const {
+  title,
+  description,
+  meta: pageMeta,
+  backgroundColor = 'white',
+  textColor = 'ink-900',
+  mainClass = '',
+  navigationVariant = 'transparent',
+  previewLabel,
+  bodyClass = '',
+} = Astro.props;
 
 const settings = await getSettings();
 const siteMeta = settings?.meta;
@@ -56,6 +68,7 @@ const resolvedOgImage = pageMeta?.ogImage?.url ?? siteMeta?.ogImage?.url;
   </head>
   <body class:list={['flex flex-col min-h-screen font-serif', `bg-${backgroundColor}`, `text-${textColor}`, bodyClass]}>
     <div class="flex flex-col flex-1">
+      {previewLabel && <PreviewBanner label={previewLabel} />}
       <NavigationTopBar variant={navigationVariant} />
       <main class:list={['MainContent', mainClass]}>
         <slot />
