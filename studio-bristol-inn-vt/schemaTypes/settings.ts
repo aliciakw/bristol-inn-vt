@@ -129,6 +129,14 @@ export const settingsType = defineType({
         }),
       ],
     }),
+    defineField({
+      name: 'hideNewsletterSubscriptionForm',
+      title: 'Hide newsletter subscription form',
+      description: 'Turn this on to remove the newsletter subscription form from the footer.',
+      type: 'boolean',
+      initialValue: false,
+      group: 'footer',
+    }),
 
     // ── Awards ───────────────────────────────────────────────────────────────
     defineField({

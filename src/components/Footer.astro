@@ -7,7 +7,7 @@ import Button from '@components/ui/Button.astro';
 const year = new Date().getFullYear();
 
 const settings = await getSettings();
-const { footerSections = [], awardImages = [], directionsLink } = settings ?? {};
+const { footerSections = [], awardImages = [], directionsLink, hideNewsletterSubscriptionForm = false } = settings ?? {};
 
 function sectionToHTML(content: unknown[]): string {
   return toHTML(content as Parameters<typeof toHTML>[0], {
@@ -38,12 +38,18 @@ function sectionToHTML(content: unknown[]): string {
           <section class:list={['desktop:col-span-2', isFirst ? 'col-span-6 desktop:col-start-2 desktop:row-start-1 desktop:row-span-3 flex flex-col' : 'col-span-3']}>
             {section.content?.length > 0 && <div set:html={sectionToHTML(section.content)} />}
 
-            {i === footerSections.length - 1 && (
+            {i === footerSections.length - 1 && !hideNewsletterSubscriptionForm && (
               <section class="col-span-6 desktop:col-span-2 desktop:col-start mt-[var(--grid-gutter)] flex flex-col gap-4">
                 <TextStyle variant="h4">Subscribe</TextStyle>
                 <TextStyle variant="caption">Our newsletter includes events, deals, and more.</TextStyle>
                 <form class="relative">
-                  <input type="email" name="email" placeholder="you@email.com" required class="flex-1 h-11 w-full px-5 mr-[-40px] rounded-full bg-sand-100 border border-ink-900 font-serif text-[17px] text-ink-900 placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-khaki-200 focus:ring-offset-1" />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="you@email.com"
+                    required
+                    class="flex-1 h-11 w-full px-5 mr-[-40px] rounded-full bg-sand-100 border border-ink-900 font-serif text-[17px] text-ink-900 placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-khaki-200 focus:ring-offset-1"
+                  />
                   <Button type="submit" size="small" class="absolute right-0 top-0 h-11 shrink-0" bg="khaki-200">
                     Subscribe
                   </Button>
@@ -57,7 +63,12 @@ function sectionToHTML(content: unknown[]): string {
 
     <div class="col-span-6 desktop:col-span-8 text-center">
       <p class="font-serif text-[14px] text-sand-100/80">
-        &copy; {year} Bristol Inn Vermont. All rights reserved. | Site by <a href="https://aleeshza.com" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-sand-200 transition-colors">Aleeshza Studio</a>
+        &copy; {year} Bristol Inn Vermont. All rights reserved. | Site by <a
+          href="https://aleeshza.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:underline hover:text-sand-200 transition-colors">Aleeshza Studio</a
+        >
       </p>
     </div>
   </div>

@@ -17,6 +17,7 @@ type RoomSearchFormPreviewSelection = {
 
 type GalleryStripPreviewSelection = {
   images?: unknown[]
+  speed?: string
 }
 
 type FigureValue = {
@@ -113,19 +114,35 @@ export const galleryStripBlockType = defineType({
       of: [defineArrayMember({type: 'figure'})],
       validation: (Rule) => Rule.min(2),
     }),
+    defineField({
+      name: 'speed',
+      title: 'Speed',
+      type: 'string',
+      description: 'How quickly the gallery strip advances.',
+      initialValue: 'slow',
+      options: {
+        list: [
+          {title: 'Slow', value: 'slow'},
+          {title: 'Medium', value: 'medium'},
+          {title: 'Fast', value: 'fast'},
+        ],
+        layout: 'radio',
+      },
+    }),
     ...colorFields,
   ],
   preview: {
     select: {
       images: 'images',
+      speed: 'speed',
     },
-    prepare({images}: GalleryStripPreviewSelection) {
+    prepare({images, speed}: GalleryStripPreviewSelection) {
       const figuresWithImages = images?.filter(isFigureWithImage) ?? []
       const count = figuresWithImages.length
 
       return {
         title: count === 1 ? '1 image' : `${count} images`,
-        subtitle: 'Gallery Strip',
+        subtitle: speed ? `Gallery Strip - ${speed}` : 'Gallery Strip',
         media: figuresWithImages[0]?.image,
       }
     },

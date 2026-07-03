@@ -3,12 +3,18 @@ import { buildSanityImageUrl, type SanityImage } from '../../lib/sanity';
 
 interface Props {
   images: SanityImage[];
-  speed?: 'slow' | 'medium';
+  speed?: 'slow' | 'medium' | 'fast';
 }
 
 const { images, speed = 'slow' } = Astro.props;
 const visible = images.filter((img) => img.url);
-const autoplayDelay = speed === 'medium' ? 2167 : 3500;
+const delayPerImage: Record<NonNullable<Props['speed']>, number> = {
+  slow: 600,
+  medium: 350,
+  fast: 200,
+};
+// eslint-disable-next-line security/detect-object-injection
+const autoplayDelay = delayPerImage[speed] * images.length;
 ---
 
 {
@@ -19,7 +25,15 @@ const autoplayDelay = speed === 'medium' ? 2167 : 3500;
           {visible.map((img) => (
             <div class="min-w-0 flex-[0_0_75vw] tablet:flex-[0_0_20vw] pl-[var(--page-margin)]">
               <div class="rounded-lg aspect-square overflow-hidden">
-                <img src={buildSanityImageUrl(img.url, { width: 400, height: 400 })} alt={img.alt} width={400} height={400} loading="lazy" decoding="async" class="w-full h-full object-cover" />
+                <img
+                  src={buildSanityImageUrl(img.url, { width: 400, height: 400 })}
+                  alt={img.alt}
+                  width={400}
+                  height={400}
+                  loading="lazy"
+                  decoding="async"
+                  class="w-full h-full object-cover"
+                />
               </div>
             </div>
           ))}
