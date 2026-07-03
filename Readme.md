@@ -189,6 +189,47 @@ PUBLIC_SENTRY_DSN
 PUBLIC_GA4_ID
 ```
 
+#### Cloudflare Pages variables
+
+These belong on the **Astro site / Cloudflare Pages project**, not in the Sanity
+Studio settings.
+
+Required for normal site builds and runtime data fetching:
+
+```
+HOSTAWAY_ACCESS_TOKEN=...
+SANITY_API_TOKEN=...
+```
+
+Required for the Sanity Studio **Deploy** button, because `/api/deploy` runs on
+the Astro site:
+
+```
+CLOUDFLARE_ACCOUNT_ID=...
+CLOUDFLARE_PAGES_PROJECT_NAME=bristol-inn-vt
+CLOUDFLARE_API_TOKEN=...
+DEPLOY_ALLOWED_ORIGINS=http://localhost:3333,https://bristol-inn-vt.sanity.studio,https://www.sanity.io
+DEPLOY_TRIGGER_TOKEN=...
+```
+
+Optional:
+
+```
+PUBLIC_SENTRY_DSN=...
+PUBLIC_GA4_ID=...
+SENTRY_AUTH_TOKEN=...
+```
+
+Use **Secret** for `HOSTAWAY_ACCESS_TOKEN`, `SANITY_API_TOKEN`,
+`CLOUDFLARE_API_TOKEN`, `DEPLOY_TRIGGER_TOKEN`, and `SENTRY_AUTH_TOKEN`.
+Plain text is fine for `CLOUDFLARE_ACCOUNT_ID`,
+`CLOUDFLARE_PAGES_PROJECT_NAME`, `DEPLOY_ALLOWED_ORIGINS`,
+`PUBLIC_SENTRY_DSN`, and `PUBLIC_GA4_ID`.
+
+`DEPLOY_ALLOWED_ORIGINS` is a comma-separated list of exact browser origins
+allowed to call `/api/deploy`. Origins include only scheme, host, and optional
+port. Do not include paths or trailing slashes.
+
 ### Sanity Studio deploy button
 
 The Studio has a **Deploy** tool that calls the Astro API route at `/api/deploy`.
@@ -203,6 +244,23 @@ SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN=same_value_as_DEPLOY_TRIGGER_TOKEN
 If the Studio is deployed by CI, local `.env` files are not used. Add the same
 two `SANITY_STUDIO_*` variables to the CI environment before `sanity deploy`
 runs.
+
+Sanity Studio variables are build-time values. After changing them, redeploy the
+Studio and hard-refresh the browser. Seeing
+`SANITY_STUDIO_DEPLOY_API_URL is not configured` in the deployed Studio usually
+means the variable was not present when the Studio bundle was built.
+
+`SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN` is bundled into browser JavaScript, so it
+is only a light guard for POST requests. Keep `CLOUDFLARE_API_TOKEN`
+server-only in Cloudflare Pages.
+
+To verify the Studio bundle picked up the URL locally:
+
+```bash
+cd studio-bristol-inn-vt
+npm run build
+rg "bristol-inn-vt.alicia-willett.workers.dev|SANITY_STUDIO_DEPLOY_API_URL is not configured" dist
+```
 
 Sanity Studio variables are build-time values. After changing them, redeploy the
 Studio and hard-refresh the browser. Seeing
