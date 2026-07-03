@@ -20,6 +20,9 @@ type DeployResponse = {
 };
 
 let inFlightWorkflowDispatch: Promise<WorkflowRunSummary> | undefined;
+let lastWorkflowDispatch: { deployment: WorkflowRunSummary; expiresAt: number } | undefined;
+
+const DISPATCH_COOLDOWN_MS = 30_000;
 
 const allowedOrigins = DEPLOY_ALLOWED_ORIGINS.split(',')
   .map((origin) => origin.trim())
@@ -100,10 +103,22 @@ function assertCanTrigger(request: Request): boolean {
 }
 
 async function dispatchDeployWorkflowOnce(): Promise<WorkflowRunSummary> {
+  if (lastWorkflowDispatch && lastWorkflowDispatch.expiresAt > Date.now()) {
+    return lastWorkflowDispatch.deployment;
+  }
+
   if (!inFlightWorkflowDispatch) {
-    inFlightWorkflowDispatch = dispatchDeployWorkflow(getConfig()).finally(() => {
-      inFlightWorkflowDispatch = undefined;
-    });
+    inFlightWorkflowDispatch = dispatchDeployWorkflow(getConfig())
+      .then((deployment) => {
+        lastWorkflowDispatch = {
+          deployment,
+          expiresAt: Date.now() + DISPATCH_COOLDOWN_MS,
+        };
+        return deployment;
+      })
+      .finally(() => {
+        inFlightWorkflowDispatch = undefined;
+      });
   }
 
   return inFlightWorkflowDispatch;
@@ -172,7 +187,7 @@ export async function POST({ request }: APIContext): Promise<Response> {
 
     return jsonResponse(
       {
-        message: `Triggered deploy workflow ${triggeredDeployment.id}.`,
+        message: `Triggered deploy workflow ${triggeredDeployment.id}. Give GitHub a few seconds to list the new run before triggering again.`,
         latestDeployment: triggeredDeployment,
         triggeredDeployment,
       },

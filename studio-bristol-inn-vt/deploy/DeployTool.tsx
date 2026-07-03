@@ -23,9 +23,10 @@ type DeployResponse = {
   error?: string
 }
 
+const DEPLOY_COOLDOWN_SECONDS = 30
 
-// TODO: It would be nice if these were not hard coded, but since they are included in the 
-// JS bundle, they are not secret. 
+// TODO: It would be nice if these were not hard coded, but since they are included in the
+// JS bundle, they are not secret.
 const deployEndpoint = import.meta.env.SANITY_STUDIO_DEPLOY_API_URL as string | undefined
 const deployToken = import.meta.env.SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN as string | undefined
 
@@ -105,50 +106,79 @@ export function DeployTool() {
   const [response, setResponse] = useState<DeployResponse | undefined>()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | undefined>()
+  const [cooldownSeconds, setCooldownSeconds] = useState(0)
 
-  const requestDeployStatus = useCallback(async (method: 'GET' | 'POST') => {
-    if (!deployEndpoint) {
-      setError('SANITY_STUDIO_DEPLOY_API_URL is not configured.')
-      return
-    }
-
-    setIsLoading(true)
-    setError(undefined)
-
-    try {
-      const result = await fetch(deployEndpoint, {
-        method,
-        headers:
-          method === 'POST' && deployToken
-            ? {
-                Authorization: `Bearer ${deployToken}`,
-              }
-            : undefined,
-      })
-      const body = (await result.json()) as DeployResponse
-
-      if (!result.ok || body.error) {
-        throw new Error(body.error ?? `Deploy request failed with status ${result.status}`)
+  const requestDeployStatus = useCallback(
+    async (method: 'GET' | 'POST', options: {ignoreCooldown?: boolean} = {}) => {
+      if (!deployEndpoint) {
+        setError('SANITY_STUDIO_DEPLOY_API_URL is not configured.')
+        return
       }
 
-      setResponse(body)
-    } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : 'Deploy request failed.')
-    } finally {
-      setIsLoading(false)
-    }
+      if (method === 'POST' && cooldownSeconds > 0 && !options.ignoreCooldown) {
+        return
+      }
+
+      setIsLoading(true)
+      setError(undefined)
+
+      try {
+        const result = await fetch(deployEndpoint, {
+          method,
+          headers:
+            method === 'POST' && deployToken
+              ? {
+                  Authorization: `Bearer ${deployToken}`,
+                }
+              : undefined,
+        })
+        const body = (await result.json()) as DeployResponse
+
+        if (!result.ok || body.error) {
+          throw new Error(body.error ?? `Deploy request failed with status ${result.status}`)
+        }
+
+        setResponse(body)
+        if (method === 'POST') {
+          setCooldownSeconds(DEPLOY_COOLDOWN_SECONDS)
+        }
+      } catch (caughtError) {
+        setError(caughtError instanceof Error ? caughtError.message : 'Deploy request failed.')
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [cooldownSeconds],
+  )
+
+  useEffect(() => {
+    void requestDeployStatus('GET', {ignoreCooldown: true})
+    // Run once on mount. Manual refresh handles later status checks.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    void requestDeployStatus('GET')
-  }, [requestDeployStatus])
+    if (cooldownSeconds <= 0) {
+      return undefined
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setCooldownSeconds((currentSeconds) => Math.max(0, currentSeconds - 1))
+    }, 1000)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [cooldownSeconds])
+
+  const isDeployDisabled = isLoading || !deployEndpoint || cooldownSeconds > 0
 
   return (
     <main style={styles.page}>
       <div style={styles.header}>
         <div>
           <h1 style={styles.title}>Deploy website</h1>
-          <p style={styles.copy}>{response?.message ?? 'Check or trigger the site deploy workflow.'}</p>
+          <p style={styles.copy}>
+            {response?.message ?? 'Check or trigger the site deploy workflow.'}
+          </p>
         </div>
         <div style={styles.actions}>
           <button
@@ -160,12 +190,16 @@ export function DeployTool() {
             Refresh
           </button>
           <button
-            disabled={isLoading || !deployEndpoint}
+            disabled={isDeployDisabled}
             onClick={() => void requestDeployStatus('POST')}
             style={styles.primaryButton}
             type="button"
           >
-            {isLoading ? 'Working...' : 'Deploy'}
+            {isLoading
+              ? 'Working...'
+              : cooldownSeconds > 0
+                ? `Deploy (${cooldownSeconds}s)`
+                : 'Deploy'}
           </button>
         </div>
       </div>

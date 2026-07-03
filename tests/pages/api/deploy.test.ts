@@ -107,4 +107,23 @@ describe('POST /api/deploy', () => {
       triggeredDeployment: { id: 'shared-workflow-dispatch' },
     });
   });
+
+  it('reuses a recent workflow dispatch while GitHub is still listing the new run', async () => {
+    dispatchDeployWorkflow.mockResolvedValue({
+      id: 'recent-workflow-dispatch',
+      state: 'active',
+      status: 'queued',
+    });
+    const { POST } = await importDeployRoute();
+
+    const firstResponse = await POST(contextWithRequest(authorizedRequest()));
+    const secondResponse = await POST(contextWithRequest(authorizedRequest()));
+
+    expect(dispatchDeployWorkflow).toHaveBeenCalledOnce();
+    expect(firstResponse.status).toBe(202);
+    expect(secondResponse.status).toBe(202);
+    await expect(secondResponse.json()).resolves.toMatchObject({
+      triggeredDeployment: { id: 'recent-workflow-dispatch' },
+    });
+  });
 });
