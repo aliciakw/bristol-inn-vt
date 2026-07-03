@@ -1,13 +1,13 @@
 # Bristol Inn — Astro Website
 
-A proof-of-concept hospitality website built with Astro 5, TypeScript (strict mode), Tailwind CSS, and integrated with Hostaway API and Prismic CMS.
+A proof-of-concept hospitality website built with Astro, TypeScript (strict mode), Tailwind CSS, and integrated with Hostaway API and Sanity CMS.
 
 ## Technology Stack
 
 - **Framework:** Astro 6.x (static-first)
 - **Language:** TypeScript (strict mode)
 - **Styling:** Tailwind CSS (mobile-first, 3 breakpoints)
-- **CMS:** Prismic (Phase 2)
+- **CMS:** Sanity
 - **Booking:** Hostaway API (Phase 2)
 - **Hosting:** Cloudflare Pages
 - **Error Tracking:** Sentry (Phase 6)
@@ -36,7 +36,7 @@ A proof-of-concept hospitality website built with Astro 5, TypeScript (strict mo
    cp .env.example .env.local
    ```
 
-3. Fill in `.env.local` with your API keys (Hostaway, Prismic, Sentry, GA4)
+3. Fill in `.env.local` with your API keys (Hostaway, Sanity, Sentry, GA4)
 
 4. Install dependencies
 
@@ -102,14 +102,11 @@ Example:
 
 ### Environment Variables
 
-Create `.env.local` (git-ignored) with these variables:
+Create `.env.local` (git-ignored) with the variables from `.env.example`.
 
-```
-HOSTAWAY_API_KEY=your-api-key
-PRISMIC_TOKEN=your-token
-PUBLIC_SENTRY_DSN=https://...
-PUBLIC_GA4_ID=G-...
-```
+The main Astro site reads server-only values at build time and in server routes.
+The Sanity Studio is a separate static app; any `SANITY_STUDIO_*` variables are
+baked into the Studio JavaScript when `sanity build` or `sanity deploy` runs.
 
 Prefix with **`PUBLIC_`** only if the variable needs to be accessible from client-side code (Sentry DSN, GA4 ID). Server-only variables (API keys, tokens) should have no prefix.
 
@@ -122,32 +119,82 @@ Missing required variables will cause the build to fail with a clear error messa
 3. Configure build settings:
    - **Build command:** `npm run build`
    - **Build output directory:** `dist`
-4. Add environment variables in Cloudflare project settings:
-   - `HOSTAWAY_API_KEY`
-   - `SANITY_API_TOKEN`
-   - `PUBLIC_SENTRY_DSN`
-   - `PUBLIC_GA4_ID`
-   - `CLOUDFLARE_ACCOUNT_ID`
-   - `CLOUDFLARE_PAGES_PROJECT_NAME`
-   - `CLOUDFLARE_API_TOKEN`
-   - `DEPLOY_ALLOWED_ORIGINS`
-   - `DEPLOY_TRIGGER_TOKEN`
+4. Add the Astro site variables in Cloudflare Pages → Settings → Variables and Secrets.
 5. Cloudflare will automatically build and deploy on push
 6. PR preview deployments auto-generate unique URLs
+
+#### Cloudflare Pages variables
+
+These belong on the **Astro site / Cloudflare Pages project**, not in the Sanity
+Studio settings.
+
+Required for normal site builds and runtime data fetching:
+
+```
+HOSTAWAY_ACCESS_TOKEN=...
+SANITY_API_TOKEN=...
+```
+
+Required for the Sanity Studio **Deploy** button, because `/api/deploy` runs on
+the Astro site:
+
+```
+CLOUDFLARE_ACCOUNT_ID=...
+CLOUDFLARE_PAGES_PROJECT_NAME=bristol-inn-vt
+CLOUDFLARE_API_TOKEN=...
+DEPLOY_ALLOWED_ORIGINS=http://localhost:3333,https://bristol-inn-vt.sanity.studio,https://www.sanity.io
+DEPLOY_TRIGGER_TOKEN=...
+```
+
+Optional:
+
+```
+PUBLIC_SENTRY_DSN=...
+PUBLIC_GA4_ID=...
+SENTRY_AUTH_TOKEN=...
+```
+
+Use **Secret** for `HOSTAWAY_ACCESS_TOKEN`, `SANITY_API_TOKEN`,
+`CLOUDFLARE_API_TOKEN`, `DEPLOY_TRIGGER_TOKEN`, and `SENTRY_AUTH_TOKEN`.
+Plain text is fine for `CLOUDFLARE_ACCOUNT_ID`,
+`CLOUDFLARE_PAGES_PROJECT_NAME`, `DEPLOY_ALLOWED_ORIGINS`,
+`PUBLIC_SENTRY_DSN`, and `PUBLIC_GA4_ID`.
+
+`DEPLOY_ALLOWED_ORIGINS` is a comma-separated list of exact browser origins
+allowed to call `/api/deploy`. Origins include only scheme, host, and optional
+port. Do not include paths or trailing slashes.
 
 ### Sanity Studio deploy button
 
 The Studio has a **Deploy** tool that calls the Astro API route at `/api/deploy`.
-Configure the Studio deployment with:
+Configure these variables in `studio-bristol-inn-vt/.env` before running
+`sanity dev`, `sanity build`, or `sanity deploy` locally:
 
 ```
-SANITY_STUDIO_DEPLOY_API_URL=https://your-site.example.com/api/deploy
-SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN=shared_deploy_trigger_token
+SANITY_STUDIO_DEPLOY_API_URL=https://bristol-inn-vt.alicia-willett.workers.dev/api/deploy
+SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN=same_value_as_DEPLOY_TRIGGER_TOKEN
 ```
 
-`SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN` is bundled into the Studio's browser
-JavaScript, so it is only a light guard for POST requests. Keep
-`CLOUDFLARE_API_TOKEN` server-only in Cloudflare Pages.
+If the Studio is deployed by CI, local `.env` files are not used. Add the same
+two `SANITY_STUDIO_*` variables to the CI environment before `sanity deploy`
+runs.
+
+Sanity Studio variables are build-time values. After changing them, redeploy the
+Studio and hard-refresh the browser. Seeing
+`SANITY_STUDIO_DEPLOY_API_URL is not configured` in the deployed Studio usually
+means the variable was not present when the Studio bundle was built.
+
+`SANITY_STUDIO_DEPLOY_TRIGGER_TOKEN` is bundled into browser JavaScript, so it
+is only a light guard for POST requests. Keep `CLOUDFLARE_API_TOKEN`
+server-only in Cloudflare Pages.
+
+To verify the Studio bundle picked up the URL locally:
+
+```bash
+cd studio-bristol-inn-vt
+npm run build
+rg "bristol-inn-vt.alicia-willett.workers.dev|SANITY_STUDIO_DEPLOY_API_URL is not configured" dist
+```
 
 #### Some quirks about Cloudflare Pages
 

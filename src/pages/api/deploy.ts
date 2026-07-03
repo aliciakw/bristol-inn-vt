@@ -1,5 +1,12 @@
 import type { APIContext } from 'astro';
-import { createProductionDeployment, findActiveDeployment, getFailureMessage, listPagesDeployments, type DeploymentSummary } from '../../lib/cloudflare/pages-deployments';
+import {
+  CloudflarePagesApiError,
+  createProductionDeployment,
+  findActiveDeployment,
+  getFailureMessage,
+  listPagesDeployments,
+  type DeploymentSummary,
+} from '../../lib/cloudflare/pages-deployments';
 import { CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN, CLOUDFLARE_PAGES_PROJECT_NAME, DEPLOY_ALLOWED_ORIGINS, DEPLOY_TRIGGER_TOKEN } from 'astro:env/server';
 
 export const prerender = false;
@@ -37,9 +44,42 @@ function jsonResponse(body: DeployResponse | { error: string }, status: number, 
   });
 }
 
+function requestId(request: Request): string {
+  return request.headers.get('cf-ray') ?? crypto.randomUUID();
+}
+
+function logDeployRouteError(method: 'GET' | 'POST', id: string, error: unknown): void {
+  if (error instanceof CloudflarePagesApiError) {
+    console.error(
+      JSON.stringify({
+        errorMessage: error.message,
+        errors: error.errors,
+        method,
+        path: error.path,
+        requestId: id,
+        route: '/api/deploy',
+        source: 'deploy-route',
+        status: error.status,
+      }),
+    );
+    return;
+  }
+
+  console.error(
+    JSON.stringify({
+      errorMessage: error instanceof Error ? error.message : String(error),
+      errorName: error instanceof Error ? error.name : 'UnknownError',
+      method,
+      requestId: id,
+      route: '/api/deploy',
+      source: 'deploy-route',
+    }),
+  );
+}
+
 function getConfig() {
   if (!CLOUDFLARE_ACCOUNT_ID || !CLOUDFLARE_PAGES_PROJECT_NAME || !CLOUDFLARE_API_TOKEN) {
-    throw new Error('Cloudflare deploy API is not configured.');
+    throw new Error('Cloudflare deploy API is not configured!');
   }
 
   return {
@@ -100,16 +140,25 @@ export function OPTIONS({ request }: APIContext): Response {
 
 export async function GET({ request }: APIContext): Promise<Response> {
   const origin = request.headers.get('Origin');
+  const id = requestId(request);
 
   try {
     return jsonResponse(await getDeployStatus(true), 200, origin);
   } catch (error) {
-    return jsonResponse({ error: error instanceof Error ? error.message : 'Unable to fetch deployment status.' }, 500, origin);
+    logDeployRouteError('GET', id, error);
+    return jsonResponse(
+      {
+        error: error instanceof Error ? `${error.message} Request id: ${id}` : `Unable to fetch deployment status. Request id: ${id}`,
+      },
+      500,
+      origin,
+    );
   }
 }
 
 export async function POST({ request }: APIContext): Promise<Response> {
   const origin = request.headers.get('Origin');
+  const id = requestId(request);
 
   if (!assertCanTrigger(request)) {
     return jsonResponse({ error: 'Deploy trigger token is missing or invalid.' }, 401, origin);
@@ -134,6 +183,13 @@ export async function POST({ request }: APIContext): Promise<Response> {
       origin,
     );
   } catch (error) {
-    return jsonResponse({ error: error instanceof Error ? error.message : 'Unable to trigger deployment.' }, 500, origin);
+    logDeployRouteError('POST', id, error);
+    return jsonResponse(
+      {
+        error: error instanceof Error ? `${error.message} Request id: ${id}` : `Unable to trigger deployment. Request id: ${id}`,
+      },
+      500,
+      origin,
+    );
   }
 }

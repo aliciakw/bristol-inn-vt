@@ -46,14 +46,26 @@ type CloudflarePagesConfig = {
   apiToken: string;
 };
 
+export class CloudflarePagesApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly path: string,
+    readonly errors: Array<{ message?: string }> = [],
+  ) {
+    super(message);
+    this.name = 'CloudflarePagesApiError';
+  }
+}
+
 const TERMINAL_STATUSES = new Set(['success', 'failure', 'failed', 'canceled', 'cancelled', 'skipped']);
 
-function toApiError(response: Response, body: CloudflareResponse<unknown> | null): Error {
+function toApiError(response: Response, path: string, body: CloudflareResponse<unknown> | null): Error {
   const message = body?.errors
     ?.map((error) => error.message)
     .filter(Boolean)
     .join('; ');
-  return new Error(message || `Cloudflare Pages API request failed with status ${response.status}`);
+  return new CloudflarePagesApiError(message || `Cloudflare Pages API request failed with status ${response.status}`, response.status, path, body?.errors);
 }
 
 function normalizeState(status: string | undefined): DeploymentState {
@@ -123,7 +135,7 @@ async function cloudflareRequest<T>(config: CloudflarePagesConfig, path: string,
   const body = (await response.json().catch(() => null)) as CloudflareResponse<T> | null;
 
   if (!response.ok || !body?.success) {
-    throw toApiError(response, body);
+    throw toApiError(response, path, body);
   }
 
   return body.result;
