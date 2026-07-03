@@ -4,7 +4,7 @@ import {visionTool} from '@sanity/vision'
 import {colorInput} from '@sanity/color-input'
 import {schemaTypes} from './schemaTypes'
 import {DeployTool} from './deploy/DeployTool'
-import {PagePreviewPane} from './components/PagePreviewPane'
+import {MobilePagePreviewPane, PagePreviewPane} from './components/PagePreviewPane'
 
 const HOMEPAGE_ID = '6e561f5f-23ec-49fa-863f-141c005904c3'
 const CONTACT_PAGE_ID = 'contact-page-singleton'
@@ -16,7 +16,11 @@ const pageDocument = (S: any, documentId: string, schemaType: string) =>
   S.document()
     .documentId(documentId)
     .schemaType(schemaType)
-    .views([S.view.form(), S.view.component(PagePreviewPane).title('Preview')])
+    .views([
+      S.view.form(),
+      S.view.component(PagePreviewPane).title('Preview'),
+      S.view.component(MobilePagePreviewPane).title('Mobile Preview'),
+    ])
 
 export default defineConfig({
   name: 'default',
