@@ -148,9 +148,7 @@ export function DeployTool() {
       <div style={styles.header}>
         <div>
           <h1 style={styles.title}>Deploy website</h1>
-          <p style={styles.copy}>
-            {response?.message ?? 'Check or trigger the Cloudflare Pages build.'}
-          </p>
+          <p style={styles.copy}>{response?.message ?? 'Check or trigger the site deploy workflow.'}</p>
         </div>
         <div style={styles.actions}>
           <button

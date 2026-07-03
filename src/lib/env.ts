@@ -10,9 +10,11 @@
  *   HOSTAWAY_ACCESS_TOKEN — Hostaway API Bearer token (pre-generated, exp 2028-05-15)
  *   SANITY_API_TOKEN      — Sanity CMS read token
  *   SENTRY_AUTH_TOKEN     — Sentry source-map upload token (optional)
- *   CLOUDFLARE_ACCOUNT_ID         — Cloudflare account id for Pages API calls
- *   CLOUDFLARE_PAGES_PROJECT_NAME — Cloudflare Pages project name
- *   CLOUDFLARE_API_TOKEN          — Cloudflare API token with Pages edit/read access
+ *   GITHUB_DEPLOY_TOKEN       — GitHub token with Actions read/write for workflow dispatch
+ *   GITHUB_DEPLOY_OWNER       — GitHub repository owner for the deploy workflow
+ *   GITHUB_DEPLOY_REPO        — GitHub repository name for the deploy workflow
+ *   GITHUB_DEPLOY_WORKFLOW_ID — GitHub Actions workflow file/id to dispatch
+ *   GITHUB_DEPLOY_REF         — Git ref to dispatch, usually main
  *   DEPLOY_ALLOWED_ORIGINS        — Comma-separated Studio origins allowed to call /api/deploy
  *   DEPLOY_TRIGGER_TOKEN          — Optional bearer token for POST /api/deploy
  *
@@ -30,7 +32,8 @@
  *   Copy .env.example to .env.local and fill in all values.
  *   Do NOT commit .env.local to git.
  *
- * For Cloudflare Pages production:
- *   Configure all vars in Cloudflare project settings → Environment Variables.
+ * For Cloudflare Worker production:
+ *   Configure runtime vars in Cloudflare Worker settings → Variables and Secrets.
+ *   Configure build/deploy vars in GitHub Actions secrets and variables.
  *   Use PUBLIC_ prefix only for client-visible vars.
  */

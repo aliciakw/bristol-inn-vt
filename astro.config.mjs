@@ -36,23 +36,35 @@ export default defineConfig({
         access: 'secret',
         optional: true,
       }),
-      CLOUDFLARE_ACCOUNT_ID: envField.string({
+      GITHUB_DEPLOY_TOKEN: envField.string({
         context: 'server',
         access: 'secret',
         optional: true,
         default: '',
       }),
-      CLOUDFLARE_PAGES_PROJECT_NAME: envField.string({
+      GITHUB_DEPLOY_OWNER: envField.string({
         context: 'server',
         access: 'secret',
         optional: true,
-        default: '',
+        default: 'aliciakw',
       }),
-      CLOUDFLARE_API_TOKEN: envField.string({
+      GITHUB_DEPLOY_REPO: envField.string({
         context: 'server',
         access: 'secret',
         optional: true,
-        default: '',
+        default: 'bristol-inn-vt',
+      }),
+      GITHUB_DEPLOY_WORKFLOW_ID: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+        default: 'deploy-site.yml',
+      }),
+      GITHUB_DEPLOY_REF: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+        default: 'main',
       }),
       DEPLOY_ALLOWED_ORIGINS: envField.string({
         context: 'server',
