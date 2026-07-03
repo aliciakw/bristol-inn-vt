@@ -170,7 +170,7 @@ const getImageBlockContentClass = (image?: { layout?: string }) =>
     if (block._type === 'galleryStripBlock') {
       return (
         <section class="py-12" style={block.backgroundColor ? `background-color: ${block.backgroundColor}` : undefined}>
-          <GalleryStrip images={(block.images as Parameters<typeof GalleryStrip>[0]['images']) ?? []} />
+          <GalleryStrip images={(block.images as Parameters<typeof GalleryStrip>[0]['images']) ?? []} speed={block.speed as Parameters<typeof GalleryStrip>[0]['speed']} />
         </section>
       );
     }

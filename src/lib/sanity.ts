@@ -392,6 +392,7 @@ export type SanitySettings = {
   rightCta?: SanityButtonLink;
   sidebarLinks: SanityLink[];
   footerSections: SanityFooterSection[];
+  hideNewsletterSubscriptionForm: boolean;
   awardImages: SanityAwardImage[];
   directionsLink: SanityLink | null;
 };
@@ -421,6 +422,7 @@ export async function getSettings(): Promise<SanitySettings> {
         title,
         content
       },
+      "hideNewsletterSubscriptionForm": coalesce(hideNewsletterSubscriptionForm, false),
       "awardImages": awardImages[]{
         "url": asset->url,
         alt,
