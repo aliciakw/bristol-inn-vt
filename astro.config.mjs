@@ -72,6 +72,12 @@ export default defineConfig({
         access: 'secret',
         optional: false,
       }),
+      PREVIEW_SECRET: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+        default: '',
+      }),
       SENTRY_AUTH_TOKEN: envField.string({
         context: 'server',
         access: 'secret',

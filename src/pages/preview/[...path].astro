@@ -1,0 +1,93 @@
+---
+import { PREVIEW_SECRET } from 'astro:env/server';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ContactPageContent from '@components/pages/ContactPageContent.astro';
+import GenericPageContent from '@components/pages/GenericPageContent.astro';
+import { RoomBrowser } from '../../components/rooms/RoomBrowser';
+import { getRooms } from '../../lib/rooms';
+import { getContactPagePreview, getPagePreview, type SanityContactPage, type SanityPage, type SanityPreviewLabel } from '../../lib/sanity';
+
+export const prerender = false;
+
+Astro.response.headers.set('Cache-Control', 'no-store');
+
+if (!PREVIEW_SECRET || Astro.url.searchParams.get('secret') !== PREVIEW_SECRET) {
+  return new Response('Unauthorized', { status: 401 });
+}
+
+const previewPath = Astro.params.path?.replace(/^\/+|\/+$/g, '') ?? '';
+
+if (!previewPath || previewPath.includes('/')) {
+  return new Response('Not found', { status: 404 });
+}
+
+if (previewPath === 'rooms') {
+  const redirectUrl = new URL('/preview/rooms-and-suites', Astro.url);
+  redirectUrl.searchParams.set('secret', PREVIEW_SECRET);
+  return Astro.redirect(redirectUrl.toString(), 301);
+}
+
+let contactPage: SanityContactPage | null = null;
+let page: SanityPage | null = null;
+let previewLabel: SanityPreviewLabel = 'Live Site';
+const isContactPage = previewPath === 'contact';
+const isRoomsAndSuites = previewPath === 'rooms-and-suites';
+
+if (isContactPage) {
+  const result = await getContactPagePreview();
+  contactPage = result.data;
+  previewLabel = result.label;
+} else {
+  const result = await getPagePreview(previewPath);
+  page = result.data;
+  previewLabel = result.label;
+}
+
+if (!contactPage && !page) {
+  return new Response('Not found', { status: 404 });
+}
+
+const pageTitle = page?.title || 'Untitled';
+const rooms = isRoomsAndSuites ? await getRooms() : [];
+const browserRooms = rooms.map((room) => ({
+  id: room.id,
+  name: room.name,
+  bedroomsLabel: room.bedroomsLabel,
+  price: room.price,
+  personCapacity: room.personCapacity,
+  floorNumber: room.floorNumber,
+  dogsAllowed: room.dogsAllowed,
+  photo: room.photos[0] ?? { url: '', caption: '' },
+  amenities: room.amenityNames.slice(0, 3),
+}));
+---
+
+{
+  contactPage ? (
+    <BaseLayout title="Contact - Bristol Inn" description="Get in touch with Bristol Inn" meta={contactPage.meta} mainClass="Spacer--navigation-offset" previewLabel={previewLabel}>
+      <meta slot="head" name="robots" content="noindex,nofollow" />
+      <ContactPageContent contactPage={contactPage} />
+    </BaseLayout>
+  ) : (
+    page && (
+      <BaseLayout
+        title={`${pageTitle} — Bristol Inn`}
+        meta={page.meta}
+        backgroundColor="white"
+        navigationVariant="transparent"
+        mainClass={isRoomsAndSuites ? 'Spacer--navigation-offset Spacer--page-bottom' : page.pageHeader ? 'Spacer--navigation-offset' : ''}
+        previewLabel={previewLabel}
+      >
+        <meta slot="head" name="robots" content="noindex,nofollow" />
+
+        <GenericPageContent page={page} pageHeaderClass={isRoomsAndSuites ? 'pb-18' : 'pb-16'} />
+
+        {isRoomsAndSuites && (
+          <section class="Section mt-[-72px] mb-16">
+            <RoomBrowser client:load rooms={browserRooms} />
+          </section>
+        )}
+      </BaseLayout>
+    )
+  )
+}

@@ -1,0 +1,38 @@
+---
+import { PREVIEW_SECRET } from 'astro:env/server';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import HomePageContent from '@components/pages/HomePageContent.astro';
+import HomePagePreloads from '@components/pages/HomePagePreloads.astro';
+import { getHomepagePreview } from '../../lib/sanity';
+
+export const prerender = false;
+
+Astro.response.headers.set('Cache-Control', 'no-store');
+
+if (!PREVIEW_SECRET || Astro.url.searchParams.get('secret') !== PREVIEW_SECRET) {
+  return new Response('Unauthorized', { status: 401 });
+}
+
+const { data: homepage, label } = await getHomepagePreview();
+
+if (!homepage) {
+  return new Response('Not found', { status: 404 });
+}
+---
+
+<BaseLayout
+  title="Bristol Inn — Vermont"
+  description="Welcome to Bristol Inn, a Vermont inn with beautiful rooms and a warm atmosphere."
+  backgroundColor="white"
+  textColor="ink-900"
+  navigationVariant="transparent"
+  mainClass="Spacer__navigation-offset"
+  bodyClass="transition-colors duration-300"
+  previewLabel={label}
+>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex,nofollow" />
+    <HomePagePreloads homepage={homepage} />
+  </Fragment>
+  <HomePageContent homepage={homepage} />
+</BaseLayout>
