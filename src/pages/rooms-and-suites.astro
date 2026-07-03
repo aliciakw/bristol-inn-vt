@@ -3,7 +3,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import { RoomBrowser } from '../components/rooms/RoomBrowser';
 import { getPage } from '../lib/sanity';
 import { getRooms } from '../lib/rooms';
-import PageHeader from '../components/PageHeader.astro';
+import GenericPageContent from '@components/pages/GenericPageContent.astro';
 
 const [page, rooms] = await Promise.all([getPage('rooms-and-suites'), getRooms()]);
 
@@ -29,7 +29,7 @@ const browserRooms = rooms.map((r) => ({
   navigationVariant="transparent"
   mainClass="Spacer--navigation-offset Spacer--page-bottom"
 >
-  {page?.pageHeader && <PageHeader block={page.pageHeader} className="pb-18" />}
+  <GenericPageContent page={page} pageHeaderClass="pb-18" />
 
   <section class="Section mt-[-72px] mb-16">
     <RoomBrowser client:load rooms={browserRooms} />

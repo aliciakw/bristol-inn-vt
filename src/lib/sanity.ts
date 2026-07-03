@@ -23,6 +23,7 @@ const DATASET = 'production';
 const API_VERSION = '2025-06-02';
 
 let _client: SanityClient | null = null;
+let _previewClient: SanityClient | null = null;
 
 export function getClient(): SanityClient {
   if (_client) return _client;
@@ -36,7 +37,27 @@ export function getClient(): SanityClient {
   return _client;
 }
 
+export function getPreviewClient(): SanityClient {
+  if (_previewClient) return _previewClient;
+  _previewClient = createClient({
+    projectId: PROJECT_ID,
+    dataset: DATASET,
+    apiVersion: API_VERSION,
+    useCdn: false,
+    token: SANITY_API_TOKEN,
+    perspective: 'drafts',
+  });
+  return _previewClient;
+}
+
 export type SanityBlock = { _type: string; _key: string; [key: string]: unknown };
+
+export type SanityPreviewLabel = 'Preview' | 'Live Site';
+
+export type SanityPreviewResult<T> = {
+  data: T | null;
+  label: SanityPreviewLabel;
+};
 
 export type SanityMeta = {
   ogTitle?: string;
@@ -125,6 +146,7 @@ export type SanityRoom = {
 
 const HOMEPAGE_ID = '6e561f5f-23ec-49fa-863f-141c005904c3';
 const CONTACT_PAGE_ID = 'contact-page-singleton';
+const PREVIEW_LABEL_FIELD = `"_previewLabel": select(_originalId in path("drafts.**") => "Preview", "Live Site")`;
 
 const RESOLVE_LINK = `{ label, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
 
@@ -164,59 +186,108 @@ const RESOLVE_BODY_ITEM = `{
   }
 }`;
 
+const HOMEPAGE_FIELDS = `
+  coverColor,
+  welcomeBackgroundColor,
+  welcomeHeading,
+  "welcomeItems": welcomeItems[]{
+    _key,
+    text,
+    "cta": cta${RESOLVE_LINK},
+    "image": image{ "url": asset->url, "alt": coalesce(alt, "") },
+    "showRoomSearchForm": coalesce(showRoomSearchForm, false)
+  },
+  "heroLeftImage": heroLeftImage{ "url": asset->url, "alt": coalesce(alt, "") },
+  "heroRightImage": heroRightImage{ "url": asset->url, "alt": coalesce(alt, "") },
+  "galleryImages": galleryImages[]{ "url": asset->url, "alt": coalesce(alt, "") },
+  reservationHeading,
+  "reservationHeadingIcon": reservationHeadingIcon{ "url": asset->url, "alt": coalesce(alt, "") },
+  reservationDescription,
+  testimonialsHeading,
+  "testimonial": testimonial[]{
+    _type,
+    _key,
+    _type == "testimonialItem" => { quote, author, role },
+    _type == "image" => { "url": asset->url, "alt": coalesce(alt, "") }
+  },
+  "amenities": coalesce(amenities, []),
+  "body": body[]${RESOLVE_BODY_ITEM}
+`;
+
+const PAGE_FIELDS = `
+  title,
+  "pageHeader": pageHeader{
+    introduction,
+    "heroImage": heroImage{ "url": asset->url, "alt": coalesce(alt, "") },
+    textColor,
+    backgroundColor
+  },
+  "meta": meta{
+    ogTitle,
+    ogDescription,
+    "ogImage": ogImage.asset->{ "url": url }
+  },
+  "body": body[]${RESOLVE_BODY_ITEM},
+  "uid": slug.current
+`;
+
+const CONTACT_PAGE_FIELDS = `
+  "meta": meta{
+    ogTitle,
+    ogDescription,
+    "ogImage": ogImage.asset->{ "url": url }
+  },
+  "introduction": coalesce(introduction, []),
+  "address": coalesce(address, []),
+  phone,
+  email,
+  "directionsLink": directionsLink${RESOLVE_LINK},
+  googleMapEmbedUrl
+`;
+
+type PreviewQueryResult<T> = T & {
+  _previewLabel?: SanityPreviewLabel;
+};
+
+function toPreviewResult<T>(document: PreviewQueryResult<T> | null): SanityPreviewResult<T> {
+  if (!document) {
+    return { data: null, label: 'Live Site' };
+  }
+
+  const { _previewLabel, ...data } = document;
+  return { data: data as T, label: _previewLabel ?? 'Live Site' };
+}
+
 export async function getHomepage(): Promise<SanityHomepage> {
-  return getClient().fetch<SanityHomepage>(
+  return getClient().fetch<SanityHomepage>(`*[_type == "homepage" && _id == $id][0]{${HOMEPAGE_FIELDS}}`, { id: HOMEPAGE_ID });
+}
+
+export async function getHomepagePreview(): Promise<SanityPreviewResult<SanityHomepage>> {
+  const document = await getPreviewClient().fetch<PreviewQueryResult<SanityHomepage> | null>(
     `*[_type == "homepage" && _id == $id][0]{
-      coverColor,
-      welcomeBackgroundColor,
-      welcomeHeading,
-      "welcomeItems": welcomeItems[]{
-        _key,
-        text,
-        "cta": cta${RESOLVE_LINK},
-        "image": image{ "url": asset->url, "alt": coalesce(alt, "") },
-        "showRoomSearchForm": coalesce(showRoomSearchForm, false)
-      },
-      "heroLeftImage": heroLeftImage{ "url": asset->url, "alt": coalesce(alt, "") },
-      "heroRightImage": heroRightImage{ "url": asset->url, "alt": coalesce(alt, "") },
-      "galleryImages": galleryImages[]{ "url": asset->url, "alt": coalesce(alt, "") },
-      reservationHeading,
-      "reservationHeadingIcon": reservationHeadingIcon{ "url": asset->url, "alt": coalesce(alt, "") },
-      reservationDescription,
-      testimonialsHeading,
-      "testimonial": testimonial[]{
-        _type,
-        _key,
-        _type == "testimonialItem" => { quote, author, role },
-        _type == "image" => { "url": asset->url, "alt": coalesce(alt, "") }
-      },
-      "amenities": coalesce(amenities, []),
-      "body": body[]${RESOLVE_BODY_ITEM}
+      ${HOMEPAGE_FIELDS},
+      ${PREVIEW_LABEL_FIELD}
     }`,
     { id: HOMEPAGE_ID },
   );
+
+  return toPreviewResult(document);
 }
 
 export async function getPage(slug: string): Promise<SanityPage> {
-  return getClient().fetch<SanityPage>(
+  return getClient().fetch<SanityPage>(`*[_type == "page" && slug.current == $slug][0]{${PAGE_FIELDS}}`, { slug });
+}
+
+export async function getPagePreview(slug: string): Promise<SanityPreviewResult<SanityPage>> {
+  const document = await getPreviewClient().fetch<PreviewQueryResult<SanityPage> | null>(
     `*[_type == "page" && slug.current == $slug][0]{
-      title,
-      "pageHeader": pageHeader{
-        introduction,
-        "heroImage": heroImage{ "url": asset->url, "alt": coalesce(alt, "") },
-        textColor,
-        backgroundColor
-      },
-      "meta": meta{
-        ogTitle,
-        ogDescription,
-        "ogImage": ogImage.asset->{ "url": url }
-      },
-      "body": body[]${RESOLVE_BODY_ITEM},
-      "uid": slug.current
+      ${PAGE_FIELDS},
+      ${PREVIEW_LABEL_FIELD}
     }`,
     { slug },
   );
+
+  return toPreviewResult(document);
 }
 
 export async function getPages(): Promise<Pick<SanityPage, 'uid'>[]> {
@@ -281,22 +352,19 @@ export type SanityContactPage = {
 };
 
 export async function getContactPage(): Promise<SanityContactPage> {
-  return getClient().fetch<SanityContactPage>(
+  return getClient().fetch<SanityContactPage>(`*[_type == "contactPage" && _id == $contactPageId][0]{${CONTACT_PAGE_FIELDS}}`, { contactPageId: CONTACT_PAGE_ID });
+}
+
+export async function getContactPagePreview(): Promise<SanityPreviewResult<SanityContactPage>> {
+  const document = await getPreviewClient().fetch<PreviewQueryResult<SanityContactPage> | null>(
     `*[_type == "contactPage" && _id == $contactPageId][0]{
-      "meta": meta{
-        ogTitle,
-        ogDescription,
-        "ogImage": ogImage.asset->{ "url": url }
-      },
-      "introduction": coalesce(introduction, []),
-      "address": coalesce(address, []),
-      phone,
-      email,
-      "directionsLink": directionsLink${RESOLVE_LINK},
-      googleMapEmbedUrl
+      ${CONTACT_PAGE_FIELDS},
+      ${PREVIEW_LABEL_FIELD}
     }`,
     { contactPageId: CONTACT_PAGE_ID },
   );
+
+  return toPreviewResult(document);
 }
 
 export type SanityFooterSection = {

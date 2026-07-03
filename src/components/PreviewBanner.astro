@@ -1,0 +1,13 @@
+---
+import type { SanityPreviewLabel } from '../lib/sanity';
+
+interface Props {
+  label: SanityPreviewLabel;
+}
+
+const { label } = Astro.props;
+---
+
+<div class="bg-ink-900 text-white text-center text-sm tracking-wide py-2 px-[var(--grid-margin)]">
+  {label}
+</div>

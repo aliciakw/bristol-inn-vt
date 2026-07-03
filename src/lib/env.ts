@@ -9,6 +9,7 @@
  * Server-only secrets (never emitted into client bundle):
  *   HOSTAWAY_ACCESS_TOKEN — Hostaway API Bearer token (pre-generated, exp 2028-05-15)
  *   SANITY_API_TOKEN      — Sanity CMS read token
+ *   PREVIEW_SECRET        — Shared secret required by Sanity Studio preview URLs
  *   SENTRY_AUTH_TOKEN     — Sentry source-map upload token (optional)
  *   GITHUB_DEPLOY_TOKEN       — GitHub token with Actions read/write for workflow dispatch
  *   GITHUB_DEPLOY_OWNER       — GitHub repository owner for the deploy workflow
@@ -23,7 +24,7 @@
  *   PUBLIC_GA4_ID     — Google Analytics 4 measurement ID (optional)
  *
  * Usage in server-only lib files (e.g. src/lib/hostaway.ts, src/lib/sanity.ts):
- *   import { HOSTAWAY_ACCESS_TOKEN, SANITY_API_TOKEN } from 'astro:env/server';
+ *   import { HOSTAWAY_ACCESS_TOKEN, SANITY_API_TOKEN, PREVIEW_SECRET } from 'astro:env/server';
  *
  * Usage in client components (e.g. src/components/Analytics.astro):
  *   import { PUBLIC_SENTRY_DSN, PUBLIC_GA4_ID } from 'astro:env/client';

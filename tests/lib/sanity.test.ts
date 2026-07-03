@@ -20,11 +20,13 @@ vi.mock('@sanity/client', () => ({
 }));
 
 // Import after mocking so the module picks up the mock
-const { getHomepage, getPage, getPages, getSanityRooms, getClient } = await import('../../src/lib/sanity');
+const { getHomepage, getPage, getPages, getSanityRooms, getClient, getPreviewClient } = await import('../../src/lib/sanity');
 
 // Capture createClient args from the singleton initialisation (first call).
 getClient();
 const initialCreateClientArgs = mockCreateClient.mock.calls[0] as [Record<string, unknown>] | undefined;
+getPreviewClient();
+const previewCreateClientArgs = mockCreateClient.mock.calls[1] as [Record<string, unknown>] | undefined;
 
 // ---------------------------------------------------------------------------
 // Setup
@@ -58,6 +60,32 @@ describe('getClient()', () => {
   it('does NOT include the token in any logged console output', () => {
     const consoleSpy = vi.spyOn(console, 'log');
     getClient();
+    for (const call of consoleSpy.mock.calls) {
+      expect(call.join(' ')).not.toContain('test-sanity-token');
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getPreviewClient()
+// ---------------------------------------------------------------------------
+
+describe('getPreviewClient()', () => {
+  it('uses the uncached API for draft preview reads', () => {
+    expect(previewCreateClientArgs?.[0]).toMatchObject({ useCdn: false });
+  });
+
+  it('uses the drafts perspective', () => {
+    expect(previewCreateClientArgs?.[0]).toMatchObject({ perspective: 'drafts' });
+  });
+
+  it('passes SANITY_API_TOKEN as token', () => {
+    expect(previewCreateClientArgs?.[0]).toMatchObject({ token: 'test-sanity-token' });
+  });
+
+  it('does NOT include the token in any logged console output', () => {
+    const consoleSpy = vi.spyOn(console, 'log');
+    getPreviewClient();
     for (const call of consoleSpy.mock.calls) {
       expect(call.join(' ')).not.toContain('test-sanity-token');
     }

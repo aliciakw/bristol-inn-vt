@@ -4,7 +4,6 @@ Development best practices -- ask for confirmation if you need to deviate from t
 
 - Use the astro cli for initial configuration, where ever possible. If overrides are needed, do that after running the CLI.
 - By default, install node packages using `npm install`, rather than editing package.json to set a specific version directly.
-- Use git in readonly mode. It is fine to compare current local changes to either remote or local git history, but never add, commit or push without permission
 
 General Best practices
 
@@ -28,3 +27,8 @@ Integrations
 
 - Hostaway is used for booking and room browsing
 - Prismic is the CMS
+
+Special instructions
+
+- Never modify .env, .env.local., .dev.vars.
+- Use git in readonly mode. It is fine to compare current local changes to either remote or local git history, but never add, commit or push without permission
