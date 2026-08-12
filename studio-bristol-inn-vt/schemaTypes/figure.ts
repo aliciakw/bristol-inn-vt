@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {FigureInput} from '../components/FigureInput'
 
 type FigurePreviewSelection = {
   media?: any
@@ -22,6 +23,7 @@ export const figureType = defineType({
   name: 'figure',
   title: 'Figure',
   type: 'object',
+  components: {input: FigureInput},
   fields: [
     defineField({
       name: 'image',
@@ -65,7 +67,7 @@ export const figureType = defineType({
           {title: 'Default', value: 'default'},
           {title: 'Square', value: 'square'},
           {title: 'Full Bleed', value: 'fullbleed'},
-          {title: 'Narrow', value: 'narrow'}
+          {title: 'Narrow', value: 'narrow'},
         ],
         layout: 'radio',
       },

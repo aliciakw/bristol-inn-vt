@@ -72,8 +72,8 @@ const prepareColumnBlockPreview = (
   const title = text ?? imageText ?? blockTitle
 
   return {
-    title: truncatePreviewText(title),
-    subtitle: blockTitle,
+    title: blockTitle,
+    subtitle: truncatePreviewText(title),
     media,
   }
 }
@@ -104,8 +104,13 @@ const columnItemFields = [
     name: 'image',
     title: 'Image',
     type: 'figure',
+    options: {
+      collapsible: false,
+      hiddenItems: ['rounded', 'layout'],
+    },
   }),
-  defineField({name: 'cta', title: 'CTA', type: 'link'}),
+  defineField({name: 'cta', title: 'CTA', type: 'link', options: {
+      collapsible: false,}}),
 ]
 
 const createColumnField = (columnNumber: number) =>
@@ -130,8 +135,8 @@ const createColumnBlockType = ({
     name,
     title,
     fields: [
-      ...Array.from({length: maxColumns}, (_, index) => createColumnField(index + 1)),
       ...colorFields,
+      ...Array.from({length: maxColumns}, (_, index) => createColumnField(index + 1)),
     ],
     preview: {
       select: {
