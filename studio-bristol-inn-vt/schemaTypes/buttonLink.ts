@@ -23,9 +23,10 @@ export const buttonLinkType = defineType({
           { title: 'Forest', value: 'forest-400' },
           { title: 'Lilac', value: 'lilac-200' },
           { title: 'Prussian', value: 'prussian-500' },
+          { title: 'Prussian Light', value: 'prussian-200' },
         ],
       },
-      initialValue: 'sand',
+      initialValue: 'sand-100',
     }),
     defineField({
       name: 'linkType',

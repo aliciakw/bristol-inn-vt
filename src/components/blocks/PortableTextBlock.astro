@@ -6,9 +6,10 @@ import type { TextStyleVariant } from '../ui/types';
 interface Props {
   block: SanityBlock;
   contrainProseWidth?: boolean;
+  textVariant?: TextStyleVariant;
 }
 
-const { block, contrainProseWidth = true } = Astro.props;
+const { block, contrainProseWidth = true, textVariant } = Astro.props;
 
 type MarkDef = { _key: string; _type: string; href?: string; url?: string; openInNewTab?: boolean };
 
@@ -54,7 +55,7 @@ const styleVariantMap: Record<string, TextStyleVariant> = {
 const style = (block.style as string) ?? 'normal';
 const listItem = block.listItem as string | undefined;
 // eslint-disable-next-line security/detect-object-injection
-const variant = styleVariantMap[style] ?? 'paragraph';
+const variant = textVariant ?? styleVariantMap[style] ?? 'paragraph';
 const innerHtml = renderBlockChildren(block);
 ---
 
@@ -72,7 +73,7 @@ const innerHtml = renderBlockChildren(block);
       </TextStyle>
     </ol>
   ) : (
-    <TextStyle variant={variant} class:list={[contrainProseWidth && 'max-w-prose']}>
+    <TextStyle variant={variant} element={textVariant ? 'p' : undefined} class:list={[contrainProseWidth && 'max-w-prose']}>
       <Fragment set:html={innerHtml} />
     </TextStyle>
   )

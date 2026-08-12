@@ -1,8 +1,8 @@
 ---
 import type { SanityHomepage } from '../../lib/sanity';
 import DoubleHeroBlock from '@components/home/DoubleHeroBlock.astro';
-import WelcomeSection from '@components/home/WelcomeSection.astro';
 import SliceZone from '@components/SliceZone.astro';
+import TextStyle from '@components/ui/TextStyle.astro';
 
 interface Props {
   homepage: SanityHomepage;
@@ -10,10 +10,17 @@ interface Props {
 
 const { homepage } = Astro.props;
 
-const { welcomeBackgroundColor, welcomeHeading, welcomeItems, heroLeftImage, heroRightImage, body } = homepage;
+const { heroLeftImage, heroRightImage, body } = homepage;
 ---
 
 <DoubleHeroBlock leftImage={heroLeftImage} rightImage={heroRightImage} showLogoBadge={true} />
-<WelcomeSection welcomeBackgroundColor={welcomeBackgroundColor} welcomeHeading={welcomeHeading} welcomeItems={welcomeItems} />
 
 {body?.length > 0 && <SliceZone blocks={body} />}
+
+<div class="Section">
+  <div class="flex justify-center py-8 tablet:py-12">
+    <TextStyle variant="paragraph" element="span">
+      <a href="#main-content" class="underline underline-offset-4">Back to the top</a>
+    </TextStyle>
+  </div>
+</div>

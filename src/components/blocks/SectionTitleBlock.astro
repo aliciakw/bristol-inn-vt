@@ -1,0 +1,33 @@
+---
+import ImageComponent from '@components/ui/ImageComponent.astro';
+import TextStyle from '@components/ui/TextStyle.astro';
+import { buildSanityImageUrl, type SanityImage } from '../../lib/sanity';
+
+interface Props {
+  title: string;
+  icon?: SanityImage;
+}
+
+const { title, icon } = Astro.props;
+---
+
+<section class="Section">
+  <div class="Section__inner py-8 tablet:py-12">
+    <div class="col-span-full flex flex-col items-center gap-4 text-center">
+      {
+        icon?.url && (
+          <ImageComponent
+            src={buildSanityImageUrl(icon.url, { width: 160, height: 160, fit: 'max' })}
+            alt={icon.alt}
+            width={80}
+            height={80}
+            loading="lazy"
+            class="h-20 w-[160px]"
+            imgClass="h-full w-full object-contain"
+          />
+        )
+      }
+      <TextStyle variant="h2" element="h2">{title}</TextStyle>
+    </div>
+  </div>
+</section>

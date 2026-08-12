@@ -2,6 +2,12 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {colorInput} from '@sanity/color-input'
+import {CaseIcon} from '@sanity/icons/Case'
+import {CogIcon} from '@sanity/icons/Cog'
+import {DocumentsIcon} from '@sanity/icons/Documents'
+import {EnvelopeIcon} from '@sanity/icons/Envelope'
+import {HelpCircleIcon} from '@sanity/icons/HelpCircle'
+import {HomeIcon} from '@sanity/icons/Home'
 import {media} from 'sanity-plugin-media'
 
 import {schemaTypes} from './schemaTypes'
@@ -38,37 +44,33 @@ export default defineConfig({
           .title('Content')
           .items([
             S.listItem()
-              .title('Pages')
-              .id('pages')
+              .title('Homepage')
+              .icon(HomeIcon)
+              .id(HOMEPAGE_ID)
+              .child(pageDocument(S, HOMEPAGE_ID, 'homepage')),
+            S.listItem()
+              .title('Contact Page')
+              .icon(EnvelopeIcon)
+              .id(CONTACT_PAGE_ID)
+              .child(pageDocument(S, CONTACT_PAGE_ID, 'contactPage')),
+            S.documentTypeListItem('page')
+              .title('Other Pages')
+              .icon(DocumentsIcon)
               .child(
-                S.list()
-                  .title('Pages')
-                  .items([
-                    S.listItem()
-                      .title('Homepage')
-                      .id(HOMEPAGE_ID)
-                      .child(pageDocument(S, HOMEPAGE_ID, 'homepage')),
-                    S.listItem()
-                      .title('Contact Page')
-                      .id(CONTACT_PAGE_ID)
-                      .child(pageDocument(S, CONTACT_PAGE_ID, 'contactPage')),
-                    S.documentTypeListItem('page')
-                      .title('Pages')
-                      .child(
-                        S.documentTypeList('page')
-                          .title('Pages')
-                          .child((documentId: string) => pageDocument(S, documentId, 'page')),
-                      ),
-                  ]),
+                S.documentTypeList('page')
+                  .title('Other Pages')
+                  .child((documentId: string) => pageDocument(S, documentId, 'page')),
               ),
             S.divider(),
             S.listItem()
-              .title('FAQ')
+              .title('FAQ: Questions & Answers')
+              .icon(HelpCircleIcon)
               .id(FAQ_ID)
               .child(S.document().schemaType('faq').documentId(FAQ_ID)),
             S.divider(),
             S.listItem()
               .title('Rooms')
+              .icon(CaseIcon)
               .id('rooms')
               .child(
                 S.documentList()
@@ -78,6 +80,7 @@ export default defineConfig({
             S.divider(),
             S.listItem()
               .title('Settings')
+              .icon(CogIcon)
               .id(SETTINGS_ID)
               .child(S.document().schemaType('settings').documentId(SETTINGS_ID)),
           ]),

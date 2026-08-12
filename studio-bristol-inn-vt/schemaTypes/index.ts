@@ -1,3 +1,4 @@
+import {alternatingContentBlockType} from './alternatingContentBlock'
 import {buttonLinkType} from './buttonLink'
 import {singleColumnBlockType, threeColumnBlockType, twoColumnBlockType} from './columnBlock'
 import {contactPageType} from './contactPage'
@@ -13,10 +14,12 @@ import {linkType} from './link'
 import {metaType} from './meta'
 import {pageType} from './page'
 import {roomType} from './room'
+import {sectionTitleBlockType} from './sectionTitleBlock'
 import {settingsType} from './settings'
 import {testimonialType} from './testimonial'
 
 export const schemaTypes = [
+  alternatingContentBlockType,
   buttonLinkType,
   singleColumnBlockType,
   contactPageType,
@@ -30,6 +33,7 @@ export const schemaTypes = [
   pageType,
   roomType,
   roomSearchFormBlockType,
+  sectionTitleBlockType,
   settingsType,
   testimonialGalleryBlockType,
   testimonialType,

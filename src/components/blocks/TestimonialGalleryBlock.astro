@@ -16,11 +16,11 @@ const { heading, items = [], textColor, backgroundColor } = Astro.props;
 const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
 ---
 
-<section class="Section" style={wrapperStyle || undefined}>
-  <div class="Grid">
+<section class="Section bg-sand-200 my-12" style={wrapperStyle || undefined}>
+  <div class="Grid py-16">
     {
       heading && (
-        <div class="Grid__Row--full mb-2">
+        <div class="Grid__Row--full">
           <TextStyle variant="h2" class="text-center ma-2xl mx-auto">
             {heading}
           </TextStyle>

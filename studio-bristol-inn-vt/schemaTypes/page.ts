@@ -256,6 +256,8 @@ export const pageType = defineType({
         defineArrayMember({type: 'singleColumnBlock'}),
         defineArrayMember({type: 'twoColumnBlock'}),
         defineArrayMember({type: 'threeColumnBlock'}),
+        defineArrayMember({type: 'alternatingContentBlock'}),
+        defineArrayMember({type: 'sectionTitleBlock'}),
         defineArrayMember({type: 'roomSearchFormBlock'}),
         defineArrayMember({type: 'galleryStripBlock'}),
         defineArrayMember({type: 'testimonialGalleryBlock'}),

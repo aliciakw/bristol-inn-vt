@@ -93,8 +93,8 @@ export const roomSearchFormBlockType = defineType({
     },
     prepare({introduction, media}: RoomSearchFormPreviewSelection) {
       return {
-        title: truncatePreviewText(getPortableTextPreview(introduction) ?? 'Room Search Form'),
-        subtitle: 'Room Search Form',
+        title: 'Room Search Form Block',
+        subtitle: truncatePreviewText(getPortableTextPreview(introduction) ?? 'Room Search Form'),
         media,
       }
     },

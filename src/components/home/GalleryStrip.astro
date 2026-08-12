@@ -9,9 +9,9 @@ interface Props {
 const { images, speed = 'slow' } = Astro.props;
 const visible = images.filter((img) => img.url);
 const delayPerImage: Record<NonNullable<Props['speed']>, number> = {
-  slow: 600,
-  medium: 350,
-  fast: 200,
+  slow: 2400,
+  medium: 1200,
+  fast: 300,
 };
 // eslint-disable-next-line security/detect-object-injection
 const autoplayDelay = delayPerImage[speed];
