@@ -76,7 +76,7 @@ const canonicalUrl = new URL(canonicalOverride ?? Astro.url.pathname, siteUrl).h
     <div class="flex flex-col flex-1">
       {previewLabel && <PreviewBanner label={previewLabel} />}
       <NavigationTopBar variant={navigationVariant} />
-      <main class:list={['MainContent', mainClass]}>
+      <main id="main-content" tabindex="-1" class:list={['MainContent', mainClass]}>
         <slot />
       </main>
     </div>
