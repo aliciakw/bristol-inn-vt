@@ -20,7 +20,7 @@ export const IMAGE_SIZES: Record<ColumnCount, { width: number; height: number }>
 type PressableBaseProps = {
   size?: 'large' | 'default' | 'small' | 'x-small';
   textColor?: 'ink-900' | 'white';
-  bg?: 'prussian-700' | 'prussian-500' | 'prussian-200' | 'lilac-200' | 'sand-200' | 'khaki-200';
+  bg?: 'prussian-700' | 'prussian-500' | 'prussian-200' | 'lilac-200' | 'sand-100' | 'sand-200' | 'khaki-200' | 'forest-400';
   class?: string;
   tabIndex?: number;
 };
@@ -54,8 +54,10 @@ export const buttonBgClasses = {
   'prussian-500': 'bg-prussian-500 hover:bg-prussian-500/90',
   'prussian-200': 'bg-prussian-200 hover:bg-prussian-200/50',
   'lilac-200': 'bg-lilac-200',
+  'sand-100': 'bg-sand-100 hover:bg-sand-200',
   'sand-200': 'bg-sand-200 hover:bg-sand-100',
   'khaki-200': 'bg-khaki-200',
+  'forest-400': 'bg-forest-400 hover:bg-forest-400/90',
 } satisfies Record<NonNullable<ButtonProps['bg']>, string>;
 
 export function makeButtonClasses(

@@ -26,10 +26,18 @@ const nameplateLogo = settings?.nameplateLogo ?? null;
 
 const leftCta = settings?.leftCta?.label && settings?.leftCta?.href ? settings.leftCta : { label: settings?.leftCta?.label, href: settings?.leftCta?.href, openInNewTab: false };
 
-const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? settings.rightCta : { label: settings?.rightCta?.label, href: settings?.rightCta?.href, openInNewTab: false };
+const rightCta =
+  settings?.rightCta?.label && settings?.rightCta?.href ? settings.rightCta : { label: settings?.rightCta?.label, href: settings?.rightCta?.href, openInNewTab: false };
 ---
 
-<header id="nav-top-bar" class:list={['w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0 sticky px-[var(--grid-margin)] desktop:pl-[var(--grid-gutter)] desktop:pr-1', `bg-${variant}`, shadow && `shadow-lg`]}>
+<header
+  id="nav-top-bar"
+  class:list={[
+    'w-full h-[var(--nav-top-bar-height)] z-30 top-0 flex items-center shrink-0 sticky px-[var(--grid-margin)] desktop:pl-[var(--grid-gutter)] desktop:pr-1',
+    `bg-${variant}`,
+    shadow && `shadow-lg`,
+  ]}
+>
   <!-- Left (desktop only) -->
   <div class="flex">
     <a href="/" class="flex">
@@ -43,21 +51,57 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
       <div class="hidden tablet:inline-flex gap-2">
         {
           leftCta.label && leftCta.href && (
-            <ButtonLink href={leftCta.href} target={leftCta.openInNewTab ? '_blank' : undefined} rel={leftCta.openInNewTab ? 'noopener noreferrer' : undefined} size="small" class="bg-sand-200 hover:bg-sand-100 desktop:inline-flex">
+            <ButtonLink
+              href={leftCta.href}
+              target={leftCta.openInNewTab ? '_blank' : undefined}
+              rel={leftCta.openInNewTab ? 'noopener noreferrer' : undefined}
+              size="small"
+              class="bg-sand-200 hover:bg-sand-100 desktop:inline-flex"
+            >
               {leftCta.label}
             </ButtonLink>
           )
         }
         {
           rightCta.label && rightCta.href && (
-            <ButtonLink href={rightCta.href} target={rightCta.openInNewTab ? '_blank' : undefined} rel={rightCta.openInNewTab ? 'noopener noreferrer' : undefined} bg="lilac-200" size="small" class="">
+            <ButtonLink
+              href={rightCta.href}
+              target={rightCta.openInNewTab ? '_blank' : undefined}
+              rel={rightCta.openInNewTab ? 'noopener noreferrer' : undefined}
+              bg="lilac-200"
+              size="small"
+            >
               {rightCta.label}
             </ButtonLink>
           )
         }
       </div>
-      <button id="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-menu" class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer desktop:w-11 ml-4">
-        <div class="w-9 h-9 flex flex-col justify-center items-stretch gap-[7px]">
+      <!-- Mobile button -->
+      <div class="tablet:hidden flex gap-2">
+        {
+          rightCta.label && rightCta.href && (
+            <ButtonLink
+              href={rightCta.href}
+              target={rightCta.openInNewTab ? '_blank' : undefined}
+              rel={rightCta.openInNewTab ? 'noopener noreferrer' : undefined}
+              bg="lilac-200"
+              size="xsmall"
+              class="px-2"
+            >
+              {rightCta.label}
+            </ButtonLink>
+          )
+        }
+      </div>
+      <button
+        id="nav-menu-toggle"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="nav-menu"
+        class="burger-icon flex flex-col justify-center items-stretch gap-[8px] shrink-0 cursor-pointer desktop:w-11 ml-1 tablet:ml-4"
+      >
+        <div class="w-7 h-8 tablet:w-9 tablet:h-9 flex flex-col justify-center items-stretch gap-[7px]">
           <span class="line"></span>
           <span class="line"></span>
           <span class="line"></span>
@@ -75,7 +119,12 @@ const rightCta = settings?.rightCta?.label && settings?.rightCta?.href ? setting
         {
           sidebarLinks.map(({ label, href, openInNewTab }) => (
             <li>
-              <a href={href} target={openInNewTab ? '_blank' : undefined} rel={openInNewTab ? 'noopener noreferrer' : undefined} class="font-serif text-[36px] leading-[1.5] hover:opacity-60 transition-opacity">
+              <a
+                href={href}
+                target={openInNewTab ? '_blank' : undefined}
+                rel={openInNewTab ? 'noopener noreferrer' : undefined}
+                class="font-serif text-[36px] leading-[1.5] hover:opacity-60 transition-opacity"
+              >
                 {label}
               </a>
             </li>

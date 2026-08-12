@@ -7,6 +7,8 @@ import ColumnLayout from './blocks/ColumnLayout.astro';
 import GalleryStrip from './home/GalleryStrip.astro';
 import RoomSearchFormBlock from './blocks/RoomSearchFormBlock.astro';
 import TestimonialGalleryBlock from './blocks/TestimonialGalleryBlock.astro';
+import AlternatingContentBlock from './blocks/AlternatingContentBlock.astro';
+import SectionTitleBlock from './blocks/SectionTitleBlock.astro';
 import { type SanityBlock, type SanityImage } from '../lib/sanity';
 
 interface Props {
@@ -154,6 +156,21 @@ const getImageBlockContentClass = (image?: { layout?: string }) =>
           backgroundColor={block.backgroundColor as string | undefined}
         />
       );
+    }
+
+    if (block._type === 'alternatingContentBlock') {
+      return (
+        <AlternatingContentBlock
+          body={block.body as SanityBlock[] | undefined}
+          figure={block.figure as Parameters<typeof AlternatingContentBlock>[0]['figure']}
+          ctas={block.ctas as Parameters<typeof AlternatingContentBlock>[0]['ctas']}
+          imagePosition={block.imagePosition as 'left' | 'right' | undefined}
+        />
+      );
+    }
+
+    if (block._type === 'sectionTitleBlock') {
+      return <SectionTitleBlock title={block.title as string} icon={block.icon as Parameters<typeof SectionTitleBlock>[0]['icon']} />;
     }
 
     if (block._type === 'roomSearchFormBlock') {

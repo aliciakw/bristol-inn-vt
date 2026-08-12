@@ -1,34 +1,29 @@
 ---
 import TextStyle from '@components/ui/TextStyle.astro';
-import { Quote } from 'lucide-react';
 
 interface Props {
   quote: string;
   author?: string;
   role?: string;
-  bg?: 'khaki-100' | 'prussian-200' | 'lilac-200';
 }
 
-const { quote, author, role, bg = 'khaki-100' } = Astro.props;
+const { quote, author, role } = Astro.props;
 
-const bgClassNames = {
-  'khaki-100': 'bg-khaki-100',
-  'prussian-200': 'bg-prussian-200',
-  'lilac-200': 'bg-lilac-200',
-};
-
-const bgClass = 'bg-khaki-100';
 const quoteVariant = quote.length > 180 ? 'h5' : quote.length > 105 ? 'h4' : 'h3';
 ---
 
-<div class:list={['rounded-[16px] p-4 desktop:p-6 flex flex-col gap-3 h-full max-w-[60vw]', bgClass]}>
+<div class="rounded-[16px] p-4 desktop:p-6 flex flex-col gap-3 h-full max-w-[60vw] bg-white shadow-md">
   <TextStyle variant={quoteVariant} element="p" class="flex-1 text-ink-900">
     &#8220;{quote.trim()}&#8221;
   </TextStyle>
   <div class="text-right">
-    <TextStyle variant="h5" element="p" class="text-ink-900">
-      &#8212; {author || 'Anonymous'}
-    </TextStyle>
+    {
+      author && (
+        <TextStyle variant="h5" element="p" class="text-ink-900">
+          &#8212; {author}
+        </TextStyle>
+      )
+    }
     {
       role && (
         <TextStyle variant="caption" element="p" class="text-ink-900 mt-0.5">

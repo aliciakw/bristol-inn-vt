@@ -71,6 +71,10 @@ export type SanityResolvedLink = {
   openInNewTab: boolean;
 };
 
+export type SanityButtonLink = SanityResolvedLink & {
+  color?: 'sand-100' | 'sand-200' | 'khaki-200' | 'forest-400' | 'lilac-200' | 'prussian-500';
+};
+
 export type SanityImage = {
   url: string;
   alt: string;
@@ -174,6 +178,16 @@ const RESOLVE_BODY_ITEM = `{
   _type == "singleColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM} },
   _type == "twoColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM} },
   _type == "threeColumnBlock" => { ..., "column1": column1${RESOLVE_COLUMN_ITEM}, "column2": column2${RESOLVE_COLUMN_ITEM}, "column3": column3${RESOLVE_COLUMN_ITEM} },
+  _type == "alternatingContentBlock" => {
+    ...,
+    "figure": figure${RESOLVE_FIGURE},
+    "ctas": ctas[]${RESOLVE_BUTTON_LINK},
+    "imagePosition": coalesce(imagePosition, "right")
+  },
+  _type == "sectionTitleBlock" => {
+    ...,
+    "icon": icon{ "url": asset->url, "alt": coalesce(alt, "") }
+  },
   _type == "roomSearchFormBlock" => { ..., "icon": icon${RESOLVE_FIGURE} },
   _type == "galleryStripBlock" => { ..., "images": images[]${RESOLVE_FIGURE} },
   _type == "testimonialGalleryBlock" => {
@@ -376,13 +390,6 @@ export type SanityAwardImage = {
   url: string;
   alt: string;
   linkUrl?: string;
-};
-
-export type SanityButtonLink = {
-  label: string;
-  color?: string;
-  href: string;
-  openInNewTab: boolean;
 };
 
 export type SanitySettings = {

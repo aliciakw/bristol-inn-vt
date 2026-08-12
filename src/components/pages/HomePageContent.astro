@@ -1,7 +1,6 @@
 ---
 import type { SanityHomepage } from '../../lib/sanity';
 import DoubleHeroBlock from '@components/home/DoubleHeroBlock.astro';
-import WelcomeSection from '@components/home/WelcomeSection.astro';
 import SliceZone from '@components/SliceZone.astro';
 
 interface Props {
@@ -14,6 +13,5 @@ const { welcomeBackgroundColor, welcomeHeading, welcomeItems, heroLeftImage, her
 ---
 
 <DoubleHeroBlock leftImage={heroLeftImage} rightImage={heroRightImage} showLogoBadge={true} />
-<WelcomeSection welcomeBackgroundColor={welcomeBackgroundColor} welcomeHeading={welcomeHeading} welcomeItems={welcomeItems} />
 
 {body?.length > 0 && <SliceZone blocks={body} />}

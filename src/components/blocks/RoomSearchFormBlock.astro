@@ -14,8 +14,8 @@ const { introduction = [], icon, textColor, backgroundColor } = Astro.props;
 const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
 ---
 
-<section class="Section" style={wrapperStyle || undefined}>
-  <div class="Grid pt-4 pb-16">
+<section class="Section my-12" style={wrapperStyle || undefined}>
+  <div class="Grid py-16">
     <div class="Grid__Row--inset-2 flex flex-col items-center gap-8">
       {
         introduction.length > 0 && (

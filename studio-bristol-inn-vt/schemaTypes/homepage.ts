@@ -27,26 +27,6 @@ export const homepageType = defineType({
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
     }),
-    // Welcome section
-    defineBackgroundColorField('welcomeBackgroundColor', 'Welcome Section Background Color'),
-    defineField({ name: 'welcomeHeading', title: 'Welcome Heading', type: 'string' }),
-    defineField({ 
-      name: 'welcomeItems',
-      title: 'Welcome Items',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'welcomeItem',
-          fields: [
-            defineField({ name: 'text', type: 'text', title: 'Text' }),
-            defineField({name: 'cta', type: 'link', title: 'Button'}),
-            defineField({name: 'image', type: 'image', title: 'Image'}),
-            defineField({ name: 'showRoomSearchForm', type: 'boolean', title: "Show Room Search Form"})
-          ]
-        })
-      ]
-    }),
 
     // Flexible body (SliceZone)
     defineField({
@@ -121,6 +101,8 @@ export const homepageType = defineType({
         defineArrayMember({ type: 'singleColumnBlock' }),
         defineArrayMember({ type: 'twoColumnBlock' }),
         defineArrayMember({ type: 'threeColumnBlock' }),
+        defineArrayMember({ type: 'alternatingContentBlock' }),
+        defineArrayMember({ type: 'sectionTitleBlock' }),
         defineArrayMember({ type: 'roomSearchFormBlock' }),
         defineArrayMember({ type: 'galleryStripBlock' }),
         defineArrayMember({ type: 'testimonialGalleryBlock' }),

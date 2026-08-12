@@ -1,0 +1,69 @@
+---
+import ButtonLink from '@components/ui/ButtonLink.astro';
+import type { SanityBlock, SanityButtonLink, SanityImage } from '../../lib/sanity';
+import PortableTextBlock from './PortableTextBlock.astro';
+import SingleImageBlock from './SingleImageBlock.astro';
+
+interface Props {
+  body?: SanityBlock[];
+  figure?: SanityImage;
+  ctas?: SanityButtonLink[];
+  imagePosition?: 'left' | 'right';
+}
+
+const { figure, imagePosition = 'right' } = Astro.props;
+const body = Astro.props.body ?? [];
+const ctas = Astro.props.ctas ?? [];
+const validCtas = ctas.filter((cta) => cta.href && cta.label);
+const textColorForButton = (color?: SanityButtonLink['color']) => (color === 'forest-400' || color === 'prussian-500' ? 'white' : 'ink-900');
+---
+
+<section class="Section">
+  <div class="Section__inner py-4">
+    <div
+      class:list={['col-span-full flex flex-col gap-8 tablet:gap-12', imagePosition === 'left' ? 'tablet:flex-row-reverse' : 'tablet:flex-row']}
+      data-image-position={imagePosition}
+    >
+      <div class="flex min-w-0 flex-1 items-center tablet:items-start flex-col gap-6">
+        {
+          body.length > 0 && (
+            <div class="flex flex-col gap-4 max-w-prose">
+              {body.map((block) => (
+                <PortableTextBlock block={block} />
+              ))}
+            </div>
+          )
+        }
+
+        {
+          validCtas.length > 0 && (
+            <div class="flex flex-wrap items-center gap-3">
+              {validCtas.map((cta) => (
+                <ButtonLink
+                  href={cta.href}
+                  bg={cta.color ?? 'khaki-200'}
+                  textColor={textColorForButton(cta.color)}
+                  target={cta.openInNewTab ? '_blank' : undefined}
+                  rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}
+                >
+                  {cta.label}
+                </ButtonLink>
+              ))}
+            </div>
+          )
+        }
+      </div>
+
+      <div class="alternating-image min-w-0 flex-1">
+        <SingleImageBlock
+          image={figure}
+          layout={figure?.layout}
+          caption={figure?.caption}
+          rounded={figure?.rounded}
+          maxImageWidth={1480}
+          sizes="(min-width: 1624px) 708px, (min-width: 1240px) calc(50vw - 88px), (min-width: 912px) calc(50vw - 48px), calc(100vw - 32px)"
+        />
+      </div>
+    </div>
+  </div>
+</section>
