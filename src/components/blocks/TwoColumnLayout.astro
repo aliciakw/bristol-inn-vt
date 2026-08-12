@@ -1,0 +1,23 @@
+---
+import ColumnContent from './ColumnContent.astro';
+import { getColumnLayoutStyle, type ColumnLayoutItem, type ColumnLayoutStyleProps } from './columnLayoutTypes';
+
+interface Props extends ColumnLayoutStyleProps {
+  column1?: ColumnLayoutItem | null;
+  column2?: ColumnLayoutItem | null;
+}
+
+const { column1 = null, column2 = null, textColor, backgroundColor } = Astro.props;
+const wrapperStyle = getColumnLayoutStyle({ textColor, backgroundColor });
+---
+
+<section class="Section">
+  <div class="Grid pb-16" style={wrapperStyle}>
+    <div class="col-span-6 flex flex-col gap-8 tablet:col-span-4 desktop:col-start-3">
+      <ColumnContent column={column1} />
+    </div>
+    <div class="col-span-6 flex flex-col gap-8 tablet:col-span-4">
+      <ColumnContent column={column2} />
+    </div>
+  </div>
+</section>
