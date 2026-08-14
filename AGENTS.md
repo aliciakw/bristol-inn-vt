@@ -1,35 +1,32 @@
-This project is primarily a content website for a small inn.
+# Bristol Inn agent guide
 
-Development best practices -- ask for confirmation if you need to deviate from these:
+Small-inn content and booking website. Keep this file short; load the linked docs only when a task touches their subject.
 
-- Use the astro cli for initial configuration, where ever possible. If overrides are needed, do that after running the CLI.
-- By default, install node packages using `npm install`, rather than editing package.json to set a specific version directly.
+## Before changing code
 
-General Best practices
+- Read `docs/architecture-decisions.md` for integrations, data ownership, deployment, security, or structural changes.
+- Read `docs/product-rules.md` for rooms, availability, booking, content, routes, or guest-facing behavior.
+- Use the live code and tests as the source of truth when old prose conflicts with implementation.
+- Ask before departing from these rules or changing a documented decision.
 
-- Leverage Astro.JS's static first preference. the website should load fast on poor internet
-- Leverage SEO best practices
-- Leverage Accessibility best practices
-- Leverage data privacy and web security best practices
-- Use Typescript in strict mode
-- With the exception of one line if statements optional
-- Wrap any dependencies so they are easy to swap out
-- When it comes to components, prefer composability over configuration
+## Engineering rules
 
-Styling
+- Prefer Astro's static-first model and fast loading on poor connections.
+- Maintain SEO, accessibility, privacy, and web-security fundamentals.
+- Use strict TypeScript. Wrap external services behind `src/lib/` modules.
+- Prefer composable components over configuration-heavy components.
+- Use the Astro CLI for initial configuration where possible; apply overrides afterward.
+- Install packages with `npm install`; do not hand-edit dependency versions.
+- Preserve existing brace style; one-line conditionals are the only optional exception.
 
-- Compose Tailwind classnames for most styling. There may be on global reset.css file. Otherwise use inline styling for rare overrides.
-- The layout follows a 6 column grid for mobile and 8 column grid for desktop. Generally prefer CSS grid or flexbox rather than setting sizes explicitly or based on percentages, unless there is a valid reason
-- Use UI primitive components like TextStyle, Button, Link, FormInput to maintain consistency wherever possible.
-- mobile first styling, with (3) breakpoints: mobile, tablet / laptop, large monitors
+## UI rules
 
-Integrations
+- Compose Tailwind classes for most styling; reserve global CSS for resets/tokens and rare shared needs.
+- Build mobile-first with `tablet` and `desktop` breakpoints.
+- Use a 6-column mobile and 8-column desktop grid where layout calls for a grid; prefer grid/flex over fixed or percentage sizing.
+- Reuse primitives in `src/components/ui/` (for example TextStyle, Button, ButtonLink, and form fields).
 
-- Hostaway is used for booking and room browsing
-- Sanity is the CMS
-- Cloudflare Workers is used to render static site
+## Safety
 
-Special instructions
-
-- Never modify .env, .env.local., .dev.vars.
-- Use git in readonly mode. It is fine to compare current local changes to either remote or local git history, but never add, commit or push without permission
+- Never modify `.env`, `.env.local`, `.dev.vars`, or the Studio `.env`.
+- Git is read-only unless the user explicitly authorizes staging, committing, or pushing.
