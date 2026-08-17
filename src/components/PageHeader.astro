@@ -36,7 +36,7 @@ const { introduction, heroImage, textColor, backgroundColor = 'var(--color-pruss
         />
       )
     }
-    <div class="row-span-1 col-span-6 tablet:hidden flex flex-col gap-4 mt-4 mb-4">
+    <div class="row-span-1 col-span-6 tablet:hidden flex flex-col gap-4">
       {introduction && introduction?.length > 0 && <SliceZone blocks={introduction} contrainProseWidth={false} />}
     </div>
     <slot />

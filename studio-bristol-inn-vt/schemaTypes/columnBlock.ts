@@ -106,7 +106,7 @@ const columnItemFields = [
     type: 'figure',
     options: {
       collapsible: false,
-      hiddenItems: ['rounded', 'layout'],
+      hiddenItems: ['rounded'],
     },
   }),
   defineField({name: 'cta', title: 'CTA', type: 'link', options: {
@@ -134,8 +134,15 @@ const createColumnBlockType = ({
     type: 'object',
     name,
     title,
+    fieldsets: [
+      {
+        name: 'colors',
+        title: 'Color Overrides',
+        options: {collapsible: true, collapsed: true},
+      },
+    ],
     fields: [
-      ...colorFields,
+      ...colorFields.map((field) => ({...field, fieldset: 'colors'})),
       ...Array.from({length: maxColumns}, (_, index) => createColumnField(index + 1)),
     ],
     preview: {

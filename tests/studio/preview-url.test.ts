@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildPreviewUrl, resolvePreviewPath } from '../../studio-bristol-inn-vt/lib/previewUrl';
+import { buildPreviewUrl, resolvePreviewPath, resolvePreviewSiteUrl } from '../../studio-bristol-inn-vt/lib/previewUrl';
 
 describe('resolvePreviewPath()', () => {
   it('resolves the homepage singleton to /preview', () => {
@@ -36,7 +36,17 @@ describe('buildPreviewUrl()', () => {
     expect(buildPreviewUrl({ _type: 'homepage' }, { siteUrl: 'https://www.example.com' })).toBeNull();
   });
 
-  it('falls back to the deployed Studio URL without a site URL override', () => {
-    expect(buildPreviewUrl({ _type: 'homepage' }, { secret: 'shared-secret' })).toBe('https://bristol-inn-vt.sanity.studio/preview?secret=shared-secret');
+  it('falls back to the deployed website without a site URL override', () => {
+    expect(buildPreviewUrl({ _type: 'homepage' }, { secret: 'shared-secret' })).toBe('https://bristol-inn-vt.alicia-willett.workers.dev/preview?secret=shared-secret');
+  });
+});
+
+describe('resolvePreviewSiteUrl()', () => {
+  it('keeps localhost when the Studio is also running locally', () => {
+    expect(resolvePreviewSiteUrl('http://localhost:4321', 'http://localhost:3333/structure')).toBe('http://localhost:4321');
+  });
+
+  it('replaces localhost when the Studio is deployed', () => {
+    expect(resolvePreviewSiteUrl('http://localhost:4321', 'https://bristol-inn-vt.sanity.studio/structure')).toBe('https://bristol-inn-vt.alicia-willett.workers.dev');
   });
 });
