@@ -1,0 +1,30 @@
+---
+import ColumnContent from './ColumnContent.astro';
+import { getColumnLayoutStyle, type ColumnLayoutItem, type ColumnLayoutStyleProps } from './columnLayoutTypes';
+import { getSpacerClasses } from './layoutOptions';
+
+interface Props extends ColumnLayoutStyleProps {
+  column1?: ColumnLayoutItem | null;
+  column2?: ColumnLayoutItem | null;
+  column3?: ColumnLayoutItem | null;
+}
+
+const { column1 = null, column2 = null, column3 = null, textColor, backgroundColor, topSpacer, bottomSpacer } = Astro.props;
+const wrapperStyle = getColumnLayoutStyle({ textColor, backgroundColor });
+const columns = [column1, column2, column3];
+const spacerClasses = getSpacerClasses(topSpacer, bottomSpacer);
+---
+
+<section class="Section">
+  <div class:list={['Grid', spacerClasses]} style={wrapperStyle}>
+    <div class="col-span-6 grid grid-cols-1 gap-[var(--grid-gutter)] tablet:col-span-8 desktop:col-span-8 desktop:col-start-3 tablet:grid-cols-3">
+      {
+        columns.map((column) => (
+          <div class="flex min-w-0 flex-col gap-8">
+            <ColumnContent column={column} />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

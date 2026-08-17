@@ -16,6 +16,7 @@ import {pageType} from './page'
 import {roomType} from './room'
 import {sectionTitleBlockType} from './sectionTitleBlock'
 import {settingsType} from './settings'
+import {singleImageBlockType} from './singleImageBlock'
 import {testimonialType} from './testimonial'
 
 export const schemaTypes = [
@@ -35,6 +36,7 @@ export const schemaTypes = [
   roomSearchFormBlockType,
   sectionTitleBlockType,
   settingsType,
+  singleImageBlockType,
   testimonialGalleryBlockType,
   testimonialType,
   threeColumnBlockType,

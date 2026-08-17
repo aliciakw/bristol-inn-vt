@@ -18,8 +18,7 @@ const ANIMATION_MODE: false | 'fade' | 'slide' = 'fade';
   class="DoubleHero__Wrapper"
   class:list={[
     'relative w-full flex items-center justify-center bg-white pointer-events-none',
-    ANIMATION_MODE === 'fade' && 'DoubleHero__Wrapper--fade',
-    ANIMATION_MODE === 'slide' && 'DoubleHero__Wrapper--slide',
+    ANIMATION_MODE === 'fade' ? 'DoubleHero__Wrapper--fade' : ANIMATION_MODE === 'slide' ? 'DoubleHero__Wrapper--slide' : '',
   ]}
 >
   {
@@ -74,8 +73,8 @@ const ANIMATION_MODE: false | 'fade' | 'slide' = 'fade';
 <style>
   :root {
     --double-hero-wrapper-h: 80vh;
-    --double-hero-image-h: calc(var(--double-hero-wrapper-h) - 72px);
-    --double-hero-image-w: calc(50vw - var(--grid-gutter));
+    --double-hero-image-h: calc(var(--double-hero-wrapper-h) - 48px);
+    --double-hero-image-w: calc(50vw - 0.5 * var(--grid-gutter));
     --double-hero-image-w-expanded: calc(100vw - (2 * var(--grid-margin)));
   }
 
@@ -84,8 +83,9 @@ const ANIMATION_MODE: false | 'fade' | 'slide' = 'fade';
     }
   }
 
-  @media (min-width: 1224px) {
+  @media (min-width: 1240px) {
     :root {
+      /* --double-hero-wrapper-h: 76vh; */
     }
   }
   .DoubleHero__Wrapper {

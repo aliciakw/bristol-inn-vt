@@ -13,32 +13,36 @@ const { block, className } = Astro.props;
 const { introduction, heroImage, textColor, backgroundColor = 'var(--color-prussian-100)' } = block;
 ---
 
-<div class="Section" style={`background-color: ${backgroundColor}; color: ${textColor};`}>
-  <div class="Grid" class:list={[className]}>
-    <div class="row-span-1 col-span-1 tablet:col-span-4 desktop:col-span-6 tablet:pr-[var(--grid-gutter)] tablet:pt-44 gap-6">
-      <div class="hidden tablet:flex flex-col max-w-xl">
-        {introduction && introduction.length > 0 && <SliceZone blocks={introduction} contrainProseWidth={false} />}
+<section class="tablet:pb-16 overflow-hidden">
+  <div class="Section overflow-visible! tablet:min-h-[320px]" style={`background-color: ${backgroundColor}; color: ${textColor};`}>
+    <div class="Grid relative" class:list={[className]}>
+      <div class="row-span-1 col-span-1 tablet:col-span-4 desktop:col-span-6 desktop:col-start-2 tablet:pr-[var(--grid-gutter)] tablet:pt-44 gap-6">
+        <div class="hidden tablet:flex flex-1 flex-col justify-end max-w-xl">
+          {introduction && introduction.length > 0 && <SliceZone blocks={introduction} contrainProseWidth={false} />}
+        </div>
       </div>
+      {
+        heroImage?.url && (
+          <div class="row-span-1 col-span-6 tablet:relative tablet:col-span-4 desktop:col-span-5">
+            <ImageComponent
+              src={buildSanityImageUrl(heroImage.url, { width: 900, height: 700 })}
+              srcset={`${buildSanityImageUrl(heroImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(heroImage.url, { width: 900, height: 700 })} 900w`}
+              sizes="(max-width: 912px) 100vw, 50vw"
+              alt={heroImage.alt}
+              width={900}
+              height={700}
+              loading="eager"
+              fadeIn
+              class="mt-16 ml-auto aspect-[5/3] tablet:aspect-[4.5/3] max-w-xl overflow-hidden rounded-[16px] tablet:absolute tablet:inset-x-0 tablet:top-0 tablet:mt-0 tablet:min-h-[384px] tablet:max-w-none tablet:rounded-t-none"
+              imgClass="w-full h-full object-cover"
+            />
+          </div>
+        )
+      }
+      <div class="row-span-1 col-span-6 tablet:hidden flex flex-col gap-4">
+        {introduction && introduction?.length > 0 && <SliceZone blocks={introduction} contrainProseWidth={false} />}
+      </div>
+      <slot />
     </div>
-    {
-      heroImage?.url && (
-        <ImageComponent
-          src={buildSanityImageUrl(heroImage.url, { width: 900, height: 700 })}
-          srcset={`${buildSanityImageUrl(heroImage.url, { width: 450, height: 350 })} 450w, ${buildSanityImageUrl(heroImage.url, { width: 900, height: 700 })} 900w`}
-          sizes="(max-width: 912px) 100vw, 50vw"
-          alt={heroImage.alt}
-          width={900}
-          height={700}
-          loading="eager"
-          fadeIn
-          class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-6 overflow-hidden aspect-[5/3] tablet:aspect-[5/3.5] mt-16 tablet:mt-0 rounded-[16px] tablet:rounded-t-none max-w-xl ml:auto tablet:max-w-none"
-          imgClass="w-full h-full object-cover"
-        />
-      )
-    }
-    <div class="row-span-1 col-span-6 tablet:hidden flex flex-col gap-4 mt-4 mb-4">
-      {introduction && introduction?.length > 0 && <SliceZone blocks={introduction} contrainProseWidth={false} />}
-    </div>
-    <slot />
   </div>
-</div>
+</section>

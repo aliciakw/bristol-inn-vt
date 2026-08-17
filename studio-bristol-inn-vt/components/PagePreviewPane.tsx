@@ -57,6 +57,7 @@ function ScaledPreviewPane(props: ScaledPreviewPaneProps) {
     refreshKey,
     siteUrl,
     secret: previewSecret,
+    studioUrl: window.location.href,
   })
 
   useEffect(() => {
@@ -83,19 +84,11 @@ function ScaledPreviewPane(props: ScaledPreviewPaneProps) {
   }, [])
 
   if (!previewSecret) {
-    return (
-      <div style={messageStyle}>
-        Add SANITY_STUDIO_PREVIEW_SECRET to enable page previews.
-      </div>
-    )
+    return <div style={messageStyle}>Add SANITY_STUDIO_PREVIEW_SECRET to enable page previews.</div>
   }
 
   if (!previewUrl) {
-    return (
-      <div style={messageStyle}>
-        Add a slug, then save or publish this page to preview it.
-      </div>
-    )
+    return <div style={messageStyle}>Add a slug, then save or publish this page to preview it.</div>
   }
 
   const scale = paneSize.width > 0 ? Math.min(paneSize.width / props.previewWidth, 1) : 1
@@ -127,5 +120,7 @@ export function PagePreviewPane(props: PreviewPaneProps) {
 }
 
 export function MobilePagePreviewPane(props: PreviewPaneProps) {
-  return <ScaledPreviewPane {...props} previewWidth={MOBILE_PREVIEW_WIDTH} title="Mobile page preview" />
+  return (
+    <ScaledPreviewPane {...props} previewWidth={MOBILE_PREVIEW_WIDTH} title="Mobile page preview" />
+  )
 }

@@ -3,7 +3,9 @@ import ButtonLink from '@components/ui/ButtonLink.astro';
 import PageHeaderBlock from './blocks/PageHeaderBlock.astro';
 import PortableTextBlock from './blocks/PortableTextBlock.astro';
 import SingleImageBlock from './blocks/SingleImageBlock.astro';
-import ColumnLayout from './blocks/ColumnLayout.astro';
+import SingleColumnLayout from './blocks/SingleColumnLayout.astro';
+import TwoColumnLayout from './blocks/TwoColumnLayout.astro';
+import ThreeColumnLayout from './blocks/ThreeColumnLayout.astro';
 import GalleryStrip from './home/GalleryStrip.astro';
 import RoomSearchFormBlock from './blocks/RoomSearchFormBlock.astro';
 import TestimonialGalleryBlock from './blocks/TestimonialGalleryBlock.astro';
@@ -19,7 +21,7 @@ interface Props {
 
 type CtaFigure = Parameters<typeof SingleImageBlock>[0]['image'] & {
   caption?: string;
-  layout?: 'default' | 'square' | 'fullbleed' | 'narrow';
+  layout?: 'default' | 'square' | 'fullbleed' | 'narrow' | 'portrait';
   rounded?: boolean;
 };
 
@@ -73,7 +75,15 @@ const getImageBlockContentClass = (image?: { layout?: string }) =>
 
     if (block._type === 'singleImageBlock') {
       const image = block.image as SanityImage | undefined;
-      const content = <SingleImageBlock image={image} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      const content = (
+        <SingleImageBlock
+          image={image}
+          textColor={block.textColor as string | undefined}
+          backgroundColor={block.backgroundColor as string | undefined}
+          topSpacer={(block.topSpacer as Parameters<typeof SingleImageBlock>[0]['topSpacer']) ?? 'sm'}
+          bottomSpacer={(block.bottomSpacer as Parameters<typeof SingleImageBlock>[0]['bottomSpacer']) ?? 'sm'}
+        />
+      );
       return wrapStandaloneBlocks ? (
         <section class="Section">
           <div class="Section__inner">
@@ -124,36 +134,39 @@ const getImageBlockContentClass = (image?: { layout?: string }) =>
 
     if (block._type === 'singleColumnBlock') {
       return (
-        <ColumnLayout
-          column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']}
-          numColumns={1}
+        <SingleColumnLayout
+          column1={block.column1 as Parameters<typeof SingleColumnLayout>[0]['column1']}
           textColor={block.textColor as string | undefined}
           backgroundColor={block.backgroundColor as string | undefined}
+          topSpacer={block.topSpacer as Parameters<typeof SingleColumnLayout>[0]['topSpacer']}
+          bottomSpacer={block.bottomSpacer as Parameters<typeof SingleColumnLayout>[0]['bottomSpacer']}
         />
       );
     }
 
     if (block._type === 'twoColumnBlock') {
       return (
-        <ColumnLayout
-          column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']}
-          column2={block.column2 as Parameters<typeof ColumnLayout>[0]['column2']}
-          numColumns={2}
+        <TwoColumnLayout
+          column1={block.column1 as Parameters<typeof TwoColumnLayout>[0]['column1']}
+          column2={block.column2 as Parameters<typeof TwoColumnLayout>[0]['column2']}
           textColor={block.textColor as string | undefined}
           backgroundColor={block.backgroundColor as string | undefined}
+          topSpacer={block.topSpacer as Parameters<typeof TwoColumnLayout>[0]['topSpacer']}
+          bottomSpacer={block.bottomSpacer as Parameters<typeof TwoColumnLayout>[0]['bottomSpacer']}
         />
       );
     }
 
     if (block._type === 'threeColumnBlock') {
       return (
-        <ColumnLayout
-          column1={block.column1 as Parameters<typeof ColumnLayout>[0]['column1']}
-          column2={block.column2 as Parameters<typeof ColumnLayout>[0]['column2']}
-          column3={block.column3 as Parameters<typeof ColumnLayout>[0]['column3']}
-          numColumns={3}
+        <ThreeColumnLayout
+          column1={block.column1 as Parameters<typeof ThreeColumnLayout>[0]['column1']}
+          column2={block.column2 as Parameters<typeof ThreeColumnLayout>[0]['column2']}
+          column3={block.column3 as Parameters<typeof ThreeColumnLayout>[0]['column3']}
           textColor={block.textColor as string | undefined}
           backgroundColor={block.backgroundColor as string | undefined}
+          topSpacer={block.topSpacer as Parameters<typeof ThreeColumnLayout>[0]['topSpacer']}
+          bottomSpacer={block.bottomSpacer as Parameters<typeof ThreeColumnLayout>[0]['bottomSpacer']}
         />
       );
     }

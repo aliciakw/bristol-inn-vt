@@ -12,6 +12,7 @@ import {media} from 'sanity-plugin-media'
 
 import {schemaTypes} from './schemaTypes'
 import {DeployTool} from './deploy/DeployTool'
+import {OpenPreviewAction} from './components/OpenPreviewAction'
 import {MobilePagePreviewPane, PagePreviewPane} from './components/PagePreviewPane'
 
 const HOMEPAGE_ID = '6e561f5f-23ec-49fa-863f-141c005904c3'
@@ -72,11 +73,7 @@ export default defineConfig({
               .title('Rooms')
               .icon(CaseIcon)
               .id('rooms')
-              .child(
-                S.documentList()
-                  .title('Rooms')
-                  .filter('_type == "room"')
-              ),
+              .child(S.documentList().title('Rooms').filter('_type == "room"')),
             S.divider(),
             S.listItem()
               .title('Settings')
@@ -105,11 +102,14 @@ export default defineConfig({
 
   document: {
     actions: (prev, {schemaType}) => {
+      const isPreviewable = [...PAGE_SINGLETON_TYPES, 'page'].includes(schemaType)
+      const actions = isPreviewable ? [...prev, OpenPreviewAction] : prev
+
       if (!PAGE_SINGLETON_TYPES.includes(schemaType)) {
-        return prev
+        return actions
       }
 
-      return prev.filter(({action}) => action !== 'delete' && action !== 'duplicate')
+      return actions.filter(({action}) => action !== 'delete' && action !== 'duplicate')
     },
     newDocumentOptions: (prev) =>
       prev.filter(({templateId}) => !PAGE_SINGLETON_TYPES.includes(templateId)),

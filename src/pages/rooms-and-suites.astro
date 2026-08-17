@@ -29,9 +29,13 @@ const browserRooms = rooms.map((r) => ({
   navigationVariant="transparent"
   mainClass="Spacer--navigation-offset Spacer--page-bottom"
 >
-  <GenericPageContent page={page} pageHeaderClass="pb-18" />
+  <GenericPageContent page={page} pageHeaderClass="pb-8" />
 
   <section class="Section mt-[-72px] mb-16">
-    <RoomBrowser client:load rooms={browserRooms} />
+    <div class="Grid">
+      <div class="col-span-6 tablet:col-span-8 desktop:col-span-10 desktop:col-start-2">
+        <RoomBrowser client:load rooms={browserRooms} />
+      </div>
+    </div>
   </section>
 </BaseLayout>
