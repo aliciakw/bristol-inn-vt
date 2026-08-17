@@ -18,12 +18,6 @@ type ImagePreviewFields = {
   imageAlt?: string
 }
 
-type ImageBlockPreviewSelection = ImagePreviewFields & {
-  media?: any
-  caption?: string
-  layout?: string
-}
-
 type CtaBlockPreviewSelection = {
   label?: string
   page?: string
@@ -57,24 +51,6 @@ const truncatePreviewText = (text: string) => {
   }
 
   return `${text.slice(0, 77).trim()}...`
-}
-
-const prepareImageBlockPreview = ({
-  media,
-  caption,
-  layout,
-  imageTitle,
-  imageFilename,
-  imageAlt,
-}: ImageBlockPreviewSelection) => {
-  const title =
-    caption?.trim() ?? getImagePreviewText({imageTitle, imageFilename, imageAlt}) ?? 'Image'
-
-  return {
-    title: truncatePreviewText(title),
-    subtitle: layout ?? 'default',
-    media,
-  }
 }
 
 const prepareCtaBlockPreview = ({label, page, url}: CtaBlockPreviewSelection) => {
@@ -168,32 +144,7 @@ export const pageType = defineType({
       title: 'Body',
       type: 'array',
       of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'singleImageBlock',
-          title: 'Image',
-          fields: [
-            defineField({
-              name: 'image',
-              type: 'figure',
-              title: 'Image',
-            }),
-            ...colorFields,
-          ],
-          preview: {
-            select: {
-              media: 'image.image',
-              caption: 'image.caption',
-              layout: 'image.layout',
-              imageTitle: 'image.image.asset.title',
-              imageFilename: 'image.image.asset.originalFilename',
-              imageAlt: 'image.alt',
-            },
-            prepare(selection: ImageBlockPreviewSelection) {
-              return prepareImageBlockPreview(selection)
-            },
-          },
-        }),
+        defineArrayMember({type: 'singleImageBlock'}),
         // ── CTA ───────────────────────────────────────────────────────────────
         defineArrayMember({
           type: 'object',

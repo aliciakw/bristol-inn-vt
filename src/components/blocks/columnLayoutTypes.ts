@@ -1,4 +1,5 @@
 import type { SanityBlock, SanityImage, SanityResolvedLink } from '../../lib/sanity';
+import type { SpacerSize } from './layoutOptions';
 
 export interface ColumnLayoutItem {
   _key?: string;
@@ -11,6 +12,8 @@ export interface ColumnLayoutItem {
 export interface ColumnLayoutStyleProps {
   textColor?: string;
   backgroundColor?: string;
+  topSpacer?: SpacerSize;
+  bottomSpacer?: SpacerSize;
 }
 
 export function getColumnLayoutStyle({ textColor, backgroundColor }: ColumnLayoutStyleProps): string | undefined {

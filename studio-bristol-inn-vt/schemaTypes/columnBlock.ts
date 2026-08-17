@@ -1,5 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {colorFields} from './colorFields'
+import {layoutOptionFields, layoutOptionsFieldset} from './layoutOptions'
 
 type PortableTextSpan = {
   text?: string
@@ -109,8 +109,14 @@ const columnItemFields = [
       hiddenItems: ['rounded'],
     },
   }),
-  defineField({name: 'cta', title: 'CTA', type: 'link', options: {
-      collapsible: false,}}),
+  defineField({
+    name: 'cta',
+    title: 'CTA',
+    type: 'link',
+    options: {
+      collapsible: false,
+    },
+  }),
 ]
 
 const createColumnField = (columnNumber: number) =>
@@ -134,15 +140,9 @@ const createColumnBlockType = ({
     type: 'object',
     name,
     title,
-    fieldsets: [
-      {
-        name: 'colors',
-        title: 'Color Overrides',
-        options: {collapsible: true, collapsed: true},
-      },
-    ],
+    fieldsets: [layoutOptionsFieldset],
     fields: [
-      ...colorFields.map((field) => ({...field, fieldset: 'colors'})),
+      ...layoutOptionFields,
       ...Array.from({length: maxColumns}, (_, index) => createColumnField(index + 1)),
     ],
     preview: {

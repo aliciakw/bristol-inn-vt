@@ -3,6 +3,7 @@ import ImageComponent from '@components/ui/ImageComponent.astro';
 import TextStyle from '@components/ui/TextStyle.astro';
 import { buildSanityImageUrl } from '../../lib/sanity';
 import { INNER_MAX_WIDTH__DESKTOP, IMAGE_SIZES, ASPECT_RATIOS, type ImageLayout } from '@components/ui/constants';
+import { getSpacerClasses, type SpacerSize } from './layoutOptions';
 
 interface Props {
   image?: { url?: string; alt?: string; caption?: string; layout?: ImageLayout; rounded?: boolean };
@@ -11,11 +12,24 @@ interface Props {
   rounded?: boolean;
   textColor?: string;
   backgroundColor?: string;
+  topSpacer?: SpacerSize;
+  bottomSpacer?: SpacerSize;
   maxImageWidth?: number;
   sizes?: string;
 }
 
-const { image, layout: layoutProp = 'default', caption: captionProp, rounded: roundedProp, textColor, backgroundColor, maxImageWidth, sizes: sizesProp } = Astro.props;
+const {
+  image,
+  layout: layoutProp = 'default',
+  caption: captionProp,
+  rounded: roundedProp,
+  textColor,
+  backgroundColor,
+  topSpacer,
+  bottomSpacer,
+  maxImageWidth,
+  sizes: sizesProp,
+} = Astro.props;
 const layout = image?.layout ?? layoutProp;
 const caption = image?.caption ?? captionProp;
 const rounded = image?.rounded ?? roundedProp ?? true;
@@ -46,11 +60,12 @@ const figureClass = [figureLayoutClass, layout].filter(Boolean).join(' ');
 const frameClass = [frameLayoutClass, 'overflow-hidden', rounded && 'rounded-xl'].filter(Boolean).join(' ');
 const imageClass = 'h-full w-full object-cover';
 const imageSizes = sizesProp ?? (layout === 'fullbleed' ? '100vw' : '(min-width: 1240px) 60vw, 100vw');
+const spacerClasses = topSpacer || bottomSpacer ? getSpacerClasses(topSpacer, bottomSpacer) : undefined;
 ---
 
 {
   url && (
-    <figure class={figureClass} style={wrapperStyle || undefined}>
+    <figure class:list={[figureClass, spacerClasses]} style={wrapperStyle || undefined}>
       <div class={frameClass}>
         <ImageComponent
           src={buildSanityImageUrl(url, { width: imgWidth, height: imgHeight, fit: 'crop' })}

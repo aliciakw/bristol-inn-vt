@@ -8,9 +8,9 @@ interface Props {
   pageHeaderClass?: string;
 }
 
-const { page, pageHeaderClass = 'pb-16' } = Astro.props;
+const { page } = Astro.props;
 ---
 
-{page?.pageHeader && <PageHeader block={page.pageHeader} className={pageHeaderClass} />}
+{page?.pageHeader && <PageHeader block={page.pageHeader} />}
 
 <SliceZone blocks={page.body ?? []} wrapStandaloneBlocks />

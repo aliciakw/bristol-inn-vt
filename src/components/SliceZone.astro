@@ -75,7 +75,15 @@ const getImageBlockContentClass = (image?: { layout?: string }) =>
 
     if (block._type === 'singleImageBlock') {
       const image = block.image as SanityImage | undefined;
-      const content = <SingleImageBlock image={image} textColor={block.textColor as string | undefined} backgroundColor={block.backgroundColor as string | undefined} />;
+      const content = (
+        <SingleImageBlock
+          image={image}
+          textColor={block.textColor as string | undefined}
+          backgroundColor={block.backgroundColor as string | undefined}
+          topSpacer={(block.topSpacer as Parameters<typeof SingleImageBlock>[0]['topSpacer']) ?? 'sm'}
+          bottomSpacer={(block.bottomSpacer as Parameters<typeof SingleImageBlock>[0]['bottomSpacer']) ?? 'sm'}
+        />
+      );
       return wrapStandaloneBlocks ? (
         <section class="Section">
           <div class="Section__inner">
@@ -130,6 +138,8 @@ const getImageBlockContentClass = (image?: { layout?: string }) =>
           column1={block.column1 as Parameters<typeof SingleColumnLayout>[0]['column1']}
           textColor={block.textColor as string | undefined}
           backgroundColor={block.backgroundColor as string | undefined}
+          topSpacer={block.topSpacer as Parameters<typeof SingleColumnLayout>[0]['topSpacer']}
+          bottomSpacer={block.bottomSpacer as Parameters<typeof SingleColumnLayout>[0]['bottomSpacer']}
         />
       );
     }
@@ -141,6 +151,8 @@ const getImageBlockContentClass = (image?: { layout?: string }) =>
           column2={block.column2 as Parameters<typeof TwoColumnLayout>[0]['column2']}
           textColor={block.textColor as string | undefined}
           backgroundColor={block.backgroundColor as string | undefined}
+          topSpacer={block.topSpacer as Parameters<typeof TwoColumnLayout>[0]['topSpacer']}
+          bottomSpacer={block.bottomSpacer as Parameters<typeof TwoColumnLayout>[0]['bottomSpacer']}
         />
       );
     }
@@ -153,6 +165,8 @@ const getImageBlockContentClass = (image?: { layout?: string }) =>
           column3={block.column3 as Parameters<typeof ThreeColumnLayout>[0]['column3']}
           textColor={block.textColor as string | undefined}
           backgroundColor={block.backgroundColor as string | undefined}
+          topSpacer={block.topSpacer as Parameters<typeof ThreeColumnLayout>[0]['topSpacer']}
+          bottomSpacer={block.bottomSpacer as Parameters<typeof ThreeColumnLayout>[0]['bottomSpacer']}
         />
       );
     }
