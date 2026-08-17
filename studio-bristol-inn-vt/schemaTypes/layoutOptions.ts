@@ -12,10 +12,10 @@ const spacerOptions = [
   {title: 'Small', value: 'sm'},
   {title: 'Medium', value: 'md'},
   {title: 'Large', value: 'lg'},
+  {title: 'Extra Large', value: 'xl'},
 ]
 
 export const layoutOptionFields = [
-  ...colorFields.map((field) => ({...field, fieldset: 'layoutOptions'})),
   defineField({
     name: 'topSpacer',
     title: 'Top spacer',
@@ -32,4 +32,5 @@ export const layoutOptionFields = [
     initialValue: 'sm',
     options: {list: spacerOptions},
   }),
+  ...colorFields.map((field) => ({...field, fieldset: 'layoutOptions'})),
 ]

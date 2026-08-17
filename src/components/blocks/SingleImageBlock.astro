@@ -34,10 +34,13 @@ const layout = image?.layout ?? layoutProp;
 const caption = image?.caption ?? captionProp;
 const rounded = image?.rounded ?? roundedProp ?? true;
 const url = image?.url;
-const defaultImageWidth = layout === 'fullbleed' ? INNER_MAX_WIDTH__DESKTOP : layout === 'narrow' ? IMAGE_SIZES[3].width : IMAGE_SIZES[2].width;
-const imgWidth = maxImageWidth ?? defaultImageWidth;
+const constrainedImageWidth = 520;
+const constrainedSourceWidth = constrainedImageWidth * 2;
+const isConstrainedLayout = layout === 'narrow' || layout === 'portrait';
+const defaultImageWidth = layout === 'fullbleed' ? INNER_MAX_WIDTH__DESKTOP : isConstrainedLayout ? constrainedSourceWidth : IMAGE_SIZES[2].width;
+const imgWidth = Math.round(maxImageWidth ?? defaultImageWidth);
 // eslint-disable-next-line security/detect-object-injection
-const imgHeight = imgWidth / ASPECT_RATIOS[layout];
+const imgHeight = Math.round(imgWidth / ASPECT_RATIOS[layout]);
 const smallImageWidth = Math.round(imgWidth / 2);
 const smallImageHeight = Math.round(imgHeight / 2);
 
@@ -45,12 +48,14 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
 
 const figureLayoutClasses: Partial<Record<ImageLayout, string>> = {
   narrow: 'max-w-[min(100%,520px)] mx-auto',
+  portrait: 'max-w-[min(100%,520px)] mx-auto',
 };
 const frameLayoutClasses: Record<ImageLayout, string> = {
   fullbleed: 'aspect-[5/3]',
   default: 'aspect-[5/3]',
   square: 'aspect-square',
   narrow: 'aspect-[5/3]',
+  portrait: 'aspect-[3/4]',
 };
 // eslint-disable-next-line security/detect-object-injection
 const figureLayoutClass = figureLayoutClasses[layout];
@@ -59,7 +64,7 @@ const frameLayoutClass = frameLayoutClasses[layout];
 const figureClass = [figureLayoutClass, layout].filter(Boolean).join(' ');
 const frameClass = [frameLayoutClass, 'overflow-hidden', rounded && 'rounded-xl'].filter(Boolean).join(' ');
 const imageClass = 'h-full w-full object-cover';
-const imageSizes = sizesProp ?? (layout === 'fullbleed' ? '100vw' : '(min-width: 1240px) 60vw, 100vw');
+const imageSizes = sizesProp ?? (layout === 'fullbleed' ? '100vw' : isConstrainedLayout ? '(min-width: 520px) 520px, 100vw' : '(min-width: 1240px) 60vw, 100vw');
 const spacerClasses = topSpacer || bottomSpacer ? getSpacerClasses(topSpacer, bottomSpacer) : undefined;
 ---
 

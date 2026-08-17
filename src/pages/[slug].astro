@@ -26,7 +26,7 @@ const pageTitle = page.title || 'Untitled';
   meta={page?.meta}
   backgroundColor="white"
   navigationVariant="transparent"
-  mainClass={page.pageHeader ? 'Spacer--navigation-offset' : ''}
+  mainClass={page.pageHeader ? 'Spacer--navigation-offset pb-[var-top-bar-height] tablet:pb-16' : ''}
 >
   <GenericPageContent page={page} />
 </BaseLayout>

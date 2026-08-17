@@ -79,7 +79,7 @@ export type SanityImage = {
   url: string;
   alt: string;
   caption?: string;
-  layout?: 'default' | 'square' | 'fullbleed' | 'narrow';
+  layout?: 'default' | 'square' | 'fullbleed' | 'narrow' | 'portrait';
   rounded?: boolean;
 };
 

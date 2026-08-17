@@ -11,6 +11,7 @@ describe('getSpacerClasses()', () => {
     ['sm', 'sm', 'pt-4 pb-4'],
     ['md', 'md', 'pt-8 pb-8'],
     ['lg', 'lg', 'pt-16 pb-16'],
+    ['xl', 'xl', 'pt-32 pb-32'],
   ] as const)('maps %s spacing to static Tailwind classes', (topSpacer, bottomSpacer, expected) => {
     expect(getSpacerClasses(topSpacer, bottomSpacer)).toBe(expected);
   });

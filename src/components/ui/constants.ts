@@ -2,12 +2,13 @@ import type { HTMLAttributes, AnchorHTMLAttributes } from 'react';
 
 // --inner-max-width: 1480px;
 export const INNER_MAX_WIDTH__DESKTOP = 1480;
-export type ImageLayout = 'fullbleed' | 'default' | 'square' | 'narrow';
+export type ImageLayout = 'fullbleed' | 'default' | 'square' | 'narrow' | 'portrait';
 export const ASPECT_RATIOS: Record<ImageLayout, number> = {
   fullbleed: 5 / 3,
   default: 5 / 3,
   square: 1,
   narrow: 5 / 3,
+  portrait: 3 / 4,
 };
 
 export type ColumnCount = 1 | 2 | 3;

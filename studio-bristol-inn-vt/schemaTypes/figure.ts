@@ -68,6 +68,7 @@ export const figureType = defineType({
           {title: 'Square', value: 'square'},
           {title: 'Full Bleed', value: 'fullbleed'},
           {title: 'Narrow', value: 'narrow'},
+          {title: 'Portrait', value: 'portrait'},
         ],
         layout: 'radio',
       },
