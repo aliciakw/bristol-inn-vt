@@ -9,7 +9,7 @@ interface Props {
 const { images, speed = 'slow' } = Astro.props;
 const visible = images.filter((img) => img.url);
 const delayPerImage: Record<NonNullable<Props['speed']>, number> = {
-  slow: 2400,
+  slow: 3400,
   medium: 1200,
   fast: 300,
 };
