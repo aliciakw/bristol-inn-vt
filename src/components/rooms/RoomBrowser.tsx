@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { AvailabilitySearchForm } from './AvailabilitySearchForm';
 import type { SearchParams } from './AvailabilitySearchForm';
 import { RoomCardReact, type RoomBrowserRoom } from './RoomCardReact';
 import { TextStyle } from '@components/ui/TextStyle';
-import { FormCheckbox } from '@components/ui/FormCheckbox';
 import { getBookingUrl, getCheckoutUrl, getDetailUrl } from '@lib/hostaway-urls';
 import { preferencesFromSearch, roomMeetsPreferences, sortRooms, type RoomPreferences, type RoomSort } from './room-search';
 
@@ -36,15 +35,21 @@ interface RoomGridProps {
   isLoading?: boolean;
   availability?: AvailabilityResult[];
   lastSearch: SearchParams | null;
+  headerAction?: ReactNode;
 }
 
-function RoomGrid({ title, rooms, isLoading, availability, lastSearch }: RoomGridProps) {
+function RoomGrid({ title, rooms, isLoading, availability, lastSearch, headerAction }: RoomGridProps) {
   return (
     <section className="flex flex-col gap-6">
-      {title && (
-        <TextStyle variant="h4" element="h2" className="">
-          {title}
-        </TextStyle>
+      {(title || headerAction) && (
+        <div className="flex flex-col gap-4 tablet:flex-row tablet:items-center tablet:justify-between">
+          {title && (
+            <TextStyle variant="h4" element="h2" className="shrink-0">
+              {title}
+            </TextStyle>
+          )}
+          {headerAction}
+        </div>
       )}
       {}
       <div className={['grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-2 gap-[var(--grid-gutter)]'].join(' ')}>
@@ -77,9 +82,10 @@ interface RoomSectionsProps {
   availability: AvailabilityResult[];
   lastSearch: SearchParams | null;
   preferences: RoomPreferences;
+  toolbar: ReactNode;
 }
 
-function RoomSections({ rooms, availability, lastSearch, preferences }: RoomSectionsProps) {
+function RoomSections({ rooms, availability, lastSearch, preferences, toolbar }: RoomSectionsProps) {
   const effectiveSearch = lastSearch ? { ...lastSearch, pets: preferences.pets, groundFloor: preferences.groundFloor } : null;
   const calendarAvailable = rooms.filter((room) => availability.find((result) => result.listingId === room.id)?.available);
   const available = calendarAvailable.filter((room) => roomMeetsPreferences(room, preferences));
@@ -88,7 +94,7 @@ function RoomSections({ rooms, availability, lastSearch, preferences }: RoomSect
 
   return (
     <div className="flex flex-col gap-12">
-      <RoomGrid title={`Available (${available.length})`} rooms={available} availability={availability} lastSearch={effectiveSearch} />
+      <RoomGrid title={`Available (${available.length})`} rooms={available} availability={availability} lastSearch={effectiveSearch} headerAction={toolbar} />
       {didNotMeetRequirements.length > 0 && (
         <RoomGrid
           title={resultHeading(didNotMeetRequirements.length, 'room did not meet your requirements', 'rooms did not meet your requirements')}
@@ -117,24 +123,51 @@ function RoomSections({ rooms, availability, lastSearch, preferences }: RoomSect
   );
 }
 
-interface ResultsToolbarProps {
+interface BrowseSectionsProps {
+  rooms: RoomBrowserRoom[];
+  preferences: RoomPreferences;
+  toolbar: ReactNode;
+  isLoading: boolean;
+  lastSearch: SearchParams | null;
+}
+
+function BrowseSections({ rooms, preferences, toolbar, isLoading, lastSearch }: BrowseSectionsProps) {
+  const matching = rooms.filter((room) => roomMeetsPreferences(room, preferences));
+  const didNotMeetRequirements = rooms.filter((room) => !roomMeetsPreferences(room, preferences));
+
+  return (
+    <div className="flex flex-col gap-12">
+      <RoomGrid title={`All Rooms & Suites (${matching.length})`} rooms={matching} isLoading={isLoading} lastSearch={lastSearch} headerAction={toolbar} />
+      {didNotMeetRequirements.length > 0 && (
+        <RoomGrid
+          title={resultHeading(didNotMeetRequirements.length, 'room did not meet your requirements', 'rooms did not meet your requirements')}
+          rooms={didNotMeetRequirements}
+          isLoading={isLoading}
+          lastSearch={lastSearch}
+        />
+      )}
+    </div>
+  );
+}
+
+interface SortAndFilterToolbarProps {
   sort: RoomSort;
   onSortChange: (sort: RoomSort) => void;
   preferences: RoomPreferences;
   onPreferencesChange: (preferences: RoomPreferences) => void;
 }
 
-function ResultsToolbar({ sort, onSortChange, preferences, onPreferencesChange }: ResultsToolbarProps) {
+function SortAndFilterToolbar({ sort, onSortChange, preferences, onPreferencesChange }: SortAndFilterToolbarProps) {
   return (
-    <div aria-label="Sort and filter rooms" className="flex flex-col tablet:flex-row tablet:items-end gap-5 rounded-lg border border-ink-900 bg-sand-050 px-4 py-4 shadow--card">
-      <label className="flex flex-col gap-1.5 min-w-52 font-serif text-ink-900">
+    <div aria-label="Sort and filter rooms" className="flex flex-wrap items-center gap-x-5 gap-y-2 tablet:justify-end font-serif text-ink-900">
+      <label className="inline-flex items-center gap-2 whitespace-nowrap">
         <TextStyle variant="label" element="span" className="font-medium">
-          Sort rooms
+          Sort:
         </TextStyle>
         <select
           value={sort}
           onChange={(event) => onSortChange(event.target.value as RoomSort)}
-          className="rounded-lg border border-ink-900 bg-white/50 px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-ink-900"
+          className="border-b border-ink-900 bg-transparent py-1 pr-7 focus:outline-none focus:ring-1 focus:ring-prussian-500"
         >
           <option value="floor">Floor, low to high</option>
           <option value="price-low">Price, low to high</option>
@@ -143,20 +176,28 @@ function ResultsToolbar({ sort, onSortChange, preferences, onPreferencesChange }
           <option value="name">Room name</option>
         </select>
       </label>
-      <fieldset className="flex flex-col gap-3 tablet:flex-row tablet:items-center tablet:pb-1.5">
+      <fieldset className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <legend className="sr-only">Filter available rooms</legend>
-        <FormCheckbox
-          name="filter-pets"
-          label="Dogs permitted"
-          checked={preferences.pets}
-          onChange={(event) => onPreferencesChange({ ...preferences, pets: event.target.checked })}
-        />
-        <FormCheckbox
-          name="filter-ground-floor"
-          label="Ground floor only"
-          checked={preferences.groundFloor}
-          onChange={(event) => onPreferencesChange({ ...preferences, groundFloor: event.target.checked })}
-        />
+        <label className="inline-flex cursor-pointer items-center gap-2 whitespace-nowrap">
+          <input
+            name="filter-pets"
+            type="checkbox"
+            checked={preferences.pets}
+            onChange={(event) => onPreferencesChange({ ...preferences, pets: event.target.checked })}
+            className="size-4 accent-prussian-500"
+          />
+          Dogs permitted
+        </label>
+        <label className="inline-flex cursor-pointer items-center gap-2 whitespace-nowrap">
+          <input
+            name="filter-ground-floor"
+            type="checkbox"
+            checked={preferences.groundFloor}
+            onChange={(event) => onPreferencesChange({ ...preferences, groundFloor: event.target.checked })}
+            className="size-4 accent-prussian-500"
+          />
+          Ground floor only
+        </label>
       </fieldset>
     </div>
   );
@@ -220,10 +261,11 @@ export function RoomBrowser({ rooms }: Props) {
 
   const isLoading = state.status === 'loading';
   const hasResults = state.status === 'results' || state.status === 'error';
+  const toolbar = <SortAndFilterToolbar sort={sort} onSortChange={setSort} preferences={preferences} onPreferencesChange={setPreferences} />;
 
   return (
     <div className="Grid">
-      <div className="Grid__Row--full z-10 mb-12">
+      <div className="Grid__Row--full z-10 mb-8">
         <div className="desktop:w-[66%]">
           <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} hideSpecialNeeds />
         </div>
@@ -234,17 +276,15 @@ export function RoomBrowser({ rooms }: Props) {
         )}
       </div>
       <div className="Grid__Row--full">
-        {state.status === 'results' && (
-          <div className="mb-10">
-            <ResultsToolbar sort={sort} onSortChange={setSort} preferences={preferences} onPreferencesChange={setPreferences} />
-          </div>
-        )}
         {sortedRooms.length === 0 ? (
-          <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
+          <div className="flex flex-col gap-6">
+            <div className="tablet:ml-auto">{toolbar}</div>
+            <p className="text-center text-gray-600">No rooms available at this time. Please check back soon.</p>
+          </div>
         ) : state.status === 'results' ? (
-          <RoomSections rooms={sortedRooms} availability={state.availability} lastSearch={lastSearch} preferences={preferences} />
+          <RoomSections rooms={sortedRooms} availability={state.availability} lastSearch={lastSearch} preferences={preferences} toolbar={toolbar} />
         ) : (
-          <RoomGrid title={`All Rooms & Suites (${sortedRooms.length})`} rooms={sortedRooms} isLoading={isLoading} lastSearch={lastSearch} />
+          <BrowseSections rooms={sortedRooms} preferences={preferences} toolbar={toolbar} isLoading={isLoading} lastSearch={lastSearch} />
         )}
       </div>
     </div>
