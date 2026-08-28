@@ -20,6 +20,7 @@ interface Props {
   hasResults?: boolean;
   showResetButton?: boolean;
   automatic?: boolean;
+  hideSpecialNeeds?: boolean;
 }
 
 function localDateISO(offsetDays = 0): string {
@@ -28,7 +29,16 @@ function localDateISO(offsetDays = 0): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoading = false, hasResults = false, showResetButton = false, automatic = false }: Props) {
+export function AvailabilitySearchForm({
+  navigateTo,
+  onSearch,
+  onClear,
+  isLoading = false,
+  hasResults = false,
+  showResetButton = false,
+  automatic = false,
+  hideSpecialNeeds = false,
+}: Props) {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(2);
@@ -128,11 +138,11 @@ export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoadin
   }
 
   return (
-    <form onSubmit={handleSubmit} aria-label="Check room availability" className="flex flex-col gap-3 bg-sand-050 shadow--card border-1 border-ink-900 rounded-lg px-4 pt-2 pb-3">
+    <form onSubmit={handleSubmit} aria-label="Check room availability" className="flex flex-col gap-3 bg-sand-050 shadow--card border-1 border-ink-900 rounded-lg px-4 pt-2">
       <div className="flex flex-wrap desktop:flex-nowrap items-start gap-x-4 gap-y-3 ">
         <FormField
           id="avail-guests"
-          label="Number of Guests"
+          label="Guests"
           type="number"
           value={guests}
           min={1}
@@ -172,52 +182,59 @@ export function AvailabilitySearchForm({ navigateTo, onSearch, onClear, isLoadin
           error={errors.checkOut}
           className="flex-1 min-w-36"
         />
-      </div>
-      <div className="flex flex-row gap-6 pt-4">
-        <div className="flex flex-col desktop:flex-row desktop:items-center gap-4 pr-4">
-          <TextStyle variant="label" element="span" className="font-medium whitespace-nowrap desktop:hidden">
-            Special Needs:
-          </TextStyle>
-          <FormCheckbox
-            name="pets"
-            label="Dogs Permitted"
-            checked={pets}
-            onChange={(e) => {
-              userChangedRef.current = true;
-              setPets(e.target.checked);
-            }}
-            disabled={isLoading}
-            clarification={
-              <a href="/faq#pet-policy" className="underline hover:opacity-70">
-                See Pet Policy
-              </a>
-            }
-          />
-          <FormCheckbox
-            name="groundFloor"
-            label="Ground Floor Only"
-            checked={groundFloor}
-            onChange={(e) => {
-              userChangedRef.current = true;
-              setGroundFloor(e.target.checked);
-            }}
-            disabled={isLoading}
-            clarification={
-              <a href="/faq#accessibility" className="underline hover:opacity-70">
-                Accessibility Info
-              </a>
-            }
-          />
-        </div>
-        <div className="flex flex-col md:flex-row md:items-start flex-1 justify-stretch gap-2 shrink-0 pb-0.5 max-w-[200px]">
-          {!automatic && (
-            <Button size="default" type="submit" disabled={isLoading} bg="prussian-500" textColor="white" className="flex-1 hover:bg-prussian-700 flex-none">
+        {(hideSpecialNeeds || showResetButton || !automatic) && (
+          <div className="flex items-end gap-2 mt-auto">
+            <Button size="large" type="submit" disabled={isLoading} bg="prussian-500" textColor="white" className="flex-1 hover:bg-prussian-700 min-w-1/3 flex-none">
               {isLoading ? 'Searching…' : 'Search'}
             </Button>
-          )}
-          {showResetButton && hasResults && (
-            <Button bg="khaki-200" onClick={handleClear} disabled={isLoading} className="flex-none">
+            <Button size="large" bg="khaki-200" onClick={handleClear} disabled={isLoading}>
               Reset
+            </Button>
+          </div>
+        )}
+      </div>
+      <div className={`flex flex-row gap-6 ${hideSpecialNeeds ? '' : 'pt-4'}`}>
+        {!hideSpecialNeeds && (
+          <div className="flex flex-col desktop:flex-row desktop:items-center gap-4 pr-4">
+            <TextStyle variant="label" element="span" className="font-medium whitespace-nowrap desktop:hidden">
+              Special Needs:
+            </TextStyle>
+            <FormCheckbox
+              name="pets"
+              label="Dogs Permitted"
+              checked={pets}
+              onChange={(e) => {
+                userChangedRef.current = true;
+                setPets(e.target.checked);
+              }}
+              disabled={isLoading}
+              clarification={
+                <a href="/faq#pet-policy" className="underline hover:opacity-70">
+                  See Pet Policy
+                </a>
+              }
+            />
+            <FormCheckbox
+              name="groundFloor"
+              label="Ground Floor Only"
+              checked={groundFloor}
+              onChange={(e) => {
+                userChangedRef.current = true;
+                setGroundFloor(e.target.checked);
+              }}
+              disabled={isLoading}
+              clarification={
+                <a href="/faq#accessibility" className="underline hover:opacity-70">
+                  Accessibility Info
+                </a>
+              }
+            />
+          </div>
+        )}
+        <div className="flex flex-1 justify-center desktop:justify-start pb-3">
+          {!hideSpecialNeeds && !automatic && !hasResults && (
+            <Button size="default" type="submit" disabled={isLoading} bg="prussian-500" textColor="white" className="flex-1 hover:bg-prussian-700 min-w-1/3 flex-none">
+              {isLoading ? 'Searching…' : 'Search'}
             </Button>
           )}
         </div>

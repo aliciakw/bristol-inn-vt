@@ -35,22 +35,10 @@ export async function GET({ url }: APIContext): Promise<Response> {
     return Response.json({ error: 'guests must be an integer between 1 and 20' }, { status: 400 });
   }
 
-  const pets = url.searchParams.get('pets') === '1';
-  const groundFloor = url.searchParams.get('groundFloor') === '1';
-
   try {
     const rooms = await getRooms();
-    let eligible = rooms.filter((r) => r.personCapacity >= guests);
-    if (pets) eligible = eligible.filter((r) => r.dogsAllowed);
-    if (groundFloor) eligible = eligible.filter((r) => r.groundFloor);
-
-    const listingIds = eligible.map((r) => r.id);
-    const results = await checkAvailability(listingIds, checkIn, checkOut);
-
-    // Rooms filtered out by capacity or amenity are always "not available"
-    const excluded = rooms.filter((r) => !eligible.some((e) => e.id === r.id)).map((r) => ({ listingId: r.id, available: false }));
-
-    return Response.json([...results, ...excluded]);
+    const listingIds = rooms.map((room) => room.id);
+    return Response.json(await checkAvailability(listingIds, checkIn, checkOut));
   } catch {
     return Response.json({ error: 'Unable to check availability. Please try again.' }, { status: 500 });
   }
