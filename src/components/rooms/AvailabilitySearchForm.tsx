@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { FormField } from '@components/ui/FormField';
 import { FormCheckbox } from '@components/ui/FormCheckbox';
 import { Button } from '@components/ui/Button';
-import { TextStyle } from '@components/ui/TextStyle';
 
 export interface SearchParams {
   checkIn: string;
@@ -138,7 +137,7 @@ export function AvailabilitySearchForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} aria-label="Check room availability" className="flex flex-col gap-3 bg-sand-050 shadow--card border-1 border-ink-900 rounded-lg px-4 pt-2">
+    <form onSubmit={handleSubmit} aria-label="Check room availability" className="flex flex-col  bg-sand-050 shadow--card border-1 border-ink-900 rounded-lg px-4 pt-3 tablet:pb-2">
       <div className="flex flex-wrap desktop:flex-nowrap items-start gap-x-4 gap-y-3 ">
         <FormField
           id="avail-guests"
@@ -182,58 +181,66 @@ export function AvailabilitySearchForm({
           error={errors.checkOut}
           className="flex-1 min-w-36"
         />
-        {(hideSpecialNeeds || showResetButton || !automatic) && (
-          <div className="flex items-end gap-2 mt-auto">
-            <Button size="large" type="submit" disabled={isLoading} bg="prussian-500" textColor="white" className="flex-1 hover:bg-prussian-700 min-w-1/3 flex-none">
+        {(hideSpecialNeeds || showResetButton) && (
+          <div className="flex flex-1 items-end gap-2 mt-auto pt-1">
+            <Button size="large" type="submit" disabled={isLoading} bg="prussian-500" textColor="white" className="flex-1 hover:bg-prussian-700 min-w-1/3">
               {isLoading ? 'Searching…' : 'Search'}
             </Button>
-            <Button size="large" bg="khaki-200" onClick={handleClear} disabled={isLoading}>
+            <Button size="large" bg="khaki-200" onClick={handleClear} disabled={isLoading} className="flex-1">
               Reset
             </Button>
           </div>
         )}
       </div>
-      <div className={`flex flex-row gap-6 ${hideSpecialNeeds ? '' : 'pt-4'}`}>
+      <div className={`flex flex-col items-center gap-4 ${hideSpecialNeeds ? '' : 'pt-6'}`}>
         {!hideSpecialNeeds && (
-          <div className="flex flex-col desktop:flex-row desktop:items-center gap-4 pr-4">
-            <TextStyle variant="label" element="span" className="font-medium whitespace-nowrap desktop:hidden">
-              Special Needs:
-            </TextStyle>
-            <FormCheckbox
-              name="pets"
-              label="Dogs Permitted"
-              checked={pets}
-              onChange={(e) => {
-                userChangedRef.current = true;
-                setPets(e.target.checked);
-              }}
-              disabled={isLoading}
-              clarification={
-                <a href="/faq#pet-policy" className="underline hover:opacity-70">
-                  See Pet Policy
-                </a>
-              }
-            />
-            <FormCheckbox
-              name="groundFloor"
-              label="Ground Floor Only"
-              checked={groundFloor}
-              onChange={(e) => {
-                userChangedRef.current = true;
-                setGroundFloor(e.target.checked);
-              }}
-              disabled={isLoading}
-              clarification={
-                <a href="/faq#accessibility" className="underline hover:opacity-70">
-                  Accessibility Info
-                </a>
-              }
-            />
+          <div className="flex flex-row items-center w-full pb-3">
+            <div className="flex-1">
+              <FormCheckbox
+                name="pets"
+                label="Dogs Permitted"
+                checked={pets}
+                onChange={(e) => {
+                  userChangedRef.current = true;
+                  setPets(e.target.checked);
+                }}
+                disabled={isLoading}
+                clarification={
+                  <a href="/faq#pet-policy" className="underline hover:opacity-70">
+                    See Pet Policy
+                  </a>
+                }
+              />
+            </div>
+            <div className="flex-1">
+              <FormCheckbox
+                name="groundFloor"
+                label="Ground Floor Only"
+                checked={groundFloor}
+                onChange={(e) => {
+                  userChangedRef.current = true;
+                  setGroundFloor(e.target.checked);
+                }}
+                disabled={isLoading}
+                clarification={
+                  <a href="/faq#accessibility" className="underline hover:opacity-70">
+                    Accessibility Info
+                  </a>
+                }
+              />
+            </div>
           </div>
         )}
-        <div className="flex flex-1 justify-center desktop:justify-start pb-3">
+        <div className="flex flex-1 w-full tablet:w-1/3 pb-4 tablet:pb-3">
           {!hideSpecialNeeds && !automatic && !hasResults && (
-            <Button size="default" type="submit" disabled={isLoading} bg="prussian-500" textColor="white" className="flex-1 hover:bg-prussian-700 min-w-1/3 flex-none">
+            <Button
+              size="default"
+              type="submit"
+              disabled={isLoading}
+              bg="prussian-500"
+              textColor="white"
+              className="flex-1 hover:bg-prussian-700 max-w-[50vw] tablet:max-w-auto mx-auto"
+            >
               {isLoading ? 'Searching…' : 'Search'}
             </Button>
           )}

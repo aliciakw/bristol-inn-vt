@@ -266,7 +266,7 @@ export function RoomBrowser({ rooms }: Props) {
   return (
     <div className="Grid">
       <div className="Grid__Row--full z-10 mb-8">
-        <div className="desktop:w-[66%]">
+        <div className="desktop:w-[74.5%]">
           <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} hideSpecialNeeds />
         </div>
         {state.status === 'error' && (
