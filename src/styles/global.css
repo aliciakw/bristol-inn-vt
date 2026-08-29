@@ -297,14 +297,3 @@ html {
     transform: rotate(360deg);
   }
 }
-
-/* Standard syntax */
-::selection {
-  background-color: var(--color-prussian-100); /* The highlight background */
-}
-
-/* Gecko browsers (Firefox) */
-::-moz-selection {
-  background-color: #ff0099;
-  color: #ffffff;
-}
