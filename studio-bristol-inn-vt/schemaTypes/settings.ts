@@ -1,4 +1,44 @@
 import { defineType, defineField, defineArrayMember } from 'sanity'
+import {colorFields} from './colorFields'
+
+const announcementRichTextOf = [
+  defineArrayMember({
+    type: 'block',
+    styles: [
+      {title: 'Normal', value: 'normal'},
+      {title: 'Small', value: 'small'},
+    ],
+    lists: [],
+    marks: {
+      decorators: [
+        {title: 'Bold', value: 'strong'},
+        {title: 'Italic', value: 'em'},
+      ],
+      annotations: [
+        defineArrayMember({
+          name: 'link',
+          type: 'object',
+          title: 'Link',
+          fields: [
+            defineField({
+              name: 'href',
+              title: 'URL',
+              type: 'string',
+              description: 'Relative path or absolute URL',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'openInNewTab',
+              title: 'Open in new tab',
+              type: 'boolean',
+              initialValue: false,
+            }),
+          ],
+        }),
+      ],
+    },
+  }),
+]
 
 const footerRichTextOf = [
   defineArrayMember({
@@ -50,6 +90,7 @@ export const settingsType = defineType({
   },
   groups: [
     { name: 'navigation', title: 'Navigation' },
+    { name: 'announcement', title: 'Announcement Bar' },
     { name: 'footer', title: 'Footer' },
     { name: 'seo', title: 'SEO / OG' },
   ],
@@ -92,6 +133,55 @@ export const settingsType = defineType({
       type: 'array',
       group: 'navigation',
       of: [defineArrayMember({ type: 'link' })],
+    }),
+
+    // ── Announcement ────────────────────────────────────────────────────────
+    defineField({
+      name: 'announcementBar',
+      title: 'Announcement Bar',
+      type: 'object',
+      description: 'Optional message displayed above the navigation on every page.',
+      group: 'announcement',
+      fields: [
+        defineField({
+          name: 'announcementBarIsEnabled',
+          title: 'Enable announcement bar',
+          type: 'boolean',
+          initialValue: false,
+        }),
+        defineField({
+          name: 'isDismissable',
+          title: 'Allow visitors to dismiss',
+          type: 'boolean',
+          initialValue: false,
+        }),
+        defineField({
+          name: 'cacheKey',
+          title: 'Cache Key',
+          type: 'slug',
+          description: 'Change this value whenever dismissed visitors should see the announcement again.',
+          validation: (Rule) =>
+            Rule.custom((value, context) => {
+              const parent = context.parent as {announcementBarIsEnabled?: boolean}
+              return !parent?.announcementBarIsEnabled || value?.current
+                ? true
+                : 'Cache Key is required when the announcement bar is enabled.'
+            }),
+        }),
+        defineField({
+          name: 'body',
+          title: 'Body',
+          type: 'array',
+          of: announcementRichTextOf,
+          validation: (Rule) =>
+            Rule.custom((value, context) => {
+              const parent = context.parent as {announcementBarIsEnabled?: boolean}
+              if (!parent?.announcementBarIsEnabled) return true;
+              return value?.length ? true : 'Body is required when the announcement bar is enabled.'
+            }),
+        }),
+        ...colorFields,
+      ],
     }),
 
     // ── Footer ───────────────────────────────────────────────────────────────

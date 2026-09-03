@@ -392,7 +392,17 @@ export type SanityAwardImage = {
   linkUrl?: string;
 };
 
+export type SanityAnnouncementBar = {
+  announcementBarIsEnabled: boolean;
+  cacheKey: string;
+  body: SanityBlock[];
+  backgroundColor?: string;
+  textColor?: string;
+  isDismissable: boolean;
+};
+
 export type SanitySettings = {
+  announcementBar?: SanityAnnouncementBar;
   meta?: SanityMeta;
   nameplateLogo?: string;
   leftCta?: SanityButtonLink;
@@ -409,6 +419,14 @@ const SETTINGS_ID = 'settings-singleton';
 export async function getSettings(): Promise<SanitySettings> {
   return getClient().fetch<SanitySettings>(
     `*[_type == "settings" && _id == $id][0]{
+      announcementBar{
+        "announcementBarIsEnabled": coalesce(announcementBarIsEnabled, false),
+        "cacheKey": cacheKey.current,
+        body,
+        backgroundColor,
+        textColor,
+        "isDismissable": coalesce(isDismissable, false)
+      },
       "meta": meta{
         ogTitle,
         ogDescription,

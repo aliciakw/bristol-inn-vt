@@ -1,0 +1,89 @@
+---
+import PortableTextBlock from './blocks/PortableTextBlock.astro';
+import type { SanityAnnouncementBar } from '../lib/sanity';
+
+interface Props {
+  announcement: SanityAnnouncementBar;
+}
+
+const { announcement } = Astro.props;
+const storageKey = `bristol-inn:announcement:${announcement.cacheKey}`;
+const wrapperStyle = [announcement.backgroundColor ? `background-color: ${announcement.backgroundColor}` : '', announcement.textColor ? `color: ${announcement.textColor}` : '']
+  .filter(Boolean)
+  .join('; ');
+---
+
+<aside
+  class="AnnouncementBar relative z-40 shrink-0 bg-prussian-500 px-[var(--grid-margin)] h-[52px] text-sand-050 flex items-center justify-center"
+  style={wrapperStyle || undefined}
+  aria-label="Announcement"
+  data-announcement-bar
+  data-storage-key={storageKey}
+>
+  <div class:list={['flex max-w-[var(--inner-max-width)] items-center justify-center', announcement.isDismissable && 'pl-8 pr-10 tablet:px-14']}>
+    <div class="AnnouncementBar__body flex flex-col items-center gap-1 text-center font-medium">
+      {announcement.body.map((block) => <PortableTextBlock block={block} contrainProseWidth={false} textVariant={block.style === 'small' ? 'caption' : 'paragraph'} />)}
+    </div>
+
+    {
+      announcement.isDismissable && (
+        <button
+          type="button"
+          class="absolute right-0 top-1/2 flex size-[52px] -translate-y-1/2 items-center justify-center transition-colors hover:bg-current/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-current"
+          aria-label="Dismiss announcement"
+          data-announcement-dismiss
+        >
+          <span class="relative block size-5" aria-hidden="true">
+            <span class="absolute left-1/2 top-1/2 h-px w-full -translate-x-1/2 -translate-y-1/2 rotate-45 bg-current" />
+            <span class="absolute left-1/2 top-1/2 h-px w-full -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-current" />
+          </span>
+        </button>
+      )
+    }
+  </div>
+</aside>
+
+<style>
+  .AnnouncementBar__body :global(p) {
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .AnnouncementBar__body :global(a) {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .AnnouncementBar__body :global(a:hover) {
+    text-decoration-thickness: 2px;
+  }
+</style>
+
+<script is:inline define:vars={{ storageKey }}>
+  (() => {
+    const bar = document.querySelector(`[data-storage-key="${CSS.escape(storageKey)}"]`);
+    if (!(bar instanceof HTMLElement) || !bar.matches('[data-announcement-bar]')) return;
+
+    const dismissalKey = bar.dataset.storageKey;
+    if (!dismissalKey) return;
+
+    try {
+      if (localStorage.getItem(dismissalKey) === 'dismissed') {
+        bar.hidden = true;
+        return;
+      }
+    } catch {
+      // Storage can be unavailable in privacy modes; the announcement remains usable.
+    }
+
+    bar.querySelector('[data-announcement-dismiss]')?.addEventListener('click', () => {
+      try {
+        localStorage.setItem(dismissalKey, 'dismissed');
+      } catch {
+        // Dismiss for this page view even when storage is unavailable.
+      }
+      bar.hidden = true;
+    });
+  })();
+</script>

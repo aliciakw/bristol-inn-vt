@@ -2,6 +2,7 @@
 import NavigationTopBar, { type NavigationVariant, type NavigationTextColor } from '@components/NavigationTopBar.astro';
 import Footer from '@components/Footer.astro';
 import PreviewBanner from '@components/PreviewBanner.astro';
+import AnnouncementBar from '@components/AnnouncementBar.astro';
 import { getSettings } from '../lib/sanity';
 import type { SanityMeta, SanityPreviewLabel } from '../lib/sanity';
 import '@styles/global.css';
@@ -75,6 +76,11 @@ const canonicalUrl = new URL(canonicalOverride ?? Astro.url.pathname, siteUrl).h
   <body class:list={['flex flex-col min-h-screen font-serif', `bg-${backgroundColor}`, `text-${textColor}`, bodyClass]}>
     <div class="flex flex-col flex-1">
       {previewLabel && <PreviewBanner label={previewLabel} />}
+      {
+        settings?.announcementBar?.announcementBarIsEnabled && settings.announcementBar.cacheKey && settings.announcementBar.body?.length && (
+          <AnnouncementBar announcement={settings.announcementBar} />
+        )
+      }
       <NavigationTopBar variant={navigationVariant} />
       <main id="main-content" tabindex="-1" class:list={['MainContent', mainClass]}>
         <slot />
