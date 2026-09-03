@@ -24,7 +24,7 @@ const spans = getAutoCollageSpans(visibleImages);
 
 {
   visibleImages.length > 0 && (
-    <div class:list={['grid grid-cols-2 gap-3', className]} data-auto-collage>
+    <div class:list={['col-span-full grid w-full grid-cols-2 gap-3', className]} data-auto-collage>
       {visibleImages.map((image, index) => {
         const orientation = getCollageOrientation(image);
         // eslint-disable-next-line security/detect-object-injection

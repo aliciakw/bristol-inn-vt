@@ -9,8 +9,18 @@ interface Props {
 }
 
 const { page, pageHeaderClass = '' } = Astro.props;
+const hasIntroduction =
+  page?.pageHeader?.introduction?.some((block) => {
+    if (!Array.isArray(block.children)) return false;
+
+    return block.children.some((child) => typeof child === 'object' && child !== null && 'text' in child && typeof child.text === 'string' && child.text.trim().length > 0);
+  }) ?? false;
+const hasHeroImage = Boolean(page?.pageHeader?.heroImage?.url?.trim());
+const hasPageHeaderContent = hasIntroduction || hasHeroImage;
 ---
 
-{page?.pageHeader && <PageHeader block={page.pageHeader} className={pageHeaderClass} />}
+{page?.pageHeader && hasPageHeaderContent && <PageHeader block={page.pageHeader} className={pageHeaderClass} />}
 
-<SliceZone blocks={page.body ?? []} wrapStandaloneBlocks />
+<div class="pt-8 py-16 tablet:pt-24">
+  <SliceZone blocks={page.body ?? []} wrapStandaloneBlocks />
+</div>

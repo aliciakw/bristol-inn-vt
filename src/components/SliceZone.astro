@@ -210,7 +210,7 @@ const getImageBlockContentClass = (image?: { layout?: string }) =>
       return (
         <section class="Section py-12" style={block.backgroundColor ? `background-color: ${block.backgroundColor}` : undefined}>
           <div class="Section__inner">
-            <AutoCollage images={(block.images as Parameters<typeof AutoCollage>[0]['images']) ?? []} />
+            <AutoCollage images={(block.images as Parameters<typeof AutoCollage>[0]['images']) ?? []} class="desktop:col-start-2 desktop:col-span-10" />
           </div>
         </section>
       );
