@@ -1,5 +1,6 @@
 ---
 import ImageComponent from '@components/ui/ImageComponent.astro';
+import TextStyle from '@components/ui/TextStyle.astro';
 import { buildSanityImageUrl } from '@lib/sanity';
 import { getAutoCollageSpans, getCollageOrientation, type CollageOrientation } from '@lib/auto-collage';
 
@@ -48,7 +49,11 @@ const spans = getAutoCollageSpans(visibleImages);
               class:list={['w-full overflow-hidden rounded-xl', orientation === 'portrait' ? 'aspect-[3/4]' : 'aspect-[5/3]']}
               imgClass="h-full w-full object-cover"
             />
-            {image.caption && <figcaption class="sr-only">{image.caption}</figcaption>}
+            {image.caption && (
+              <figcaption class="mt-2">
+                <TextStyle variant="caption">{image.caption}</TextStyle>
+              </figcaption>
+            )}
           </figure>
         );
       })}

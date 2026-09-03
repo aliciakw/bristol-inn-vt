@@ -163,7 +163,14 @@ export const autoCollageBlockType = defineType({
       title: 'Images',
       description: 'Portrait images pair in two columns; landscape images span the full width.',
       type: 'array',
-      of: [defineArrayMember({type: 'figure'})],
+      of: [
+        defineArrayMember({
+          type: 'figure',
+          options: {
+            hiddenItems: ['layout', 'rounded'],
+          },
+        }),
+      ],
       validation: (Rule) => Rule.min(1),
     }),
     ...colorFields,

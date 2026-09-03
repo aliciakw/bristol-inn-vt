@@ -184,7 +184,11 @@ const getImageBlockContentClass = (image?: { layout?: string }) =>
     }
 
     if (block._type === 'sectionTitleBlock') {
-      return <SectionTitleBlock title={block.title as string} icon={block.icon as Parameters<typeof SectionTitleBlock>[0]['icon']} />;
+      return (
+        <div class="my-2 tablet:mt-4 tablet:mb-8">
+          <SectionTitleBlock title={block.title as string} icon={block.icon as Parameters<typeof SectionTitleBlock>[0]['icon']} />
+        </div>
+      );
     }
 
     if (block._type === 'roomSearchFormBlock') {
