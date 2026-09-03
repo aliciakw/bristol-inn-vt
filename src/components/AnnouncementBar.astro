@@ -14,14 +14,14 @@ const wrapperStyle = [announcement.backgroundColor ? `background-color: ${announ
 ---
 
 <aside
-  class="AnnouncementBar relative z-40 shrink-0 bg-prussian-500 px-[var(--grid-margin)] h-[52px] text-sand-050 flex items-center justify-center"
+  class="AnnouncementBar relative z-20 flex min-h-[52px] shrink-0 items-center justify-center bg-prussian-500 px-[var(--grid-margin)] py-2 text-sand-050"
   style={wrapperStyle || undefined}
   aria-label="Announcement"
   data-announcement-bar
   data-storage-key={storageKey}
 >
-  <div class:list={['flex max-w-[var(--inner-max-width)] items-center justify-center', announcement.isDismissable && 'pl-8 pr-10 tablet:px-14']}>
-    <div class="AnnouncementBar__body flex flex-col items-center gap-1 text-center font-medium">
+  <div class:list={['flex max-w-[var(--inner-max-width)] items-center justify-center', announcement.isDismissable && 'pl-8 pr-12 tablet:px-14']}>
+    <div class="AnnouncementBar__body overflow-hidden text-center font-medium">
       {announcement.body.map((block) => <PortableTextBlock block={block} contrainProseWidth={false} textVariant={block.style === 'small' ? 'caption' : 'paragraph'} />)}
     </div>
 
@@ -45,8 +45,21 @@ const wrapperStyle = [announcement.backgroundColor ? `background-color: ${announ
 
 <style>
   .AnnouncementBar__body :global(p) {
+    display: inline;
     margin: 0;
-    text-wrap: balance;
+    line-height: 1.35;
+  }
+
+  .AnnouncementBar__body :global(p + p)::before {
+    content: ' ';
+  }
+
+  .AnnouncementBar__body {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
 
   .AnnouncementBar__body :global(a) {
