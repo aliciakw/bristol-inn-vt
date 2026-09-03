@@ -15,8 +15,7 @@ export const prerender = false;
 type DeployResponse = {
   message: string;
   activeDeployment?: WorkflowRunSummary;
-  latestDeployment?: WorkflowRunSummary;
-  triggeredDeployment?: WorkflowRunSummary;
+  completedDeployments: WorkflowRunSummary[];
 };
 
 let inFlightWorkflowDispatch: Promise<WorkflowRunSummary> | undefined;
@@ -149,19 +148,19 @@ async function dispatchDeployWorkflowOnce(): Promise<WorkflowRunSummary> {
 async function getDeployStatus(): Promise<DeployResponse> {
   const runs = await listDeployWorkflowRuns(getConfig());
   const activeDeployment = findActiveWorkflowRun(runs);
-  const latestDeployment = runs[0];
+  const completedDeployments = runs.filter((run) => run.state !== 'active').slice(0, 3);
 
   if (activeDeployment) {
     return {
       message: `A deploy workflow is already ${activeDeployment.status}.`,
       activeDeployment,
-      latestDeployment,
+      completedDeployments,
     };
   }
 
   return {
-    message: latestDeployment ? `Latest deploy workflow run is ${latestDeployment.status}.` : 'No deploy workflow runs were found.',
-    latestDeployment,
+    message: completedDeployments[0] ? `Latest deploy workflow run is ${completedDeployments[0].status}.` : 'No deploy workflow runs were found.',
+    completedDeployments,
   };
 }
 
@@ -210,8 +209,8 @@ export async function POST({ request }: APIContext): Promise<Response> {
     return jsonResponse(
       {
         message: `Triggered deploy workflow ${triggeredDeployment.id}. Give GitHub a few seconds to list the new run before triggering again.`,
-        latestDeployment: triggeredDeployment,
-        triggeredDeployment,
+        activeDeployment: triggeredDeployment,
+        completedDeployments: status.completedDeployments,
       },
       202,
       origin,

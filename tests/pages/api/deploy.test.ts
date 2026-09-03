@@ -43,7 +43,7 @@ beforeEach(() => {
 });
 
 describe('POST /api/deploy', () => {
-  it('returns the dispatched workflow as the latest deployment', async () => {
+  it('returns the dispatched workflow as the active deployment without duplicating it in history', async () => {
     const triggeredDeployment = {
       id: 'deploy-site.yml:123',
       state: 'active',
@@ -56,8 +56,14 @@ describe('POST /api/deploy', () => {
     const body = await response.json();
 
     expect(response.status).toBe(202);
-    expect(body.triggeredDeployment).toEqual(triggeredDeployment);
-    expect(body.latestDeployment).toEqual(triggeredDeployment);
+    expect(body.activeDeployment).toEqual(triggeredDeployment);
+    expect(body.completedDeployments).toEqual([
+      {
+        id: 'old-workflow-run',
+        state: 'success',
+        status: 'success',
+      },
+    ]);
   });
 
   it('does not dispatch a workflow when one is already active', async () => {
@@ -101,10 +107,10 @@ describe('POST /api/deploy', () => {
     expect(first.status).toBe(202);
     expect(second.status).toBe(202);
     await expect(first.json()).resolves.toMatchObject({
-      triggeredDeployment: { id: 'shared-workflow-dispatch' },
+      activeDeployment: { id: 'shared-workflow-dispatch' },
     });
     await expect(second.json()).resolves.toMatchObject({
-      triggeredDeployment: { id: 'shared-workflow-dispatch' },
+      activeDeployment: { id: 'shared-workflow-dispatch' },
     });
   });
 
@@ -123,8 +129,33 @@ describe('POST /api/deploy', () => {
     expect(firstResponse.status).toBe(202);
     expect(secondResponse.status).toBe(202);
     await expect(secondResponse.json()).resolves.toMatchObject({
-      triggeredDeployment: { id: 'recent-workflow-dispatch' },
+      activeDeployment: { id: 'recent-workflow-dispatch' },
     });
+  });
+});
+
+describe('GET /api/deploy', () => {
+  it('returns the active run followed by the three most recent completed runs', async () => {
+    const activeWorkflowRun = {
+      id: 'active-workflow-run',
+      state: 'active',
+      status: 'in_progress',
+    };
+    const completedRuns = [
+      { id: 'completed-1', state: 'success', status: 'success' },
+      { id: 'completed-2', state: 'failure', status: 'failure' },
+      { id: 'completed-3', state: 'cancelled', status: 'cancelled' },
+      { id: 'completed-4', state: 'success', status: 'success' },
+    ];
+    listDeployWorkflowRuns.mockResolvedValue([activeWorkflowRun, ...completedRuns]);
+    findActiveWorkflowRun.mockReturnValue(activeWorkflowRun);
+    const { GET } = await importDeployRoute();
+
+    const response = await GET(contextWithRequest(new Request('https://www.example.com/api/deploy')));
+    const body = await response.json();
+
+    expect(body.activeDeployment).toEqual(activeWorkflowRun);
+    expect(body.completedDeployments).toEqual(completedRuns.slice(0, 3));
   });
 });
 
