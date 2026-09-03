@@ -18,7 +18,14 @@ export function RoomDetailHeader({ roomId, name, bedroomsLabel, personCapacity, 
   const meta = [bedroomsLabel, floorNumberLabel, personCapacityLabel, estimatedPriceLabel].filter(Boolean).join(' · ');
 
   return (
-    <div className="flex flex-col" data-room-detail-header data-room-id={roomId} data-base-price={basePrice}>
+    <div className="flex flex-col tablet:pt-12" data-room-detail-header data-room-id={roomId} data-base-price={basePrice}>
+      <a
+        href="/rooms-and-suites"
+        className="fixed top-[calc(var(--nav-top-bar-height)+var(--room-detail-nav-offset,0px)+var(--grid-gutter))] left-[max(var(--grid-margin),calc((100vw_-_var(--inner-max-width))/2))] z-20 hidden w-fit text-sm text-iron transition-colors hover:text-ink-900 tablet:inline-block"
+        data-back-to-rooms
+      >
+        ← Back to Rooms
+      </a>
       <TextStyle variant="h2" element="h1" className="line-height-tight">
         {name}
       </TextStyle>

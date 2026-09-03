@@ -21,17 +21,17 @@ const metaDescription = room.description.slice(0, 160);
 ---
 
 <BaseLayout title={`${room.name} — Bristol Inn`} description={metaDescription} navigationVariant="transparent" mainClass="Spacer--page-bottom">
-  <section class="Section Spacer--navigation-offset relative">
+  <section class="Section Spacer--navigation-offset relative !overflow-visible">
     <a
-      id="back-to-rooms"
       href="/rooms-and-suites"
-      class="absolute left-[var(--grid-margin)] top-[var(--nav-top-bar-height)] z-20 text-sm text-iron hover:text-ink-900 transition-colors w-fit"
+      class="absolute left-[var(--grid-margin)] top-[var(--nav-top-bar-height)] z-20 w-fit text-sm text-iron transition-colors hover:text-ink-900 tablet:hidden"
+      data-back-to-rooms
     >
       ← Back to Rooms
     </a>
     <div class="Grid items-start min-h-[100vh] align-start">
       <div
-        class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-4 tablet:pr-[var(--grid-margin)] flex flex-col gap-8 tablet:sticky tablet:top-[var(--room-detail-sticky-top,var(--nav-top-bar-height))] tablet:self-start pb-2"
+        class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-4 flex flex-col gap-8 tablet:sticky tablet:top-[var(--room-detail-nav-offset,0px)] tablet:self-start tablet:h-[calc(100vh-var(--room-detail-nav-offset,0px))] tablet:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-2"
         data-room-detail-sidebar
       >
         <img
@@ -76,7 +76,7 @@ const metaDescription = room.description.slice(0, 160);
         </div>
       </div>
       <!-- Right column -->
-      <div class="row-span-1 col-span-6 pt-3 tablet:col-span-4 desktop:col-span-8 overflow-hidden">
+      <div class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-8 overflow-hidden">
         <TextStyle variant="paragraph" class="font-bold my-4 tablet:hidden">Gallery</TextStyle>
         <RoomGallery photos={room.photos} roomName={room.name} layout="heroFirst" />
       </div>
@@ -85,20 +85,18 @@ const metaDescription = room.description.slice(0, 160);
 </BaseLayout>
 
 <script>
-  const sidebar = document.querySelector<HTMLElement>('[data-room-detail-sidebar]');
+  const navigationShell = document.querySelector<HTMLElement>('[data-navigation-shell]');
+  const roomDetailSidebar = document.querySelector<HTMLElement>('[data-room-detail-sidebar]');
 
-  if (sidebar) {
-    const updateStickyPosition = () => {
-      const navigationHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-top-bar-height')) || 0;
-      const bottomClearance = 16;
-      const stickyTop = Math.min(navigationHeight, window.innerHeight - sidebar.offsetHeight - bottomClearance);
-      sidebar.style.setProperty('--room-detail-sticky-top', `${stickyTop}px`);
+  if (navigationShell && roomDetailSidebar) {
+    const updateRoomDetailOffset = () => {
+      const topBarHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-top-bar-height')) || 0;
+      const navigationOffset = Math.max(0, navigationShell.offsetHeight - topBarHeight);
+      document.documentElement.style.setProperty('--room-detail-nav-offset', `${navigationOffset}px`);
     };
 
-    const sidebarObserver = new ResizeObserver(updateStickyPosition);
-    sidebarObserver.observe(sidebar);
-    window.addEventListener('resize', updateStickyPosition, { passive: true });
-    updateStickyPosition();
+    new ResizeObserver(updateRoomDetailOffset).observe(navigationShell);
+    updateRoomDetailOffset();
   }
 
   function formatRoomDate(iso: string): string {
@@ -113,7 +111,9 @@ const metaDescription = room.description.slice(0, 160);
   if (start && end && guests) {
     const back = new URLSearchParams({ checkIn: start, checkOut: end, guests });
     if (sp.get('pets') === '1') back.set('pets', '1');
-    document.getElementById('back-to-rooms')?.setAttribute('href', `/rooms-and-suites?${back.toString()}`);
+    document.querySelectorAll<HTMLAnchorElement>('[data-back-to-rooms]').forEach((link) => {
+      link.href = `/rooms-and-suites?${back.toString()}`;
+    });
 
     const header = document.querySelector<HTMLElement>('[data-room-detail-header]');
     const roomId = header?.dataset.roomId;

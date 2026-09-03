@@ -28,7 +28,7 @@ const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
       <p class="text-gray-500">No photos available</p>
     </div>
   ) : (
-    <>
+    <div class="flex flex-col tablet:mt-3">
       {heroImage && (
         <ImageComponent
           src={buildSanityImageUrl(photos[0].url, { width: 1200, height: 800 })}
@@ -51,6 +51,6 @@ const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
           }))}
         />
       )}
-    </>
+    </div>
   )
 }
