@@ -42,9 +42,9 @@ const metaDescription = room.description.slice(0, 160);
           loading="eager"
           fetchpriority="high"
           decoding="sync"
-          class="w-full object-cover rounded-xl top aspect-[4/3] mt-12 tablet:hidden"
+          class="w-full object-cover rounded-xl top aspect-[4/3] mt-24 tablet:hidden"
         />
-        <div class="tablet:mt-18 mb-8">
+        <div class="tablet:mt-18 desktop:mt-36 flex flex-col justify-center">
           <RoomDetailHeader
             roomId={room.id}
             name={room.name}
@@ -76,7 +76,7 @@ const metaDescription = room.description.slice(0, 160);
         </div>
       </div>
       <!-- Right column -->
-      <div class="row-span-1 col-span-6 tablet:col-span-4 desktop:col-span-8 overflow-hidden">
+      <div class="row-span-1 col-span-6 pt-3 tablet:col-span-4 desktop:col-span-8 overflow-hidden">
         <TextStyle variant="paragraph" class="font-bold my-4 tablet:hidden">Gallery</TextStyle>
         <RoomGallery photos={room.photos} roomName={room.name} layout="heroFirst" />
       </div>
