@@ -1,0 +1,95 @@
+---
+import ImageComponent from '@components/ui/ImageComponent.astro';
+import { buildSanityImageUrl } from '@lib/sanity';
+import { getAutoCollageSpans, getCollageOrientation, type CollageOrientation } from '@lib/auto-collage';
+
+export interface AutoCollageImage {
+  url: string;
+  alt: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+  orientation?: CollageOrientation;
+}
+
+interface Props {
+  images: AutoCollageImage[];
+  class?: string;
+}
+
+const { images, class: className } = Astro.props;
+const visibleImages = images.filter((image) => image.url);
+const spans = getAutoCollageSpans(visibleImages);
+---
+
+{
+  visibleImages.length > 0 && (
+    <div class:list={['grid grid-cols-2 gap-3', className]} data-auto-collage>
+      {visibleImages.map((image, index) => {
+        const orientation = getCollageOrientation(image);
+        // eslint-disable-next-line security/detect-object-injection
+        const span = spans[index];
+        const sourceWidth = span === 2 ? 1600 : 800;
+        const sourceHeight = orientation === 'portrait' ? Math.round((sourceWidth * 4) / 3) : Math.round((sourceWidth * 3) / 5);
+        const smallWidth = Math.round(sourceWidth / 2);
+        const smallHeight = Math.round(sourceHeight / 2);
+
+        return (
+          <figure class:list={['min-w-0', span === 2 ? 'col-span-2' : 'col-span-1']} data-auto-collage-item data-orientation={orientation}>
+            <ImageComponent
+              src={buildSanityImageUrl(image.url, { width: sourceWidth, height: sourceHeight, fit: 'crop' })}
+              srcset={`${buildSanityImageUrl(image.url, { width: smallWidth, height: smallHeight, fit: 'crop' })} ${smallWidth}w, ${buildSanityImageUrl(image.url, { width: sourceWidth, height: sourceHeight, fit: 'crop' })} ${sourceWidth}w`}
+              sizes={span === 2 ? '(min-width: 1240px) 58vw, 100vw' : '(min-width: 1240px) 29vw, 50vw'}
+              alt={image.alt}
+              width={sourceWidth}
+              height={sourceHeight}
+              loading="lazy"
+              fadeIn
+              class:list={['w-full overflow-hidden rounded-xl', orientation === 'portrait' ? 'aspect-[3/4]' : 'aspect-[5/3]']}
+              imgClass="h-full w-full object-cover"
+            />
+            {image.caption && <figcaption class="sr-only">{image.caption}</figcaption>}
+          </figure>
+        );
+      })}
+    </div>
+  )
+}
+
+<script>
+  import { getAutoCollageSpans, type CollageOrientation } from '@lib/auto-collage';
+
+  function layoutCollage(collage: HTMLElement) {
+    const items = Array.from(collage.querySelectorAll<HTMLElement>('[data-auto-collage-item]'));
+    const spans = getAutoCollageSpans(items.map((item) => ({ orientation: item.dataset.orientation as CollageOrientation | undefined })));
+
+    items.forEach((item, index) => {
+      // eslint-disable-next-line security/detect-object-injection
+      item.classList.toggle('col-span-2', spans[index] === 2);
+      // eslint-disable-next-line security/detect-object-injection
+      item.classList.toggle('col-span-1', spans[index] !== 2);
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-auto-collage]').forEach((collage) => {
+    const items = Array.from(collage.querySelectorAll<HTMLElement>('[data-auto-collage-item]'));
+
+    items.forEach((item) => {
+      if (item.dataset.orientation) return;
+      const image = item.querySelector('img');
+      if (!image) return;
+
+      const updateOrientation = () => {
+        item.dataset.orientation = image.naturalWidth >= image.naturalHeight ? 'landscape' : 'portrait';
+        item.firstElementChild?.classList.toggle('aspect-[5/3]', item.dataset.orientation === 'landscape');
+        item.firstElementChild?.classList.toggle('aspect-[3/4]', item.dataset.orientation === 'portrait');
+        layoutCollage(collage);
+      };
+
+      if (image.complete && image.naturalWidth) updateOrientation();
+      else image.addEventListener('load', updateOrientation, { once: true });
+    });
+
+    layoutCollage(collage);
+  });
+</script>

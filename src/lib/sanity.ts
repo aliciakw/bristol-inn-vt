@@ -78,6 +78,8 @@ export type SanityButtonLink = SanityResolvedLink & {
 export type SanityImage = {
   url: string;
   alt: string;
+  width?: number;
+  height?: number;
   caption?: string;
   layout?: 'default' | 'square' | 'fullbleed' | 'narrow' | 'portrait';
   rounded?: boolean;
@@ -157,6 +159,7 @@ const RESOLVE_LINK = `{ label, "href": select(linkType == "internal" => "/" + in
 const RESOLVE_BUTTON_LINK = `{ label, color, "href": select(linkType == "internal" => "/" + internalLink->slug.current, url), "openInNewTab": coalesce(openInNewTab, false) }`;
 
 const RESOLVE_FIGURE = `{ "url": image.asset->url, "alt": coalesce(alt, ""), caption, layout, "rounded": coalesce(rounded, true) }`;
+const RESOLVE_COLLAGE_FIGURE = `{ "url": image.asset->url, "alt": coalesce(alt, ""), caption, "width": image.asset->metadata.dimensions.width, "height": image.asset->metadata.dimensions.height }`;
 
 const RESOLVE_IMAGE_OR_FIGURE = `select(
   defined(image.image.asset) => image${RESOLVE_FIGURE},
@@ -190,6 +193,7 @@ const RESOLVE_BODY_ITEM = `{
   },
   _type == "roomSearchFormBlock" => { ..., "icon": icon${RESOLVE_FIGURE} },
   _type == "galleryStripBlock" => { ..., "images": images[]${RESOLVE_FIGURE} },
+  _type == "autoCollageBlock" => { ..., "images": images[]${RESOLVE_COLLAGE_FIGURE} },
   _type == "testimonialGalleryBlock" => {
     ...,
     "items": items[]{

@@ -87,6 +87,7 @@ export const homepageType = defineType({
         defineArrayMember({type: 'sectionTitleBlock'}),
         defineArrayMember({type: 'roomSearchFormBlock'}),
         defineArrayMember({type: 'galleryStripBlock'}),
+        defineArrayMember({type: 'autoCollageBlock'}),
         defineArrayMember({type: 'testimonialGalleryBlock'}),
       ],
     }),

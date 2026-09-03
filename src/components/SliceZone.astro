@@ -11,6 +11,7 @@ import RoomSearchFormBlock from './blocks/RoomSearchFormBlock.astro';
 import TestimonialGalleryBlock from './blocks/TestimonialGalleryBlock.astro';
 import AlternatingContentBlock from './blocks/AlternatingContentBlock.astro';
 import SectionTitleBlock from './blocks/SectionTitleBlock.astro';
+import AutoCollage from './blocks/AutoCollage.astro';
 import { type SanityBlock, type SanityImage } from '../lib/sanity';
 
 interface Props {
@@ -201,6 +202,16 @@ const getImageBlockContentClass = (image?: { layout?: string }) =>
       return (
         <section class="py-12" style={block.backgroundColor ? `background-color: ${block.backgroundColor}` : undefined}>
           <GalleryStrip images={(block.images as Parameters<typeof GalleryStrip>[0]['images']) ?? []} speed={block.speed as Parameters<typeof GalleryStrip>[0]['speed']} />
+        </section>
+      );
+    }
+
+    if (block._type === 'autoCollageBlock') {
+      return (
+        <section class="Section py-12" style={block.backgroundColor ? `background-color: ${block.backgroundColor}` : undefined}>
+          <div class="Section__inner">
+            <AutoCollage images={(block.images as Parameters<typeof AutoCollage>[0]['images']) ?? []} />
+          </div>
         </section>
       );
     }

@@ -2,17 +2,16 @@
 /**
  * RoomGallery — purely presentational photo gallery.
  *
- * Displays up to 6 photos (already sliced by hostaway.ts normalization).
- * First photo loads eagerly; remaining photos load lazily in a responsive grid.
- * No JavaScript — static scrollable grid only (carousel is Phase 5 / ROOM-06).
+ * Displays every photo supplied by Hostaway. The first photo loads eagerly;
+ * remaining photos load lazily in the auto-collage.
  */
 
 import ImageComponent from '@components/ui/ImageComponent.astro';
 import { buildSanityImageUrl } from '@lib/sanity';
-import GalleryStrip from '@components/home/GalleryStrip.astro';
+import AutoCollage from '@components/blocks/AutoCollage.astro';
 
 interface Props {
-  /** Up to 6 photos; already sliced by the Hostaway lib (D-04) */
+  /** Photos ordered by the Hostaway lib. */
   photos: Array<{ url: string; caption: string }>;
   roomName: string;
   layout?: 'heroFirst' | 'default';
@@ -43,25 +42,14 @@ const gridImages = layout === 'heroFirst' ? photos.slice(1) : photos;
           imgClass="w-full h-full object-cover"
         />
       )}
-      <div class="mt-3 hidden desktop:block">
-        <GalleryStrip images={gridImages} roomName={roomName} speed="slow" />
-      </div>
       {gridImages.length > 0 && (
-        <div class="grid grid-cols-2 desktop:grid-cols-4 gap-3 mt-3 desktop:hidden">
-          {gridImages.map((p, i) => (
-            <ImageComponent
-              src={buildSanityImageUrl(p.url, { width: 1200, height: 800 })}
-              srcset={`${buildSanityImageUrl(p.url, { width: 600, height: 400 })} 600w, ${buildSanityImageUrl(p.url, { width: 1200, height: 800 })} 1200w`}
-              alt={p.caption || `${roomName} — photo ${i + 2}`}
-              width={1200}
-              height={800}
-              loading="lazy"
-              fadeIn
-              class="w-full rounded-xl overflow-hidden group"
-              imgClass="w-full h-full object-cover"
-            />
-          ))}
-        </div>
+        <AutoCollage
+          class="mt-3"
+          images={gridImages.map((photo, index) => ({
+            url: photo.url,
+            alt: photo.caption || `${roomName} — photo ${index + 2}`,
+          }))}
+        />
       )}
     </>
   )

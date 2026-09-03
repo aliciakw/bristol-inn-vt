@@ -13,7 +13,7 @@ This file records guest-facing rules that are easy to lose during refactors. Kee
 - A room's stable identity is its numeric Hostaway listing ID.
 - Hostaway owns base price, capacity, bedrooms, bathrooms, amenities, photos, dog policy, and calendar availability.
 - Sanity room records join by `hostawayId` and may supply the editorial name, floor, and special instructions.
-- Room photos are ordered by Hostaway `sortOrder` and limited to six in the normalized room model.
+- Room photos are ordered by Hostaway `sortOrder`; every available photo is included in the normalized room model.
 - Search accepts ISO dates (`YYYY-MM-DD`), requires checkout after check-in, and accepts 1–20 guests.
 - Calendar availability is checked for every room. Available rooms that lack capacity or a selected preference are shown separately as not meeting the guest's requirements; pet preferences require a dog-friendly room and ground-floor preferences require CMS floor 1.
 - If a room's calendar request fails, report it as unavailable; do not guess availability.

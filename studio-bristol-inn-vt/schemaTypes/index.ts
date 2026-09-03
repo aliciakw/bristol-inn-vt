@@ -3,6 +3,7 @@ import {buttonLinkType} from './buttonLink'
 import {singleColumnBlockType, threeColumnBlockType, twoColumnBlockType} from './columnBlock'
 import {contactPageType} from './contactPage'
 import {
+  autoCollageBlockType,
   galleryStripBlockType,
   roomSearchFormBlockType,
   testimonialGalleryBlockType,
@@ -21,6 +22,7 @@ import {testimonialType} from './testimonial'
 
 export const schemaTypes = [
   alternatingContentBlockType,
+  autoCollageBlockType,
   buttonLinkType,
   singleColumnBlockType,
   contactPageType,
