@@ -1,26 +1,10 @@
 import {useCallback, useEffect, useState, type CSSProperties} from 'react'
-
-type DeploymentState = 'success' | 'failure' | 'cancelled' | 'active' | 'unknown'
-
-type DeploymentSummary = {
-  id: string
-  state: DeploymentState
-  status: string
-  url?: string
-  createdAt?: string
-  modifiedAt?: string
-  branch?: string
-  commitHash?: string
-  commitMessage?: string
-  failureMessage?: string
-}
-
-type DeployResponse = {
-  message: string
-  activeDeployment?: DeploymentSummary
-  completedDeployments: DeploymentSummary[]
-  error?: string
-}
+import {
+  getCompletedDeployments,
+  type DeploymentState,
+  type DeploymentSummary,
+  type DeployResponse,
+} from './deploy-response'
 
 const DEPLOY_COOLDOWN_SECONDS = 30
 
@@ -171,6 +155,7 @@ export function DeployTool() {
   }, [cooldownSeconds])
 
   const isDeployDisabled = isLoading || !deployEndpoint || cooldownSeconds > 0
+  const completedDeployments = getCompletedDeployments(response)
 
   return (
     <main style={styles.page}>
@@ -208,7 +193,7 @@ export function DeployTool() {
       {error ? <p style={styles.error}>{error}</p> : null}
 
       <DeploymentDetails deployment={response?.activeDeployment} title="Active build" />
-      {response?.completedDeployments.map((deployment, index) => (
+      {completedDeployments.map((deployment, index) => (
         <DeploymentDetails
           deployment={deployment}
           key={deployment.id}
