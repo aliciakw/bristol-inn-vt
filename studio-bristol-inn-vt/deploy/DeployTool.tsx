@@ -18,8 +18,7 @@ type DeploymentSummary = {
 type DeployResponse = {
   message: string
   activeDeployment?: DeploymentSummary
-  latestDeployment?: DeploymentSummary
-  triggeredDeployment?: DeploymentSummary
+  completedDeployments: DeploymentSummary[]
   error?: string
 }
 
@@ -209,8 +208,13 @@ export function DeployTool() {
       {error ? <p style={styles.error}>{error}</p> : null}
 
       <DeploymentDetails deployment={response?.activeDeployment} title="Active build" />
-      <DeploymentDetails deployment={response?.triggeredDeployment} title="Triggered build" />
-      <DeploymentDetails deployment={response?.latestDeployment} title="Latest build" />
+      {response?.completedDeployments.map((deployment, index) => (
+        <DeploymentDetails
+          deployment={deployment}
+          key={deployment.id}
+          title={index === 0 ? 'Latest completed build' : 'Completed build'}
+        />
+      ))}
     </main>
   )
 }
