@@ -17,10 +17,12 @@ const hasIntroduction =
   }) ?? false;
 const hasHeroImage = Boolean(page?.pageHeader?.heroImage?.url?.trim());
 const hasPageHeaderContent = hasIntroduction || hasHeroImage;
+const hasEmptyPageHeaderOffset = Boolean(page?.pageHeader) && !hasPageHeaderContent;
+const bodySpacingClass = hasEmptyPageHeaderOffset ? 'pb-16 pt-[calc(var(--nav-top-bar-height)+2rem)] tablet:pt-[calc(var(--nav-top-bar-height)+6rem)]' : 'pb-16 pt-8 tablet:pt-24';
 ---
 
 {page?.pageHeader && hasPageHeaderContent && <PageHeader block={page.pageHeader} className={pageHeaderClass} />}
 
-<div class="pt-8 py-16 tablet:pt-24">
+<div class={bodySpacingClass}>
   <SliceZone blocks={page.body ?? []} wrapStandaloneBlocks />
 </div>

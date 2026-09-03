@@ -13,7 +13,7 @@ const { block, className } = Astro.props;
 const { introduction, heroImage, textColor, backgroundColor = 'var(--color-prussian-100)' } = block;
 ---
 
-<section class="tablet:pb-16 overflow-hidden debug">
+<section class="tablet:pb-16 overflow-hidden">
   <div class="Section overflow-visible! tablet:min-h-[320px]" style={`background-color: ${backgroundColor}; color: ${textColor};`}>
     <div class="Grid relative" class:list={[className]}>
       <div class="row-span-1 col-span-1 tablet:col-span-4 desktop:col-span-6 desktop:col-start-2 tablet:pr-[var(--grid-gutter)] tablet:pt-44 gap-6">
