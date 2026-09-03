@@ -20,6 +20,10 @@ type GalleryStripPreviewSelection = {
   speed?: string
 }
 
+type AutoCollagePreviewSelection = {
+  images?: unknown[]
+}
+
 type FigureValue = {
   image?: any
 }
@@ -143,6 +147,43 @@ export const galleryStripBlockType = defineType({
       return {
         title: count === 1 ? '1 image' : `${count} images`,
         subtitle: speed ? `Gallery Strip - ${speed}` : 'Gallery Strip',
+        media: figuresWithImages[0]?.image,
+      }
+    },
+  },
+})
+
+export const autoCollageBlockType = defineType({
+  name: 'autoCollageBlock',
+  title: 'Auto Collage',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'images',
+      title: 'Images',
+      description: 'Portrait images pair in two columns; landscape images span the full width.',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'figure',
+          options: {
+            hiddenItems: ['layout', 'rounded'],
+          },
+        }),
+      ],
+      validation: (Rule) => Rule.min(1),
+    }),
+    ...colorFields,
+  ],
+  preview: {
+    select: {images: 'images'},
+    prepare({images}: AutoCollagePreviewSelection) {
+      const figuresWithImages = images?.filter(isFigureWithImage) ?? []
+      const count = figuresWithImages.length
+
+      return {
+        title: 'Auto Collage',
+        subtitle: count === 1 ? '1 image' : `${count} images`,
         media: figuresWithImages[0]?.image,
       }
     },

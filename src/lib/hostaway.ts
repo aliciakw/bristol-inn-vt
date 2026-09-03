@@ -106,7 +106,6 @@ function normalizeRoom(raw: RawListing): HostawayRoom {
   const photos = raw.listingImages
     .slice()
     .sort((a, b) => a.sortOrder - b.sortOrder)
-    .slice(0, 6)
     .map((img) => ({
       url: img.url,
       caption: img.caption || img.vrboCaption || '',

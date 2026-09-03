@@ -183,7 +183,7 @@ describe('getRooms()', () => {
     expect(sortOrders).toEqual([1, 2, 3]);
   });
 
-  it('slices photos to at most 6', async () => {
+  it('keeps every photo supplied by Hostaway', async () => {
     const images = Array.from({ length: 10 }, (_, i) => ({
       id: i,
       caption: `Photo ${i}`,
@@ -197,7 +197,7 @@ describe('getRooms()', () => {
 
     const rooms = await getRooms();
 
-    expect(rooms[0]?.photos).toHaveLength(6);
+    expect(rooms[0]?.photos).toHaveLength(10);
   });
 
   it('throws when API returns non-2xx status', async () => {
