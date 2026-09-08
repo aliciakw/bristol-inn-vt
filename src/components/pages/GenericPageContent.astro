@@ -18,7 +18,7 @@ const hasIntroduction =
 const hasHeroImage = Boolean(page?.pageHeader?.heroImage?.url?.trim());
 const hasPageHeaderContent = hasIntroduction || hasHeroImage;
 const hasEmptyPageHeaderOffset = Boolean(page?.pageHeader) && !hasPageHeaderContent;
-const bodySpacingClass = hasEmptyPageHeaderOffset ? 'pb-16 pt-[calc(var(--nav-top-bar-height)+2rem)] tablet:pt-[calc(var(--nav-top-bar-height)+6rem)]' : 'pb-16 pt-8 tablet:pt-24';
+const bodySpacingClass = hasEmptyPageHeaderOffset ? 'pb-16 pt-[calc(var(--nav-top-bar-height)+2rem)] tablet:pt-[calc(var(--nav-top-bar-height)+6rem)]' : 'pt-8';
 ---
 
 {page?.pageHeader && hasPageHeaderContent && <PageHeader block={page.pageHeader} className={pageHeaderClass} />}

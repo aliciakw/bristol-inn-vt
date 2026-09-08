@@ -111,7 +111,7 @@ const rightCta =
   </div>
 
   <!-- Nav drawer (slides in from right) -->
-  <nav id="nav-menu" aria-label="Site navigation" class="fixed inset-y-0 right-0 z-[43] bg-prussian-500 text-white flex flex-col justify-center" aria-hidden="true">
+  <nav id="nav-menu" aria-label="Site navigation" class="fixed inset-y-0 right-0 z-[43] bg-prussian-500 text-white flex flex-col justify-center" aria-hidden="true" inert>
     <!-- Content -->
     <div class="NavDrawer__Content fade-in-200 mb-10 px-[var(--grid-margin)] py-6 flex flex-col gap-12 items-start">
       <!-- Nav links from Sanity -->
@@ -139,35 +139,45 @@ const rightCta =
 
 <style>
   #nav-menu {
-    width: 0;
-    opacity: 1;
-    overflow: hidden;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    pointer-events: none;
+    transform: translateX(100%);
+    visibility: hidden;
     transition:
-      width 0.35s ease-in-out,
-      opacity 0.35s ease-in-out;
+      transform 0.35s ease-in-out,
+      visibility 0s linear 0.35s;
   }
   #nav-menu.is-open {
-    width: 100%;
-    opacity: 1;
-    overflow-y: auto;
+    pointer-events: auto;
+    transform: translateX(0);
+    visibility: visible;
+    transition-delay: 0s;
   }
 
   #nav-menu .NavDrawer__Content {
-    transition-delay: 0.2s;
+    transition-delay: 0s;
   }
 
   #nav-menu.is-open .NavDrawer__Content {
     opacity: 1;
+    transition-delay: 0.2s;
   }
   @media (min-width: 640px) {
-    #nav-menu.is-open {
+    #nav-menu {
       width: 75%;
     }
   }
   @media (min-width: 1024px) {
-    #nav-menu.is-open {
+    #nav-menu {
       width: 50vw;
-      /* width: calc(100vw - 4 * var(--grid-margin)); */
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #nav-menu {
+      transition: none;
     }
   }
 
@@ -249,7 +259,9 @@ const rightCta =
   function openMenu() {
     menu?.classList.add('is-open');
     menu?.setAttribute('aria-hidden', 'false');
+    menu?.removeAttribute('inert');
     toggle?.setAttribute('aria-expanded', 'true');
+    toggle?.setAttribute('aria-label', 'Close navigation menu');
     backdrop?.classList.remove('opacity-0', 'pointer-events-none');
     backdrop?.classList.add('opacity-100');
     document.body.style.overflow = 'hidden';
@@ -258,10 +270,15 @@ const rightCta =
   function closeMenu() {
     menu?.classList.remove('is-open');
     menu?.setAttribute('aria-hidden', 'true');
+    menu?.setAttribute('inert', '');
     toggle?.setAttribute('aria-expanded', 'false');
+    toggle?.setAttribute('aria-label', 'Open navigation menu');
     backdrop?.classList.add('opacity-0', 'pointer-events-none');
     backdrop?.classList.remove('opacity-100');
-    document.body.style.overflow = '';
+
+    if (!menu || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.body.style.overflow = '';
+    }
   }
 
   function toggleMenu() {
@@ -275,6 +292,12 @@ const rightCta =
   toggle?.addEventListener('click', toggleMenu);
   // close?.addEventListener('click', closeMenu);
   backdrop?.addEventListener('click', closeMenu);
+
+  menu?.addEventListener('transitionend', (event) => {
+    if (event.propertyName === 'transform' && !menu.classList.contains('is-open')) {
+      document.body.style.overflow = '';
+    }
+  });
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {

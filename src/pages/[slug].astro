@@ -19,6 +19,7 @@ type Props = { slug: string };
 const { slug } = Astro.props;
 const page = await getPage(slug);
 const pageTitle = page.title || 'Untitled';
+const hasPageHeaderContent = Boolean(page?.pageHeader?.introduction?.length || page?.pageHeader?.heroImage?.url);
 ---
 
 <BaseLayout
@@ -26,7 +27,7 @@ const pageTitle = page.title || 'Untitled';
   meta={page?.meta}
   backgroundColor="white"
   navigationVariant="transparent"
-  mainClass={page.pageHeader ? 'Spacer--navigation-offset pb-(--nav-top-bar-height) tablet:pb-16' : ''}
+  mainClass={hasPageHeaderContent ? 'Spacer--navigation-offset pb-(--nav-top-bar-height) tablet:pb-16' : ''}
 >
   <GenericPageContent page={page} />
 </BaseLayout>

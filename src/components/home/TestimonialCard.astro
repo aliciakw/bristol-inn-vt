@@ -10,26 +10,43 @@ interface Props {
 const { quote, author, role } = Astro.props;
 
 const quoteVariant = quote.length > 180 ? 'h5' : quote.length > 105 ? 'h4' : 'h3';
+const mobileQuoteSize = quoteVariant === 'h5' ? '1.25rem' : quoteVariant === 'h4' ? '1.37rem' : '1.5rem';
 ---
 
-<div class="rounded-[16px] p-4 desktop:p-6 flex flex-col gap-3 h-full max-w-[60vw] bg-white shadow-md">
-  <TextStyle variant={quoteVariant} element="p" class="flex-1 text-ink-900">
+<div class="rounded-[16px] p-4 desktop:p-6 flex flex-col gap-3 h-full aspect-[3/4] max-w-[60vw] bg-white shadow-md">
+  <TextStyle variant={quoteVariant} element="p" class="TestimonialCard__Quote flex-1 text-ink-900" style={`--testimonial-mobile-quote-size: ${mobileQuoteSize}`}>
     &#8220;{quote.trim()}&#8221;
   </TextStyle>
   <div class="text-right">
     {
       author && (
-        <TextStyle variant="h5" element="p" class="text-ink-900">
+        <TextStyle variant="h5" element="p" class="TestimonialCard__Author text-ink-900">
           &#8212; {author}
         </TextStyle>
       )
     }
     {
       role && (
-        <TextStyle variant="caption" element="p" class="text-ink-900 mt-0.5">
+        <TextStyle variant="caption" element="p" class="TestimonialCard__Role text-ink-900 mt-0.5">
           {role || 'Verified guest'}
         </TextStyle>
       )
     }
   </div>
 </div>
+
+<style is:global>
+  @media (max-width: 911px) {
+    .TestimonialCard__Quote {
+      font-size: var(--testimonial-mobile-quote-size);
+    }
+
+    .TestimonialCard__Author {
+      font-size: 1.1875rem;
+    }
+
+    .TestimonialCard__Role {
+      font-size: 0.875rem;
+    }
+  }
+</style>
