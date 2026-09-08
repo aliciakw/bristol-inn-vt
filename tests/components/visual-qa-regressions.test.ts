@@ -25,11 +25,49 @@ vi.mock('../../src/lib/sanity', () => ({
 }));
 
 import DoubleHeroBlock from '../../src/components/home/DoubleHeroBlock.astro';
+import AnnouncementBar from '../../src/components/AnnouncementBar.astro';
 import Footer from '../../src/components/Footer.astro';
 import NavigationTopBar from '../../src/components/NavigationTopBar.astro';
 import TestimonialGalleryBlock from '../../src/components/blocks/TestimonialGalleryBlock.astro';
 
 describe('visual QA regressions', () => {
+  test('only a non-dismissable announcement stays above the navigation drawer', async () => {
+    const container = await AstroContainer.create();
+    const body = [
+      {
+        _type: 'block',
+        _key: 'announcement-copy',
+        style: 'normal',
+        markDefs: [],
+        children: [{ _type: 'span', _key: 'copy', text: 'Important notice', marks: [] }],
+      },
+    ];
+
+    const dismissable = await container.renderToString(AnnouncementBar, {
+      props: {
+        announcement: {
+          announcementBarIsEnabled: true,
+          cacheKey: 'dismissable-notice',
+          body,
+          isDismissable: true,
+        },
+      },
+    });
+    const persistent = await container.renderToString(AnnouncementBar, {
+      props: {
+        announcement: {
+          announcementBarIsEnabled: true,
+          cacheKey: 'persistent-notice',
+          body,
+          isDismissable: false,
+        },
+      },
+    });
+
+    expect(dismissable).toMatch(/<aside[^>]*class="[^"]*z-20/);
+    expect(persistent).toMatch(/<aside[^>]*class="[^"]*z-40/);
+  });
+
   test('the visible homepage badge provides the page-level heading', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(DoubleHeroBlock, {

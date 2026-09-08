@@ -14,7 +14,10 @@ const wrapperStyle = [announcement.backgroundColor ? `background-color: ${announ
 ---
 
 <aside
-  class="AnnouncementBar relative z-20 flex min-h-[52px] shrink-0 items-center justify-center bg-prussian-500 px-[var(--grid-margin)] py-2 text-sand-050"
+  class:list={[
+    'AnnouncementBar relative flex min-h-[52px] shrink-0 items-center justify-center bg-prussian-500 px-[var(--grid-margin)] py-2 text-sand-050',
+    announcement.isDismissable ? 'z-20' : 'z-40',
+  ]}
   style={wrapperStyle || undefined}
   aria-label="Announcement"
   data-announcement-bar
