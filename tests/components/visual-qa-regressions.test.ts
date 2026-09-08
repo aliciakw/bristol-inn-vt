@@ -1,9 +1,31 @@
 /// <reference types="astro/client" />
 
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
+
+vi.mock('../../src/lib/sanity', () => ({
+  buildSanityImageUrl: (url: string) => url,
+  getSettings: async () => ({
+    footerSections: [
+      {
+        title: 'Information',
+        content: [
+          {
+            _type: 'block',
+            _key: 'empty-heading',
+            style: 'h4',
+            markDefs: [],
+            children: [{ _type: 'span', _key: 'empty-span', text: '', marks: [] }],
+          },
+        ],
+      },
+    ],
+    hideNewsletterSubscriptionForm: true,
+  }),
+}));
 
 import DoubleHeroBlock from '../../src/components/home/DoubleHeroBlock.astro';
+import Footer from '../../src/components/Footer.astro';
 import TestimonialGalleryBlock from '../../src/components/blocks/TestimonialGalleryBlock.astro';
 
 describe('visual QA regressions', () => {
@@ -32,5 +54,12 @@ describe('visual QA regressions', () => {
     expect(dotButtons).toHaveLength(2);
     expect(dotButtons.every((button) => button.includes('size-11'))).toBe(true);
     expect(html.match(/data-testimonials-dot-indicator/g)).toHaveLength(2);
+  });
+
+  test('the footer omits empty CMS heading blocks', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Footer);
+
+    expect(html).not.toMatch(/<h4[^>]*>\s*<\/h4>/);
   });
 });

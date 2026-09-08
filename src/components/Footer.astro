@@ -14,7 +14,7 @@ function sectionToHTML(content: unknown[]): string {
     components: {
       block: {
         normal: ({ children }) => `<p class="font-serif font-[400] text-[17px] leading-[1.6] tracking-[0.02em]">${children}</p>`,
-        h4: ({ children }) => `<h4 class="font-serif text-[31px] leading-[1.2] mt-[4rem] mb-6">${children}</h4>`,
+        h4: ({ children }) => (children.trim() ? `<h4 class="font-serif text-[31px] leading-[1.2] mt-[4rem] mb-6">${children}</h4>` : ''),
         small: ({ children }) => `<p class="font-serif text-[14px] leading-[1.4] tracking-[0.01em]">${children}</p>`,
       },
       marks: {
