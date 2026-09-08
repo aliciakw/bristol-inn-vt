@@ -40,7 +40,7 @@ interface RoomGridProps {
 
 function RoomGrid({ title, rooms, isLoading, availability, lastSearch, headerAction }: RoomGridProps) {
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-10">
       {(title || headerAction) && (
         <div className="flex flex-col gap-4 tablet:flex-row tablet:items-center tablet:justify-between">
           {title && (
@@ -265,7 +265,7 @@ export function RoomBrowser({ rooms }: Props) {
 
   return (
     <div className="Grid">
-      <div className="Grid__Row--full z-10 mb-8">
+      <div className="Grid__Row--full z-10 mb-8 tablet:mb-24">
         <div className="desktop:w-[74.5%]">
           <AvailabilitySearchForm onSearch={handleSearch} onClear={handleClear} isLoading={isLoading} hasResults={hasResults} showResetButton={true} hideSpecialNeeds />
         </div>
