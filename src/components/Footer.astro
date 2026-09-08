@@ -14,7 +14,7 @@ function sectionToHTML(content: unknown[]): string {
     components: {
       block: {
         normal: ({ children }) => `<p class="font-serif font-[400] text-[17px] leading-[1.6] tracking-[0.02em]">${children}</p>`,
-        h4: ({ children }) => (children.trim() ? `<h4 class="font-serif text-[31px] leading-[1.2] mt-[4rem] mb-6">${children}</h4>` : ''),
+        h4: ({ children }) => (children?.trim() ? `<h4 class="font-serif text-[31px] leading-[1.2] mt-[4rem] mb-6">${children}</h4>` : ''),
         small: ({ children }) => `<p class="font-serif text-[14px] leading-[1.4] tracking-[0.01em]">${children}</p>`,
       },
       marks: {
@@ -29,17 +29,16 @@ function sectionToHTML(content: unknown[]): string {
 }
 ---
 
-<footer class="bg-prussian-500 text-white max-w-[100vw] overflow-x-hidden">
-  <div class="grid grid-cols-6 desktop:grid-cols-8 gap-x-8 gap-y-10 px-6 pt-14 pb-6 desktop:gap-x-16 desktop:gap-y-12">
+<footer class="bg-prussian-500 text-white max-w-[100vw] overflow-x-hidden px-[var(--grid-gutter)]">
+  <div class="grid tablet:grid-cols-8 desktop:grid-cols-12 gap-x-8 gap-y-10 px-6 pt-14 pb-6 desktop:gap-x-16 desktop:gap-y-12">
     {
       footerSections.map((section, i) => {
-        const isFirst = i === 0;
         return (
-          <section class:list={['desktop:col-span-2', isFirst ? 'col-span-6 desktop:col-start-2 desktop:row-start-1 desktop:row-span-3 flex flex-col' : 'col-span-3']}>
+          <section class="col-span-6 tablet:col-span-4 flex flex-col desktop:col-span-3" data-footer-section>
             {section.content?.length > 0 && <div set:html={sectionToHTML(section.content)} />}
 
             {i === footerSections.length - 1 && !hideNewsletterSubscriptionForm && (
-              <section class="col-span-6 desktop:col-span-2 desktop:col-start mt-[var(--grid-gutter)] flex flex-col gap-4">
+              <section class="col-span-6 desktop:col-span-3 desktop:col-start mt-[var(--grid-gutter)] flex flex-col gap-4">
                 <TextStyle variant="h4">Subscribe</TextStyle>
                 <TextStyle variant="caption">Our newsletter includes events, deals, and more.</TextStyle>
                 <form class="relative">
@@ -61,7 +60,7 @@ function sectionToHTML(content: unknown[]): string {
       })
     }
 
-    <div class="col-span-6 desktop:col-span-8 text-center">
+    <div class="col-span-6 desktop:col-span-8 pt-16 text-center">
       <p class="font-serif text-[14px] text-sand-100/80">
         &copy; {year} Bristol Inn Vermont. All rights reserved. | Site by <a
           href="https://aleeshza.com"

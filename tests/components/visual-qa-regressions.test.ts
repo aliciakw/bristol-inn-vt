@@ -19,6 +19,9 @@ vi.mock('../../src/lib/sanity', () => ({
           },
         ],
       },
+      { title: 'Location', content: [] },
+      { title: 'Contact', content: [] },
+      { title: 'Follow us', content: [] },
     ],
     hideNewsletterSubscriptionForm: true,
     announcementBar: {
@@ -165,6 +168,16 @@ describe('visual QA regressions', () => {
     const html = await container.renderToString(Footer);
 
     expect(html).not.toMatch(/<h4[^>]*>\s*<\/h4>/);
+  });
+
+  test('the footer lays out four CMS sections in four desktop columns and two smaller-screen columns', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Footer);
+    const sections = html.match(/<section[^>]*data-footer-section[^>]*>/g) ?? [];
+
+    expect(sections).toHaveLength(4);
+    expect(sections.every((section) => section.includes('col-span-3') && section.includes('desktop:col-span-2'))).toBe(true);
+    expect(sections.every((section) => !section.includes('desktop:col-start') && !section.includes('desktop:row-span'))).toBe(true);
   });
 
   test('the closed navigation drawer is excluded from keyboard interaction', async () => {
