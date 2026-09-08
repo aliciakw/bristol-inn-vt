@@ -26,6 +26,7 @@ vi.mock('../../src/lib/sanity', () => ({
 
 import DoubleHeroBlock from '../../src/components/home/DoubleHeroBlock.astro';
 import Footer from '../../src/components/Footer.astro';
+import NavigationTopBar from '../../src/components/NavigationTopBar.astro';
 import TestimonialGalleryBlock from '../../src/components/blocks/TestimonialGalleryBlock.astro';
 
 describe('visual QA regressions', () => {
@@ -61,5 +62,14 @@ describe('visual QA regressions', () => {
     const html = await container.renderToString(Footer);
 
     expect(html).not.toMatch(/<h4[^>]*>\s*<\/h4>/);
+  });
+
+  test('the closed navigation drawer is excluded from keyboard interaction', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(NavigationTopBar, {
+      props: { variant: 'white' },
+    });
+
+    expect(html).toMatch(/<nav[^>]*id="nav-menu"[^>]*inert/);
   });
 });
