@@ -10,10 +10,12 @@ interface Props {
   items?: TestimonialGalleryItem[];
   textColor?: string;
   backgroundColor?: string;
+  autoplay?: boolean;
 }
 
-const { heading, items = [], textColor, backgroundColor } = Astro.props;
+const { heading, items = [], textColor, backgroundColor, autoplay = false } = Astro.props;
 const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? `background-color: ${backgroundColor}` : ''].filter(Boolean).join('; ');
+const testimonialItems = items.filter((item): item is SanityTestimonialArrayItem => item._type === 'testimonial' || item._type === 'testimonialItem');
 ---
 
 <section class="Section bg-sand-200 my-12" style={wrapperStyle || undefined}>
@@ -28,66 +30,108 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
       )
     }
     {
-      items.length > 0 && (
-        <div class="Grid__Row--inset-1 py-12" data-testimonials-carousel>
-          <div class="overflow-visible tablet:overflow-hidden" data-testimonials-viewport>
-            <div class="flex touch-pan-y -ml-4 tablet:-ml-5 pb-5">
-              {items.map((item, index) => {
-                if (item._type === 'testimonial' || item._type === 'testimonialItem') {
-                  return (
-                    <div
-                      class:list={[
-                        'min-w-0 flex-[0_0_100%] pl-4 tablet:flex-[0_0_50%] tablet:pl-5 desktop:flex-[0_0_33.333%] transition-opacity duration-500 ease-out',
-                        index === 0 ? 'opacity-100' : 'opacity-65',
-                      ]}
-                      data-testimonial-slide
-                    >
-                      <div class="h-full flex flex-col items-center min-h-[280px] tablet:min-h-[320px]">
-                        <TestimonialCard quote={item.quote} author={item.author} role={item.role} />
-                      </div>
+      testimonialItems.length > 0 && (
+        <div class="Grid__Row--inset-1 relative py-12" data-testimonials-carousel data-testimonials-autoplay={String(autoplay)}>
+          <div class="TestimonialGallery__Clip">
+            <div class="TestimonialGallery__Viewport overflow-visible" data-testimonials-viewport>
+              <div class="flex touch-pan-y -ml-4 tablet:-ml-5 pb-5">
+                {testimonialItems.map((item, index) => (
+                  <div
+                    class:list={[
+                      'min-w-0 flex-[0_0_100%] pl-4 tablet:flex-[0_0_50%] tablet:pl-5 desktop:flex-[0_0_33.333%] transition-opacity duration-500 ease-out',
+                      index === 0 ? 'opacity-100' : 'opacity-65',
+                    ]}
+                    data-testimonial-slide
+                  >
+                    <div class="h-full flex flex-col items-center min-h-[280px] tablet:min-h-[320px]">
+                      <TestimonialCard quote={item.quote} author={item.author} role={item.role} />
                     </div>
-                  );
-                }
-                return null;
-              })}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          {items.length > 1 && (
-            <div class="mt-4 flex items-center justify-center gap-2">
-              <div class="flex items-center gap-2" aria-label="Choose testimonial">
-                {items.map((_, index) => (
-                  <button
-                    type="button"
-                    aria-label={`Show testimonial ${index + 1}`}
-                    aria-current={index === 0 ? 'true' : 'false'}
-                    class="group size-11 flex items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-900"
-                    data-testimonials-dot
-                  >
-                    <span
-                      aria-hidden="true"
-                      class:list={['h-2 rounded-full transition-all', index === 0 ? 'w-7 bg-ink-900' : 'w-2 bg-ink-900/50 group-hover:bg-ink-900/80']}
-                      data-testimonials-dot-indicator
-                    />
-                  </button>
-                ))}
+          {testimonialItems.length > 1 && (
+            <>
+              <div class="mt-6 flex items-center justify-center gap-8 desktop:contents" data-testimonials-controls>
+                <button
+                  type="button"
+                  aria-label="Previous testimonial"
+                  class="relative z-10 flex size-12 items-center justify-center bg-transparent text-ink-900 transition-opacity hover:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink-900 desktop:absolute desktop:-left-26 desktop:top-1/2 desktop:-translate-y-1/2"
+                  data-testimonials-prev
+                  data-testimonials-pristine
+                >
+                  <svg aria-hidden="true" class="size-10" viewBox="0 0 48 48" fill="none">
+                    <path d="M30 8 14 24l16 16" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  aria-label="Next testimonial"
+                  class="relative z-10 flex size-12 items-center justify-center bg-transparent text-ink-900 transition-opacity hover:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink-900 desktop:absolute desktop:-right-26 desktop:top-1/2 desktop:-translate-y-1/2"
+                  data-testimonials-next
+                >
+                  <svg aria-hidden="true" class="size-10" viewBox="0 0 48 48" fill="none">
+                    <path d="m18 8 16 16-16 16" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
               </div>
 
-              <button
-                type="button"
-                aria-label="Pause testimonial animation"
-                class="min-w-16  bg-transparent px-3 py-1.5 text-caption font-medium text-ink-900/80 transition-colors hover:border-ink-900/45 hover:text-ink-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink-900"
-                data-testimonials-toggle
-              >
-                <span data-testimonials-toggle-label>Pause</span>
-              </button>
-            </div>
+              {autoplay && (
+                <div class="mt-4 flex items-center justify-center">
+                  <button
+                    type="button"
+                    aria-label="Pause testimonial animation"
+                    class="min-w-16 bg-transparent px-3 py-1.5 text-caption font-medium text-ink-900/80 transition-colors hover:text-ink-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink-900"
+                    data-testimonials-toggle
+                  >
+                    <span data-testimonials-toggle-label>Pause</span>
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       )
     }
   </div>
 </section>
+
+<style>
+  @media (min-width: 912px) {
+    .TestimonialGallery__Clip {
+      margin-inline: -3rem;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent, black 2.5rem, black calc(100% - 2.5rem), transparent);
+      mask-image: linear-gradient(to right, transparent, black 2.5rem, black calc(100% - 2.5rem), transparent);
+    }
+
+    .TestimonialGallery__Viewport {
+      width: calc(100% - 6rem);
+      margin-inline: auto;
+    }
+  }
+
+  @media (min-width: 1240px) {
+    [data-testimonials-prev][data-testimonials-pristine] {
+      visibility: hidden;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .TestimonialGallery__Clip {
+      margin-inline: -4.5rem;
+      -webkit-mask-image: linear-gradient(to right, transparent, black 3.5rem, black calc(100% - 3.5rem), transparent);
+      mask-image: linear-gradient(to right, transparent, black 3.5rem, black calc(100% - 3.5rem), transparent);
+    }
+
+    .TestimonialGallery__Viewport {
+      width: calc(100% - 9rem);
+    }
+  }
+</style>
 
 <script>
   import EmblaCarousel from 'embla-carousel';
@@ -112,19 +156,41 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
     const nextButton = carousel.querySelector<HTMLButtonElement>('[data-testimonials-next]');
     const toggleButton = carousel.querySelector<HTMLButtonElement>('[data-testimonials-toggle]');
     const toggleLabel = carousel.querySelector<HTMLElement>('[data-testimonials-toggle-label]');
-    const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-testimonials-dot]'));
+    const autoplayEnabled = carousel.dataset.testimonialsAutoplay === 'true';
+    const desktopMedia = window.matchMedia('(min-width: 1240px)');
 
     if (!viewport || slides.length < 2) return;
 
     const embla = EmblaCarousel(viewport, {
       align: 'start',
-      containScroll: 'trimSnaps',
-      loop: false,
+      loop: true,
       skipSnaps: false,
     });
 
     let autoplayTimer: number | undefined;
     let isManuallyPaused = prefersReducedMotion;
+    let hasCarouselMoved = false;
+
+    const updatePreviousAccessibility = () => {
+      if (!previousButton) return;
+
+      const isInitiallyHidden = desktopMedia.matches && !hasCarouselMoved;
+      previousButton.setAttribute('aria-hidden', String(isInitiallyHidden));
+
+      if (isInitiallyHidden) {
+        previousButton.tabIndex = -1;
+      } else {
+        previousButton.removeAttribute('tabindex');
+      }
+    };
+
+    const revealPrevious = () => {
+      if (hasCarouselMoved) return;
+
+      hasCarouselMoved = true;
+      previousButton?.removeAttribute('data-testimonials-pristine');
+      updatePreviousAccessibility();
+    };
 
     const stopAutoplay = () => {
       if (autoplayTimer) {
@@ -134,7 +200,7 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
     };
 
     const startAutoplay = () => {
-      if (isManuallyPaused || autoplayTimer) return;
+      if (!autoplayEnabled || isManuallyPaused || autoplayTimer) return;
 
       autoplayTimer = window.setInterval(() => {
         if (document.visibilityState === 'hidden') return;
@@ -149,19 +215,11 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
     };
 
     const scrollPrevious = () => {
-      if (embla.canScrollPrev()) {
-        embla.scrollPrev();
-      } else {
-        embla.scrollTo(embla.scrollSnapList().length - 1);
-      }
+      embla.scrollPrev();
     };
 
     const scrollNext = () => {
-      if (embla.canScrollNext()) {
-        embla.scrollNext();
-      } else {
-        embla.scrollTo(0);
-      }
+      embla.scrollNext();
     };
 
     const updateSelectedState = (api: EmblaCarouselType) => {
@@ -172,17 +230,6 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
         slide.classList.toggle('opacity-100', isSelected);
         slide.classList.toggle('opacity-65', !isSelected);
       });
-
-      dots.forEach((dot, index) => {
-        const isSelected = index === selectedIndex;
-        const indicator = dot.querySelector<HTMLElement>('[data-testimonials-dot-indicator]');
-        dot.setAttribute('aria-current', String(isSelected));
-        indicator?.classList.toggle('w-7', isSelected);
-        indicator?.classList.toggle('w-2', !isSelected);
-        indicator?.classList.toggle('bg-ink-900', isSelected);
-        indicator?.classList.toggle('bg-ink-900/50', !isSelected);
-        indicator?.classList.toggle('group-hover:bg-ink-900/80', !isSelected);
-      });
     };
 
     previousButton?.addEventListener('click', () => {
@@ -191,6 +238,7 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
     });
 
     nextButton?.addEventListener('click', () => {
+      revealPrevious();
       pauseForUser();
       scrollNext();
     });
@@ -206,20 +254,23 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
       }
     });
 
-    dots.forEach((dot, index) => {
-      dot.addEventListener('click', () => {
-        pauseForUser();
-        embla.scrollTo(index);
-      });
+    if (autoplayEnabled) {
+      carousel.addEventListener('pointerenter', stopAutoplay);
+      carousel.addEventListener('pointerleave', startAutoplay);
+      carousel.addEventListener('focusin', stopAutoplay);
+      carousel.addEventListener('focusout', startAutoplay);
+    }
+    desktopMedia.addEventListener('change', updatePreviousAccessibility);
+    embla.on('select', (api) => {
+      revealPrevious();
+      updateSelectedState(api);
+    });
+    embla.on('pointerDown', () => {
+      revealPrevious();
+      pauseForUser();
     });
 
-    carousel.addEventListener('pointerenter', stopAutoplay);
-    carousel.addEventListener('pointerleave', startAutoplay);
-    carousel.addEventListener('focusin', stopAutoplay);
-    carousel.addEventListener('focusout', startAutoplay);
-    embla.on('select', updateSelectedState);
-    embla.on('pointerDown', pauseForUser);
-
+    updatePreviousAccessibility();
     updateSelectedState(embla);
     updateToggle(toggleButton, toggleLabel, isManuallyPaused);
     startAutoplay();
