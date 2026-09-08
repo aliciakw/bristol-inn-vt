@@ -175,7 +175,7 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
         dot.setAttribute('aria-current', String(isSelected));
         dot.classList.toggle('w-7', isSelected);
         dot.classList.toggle('bg-ink-900', isSelected);
-        dot.classList.toggle('bg-ink-900/50 pointer', !isSelected);
+        dot.classList.toggle('bg-ink-900/50', !isSelected);
         dot.classList.toggle('hover:bg-ink-900', !isSelected);
       });
     };
