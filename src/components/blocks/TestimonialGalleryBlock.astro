@@ -61,12 +61,15 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
                     type="button"
                     aria-label={`Show testimonial ${index + 1}`}
                     aria-current={index === 0 ? 'true' : 'false'}
-                    class:list={[
-                      'size-2 rounded-full transition-all focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink-900',
-                      index === 0 ? 'w-7 bg-ink-900' : 'bg-ink-900/50 hover:bg-ink-900/80',
-                    ]}
+                    class="group size-11 flex items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-900"
                     data-testimonials-dot
-                  />
+                  >
+                    <span
+                      aria-hidden="true"
+                      class:list={['h-2 rounded-full transition-all', index === 0 ? 'w-7 bg-ink-900' : 'w-2 bg-ink-900/50 group-hover:bg-ink-900/80']}
+                      data-testimonials-dot-indicator
+                    />
+                  </button>
                 ))}
               </div>
 
@@ -172,11 +175,13 @@ const wrapperStyle = [textColor ? `color: ${textColor}` : '', backgroundColor ? 
 
       dots.forEach((dot, index) => {
         const isSelected = index === selectedIndex;
+        const indicator = dot.querySelector<HTMLElement>('[data-testimonials-dot-indicator]');
         dot.setAttribute('aria-current', String(isSelected));
-        dot.classList.toggle('w-7', isSelected);
-        dot.classList.toggle('bg-ink-900', isSelected);
-        dot.classList.toggle('bg-ink-900/50', !isSelected);
-        dot.classList.toggle('hover:bg-ink-900', !isSelected);
+        indicator?.classList.toggle('w-7', isSelected);
+        indicator?.classList.toggle('w-2', !isSelected);
+        indicator?.classList.toggle('bg-ink-900', isSelected);
+        indicator?.classList.toggle('bg-ink-900/50', !isSelected);
+        indicator?.classList.toggle('group-hover:bg-ink-900/80', !isSelected);
       });
     };
 
